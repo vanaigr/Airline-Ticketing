@@ -132,11 +132,6 @@ namespace AirlineTicketingServer {
 
 				}
 			}
-		
-			foreach(var row_ in addFlights.Rows) {
-				var row = (DataRow) row_;
-				Console.WriteLine("{0} {1} {2}", row[0], row[1], row[2]);
-			}
 
 			//update flights in available period
 			using(var command = new SqlCommand(

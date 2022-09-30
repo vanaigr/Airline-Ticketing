@@ -135,6 +135,7 @@ namespace AirlineTicketingServer {
 				ServiceHost host = new ServiceHost(service, new Uri[] { new Uri(adress) });
 				var binding = new NetTcpBinding();
 				host.AddServiceEndpoint(typeof(MessageService), binding, "client-query");
+				host.Opened += (a, b) => Console.WriteLine("Server opened");
 				host.Open();
 			}
 			catch(Exception e) {

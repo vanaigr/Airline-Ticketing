@@ -19,11 +19,11 @@ namespace Client {
 		Dictionary<int, string> avaliableFlightClasses;
 
 		public SelectFlight() {
-			query = new ServerQuery();
+             query = new ServerQuery();
 
-			InitializeComponent();
-			setupAvailableOptions();
-			updateLoginInfo();
+            InitializeComponent();
+            setupAvailableOptions();
+            updateLoginInfo();
 		}
 
 		void setupAvailableOptions() {
