@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 
 namespace AirlineTicketingServer {
-	struct RepeatedFlight {
+	public struct PeriodicFlight {
 		public int Id;
 		public DateTime StartDate;
 		public int StartTimeMinutes;
@@ -15,7 +15,7 @@ namespace AirlineTicketingServer {
 		public int TimeRepeatPeriodMinutes;
 	}
 
-	class AvailableFlightsUpdate {
+	static class AvailableFlightsUpdate {
 		public static readonly int maxDaysFuture = 10; //this day and future maxDaysFuture-1 days
 
         static readonly int minutesInDay = 60 * 24;
@@ -41,105 +41,152 @@ namespace AirlineTicketingServer {
 				var result = command.ExecuteNonQuery();
 			}
 
-			bool[] daysPresent = new bool[maxDaysFuture];
+			var daysPresent = calculateComputedDays(thisDay, new SqlConnectionView(connection, false));
 
-			//fill days that nedd to be updated
-			using(var command = new SqlCommand(
-				"SELECT DISTINCT [DepartureDate] FROM [Flights].[AvailableFlights]", 
-				connection
-			)) {
-				command.CommandType = CommandType.Text;
-				using(
-				var result = command.ExecuteReader()) {
-				command.Dispose();
-				while(result.Read()) {
-					var diff = (DateTime)result[0] - thisDay;
-					var dayOffset = diff.Days;
-					if(dayOffset >= 0 && dayOffset < daysPresent.Length) {
-						daysPresent[dayOffset] = true;
-					}
-				}
-				}
-			}
-
-			//var addFlights = new List<AvailableFlight>();
 			var addFlights = new DataTable();
 			addFlights.Columns.Add("DepartureDate", typeof(DateTime));
 			addFlights.Columns.Add("DepartureTimeMinutes", typeof(int));
 			addFlights.Columns.Add("PeriodicFlightId", typeof(int));
 
-			//calculate new flights in available period
+			//fetch flights schedule
 			using(var command = new SqlCommand(
 				@"SELECT  [Id], [StartDate], [StartTimeMinutes], [DateRepeatPeriodDays], [TimeRepeatPeriodMinutes]
 				FROM [Flights].[PeriodicFlightsSchedule]",
 				connection
 			)) {
-				using(
-				var result = command.ExecuteReader()) {
-				command.Dispose();
+			using(
+			var result = command.ExecuteReader()) {
+			command.Dispose();
 
-				var repeatedFlights = new List<RepeatedFlight>();
-				while(result.Read()) {
-					repeatedFlights.Add(new RepeatedFlight{
-						Id = (int) result[0],
-						StartDate = (DateTime) result[1],
-						StartTimeMinutes = (int) result[2],
-						DateRepeatPeriodDays = (int) result[3],
-						TimeRepeatPeriodMinutes = (int) result[4]
-					});
+			var repeatedFlights = new List<PeriodicFlight>();
+			while(result.Read()) {
+				repeatedFlights.Add(new PeriodicFlight{
+					Id = (int) result[0],
+					StartDate = (DateTime) result[1],
+					StartTimeMinutes = (int) result[2],
+					DateRepeatPeriodDays = (int) result[3],
+					TimeRepeatPeriodMinutes = (int) result[4]
+				});
+			}
+			result.Close();
+
+			//calculate flights for available period
+			foreach(var repeatedFlight in repeatedFlights) addAvailableFlightsFromPeriodicFlight(
+				repeatedFlight, thisDay, daysPresent, 
+				(int periodicFlightId, int dayOffset, int minutesOffsetInDay) => {
+					var flightRow = addFlights.NewRow();
+					flightRow[0] = thisDay.AddDays(dayOffset);
+					flightRow[1] = minutesOffsetInDay;
+					flightRow[2] = periodicFlightId;
+					addFlights.Rows.Add(flightRow);
 				}
-				result.Close();
+			);
+			}
+			}
 
-				var availabilityPeriodStartDate = thisDay;
-				var availabilityPeriodStart = availabilityPeriodStartDate.Ticks;
+			uploadAvailableFlights(connectionView, addFlights);
+		}
+	
+		public static void periodicFlightsAdded(SqlConnectionView connectionView, List<PeriodicFlight> periodicFlightIds) {
+			var thisDay = DateTime.Today;
+			var connection = connectionView.connection;
 
-				foreach(var repeatedFlight in repeatedFlights) {
-					Debug.Assert(repeatedFlight.DateRepeatPeriodDays > 0);
+			var addFlights = new DataTable();
+			addFlights.Columns.Add("DepartureDate", typeof(DateTime));
+			addFlights.Columns.Add("DepartureTimeMinutes", typeof(int));
+			addFlights.Columns.Add("PeriodicFlightId", typeof(int));
 
-					var dTime = availabilityPeriodStart - repeatedFlight.StartDate.Ticks;
-					var flightPeriod = new DateTime().AddDays(repeatedFlight.DateRepeatPeriodDays).Ticks;
-					var flightPeriodsCount = dTime / flightPeriod;
-					var firstFlightInAvailablePeriod = repeatedFlight.StartDate.AddDays(flightPeriodsCount * repeatedFlight.DateRepeatPeriodDays);
-					
-					var flightDayOffset = (firstFlightInAvailablePeriod - availabilityPeriodStartDate).Days;
+			//calculate flights for available period
+			foreach(var repeatedFlight in periodicFlightIds) addAvailableFlightsFromPeriodicFlight(
+				repeatedFlight, thisDay, new bool[maxDaysFuture], 
+				(int periodicFlightId, int dayOffset, int minutesOffsetInDay) => {
+					var flightRow = addFlights.NewRow();
+					flightRow[0] = thisDay.AddDays(dayOffset);
+					flightRow[1] = minutesOffsetInDay;
+					flightRow[2] = periodicFlightId;
+					addFlights.Rows.Add(flightRow);
+				}
+			);
 
-					while(flightDayOffset < maxDaysFuture) {
-                        var flightMinutesOffset = repeatedFlight.StartTimeMinutes;
-                        
-                        while(flightMinutesOffset <= minutesInDay * repeatedFlight.DateRepeatPeriodDays) {
-                            var thisFlightDayOffsetFromOffset = flightMinutesOffset / minutesInDay;
-                            var thisFlightMinutesOffsetInDay = flightMinutesOffset % minutesInDay;
-                            var thisFlightDayOffset = flightDayOffset + thisFlightDayOffsetFromOffset;
-                           
-                            if(!daysPresent[thisFlightDayOffset]) {
-							    var flightRow = addFlights.NewRow();
-							    flightRow[0] = availabilityPeriodStartDate.AddDays(thisFlightDayOffset);
-							    flightRow[1] = thisFlightMinutesOffsetInDay;
-							    flightRow[2] = repeatedFlight.Id;
-							    addFlights.Rows.Add(flightRow);
-						    }
+			uploadAvailableFlights(connectionView, addFlights);
+		}
 
-                            if(repeatedFlight.TimeRepeatPeriodMinutes == 0) break; /*
-                                if period is not set then this flight is the only flight in given period
-                            */
-                            flightMinutesOffset += repeatedFlight.TimeRepeatPeriodMinutes;
-                        }
-						
+		static bool[] calculateComputedDays(DateTime thisDay, SqlConnectionView connectionView) {
+			bool[] daysPresent = new bool[maxDaysFuture];
 
-						flightDayOffset += repeatedFlight.DateRepeatPeriodDays;
+			//fill days that nedd to be updated
+			using(var command = new SqlCommand(
+				"SELECT DISTINCT [DepartureDate] FROM [Flights].[AvailableFlights]", 
+				connectionView.connection
+			)) {
+				command.CommandType = CommandType.Text;
+				using(var result = command.ExecuteReader()) {
+					command.Dispose();
+					while(result.Read()) {
+						var diff = (DateTime)result[0] - thisDay;
+						var dayOffset = diff.Days;
+						if(dayOffset >= 0 && dayOffset < daysPresent.Length) {
+							daysPresent[dayOffset] = true;
+						}
 					}
-				}
-
+					connectionView.Dispose();
 				}
 			}
 
-			//update flights in available period
+			return daysPresent;
+		} 
+		
+		delegate void AddAvailableFlight(int periodicFlightId, int dayOffset, int minutesOffsetInDay);
+
+		static void addAvailableFlightsFromPeriodicFlight(
+			PeriodicFlight repeatedFlight, 
+			DateTime availabilityPeriodStart,
+			bool[] daysPresent,
+			AddAvailableFlight addAvailableFlight
+		) {
+			Debug.Assert(repeatedFlight.DateRepeatPeriodDays > 0);
+
+			var dTime = availabilityPeriodStart.Ticks - repeatedFlight.StartDate.Ticks;
+			var flightPeriod = new DateTime().AddDays(repeatedFlight.DateRepeatPeriodDays).Ticks;
+			var flightPeriodsCount = dTime / flightPeriod;
+			var firstFlightInAvailablePeriod = repeatedFlight.StartDate.AddDays(flightPeriodsCount * repeatedFlight.DateRepeatPeriodDays);
+			
+			var flightDayOffset = (firstFlightInAvailablePeriod - availabilityPeriodStart).Days;
+
+			while(true) {
+                var flightMinutesOffset = repeatedFlight.StartTimeMinutes;
+                
+                while(flightMinutesOffset <= minutesInDay * repeatedFlight.DateRepeatPeriodDays) {
+                    var thisFlightDayOffsetFromOffset = flightMinutesOffset / minutesInDay;
+                    var thisFlightMinutesOffsetInDay = flightMinutesOffset % minutesInDay;
+                    var thisFlightDayOffset = flightDayOffset + thisFlightDayOffsetFromOffset;
+
+					if(thisFlightDayOffset >= maxDaysFuture) return;
+                   
+                    if(!daysPresent[thisFlightDayOffset]) {
+					    addAvailableFlight(repeatedFlight.Id, thisFlightDayOffset, thisFlightMinutesOffsetInDay);
+				    }
+
+                    if(repeatedFlight.TimeRepeatPeriodMinutes == 0) break; /*
+                        if period is not set then this flight is the only flight in given period
+                    */
+                    flightMinutesOffset += repeatedFlight.TimeRepeatPeriodMinutes;
+                }
+				
+
+				flightDayOffset += repeatedFlight.DateRepeatPeriodDays;
+			}
+		}
+
+		static void uploadAvailableFlights(SqlConnectionView connectionView, DataTable flights) {
+			var connection = connectionView.connection;
+
 			using(var command = new SqlCommand(
 				"[Flights].[InsertAvailableFlightsList]",
 				connection
 			)) {
 				command.CommandType = CommandType.StoredProcedure;
-				SqlParameter param = command.Parameters.AddWithValue("@availableFlights", addFlights);  
+				SqlParameter param = command.Parameters.AddWithValue("@availableFlights", flights);  
 				param.SqlDbType = SqlDbType.Structured;  
 				param.TypeName = "[Flights].[AvailableFlightInsert]";  
 
