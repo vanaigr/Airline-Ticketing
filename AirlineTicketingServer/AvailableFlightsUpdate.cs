@@ -15,13 +15,10 @@ namespace AirlineTicketingServer {
 		public int TimeRepeatPeriodMinutes;
 	}
 
-	struct AvailableFlight {
-		public DateTime departureDateTime;
-		public int periodicFlightId;
-	}
-
 	class AvailableFlightsUpdate {
-		public static readonly int maxDaysFuture = 60; //this day and future 59
+		public static readonly int maxDaysFuture = 10; //this day and future maxDaysFuture-1 days
+
+        static readonly int minutesInDay = 60 * 24;
 
 		public static void checkAndUpdate(SqlConnectionView connectionView) {	
 			var thisDay = DateTime.Today;
@@ -107,15 +104,27 @@ namespace AirlineTicketingServer {
 					var flightDayOffset = (firstFlightInAvailablePeriod - availabilityPeriodStartDate).Days;
 
 					while(flightDayOffset < maxDaysFuture) {
-						if(!daysPresent[flightDayOffset]) {
-							//TODO: loop for time
-							Console.Write("!");
-							var flightRow = addFlights.NewRow();
-							flightRow[0] = availabilityPeriodStartDate.AddDays(flightDayOffset);
-							flightRow[1] = repeatedFlight.StartTimeMinutes;
-							flightRow[2] = repeatedFlight.Id;
-							addFlights.Rows.Add(flightRow);
-						}
+                        var flightMinutesOffset = repeatedFlight.StartTimeMinutes;
+                        
+                        while(flightMinutesOffset <= minutesInDay * repeatedFlight.DateRepeatPeriodDays) {
+                            var thisFlightDayOffsetFromOffset = flightMinutesOffset / minutesInDay;
+                            var thisFlightMinutesOffsetInDay = flightMinutesOffset % minutesInDay;
+                            var thisFlightDayOffset = flightDayOffset + thisFlightDayOffsetFromOffset;
+                           
+                            if(!daysPresent[thisFlightDayOffset]) {
+							    var flightRow = addFlights.NewRow();
+							    flightRow[0] = availabilityPeriodStartDate.AddDays(thisFlightDayOffset);
+							    flightRow[1] = thisFlightMinutesOffsetInDay;
+							    flightRow[2] = repeatedFlight.Id;
+							    addFlights.Rows.Add(flightRow);
+						    }
+
+                            if(repeatedFlight.TimeRepeatPeriodMinutes == 0) break; /*
+                                if period is not set then this flight is the only flight in given period
+                            */
+                            flightMinutesOffset += repeatedFlight.TimeRepeatPeriodMinutes;
+                        }
+						
 
 						flightDayOffset += repeatedFlight.DateRepeatPeriodDays;
 					}
@@ -124,9 +133,14 @@ namespace AirlineTicketingServer {
 				}
 			}
 		
+			foreach(var row_ in addFlights.Rows) {
+				var row = (DataRow) row_;
+				Console.WriteLine("{0} {1} {2}", row[0], row[1], row[2]);
+			}
+
 			//update flights in available period
 			using(var command = new SqlCommand(
-				@"[Flights].[InsertAvailableFlightsList]",
+				"[Flights].[InsertAvailableFlightsList]",
 				connection
 			)) {
 				command.CommandType = CommandType.StoredProcedure;

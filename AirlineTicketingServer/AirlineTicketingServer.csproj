@@ -85,11 +85,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CustomersFlights.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="CustomersFlights.mdf" />
     <Content Include="CustomersFlights_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>CustomersFlights.mdf</DependentUpon>
     </Content>
   </ItemGroup>
