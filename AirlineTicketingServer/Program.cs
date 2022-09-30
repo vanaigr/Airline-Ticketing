@@ -128,13 +128,13 @@ namespace AirlineTicketingServer {
 		}
 
 		static void Main(string[] args) {
-			try {
-				string adress = "http://localhost:8080/test";
+            try {
+				string adress = "net.tcp://localhost:8080";
 				var service = new LoggingTimingMessageService(new MainMessageService());
 				
 				ServiceHost host = new ServiceHost(service, new Uri[] { new Uri(adress) });
-				var binding = new BasicHttpBinding();
-				host.AddServiceEndpoint(typeof(MessageService), binding, "");
+				var binding = new NetTcpBinding();
+				host.AddServiceEndpoint(typeof(MessageService), binding, "client-query");
 				host.Open();
 			}
 			catch(Exception e) {

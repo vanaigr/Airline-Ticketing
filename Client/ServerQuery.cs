@@ -9,9 +9,9 @@ namespace Client {
 		private ChannelFactory<Communication.MessageService> factory;
 
 		public ServerQuery() {
-			string adress = "http://localhost:8080/test";
+			string adress = "net.tcp://localhost:8080/client-query";
 			var endpoint = new EndpointAddress(adress);
-			var binding = new BasicHttpBinding();
+			var binding = new NetTcpBinding();
 			factory = new ChannelFactory<Communication.MessageService>(binding, endpoint);
 		}
 
