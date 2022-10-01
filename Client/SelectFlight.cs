@@ -7,10 +7,11 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
+using Communication;
 
 namespace Client {
 	public partial class SelectFlight : Form {
-		private ServerQuery query;
+		private MessageService service;
 
 		string Login;
 		string Password;
@@ -19,7 +20,7 @@ namespace Client {
 		Dictionary<int, string> avaliableFlightClasses;
 
 		public SelectFlight() {
-             query = new ServerQuery();
+            service = ServerQuery.Create();
 
             InitializeComponent();
             setupAvailableOptions();
@@ -28,15 +29,11 @@ namespace Client {
 
 		void setupAvailableOptions() {
 			try {
-				var result = query.query(new Communication.Params {
-					login = Login,
-					password = Password,
-					action = new Communication.QueryAvailableOptionsAction()
-				});
+				var result = service.availableOptions();
 
 				if(!result.statusOk) throw new Exception(result.message);
 
-				var options = (Communication.AvailableOptionsResult)result.result;
+				var options = result.result;
 				avaliableFlightClasses = options.flightClasses;
 
 				var source = new BindingSource();
@@ -104,7 +101,7 @@ namespace Client {
 		}
 
 		void LoginButton_Click(object sender, EventArgs e) {
-			var form = new LoginRegisterForm(query);
+			var form = new LoginRegisterForm(service);
 			var result = form.ShowDialog();
 			if(result == DialogResult.OK) {
 				Login = form.Login;

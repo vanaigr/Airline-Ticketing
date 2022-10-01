@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 
 using Communication;
+using System.Runtime.Remoting.Messaging;
+using System.Reflection;
 
 namespace AirlineTicketingServer {
 	
@@ -34,103 +36,117 @@ namespace AirlineTicketingServer {
 				}				
 			}
 
-			public Response execute(Params p) {
-				if(p.action is QueryAvailableOptionsAction) {
-					return new Response {
-						statusOk = true, message = "",
-						result = new AvailableOptionsResult { flightClasses = this.flightClasses }
-					};
-				}
-
-				if(p.login == null) p.login = "";
-				if(p.password == null) p.password = "";
-				var invalidLogin = LoginRegister.checkLogin(p.login);
-				var invalidPassword = LoginRegister.checkPassword(p.password);
+			string testLoginPasswordValid(string login, string password) {
+				if(login == null) login = "";
+				if(password == null) password = "";
+				var invalidLogin = LoginRegister.checkLogin(login);
+				var invalidPassword = LoginRegister.checkPassword(password);
 
 				if(!invalidLogin.ok || !invalidPassword.ok) {
 					var loginError = invalidLogin.error;
 					var passError = invalidPassword.error;
-					return new Response { statusOk = false, message = loginError + "\n" + passError };
+					return loginError + "\n" + passError;
 				}
+				else return null;
+			}
 
-				if(p.action is RegisterAction) {
-					var registered = LoginRegister.register(p.login, p.password);
+			public Response<AvailableOptionsResponse> availableOptions() {
+				return new Response<AvailableOptionsResponse>(
+					"", new AvailableOptionsResponse {
+						flightClasses = this.flightClasses 
+					}
+				);
+			}
 
-					if(registered) return new Response {
-						statusOk = true,
-						message = "Аккаунт зарегестрирован"
-					};
-					else return new Response {
-						statusOk = false,
-						message = "Аккаунт с таким именем пользователя уже существует"
-					};
-				}
-				else {
-					var loggedIn = LoginRegister.login(p.login, p.password);
+			public Response<MatchingFlightsResponse> matchingFlights(MatchingFlightsParams p) {
+				throw new NotImplementedException(); 
+			}
 
-					if(loggedIn.status == LoginRegister.LoginResultStatus.USER_NOT_EXISTS) return new Response {
-						statusOk = false,
-						message = "Пользователь с данным логином не найден"
-					};
-					else if(loggedIn.status == LoginRegister.LoginResultStatus.WRONG_PASSWORD) return new Response {
-						statusOk = false,
-						message = "Неправильный пароль"
-					};
+			public Response<RegisterResponse> register(string login, string password) {
+				var error = testLoginPasswordValid(login, password);
+				if(error != null) return new Response<RegisterResponse>(error, null);
 
-					var userId = loggedIn.userID;
+				var registered = LoginRegister.register(login, password);
 
-					return new Response {
-						statusOk = true,
-						message = "Вход выполнен"
-					};
-				}
-			}	
+				if(registered) return new Response<RegisterResponse>(
+					"Аккаунт зарегестрирован", new RegisterResponse()
+				);
+				else return new Response<RegisterResponse>(
+					"Аккаунт с таким именем пользователя уже существует", null
+				);
+			}
+
+			public Response<TestLoginResponse> testLogin(string login, string password) {
+				var error = testLoginPasswordValid(login, password);
+				if(error != null) return new Response<TestLoginResponse>(error, null);
+
+				var loggedIn = LoginRegister.login(login, password);
+
+				if(loggedIn.status == LoginRegister.LoginResultStatus.USER_NOT_EXISTS) return new Response<TestLoginResponse>(
+					"Пользователь с данным логином не найден", null
+				);
+				else if(loggedIn.status == LoginRegister.LoginResultStatus.WRONG_PASSWORD) return new Response<TestLoginResponse>(
+					"Неправильный пароль", null
+				);
+
+				var userId = loggedIn.userID;
+
+				return new Response<TestLoginResponse>(
+					"Вход выполнен", new TestLoginResponse()
+				);
+			}
 		}
 
 		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-		class LoggingTimingMessageService : MessageService {
-			MessageService innerService;
-
-			public LoggingTimingMessageService(MessageService innerService) {
-				this.innerService = innerService;
-			}
-
-			public Response execute(Params p) {
-				var watch = new System.Diagnostics.Stopwatch();
-				
+		public class LoggingProxy : System.Runtime.Remoting.Proxies.RealProxy {
+		    private readonly MessageService instance;
+		
+		    private LoggingProxy(MessageService instance) : base(typeof(MessageService)) {
+		        this.instance = instance;
+		    }
+		
+		    public static MessageService Create(MessageService instance) {
+		        return (MessageService) new LoggingProxy(instance).GetTransparentProxy();
+		    }
+		
+		    public override IMessage Invoke(IMessage msg) {
+				Stopwatch watch = null;
 				try {
+					var methodCall = (IMethodCallMessage) msg;
+					var method = (MethodInfo) methodCall.MethodBase;
+				
+					watch = new Stopwatch();
 					watch.Start();
-					var result = innerService.execute(p);
+		            var result = method.Invoke(instance, methodCall.InArgs);
 					watch.Stop();
 					Console.WriteLine(
-						"Responding ({3}ms) to {0} with code {1} and {2}",
-						p.action == null ? "no cation" : "action = " + p.action.GetType().Name,
-						result.statusOk ? "OK" : "ERROR",
-						result.result == null ? "null" : result.result.GetType().Name,
-						watch.Elapsed.TotalMilliseconds
+						"Responding ({0}ms) to {1} with code {2}",
+						watch.Elapsed.TotalMilliseconds,
+						methodCall.MethodName,
+						result
 					);
-					return result;
-				}
-				catch(Exception e) {
+		            return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);
+		        }
+		        catch (Exception e) {
 					watch.Stop();
-					var result = new Response { statusOk = false, message = "Неизвестная ошибка" };
 					Console.WriteLine(
-						"Error while responding ({4}ms) to {0}. Responsding with code {1} and {2} for error {3}",
-						p.action == null ? "no cation" : "action = " + p.action.GetType().Name,
-						result.statusOk ? "OK" : "ERROR",
-						result.result == null ? "null" : result.result.GetType().Name,
-						e.ToString(),
-						watch.Elapsed.TotalMilliseconds
+						"Error while responding ({0} ms) to {1}. Responsding with error {2}",
+						watch?.Elapsed.TotalMilliseconds,
+						(msg as IMethodCallMessage)?.MethodName,
+						e.ToString()
 					);
-					return result;
-				}
-			}
-		}
 
+		            if (e is TargetInvocationException && e.InnerException != null) {
+		                return new ReturnMessage(new FaultException<object>(null), msg as IMethodCallMessage);
+					} 
+					else throw e;
+		        }
+		    }
+		}
 		static void Main(string[] args) {
             try {
 				string adress = "net.tcp://localhost:8080";
-				var service = new LoggingTimingMessageService(new MainMessageService());
+				var service = LoggingProxy.Create(new MainMessageService());
 				
 				ServiceHost host = new ServiceHost(service, new Uri[] { new Uri(adress) });
 				var binding = new NetTcpBinding();

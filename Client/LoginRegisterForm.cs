@@ -7,6 +7,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
+using Communication;
 
 namespace Client {
 
@@ -14,51 +15,59 @@ namespace Client {
 		public string Login { get; private set; }
 		public string Password { get; private set; }
 
-		ServerQuery query;
+		MessageService service;
 
-		public LoginRegisterForm(ServerQuery query) {
+		public LoginRegisterForm(MessageService service) {
 			InitializeComponent();
-			this.query = query;
+			this.service = service;
 		}
 
 		private void RegisterButton_Click(object sender, EventArgs e) {
 			var login = LoginText.Text;
 			var password = PasswordText.Text;
 
-			var result = query.query(new Communication.Params {
-				login = login,
-				password = password,
-				action = new Communication.RegisterAction()
-			});
+			try {
+				var result = service.register(login, password);
 
-			if(result.statusOk) {
-				label1.ForeColor = SystemColors.ControlText;
-			}
-			else {
+				if(result.statusOk) {
+					label1.ForeColor = SystemColors.ControlText;
+				}
+				else {
+					label1.ForeColor = Color.Firebrick;
+				}
+				label1.Text = result.message;
+			} 
+			catch(Exception) {
 				label1.ForeColor = Color.Firebrick;
+				label1.Text = "Неизвестная ошибка";
 			}
-			label1.Text = result.message;
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e) {
 			var login = LoginText.Text;
 			var password = PasswordText.Text;
 
-			var result = query.query(new Communication.Params { login = login, password = password });
-			
-			if(result.statusOk) {
-				label1.ForeColor = SystemColors.ControlText;
-			}
-			else {
-				label1.ForeColor = Color.Firebrick;
-			}
-			label1.Text = result.message;
+			try {
+				var result = service.testLogin(login, password);
+				
+				if(result.statusOk) {
+					label1.ForeColor = SystemColors.ControlText;
+				}
+				else {
+					label1.ForeColor = Color.Firebrick;
+				}
+				label1.Text = result.message;
 
-			if(result.statusOk) {
-				Login = login;
-				Password = password;
-				DialogResult = DialogResult.OK;
-				Close();
+				if(result.statusOk) {
+					Login = login;
+					Password = password;
+					DialogResult = DialogResult.OK;
+					Close();
+				}
+			}
+			catch(Exception) {
+				label1.ForeColor = Color.Firebrick;
+				label1.Text = "Неизвестная ошибка";
 			}
 		}
 

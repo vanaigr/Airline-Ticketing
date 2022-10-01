@@ -7,41 +7,34 @@ using System.ServiceModel;
 using System.Text;
 
 namespace Communication {
-
-
-	[Serializable()]
-	public class Response {
-		public bool statusOk;
+	[Serializable] public struct Response<Result> {
 		public string message;
-		public object result;
+		public Result result;
+		public bool statusOk { get{ return result != null; } }
+
+		public Response(string message, Result result) {
+			this.message = message;
+			this.result = result;
+		}
+
+		public override string ToString() {
+			return "{ \"" + message + "\", " + (result == null ? "null" : result.GetType().Name) + " }";
+		}
+	}
+	
+	[Serializable] public sealed class RegisterResponse {
+	}
+	
+	[Serializable] public sealed class TestLoginResponse {
 	}
 
-	[Serializable] class AvailableOptionsResult {
+	[Serializable] public sealed class AvailableOptionsParams {
+	}
+	[Serializable] public sealed class AvailableOptionsResponse {
 		public Dictionary<int, string> flightClasses;
 	}
 
-	[Serializable]
-	class Flight {
-		string name;
-
-	}
-
-	//[Serializable] class MatchingFlightsResult {
-	//	List<>
-	//}
-
-	
-	[Serializable()]
-	public class Params {
-		public string login;
-		public string password;
-		public object action;
-	}
-
-	[Serializable] class RegisterAction {}
-	[Serializable] class QueryAvailableOptionsAction {}
-
-	[Serializable] class FindFlightsByCriteriaAction {
+	[Serializable] public sealed class MatchingFlightsParams {
 		string from;
 		string to;
 		DateTime when;
@@ -49,16 +42,35 @@ namespace Communication {
 		int childrenCount;
 		int babyCount;
 	}
+	[Serializable] public sealed class MatchingFlightsResponse {
+		List<AvailableFlight> availableFlights;
+	}
+	[Serializable] public struct AvailableFlight {
+		int id;
+		public DateTime departureTime;
 
-	[ServiceKnownType(typeof(RegisterAction))]
-	[ServiceKnownType(typeof(QueryAvailableOptionsAction))]
-	[ServiceKnownType(typeof(AvailableOptionsResult))]
-	[ServiceKnownType(typeof(FindFlightsByCriteriaAction))]
-	//[ServiceKnownType(typeof(MatchingFlightsResult))]
-	[ServiceKnownType(typeof(Flight))]
+		string name;
+		string airplaneName;
+		List<String> route;
+	}
+
+
+	
 	[ServiceContract]
 	public interface MessageService {
-		[OperationContract]
-		Response execute(Params p);
+		[FaultContract(typeof(object))] [OperationContract] 
+		Response<RegisterResponse> register(string login, string password);
+
+
+		[FaultContract(typeof(object))] [OperationContract] 
+		Response<TestLoginResponse> testLogin(string login, string password);		
+		
+
+		[FaultContract(typeof(object))] [OperationContract] 
+		Response<AvailableOptionsResponse> availableOptions();	
+
+
+		[FaultContract(typeof(object))] [OperationContract] 
+		Response<MatchingFlightsResponse> matchingFlights(MatchingFlightsParams p);	
 	}
 }
