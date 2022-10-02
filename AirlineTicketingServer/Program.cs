@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Communication;
 using System.Runtime.Remoting.Messaging;
 using System.Reflection;
+using System.Linq;
 
 namespace AirlineTicketingServer {
 	
@@ -15,21 +16,41 @@ namespace AirlineTicketingServer {
 		
 		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
 		class MainMessageService : MessageService {
-			private readonly Dictionary<int, string> flightClasses = new Dictionary<int, string>();
+			private readonly Dictionary<int, string> flightClasses;
+			private readonly List<City> cities;
 
 			public MainMessageService() {
+				flightClasses = flightClasses = new Dictionary<int, string>();
+				cities = new List<City>();
+
 				using(
 				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 
 				using(
-				var command = new SqlCommand("SELECT [Id], [Name] From [Flights].[Classes]", connection)) {
-				command.CommandType = System.Data.CommandType.Text;
+				var selectClasses = new SqlCommand("select [Id], [Name] from [Flights].[Classes]")) {
+				selectClasses.CommandType = System.Data.CommandType.Text;
 
+				using(
+				var selectCities = new SqlCommand("select [IATACode], [Name], [Country] from [Flights].[Cities]")) {
+				selectCities.CommandType = System.Data.CommandType.Text;
+
+				selectClasses.Connection = connection;
 				connection.Open();
-				var result = command.ExecuteReader();
+				using(
+				var result = selectClasses.ExecuteReader()) {
 				while(result.Read()) flightClasses.Add((int) result[0], (string) result[1]);
-				connection.Close();
+				}
 
+				selectCities.Connection = connection;
+				using(
+				var result = selectCities.ExecuteReader()) {
+				while(result.Read()) cities.Add(new City{ 
+					code = (string) result[0], 
+					name = (string) result[1],
+					country = (string) result[2] 
+				});
+				}
+				}
 				}
 
 				AvailableFlightsUpdate.checkAndUpdate(new SqlConnectionView(connection, true));
@@ -50,50 +71,41 @@ namespace AirlineTicketingServer {
 				else return null;
 			}
 
-			public Response<AvailableOptionsResponse> availableOptions() {
-				return new Response<AvailableOptionsResponse>(
-					"", new AvailableOptionsResponse {
-						flightClasses = this.flightClasses 
-					}
-				);
+			public AvailableOptionsResponse availableOptions() {
+				return new AvailableOptionsResponse {
+					flightClasses = flightClasses,
+					cities = cities
+				};
 			}
 
-			public Response<MatchingFlightsResponse> matchingFlights(MatchingFlightsParams p) {
+			public List<AvailableFlight> matchingFlights(MatchingFlightsParams p) {
 				throw new NotImplementedException(); 
 			}
 
-			public Response<RegisterResponse> register(string login, string password) {
+			public void register(string login, string password) {
 				var error = testLoginPasswordValid(login, password);
-				if(error != null) return new Response<RegisterResponse>(error, null);
+				if(error != null) throw new FaultException<object>(null, error);
 
 				var registered = LoginRegister.register(login, password);
 
-				if(registered) return new Response<RegisterResponse>(
-					"Аккаунт зарегестрирован", new RegisterResponse()
-				);
-				else return new Response<RegisterResponse>(
-					"Аккаунт с таким именем пользователя уже существует", null
+				if(!registered) throw new FaultException<object>(
+					null, 
+					"Аккаунт с таким именем пользователя уже существует"
 				);
 			}
 
-			public Response<TestLoginResponse> testLogin(string login, string password) {
+			public void logIn(string login, string password) {
 				var error = testLoginPasswordValid(login, password);
-				if(error != null) return new Response<TestLoginResponse>(error, null);
+				if(error != null) throw new FaultException<object>(null, error);
 
 				var loggedIn = LoginRegister.login(login, password);
 
-				if(loggedIn.status == LoginRegister.LoginResultStatus.USER_NOT_EXISTS) return new Response<TestLoginResponse>(
-					"Пользователь с данным логином не найден", null
-				);
-				else if(loggedIn.status == LoginRegister.LoginResultStatus.WRONG_PASSWORD) return new Response<TestLoginResponse>(
-					"Неправильный пароль", null
-				);
+				if(loggedIn.status == LoginRegister.LoginResultStatus.USER_NOT_EXISTS) 
+					 throw new FaultException<object>(null, "Пользователь с данным логином не найден");
+				else if(loggedIn.status == LoginRegister.LoginResultStatus.WRONG_PASSWORD) 
+					throw new FaultException<object>(null, "Неправильный пароль");
 
-				var userId = loggedIn.userID;
-
-				return new Response<TestLoginResponse>(
-					"Вход выполнен", new TestLoginResponse()
-				);
+				//var userId = loggedIn.userID;
 			}
 		}
 
@@ -120,7 +132,7 @@ namespace AirlineTicketingServer {
 		            var result = method.Invoke(instance, methodCall.InArgs);
 					watch.Stop();
 					Console.WriteLine(
-						"Responding ({0}ms) to {1} with code {2}",
+						"Responding ({0}ms) to `{1}` with `{2}`",
 						watch.Elapsed.TotalMilliseconds,
 						methodCall.MethodName,
 						result
@@ -130,14 +142,14 @@ namespace AirlineTicketingServer {
 		        catch (Exception e) {
 					watch.Stop();
 					Console.WriteLine(
-						"Error while responding ({0} ms) to {1}. Responsding with error {2}",
+						"Error while responding ({0} ms) to `{1}`: {2}",
 						watch?.Elapsed.TotalMilliseconds,
 						(msg as IMethodCallMessage)?.MethodName,
 						e.ToString()
 					);
 
 		            if (e is TargetInvocationException && e.InnerException != null) {
-		                return new ReturnMessage(new FaultException<object>(null), msg as IMethodCallMessage);
+		                return new ReturnMessage(e.InnerException, msg as IMethodCallMessage);
 					} 
 					else throw e;
 		        }

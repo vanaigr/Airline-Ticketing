@@ -35,8 +35,8 @@ namespace Client {
 			this.label7 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.fromDepDate = new System.Windows.Forms.DateTimePicker();
-			this.toLoc = new System.Windows.Forms.TextBox();
-			this.fromLoc = new System.Windows.Forms.TextBox();
+			this.toLoc = new Client.SelectFlight.CityComboBox();
+			this.fromLoc = new Client.SelectFlight.CityComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.adultCount = new System.Windows.Forms.NumericUpDown();
@@ -47,7 +47,7 @@ namespace Client {
 			this.label10 = new System.Windows.Forms.Label();
 			this.classSelector = new System.Windows.Forms.ComboBox();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.button1 = new System.Windows.Forms.Button();
+			this.findFlightsButton = new System.Windows.Forms.Button();
 			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.flowLayoutPanel2.SuspendLayout();
@@ -164,7 +164,7 @@ namespace Client {
 			// 
 			this.label8.AutoSize = true;
 			this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label8.Location = new System.Drawing.Point(19, 70);
+			this.label8.Location = new System.Drawing.Point(19, 72);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(63, 26);
 			this.label8.TabIndex = 19;
@@ -175,9 +175,9 @@ namespace Client {
 			// 
 			this.label7.AutoSize = true;
 			this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label7.Location = new System.Drawing.Point(19, 44);
+			this.label7.Location = new System.Drawing.Point(19, 45);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(63, 26);
+			this.label7.Size = new System.Drawing.Size(63, 27);
 			this.label7.TabIndex = 18;
 			this.label7.Text = "Куда:";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -188,7 +188,7 @@ namespace Client {
 			this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.label6.Location = new System.Drawing.Point(19, 18);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(63, 26);
+			this.label6.Size = new System.Drawing.Size(63, 27);
 			this.label6.TabIndex = 17;
 			this.label6.Text = "Откуда:";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -198,25 +198,33 @@ namespace Client {
 			this.fromDepDate.CustomFormat = "d MMMM, dddd";
 			this.fromDepDate.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.fromDepDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			this.fromDepDate.Location = new System.Drawing.Point(88, 73);
+			this.fromDepDate.Location = new System.Drawing.Point(88, 75);
 			this.fromDepDate.Name = "fromDepDate";
 			this.fromDepDate.Size = new System.Drawing.Size(200, 20);
 			this.fromDepDate.TabIndex = 15;
 			// 
 			// toLoc
 			// 
+			this.toLoc.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.toLoc.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.toLoc.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.toLoc.Location = new System.Drawing.Point(88, 47);
+			this.toLoc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this.toLoc.FormattingEnabled = true;
+			this.toLoc.Location = new System.Drawing.Point(88, 48);
 			this.toLoc.Name = "toLoc";
-			this.toLoc.Size = new System.Drawing.Size(200, 20);
+			this.toLoc.Size = new System.Drawing.Size(200, 21);
 			this.toLoc.TabIndex = 14;
 			// 
 			// fromLoc
 			// 
+			this.fromLoc.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.fromLoc.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.fromLoc.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.fromLoc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+			this.fromLoc.FormattingEnabled = true;
 			this.fromLoc.Location = new System.Drawing.Point(88, 21);
 			this.fromLoc.Name = "fromLoc";
-			this.fromLoc.Size = new System.Drawing.Size(200, 20);
+			this.fromLoc.Size = new System.Drawing.Size(200, 21);
 			this.fromLoc.TabIndex = 13;
 			// 
 			// label5
@@ -225,7 +233,7 @@ namespace Client {
 			this.tableLayoutPanel2.SetColumnSpan(this.label5, 3);
 			this.label5.Cursor = System.Windows.Forms.Cursors.Default;
 			this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label5.Location = new System.Drawing.Point(8, 96);
+			this.label5.Location = new System.Drawing.Point(8, 98);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(280, 13);
 			this.label5.TabIndex = 10;
@@ -235,7 +243,7 @@ namespace Client {
 			// 
 			this.label2.AutoSize = true;
 			this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label2.Location = new System.Drawing.Point(19, 109);
+			this.label2.Location = new System.Drawing.Point(19, 111);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(63, 26);
 			this.label2.TabIndex = 22;
@@ -245,7 +253,7 @@ namespace Client {
 			// adultCount
 			// 
 			this.adultCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.adultCount.Location = new System.Drawing.Point(88, 112);
+			this.adultCount.Location = new System.Drawing.Point(88, 114);
 			this.adultCount.Name = "adultCount";
 			this.adultCount.Size = new System.Drawing.Size(200, 20);
 			this.adultCount.TabIndex = 23;
@@ -259,7 +267,7 @@ namespace Client {
 			// 
 			this.label3.AutoSize = true;
 			this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label3.Location = new System.Drawing.Point(19, 135);
+			this.label3.Location = new System.Drawing.Point(19, 137);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(63, 26);
 			this.label3.TabIndex = 24;
@@ -270,7 +278,7 @@ namespace Client {
 			// 
 			this.label4.AutoSize = true;
 			this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label4.Location = new System.Drawing.Point(19, 161);
+			this.label4.Location = new System.Drawing.Point(19, 163);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(63, 26);
 			this.label4.TabIndex = 25;
@@ -280,7 +288,7 @@ namespace Client {
 			// childrenCount
 			// 
 			this.childrenCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.childrenCount.Location = new System.Drawing.Point(88, 138);
+			this.childrenCount.Location = new System.Drawing.Point(88, 140);
 			this.childrenCount.Name = "childrenCount";
 			this.childrenCount.Size = new System.Drawing.Size(200, 20);
 			this.childrenCount.TabIndex = 26;
@@ -288,7 +296,7 @@ namespace Client {
 			// babyCount
 			// 
 			this.babyCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.babyCount.Location = new System.Drawing.Point(88, 164);
+			this.babyCount.Location = new System.Drawing.Point(88, 166);
 			this.babyCount.Name = "babyCount";
 			this.babyCount.Size = new System.Drawing.Size(200, 20);
 			this.babyCount.TabIndex = 27;
@@ -297,7 +305,7 @@ namespace Client {
 			// 
 			this.label10.AutoSize = true;
 			this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label10.Location = new System.Drawing.Point(19, 187);
+			this.label10.Location = new System.Drawing.Point(19, 189);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(63, 27);
 			this.label10.TabIndex = 28;
@@ -308,7 +316,7 @@ namespace Client {
 			// 
 			this.classSelector.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.classSelector.FormattingEnabled = true;
-			this.classSelector.Location = new System.Drawing.Point(88, 190);
+			this.classSelector.Location = new System.Drawing.Point(88, 192);
 			this.classSelector.Name = "classSelector";
 			this.classSelector.Size = new System.Drawing.Size(200, 21);
 			this.classSelector.TabIndex = 29;
@@ -316,28 +324,28 @@ namespace Client {
 			// 
 			// panel1
 			// 
-			this.panel1.Controls.Add(this.button1);
+			this.panel1.Controls.Add(this.findFlightsButton);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.panel1.Location = new System.Drawing.Point(88, 360);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(200, 25);
 			this.panel1.TabIndex = 30;
 			// 
-			// button1
+			// findFlightsButton
 			// 
-			this.button1.BackColor = System.Drawing.Color.Transparent;
-			this.button1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
-			this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
-			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.button1.Location = new System.Drawing.Point(125, 0);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 25);
-			this.button1.TabIndex = 0;
-			this.button1.Text = "Найти";
-			this.button1.UseVisualStyleBackColor = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.findFlightsButton.BackColor = System.Drawing.Color.Transparent;
+			this.findFlightsButton.Dock = System.Windows.Forms.DockStyle.Right;
+			this.findFlightsButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+			this.findFlightsButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
+			this.findFlightsButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.findFlightsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.findFlightsButton.Location = new System.Drawing.Point(125, 0);
+			this.findFlightsButton.Name = "findFlightsButton";
+			this.findFlightsButton.Size = new System.Drawing.Size(75, 25);
+			this.findFlightsButton.TabIndex = 0;
+			this.findFlightsButton.Text = "Найти";
+			this.findFlightsButton.UseVisualStyleBackColor = false;
+			this.findFlightsButton.Click += new System.EventHandler(this.findFlightsButton_Click);
 			// 
 			// SelectFlight
 			// 
@@ -373,8 +381,8 @@ namespace Client {
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.DateTimePicker fromDepDate;
-		private System.Windows.Forms.TextBox toLoc;
-		private System.Windows.Forms.TextBox fromLoc;
+		private CityComboBox toLoc;
+		private CityComboBox fromLoc;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown adultCount;
@@ -388,6 +396,6 @@ namespace Client {
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.ToolTip elementHint;
 		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.Button findFlightsButton;
 	}
 }

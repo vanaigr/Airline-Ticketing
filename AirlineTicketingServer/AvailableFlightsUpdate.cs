@@ -36,7 +36,6 @@ namespace AirlineTicketingServer {
 					database date can be different from server date
 				*/
 
-				connection.Open();
 				var result = command.ExecuteNonQuery();
 			}
 

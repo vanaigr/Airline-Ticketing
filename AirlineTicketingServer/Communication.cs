@@ -7,44 +7,21 @@ using System.ServiceModel;
 using System.Text;
 
 namespace Communication {
-	[Serializable] public struct Response<Result> {
-		public string message;
-		public Result result;
-		public bool statusOk { get{ return result != null; } }
 
-		public Response(string message, Result result) {
-			this.message = message;
-			this.result = result;
-		}
-
-		public override string ToString() {
-			return "{ \"" + message + "\", " + (result == null ? "null" : result.GetType().Name) + " }";
-		}
-	}
-	
-	[Serializable] public sealed class RegisterResponse {
-	}
-	
-	[Serializable] public sealed class TestLoginResponse {
-	}
-
-	[Serializable] public sealed class AvailableOptionsParams {
-	}
-	[Serializable] public sealed class AvailableOptionsResponse {
+	[Serializable] public struct AvailableOptionsResponse {
 		public Dictionary<int, string> flightClasses;
+		public List<City> cities;
 	}
 
-	[Serializable] public sealed class MatchingFlightsParams {
-		string from;
-		string to;
+	[Serializable] public struct MatchingFlightsParams {
+		string fromCode;
+		string toCode;
 		DateTime when;
 		int adultCount;
 		int childrenCount;
 		int babyCount;
 	}
-	[Serializable] public sealed class MatchingFlightsResponse {
-		List<AvailableFlight> availableFlights;
-	}
+
 	[Serializable] public struct AvailableFlight {
 		int id;
 		public DateTime departureTime;
@@ -54,23 +31,26 @@ namespace Communication {
 		List<String> route;
 	}
 
+	[Serializable] public struct City {
+		public string country, code;
+		public string name { get; set; } //display in combobox requires property
+	}
 
-	
 	[ServiceContract]
 	public interface MessageService {
 		[FaultContract(typeof(object))] [OperationContract] 
-		Response<RegisterResponse> register(string login, string password);
+		void register(string login, string password);
 
 
 		[FaultContract(typeof(object))] [OperationContract] 
-		Response<TestLoginResponse> testLogin(string login, string password);		
+		void logIn(string login, string password);		
 		
 
 		[FaultContract(typeof(object))] [OperationContract] 
-		Response<AvailableOptionsResponse> availableOptions();	
+		AvailableOptionsResponse availableOptions();	
 
 
 		[FaultContract(typeof(object))] [OperationContract] 
-		Response<MatchingFlightsResponse> matchingFlights(MatchingFlightsParams p);	
+		List<AvailableFlight> matchingFlights(MatchingFlightsParams p);	
 	}
 }

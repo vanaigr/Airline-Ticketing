@@ -27,19 +27,18 @@ namespace Client {
 			var password = PasswordText.Text;
 
 			try {
-				var result = service.register(login, password);
+				service.register(login, password);
 
-				if(result.statusOk) {
-					label1.ForeColor = SystemColors.ControlText;
-				}
-				else {
-					label1.ForeColor = Color.Firebrick;
-				}
-				label1.Text = result.message;
+				label1.ForeColor = SystemColors.ControlText;
+				label1.Text = "Аккаунт зарегистрирован";
 			} 
-			catch(Exception) {
+			catch(FaultException<object> ex) {
 				label1.ForeColor = Color.Firebrick;
-				label1.Text = "Неизвестная ошибка";
+				label1.Text = ex.Message;
+			}
+			catch(Exception ex) {
+				label1.ForeColor = Color.Firebrick;
+				label1.Text = "Неизвестная ошибка: " + ex;
 			}
 		}
 
@@ -48,26 +47,23 @@ namespace Client {
 			var password = PasswordText.Text;
 
 			try {
-				var result = service.testLogin(login, password);
-				
-				if(result.statusOk) {
-					label1.ForeColor = SystemColors.ControlText;
-				}
-				else {
-					label1.ForeColor = Color.Firebrick;
-				}
-				label1.Text = result.message;
+				service.logIn(login, password);
 
-				if(result.statusOk) {
-					Login = login;
-					Password = password;
-					DialogResult = DialogResult.OK;
-					Close();
-				}
+				label1.ForeColor = SystemColors.ControlText;
+				label1.Text = "";
+
+				Login = login;
+				Password = password;
+				DialogResult = DialogResult.OK;
+				Close();
 			}
-			catch(Exception) {
+			catch(FaultException<object> ex) {
 				label1.ForeColor = Color.Firebrick;
-				label1.Text = "Неизвестная ошибка";
+				label1.Text = ex.Message;
+			}
+			catch(Exception ex) {
+				label1.ForeColor = Color.Firebrick;
+				label1.Text = "Неизвестная ошибка: " + ex;
 			}
 		}
 

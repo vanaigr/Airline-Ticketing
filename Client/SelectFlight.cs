@@ -18,23 +18,29 @@ namespace Client {
 		bool loggedIn;
 
 		Dictionary<int, string> avaliableFlightClasses;
-
+		List<City> cities;
 		public SelectFlight() {
             service = ServerQuery.Create();
 
             InitializeComponent();
             setupAvailableOptions();
             updateLoginInfo();
+
+			fromLoc.DisplayMember = "name";
+			toLoc.DisplayMember = "name";
+
+			fromLoc.DataSource = cities;
+			toLoc.DataSource = cities;
+
+			fromLoc.SelectedIndex = -1;
+			toLoc.SelectedIndex = -1;
 		}
 
 		void setupAvailableOptions() {
 			try {
-				var result = service.availableOptions();
-
-				if(!result.statusOk) throw new Exception(result.message);
-
-				var options = result.result;
+				var options = service.availableOptions();
 				avaliableFlightClasses = options.flightClasses;
+				cities = options.cities;
 
 				var source = new BindingSource();
 				source.DataSource = avaliableFlightClasses.Values;
@@ -121,11 +127,78 @@ namespace Client {
 		}
 
 		private void classSelector_SelectedIndexChanged(object sender, EventArgs e) {
-
+			//TODO
+		}
+		private void findFlightsButton_Click(object sender, EventArgs e) {
+			try {
+				//TODO
+				var result = service.matchingFlights(new MatchingFlightsParams{
+					
+				});
+			}
+			catch(FaultException<object> ex) {
+				statusLabel.ForeColor = Color.Firebrick;
+				statusLabel.Text = ex.Message;
+				Console.WriteLine(ex);
+			}
+			catch(Exception ex) {
+				statusLabel.ForeColor = Color.Firebrick;
+				statusLabel.Text = "Неизвестная ошибка";
+				Console.WriteLine(ex);
+			}
 		}
 
-		private void button1_Click(object sender, EventArgs e) {
+		class CityComboBox : ComboBox {
+			private StringBuilder sb;
 
+			public static readonly Color ForeColor2 = Color.DarkGray;
+
+			public CityComboBox() {
+				sb = new StringBuilder();
+				DrawMode = DrawMode.OwnerDrawFixed;
+			}
+
+			protected override void OnDrawItem(DrawItemEventArgs e) {
+		        e.DrawBackground();
+		        e.DrawFocusRectangle();
+
+				if(!(e.Index >= 0 && e.Index < Items.Count)) return;
+		 
+		        var item = (City) Items[e.Index];
+
+				//draw city name
+				sb.Clear().Append(item.name).Append(", ");
+				var nameString = sb.ToString();
+				var nameSize = e.Graphics.MeasureString(nameString, e.Font);
+		        e.Graphics.DrawString(
+					nameString, e.Font, new SolidBrush(e.ForeColor), 
+					e.Bounds.Left, e.Bounds.Top + 2
+				);
+
+				//draw country name
+				var countryString = sb.Clear().Append(item.country).Append(' ').ToString();
+				var countrySize =  e.Graphics.MeasureString(countryString, e.Font);
+
+				e.Graphics.DrawString(
+					countryString, e.Font, new SolidBrush(ForeColor2), 
+					e.Bounds.Left + nameSize.Width, e.Bounds.Top + 2
+				);
+
+				//draw city code
+				var codeString = item.code;
+				var codeSize =  e.Graphics.MeasureString(codeString, e.Font);
+
+				e.Graphics.DrawString(
+					codeString, e.Font, new SolidBrush(ForeColor), 
+					Math.Max(
+						e.Bounds.Left + nameSize.Width + countrySize.Width, 
+						e.Bounds.Right - codeSize.Width
+					),
+					e.Bounds.Top + 2
+				);
+		 
+		        base.OnDrawItem(e);
+		    }
 		}
 	}
 }

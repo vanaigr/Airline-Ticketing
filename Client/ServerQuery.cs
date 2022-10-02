@@ -30,7 +30,7 @@ namespace Client {
 				var method = (MethodInfo) methodCall.MethodBase;
 				var service = factory.CreateChannel();
 	            var result = method.Invoke(service, methodCall.InArgs);
-				((IClientChannel) service).Close();
+				((IClientChannel) service).Dispose();
 	            return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);
 	        }
 	        catch (Exception e) {
