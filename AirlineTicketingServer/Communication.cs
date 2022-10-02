@@ -14,21 +14,33 @@ namespace Communication {
 	}
 
 	[Serializable] public struct MatchingFlightsParams {
-		string fromCode;
-		string toCode;
-		DateTime when;
-		int adultCount;
-		int childrenCount;
-		int babyCount;
+		public string fromCode;
+		public string toCode;
+		public DateTime when;
+		public int adultCount;
+		public int childrenCount;
+		public int babyCount;
+		public int classIndex;
 	}
 
 	[Serializable] public struct AvailableFlight {
-		int id;
+		public int id;
 		public DateTime departureTime;
+		public int arrivalOffsteMinutes;
 
-		string name;
-		string airplaneName;
-		List<String> route;
+		public string flightName;
+		public string airplaneName;
+
+		public override string ToString() {
+			var sb = new StringBuilder();
+
+			sb.AppendFormat(
+				"{{ id={0}, date={1}, name={2}, airplane={3}, arrivalOffsteMinutes={4} }}",
+				id, departureTime, flightName, airplaneName, arrivalOffsteMinutes
+			);
+
+			return sb.ToString();
+		}
 	}
 
 	[Serializable] public struct City {

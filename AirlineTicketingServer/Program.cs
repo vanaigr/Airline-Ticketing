@@ -31,7 +31,7 @@ namespace AirlineTicketingServer {
 				selectClasses.CommandType = System.Data.CommandType.Text;
 
 				using(
-				var selectCities = new SqlCommand("select [IATACode], [Name], [Country] from [Flights].[Cities]")) {
+				var selectCities = new SqlCommand("select [Id], [Name], [Country] from [Flights].[Cities]")) {
 				selectCities.CommandType = System.Data.CommandType.Text;
 
 				selectClasses.Connection = connection;
@@ -78,8 +78,37 @@ namespace AirlineTicketingServer {
 				};
 			}
 
-			public List<AvailableFlight> matchingFlights(MatchingFlightsParams p) {
-				throw new NotImplementedException(); 
+			public List<AvailableFlight> matchingFlights(MatchingFlightsParams p) {	
+				var list = new List<AvailableFlight>();
+				using(
+				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+
+				using(
+				var selectClasses = new SqlCommand(
+					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes] 
+					from [Flights].[FindFlights](@fromCity, @toCity, @time, @class)",
+					connection
+				)) {
+				selectClasses.CommandType = CommandType.Text;
+				selectClasses.Parameters.AddWithValue("@fromCity", "MOV");
+				selectClasses.Parameters.AddWithValue("@toCity", "LED");
+				selectClasses.Parameters.AddWithValue("@time", DateTime.Today.AddDays(2));
+				selectClasses.Parameters.AddWithValue("@class", 0);
+
+				connection.Open();
+				using(
+				var result = selectClasses.ExecuteReader()) {
+				while(result.Read()) list.Add(new AvailableFlight{
+					id = (int) result[0], flightName = (string) result[1],
+					airplaneName = (string) result[2], departureTime = (DateTime) result[3],
+					arrivalOffsteMinutes = (int) result[4]
+				});
+
+				}
+				}
+				}
+
+				return list;
 			}
 
 			public void register(string login, string password) {

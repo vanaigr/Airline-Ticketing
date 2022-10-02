@@ -131,10 +131,22 @@ namespace Client {
 		}
 		private void findFlightsButton_Click(object sender, EventArgs e) {
 			try {
+				var fromCode = (fromLoc.SelectedItem as City?)?.code;
+				var toCode = (toLoc.SelectedItem as City?)?.code;
+
 				//TODO
 				var result = service.matchingFlights(new MatchingFlightsParams{
-					
+					fromCode = fromCode, toCode = toCode,
+					when = fromDepDate.Value,
+					adultCount = (int) adultCount.Value,
+					childrenCount = (int) childrenCount.Value,
+					babyCount = (int) babyCount.Value,
+					classIndex = classSelector.SelectedIndex
 				});
+
+				foreach(var flight in result) {
+					Console.WriteLine(flight);
+				}
 			}
 			catch(FaultException<object> ex) {
 				statusLabel.ForeColor = Color.Firebrick;
