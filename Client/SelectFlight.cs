@@ -20,20 +20,8 @@ namespace Client {
 		Dictionary<int, string> avaliableFlightClasses;
 		List<City> cities;
 		public SelectFlight() {
-            service = ServerQuery.Create();
-
             InitializeComponent();
-            setupAvailableOptions();
-            updateLoginInfo();
-
-			fromLoc.DisplayMember = "name";
-			toLoc.DisplayMember = "name";
-
-			fromLoc.DataSource = cities;
-			toLoc.DataSource = cities;
-
-			fromLoc.SelectedIndex = -1;
-			toLoc.SelectedIndex = -1;
+			reconnect();
 		}
 
 		void setupAvailableOptions() {
@@ -55,7 +43,7 @@ namespace Client {
 		}
 
 		void updateLoginInfo() {
-			flowLayoutPanel1.Controls.Clear();
+			loginLayoutPanel.Controls.Clear();
 
 			if(loggedIn) {
 				var unloginButton = new Button();
@@ -73,7 +61,7 @@ namespace Client {
 				unloginButton.UseVisualStyleBackColor = false;
 				unloginButton.Click += new System.EventHandler(this.UnloginButton_Click);
 
-				flowLayoutPanel1.Controls.Add(unloginButton);
+				loginLayoutPanel.Controls.Add(unloginButton);
 
 				var accountName = new Label();
 
@@ -84,7 +72,7 @@ namespace Client {
 				accountName.TabIndex = 0;
 				accountName.Text = Login;
 
-				flowLayoutPanel1.Controls.Add(accountName);
+				loginLayoutPanel.Controls.Add(accountName);
 			}
 			else {
 				var loginButton = new Button();
@@ -102,7 +90,7 @@ namespace Client {
 				loginButton.UseVisualStyleBackColor = false;
 				loginButton.Click += new EventHandler(this.LoginButton_Click);
 
-				flowLayoutPanel1.Controls.Add(loginButton);
+				loginLayoutPanel.Controls.Add(loginButton);
 			}
 		}
 
@@ -144,8 +132,24 @@ namespace Client {
 					classIndex = classSelector.SelectedIndex
 				});
 
-				foreach(var flight in result) {
-					Console.WriteLine(flight);
+				while (flightsTable.Controls.Count > 0) flightsTable.Controls[flightsTable.Controls.Count-1].Dispose();
+
+				if(result.Count == 0) {
+					var noResultsLabel = new Label();
+					noResultsLabel.Font = new Font(noResultsLabel.Font.FontFamily, 12);
+					noResultsLabel.Text = "Результаты не найдены";
+					noResultsLabel.TextAlign = ContentAlignment.TopCenter;
+
+					noResultsLabel.Dock = DockStyle.Top;
+					flightsTable.RowStyles.Add(new RowStyle());
+					flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
+				}
+				else foreach(var flight in result) {
+					var flightDisplay = new FlightDisplay();
+					flightDisplay.updateFromFlight(flight, fromCode, toCode);
+					flightDisplay.Dock = DockStyle.Top;
+					flightsTable.RowStyles.Add(new RowStyle());
+					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 				}
 			}
 			catch(FaultException<object> ex) {
@@ -211,6 +215,30 @@ namespace Client {
 		 
 		        base.OnDrawItem(e);
 		    }
+		}
+
+		private void pictureBox1_Click(object sender, EventArgs e) {
+			reconnect();
+		}
+
+		void reconnect() {
+			statusLabel.Text = "";
+			(service as IDisposable)?.Dispose();
+			service = ServerQuery.Create();
+
+			setupAvailableOptions();
+            updateLoginInfo();
+
+			fromLoc.DisplayMember = "name";
+			toLoc.DisplayMember = "name";
+
+			fromLoc.BindingContext = new BindingContext();
+			fromLoc.DataSource = cities;
+			toLoc.BindingContext = new BindingContext();
+			toLoc.DataSource = cities;
+
+			fromLoc.SelectedIndex = -1;
+			toLoc.SelectedIndex = -1;
 		}
 	}
 }

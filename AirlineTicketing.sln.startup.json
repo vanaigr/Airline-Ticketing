@@ -66,6 +66,13 @@
       },
       "SolutionConfiguration": "Debug",
       "SolutionPlatform": "x86"
+    },
+    "Client only (debug)": {
+      "Projects": {
+        "Client": {}
+      },
+      "SolutionConfiguration": "Debug",
+      "SolutionPlatform": "x86"
     }
   }
   }

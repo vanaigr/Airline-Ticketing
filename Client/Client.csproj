@@ -60,6 +60,12 @@
     <Compile Include="..\AirlineTicketingServer\Communication.cs">
       <Link>Communication.cs</Link>
     </Compile>
+    <Compile Include="FlightDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FlightDisplay.Designer.cs">
+      <DependentUpon>FlightDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoginRegisterForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +86,9 @@
       <DependentUpon>SelectFlight.cs</DependentUpon>
     </Compile>
     <Compile Include="ServerQuery.cs" />
+    <EmbeddedResource Include="FlightDisplay.resx">
+      <DependentUpon>FlightDisplay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -78,7 +78,11 @@ namespace AirlineTicketingServer {
 				};
 			}
 
-			public List<AvailableFlight> matchingFlights(MatchingFlightsParams p) {	
+			public List<AvailableFlight> matchingFlights(MatchingFlightsParams p) {
+				if(p.fromCode == null) throw new FaultException<object>(null, "Город вылета должен быть заполнен");
+				if(p.toCode == null) throw new FaultException<object>(null, "Город прилёта должен быть заполнен");
+				if(p.when == null) throw new FaultException<object>(null, "Дата вылета должа быть заполнена");
+				
 				var list = new List<AvailableFlight>();
 				using(
 				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
@@ -90,8 +94,8 @@ namespace AirlineTicketingServer {
 					connection
 				)) {
 				selectClasses.CommandType = CommandType.Text;
-				selectClasses.Parameters.AddWithValue("@fromCity", "MOV");
-				selectClasses.Parameters.AddWithValue("@toCity", "LED");
+				selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
+				selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
 				selectClasses.Parameters.AddWithValue("@time", DateTime.Today.AddDays(2));
 				selectClasses.Parameters.AddWithValue("@class", 0);
 
@@ -178,7 +182,10 @@ namespace AirlineTicketingServer {
 					);
 
 		            if (e is TargetInvocationException && e.InnerException != null) {
-		                return new ReturnMessage(e.InnerException, msg as IMethodCallMessage);
+						if(e.InnerException is FaultException<object>) {
+							return new ReturnMessage(e.InnerException, msg as IMethodCallMessage);
+						}
+		                else return new ReturnMessage(new FaultException<object>(null, "Неизвестная ошибка"), msg as IMethodCallMessage);
 					} 
 					else throw e;
 		        }

@@ -25,173 +25,205 @@ namespace Client {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+			System.Windows.Forms.PictureBox pictureBox1;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectFlight));
+			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+			System.Windows.Forms.Label label1;
+			System.Windows.Forms.Label label8;
+			System.Windows.Forms.Label label7;
+			System.Windows.Forms.Label label6;
+			System.Windows.Forms.Label label5;
+			System.Windows.Forms.Label label2;
+			System.Windows.Forms.Label label3;
+			System.Windows.Forms.Label label4;
+			System.Windows.Forms.Label label10;
+			System.Windows.Forms.Panel panel1;
+			this.loginLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.statusLabel = new System.Windows.Forms.Label();
-			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label8 = new System.Windows.Forms.Label();
-			this.label7 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
 			this.fromDepDate = new System.Windows.Forms.DateTimePicker();
 			this.toLoc = new Client.SelectFlight.CityComboBox();
 			this.fromLoc = new Client.SelectFlight.CityComboBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
 			this.adultCount = new System.Windows.Forms.NumericUpDown();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
 			this.childrenCount = new System.Windows.Forms.NumericUpDown();
 			this.babyCount = new System.Windows.Forms.NumericUpDown();
-			this.label10 = new System.Windows.Forms.Label();
 			this.classSelector = new System.Windows.Forms.ComboBox();
-			this.panel1 = new System.Windows.Forms.Panel();
 			this.findFlightsButton = new System.Windows.Forms.Button();
 			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
-			this.tableLayoutPanel1.SuspendLayout();
-			this.flowLayoutPanel2.SuspendLayout();
-			this.tableLayoutPanel2.SuspendLayout();
+			this.flightsTable = new System.Windows.Forms.TableLayoutPanel();
+			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			pictureBox1 = new System.Windows.Forms.PictureBox();
+			tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			label1 = new System.Windows.Forms.Label();
+			label8 = new System.Windows.Forms.Label();
+			label7 = new System.Windows.Forms.Label();
+			label6 = new System.Windows.Forms.Label();
+			label5 = new System.Windows.Forms.Label();
+			label2 = new System.Windows.Forms.Label();
+			label3 = new System.Windows.Forms.Label();
+			label4 = new System.Windows.Forms.Label();
+			label10 = new System.Windows.Forms.Label();
+			panel1 = new System.Windows.Forms.Panel();
+			tableLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel3.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(pictureBox1)).BeginInit();
+			tableLayoutPanel2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adultCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.childrenCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.babyCount)).BeginInit();
-			this.panel1.SuspendLayout();
+			panel1.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(495, 3);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 10, 10, 0);
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(486, 51);
-			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// tableLayoutPanel1
 			// 
-			this.tableLayoutPanel1.BackColor = System.Drawing.Color.White;
-			this.tableLayoutPanel1.ColumnCount = 2;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 0);
-			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 0);
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 1;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(984, 57);
-			this.tableLayoutPanel1.TabIndex = 2;
+			tableLayoutPanel1.BackColor = System.Drawing.Color.White;
+			tableLayoutPanel1.ColumnCount = 2;
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			tableLayoutPanel1.Controls.Add(this.loginLayoutPanel, 1, 0);
+			tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
+			tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+			tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			tableLayoutPanel1.Name = "tableLayoutPanel1";
+			tableLayoutPanel1.RowCount = 1;
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			tableLayoutPanel1.Size = new System.Drawing.Size(1075, 57);
+			tableLayoutPanel1.TabIndex = 2;
 			// 
-			// flowLayoutPanel2
+			// loginLayoutPanel
 			// 
-			this.flowLayoutPanel2.AutoScroll = true;
-			this.flowLayoutPanel2.Controls.Add(this.statusLabel);
-			this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
-			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-			this.flowLayoutPanel2.Padding = new System.Windows.Forms.Padding(10, 10, 0, 10);
-			this.flowLayoutPanel2.Size = new System.Drawing.Size(486, 51);
-			this.flowLayoutPanel2.TabIndex = 2;
+			this.loginLayoutPanel.BackColor = System.Drawing.Color.Transparent;
+			this.loginLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.loginLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+			this.loginLayoutPanel.Location = new System.Drawing.Point(540, 3);
+			this.loginLayoutPanel.Name = "loginLayoutPanel";
+			this.loginLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 10, 10, 0);
+			this.loginLayoutPanel.Size = new System.Drawing.Size(532, 51);
+			this.loginLayoutPanel.TabIndex = 1;
+			// 
+			// tableLayoutPanel3
+			// 
+			this.tableLayoutPanel3.ColumnCount = 2;
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 510F));
+			this.tableLayoutPanel3.Controls.Add(pictureBox1, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.statusLabel, 1, 0);
+			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
+			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+			this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(10, 10, 0, 10);
+			this.tableLayoutPanel3.RowCount = 1;
+			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(531, 51);
+			this.tableLayoutPanel3.TabIndex = 2;
+			// 
+			// pictureBox1
+			// 
+			pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+			pictureBox1.Location = new System.Drawing.Point(13, 13);
+			pictureBox1.Name = "pictureBox1";
+			pictureBox1.Size = new System.Drawing.Size(15, 25);
+			pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			pictureBox1.TabIndex = 0;
+			pictureBox1.TabStop = false;
+			pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
 			// 
 			// statusLabel
 			// 
-			this.statusLabel.AutoSize = true;
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.statusLabel.Location = new System.Drawing.Point(13, 10);
+			this.statusLabel.Location = new System.Drawing.Point(34, 10);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(0, 13);
-			this.statusLabel.TabIndex = 0;
+			this.statusLabel.Size = new System.Drawing.Size(504, 31);
+			this.statusLabel.TabIndex = 1;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tableLayoutPanel2
 			// 
-			this.tableLayoutPanel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-			this.tableLayoutPanel2.ColumnCount = 3;
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this.label8, 1, 3);
-			this.tableLayoutPanel2.Controls.Add(this.label7, 1, 2);
-			this.tableLayoutPanel2.Controls.Add(this.label6, 1, 1);
-			this.tableLayoutPanel2.Controls.Add(this.fromDepDate, 2, 3);
-			this.tableLayoutPanel2.Controls.Add(this.toLoc, 2, 2);
-			this.tableLayoutPanel2.Controls.Add(this.fromLoc, 2, 1);
-			this.tableLayoutPanel2.Controls.Add(this.label5, 0, 5);
-			this.tableLayoutPanel2.Controls.Add(this.label2, 1, 6);
-			this.tableLayoutPanel2.Controls.Add(this.adultCount, 2, 6);
-			this.tableLayoutPanel2.Controls.Add(this.label3, 1, 7);
-			this.tableLayoutPanel2.Controls.Add(this.label4, 1, 8);
-			this.tableLayoutPanel2.Controls.Add(this.childrenCount, 2, 7);
-			this.tableLayoutPanel2.Controls.Add(this.babyCount, 2, 8);
-			this.tableLayoutPanel2.Controls.Add(this.label10, 1, 10);
-			this.tableLayoutPanel2.Controls.Add(this.classSelector, 2, 10);
-			this.tableLayoutPanel2.Controls.Add(this.panel1, 2, 11);
-			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Left;
-			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 57);
-			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(5);
-			this.tableLayoutPanel2.RowCount = 12;
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(296, 393);
-			this.tableLayoutPanel2.TabIndex = 3;
+			tableLayoutPanel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+			tableLayoutPanel2.ColumnCount = 3;
+			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			tableLayoutPanel2.Controls.Add(label1, 0, 0);
+			tableLayoutPanel2.Controls.Add(label8, 1, 3);
+			tableLayoutPanel2.Controls.Add(label7, 1, 2);
+			tableLayoutPanel2.Controls.Add(label6, 1, 1);
+			tableLayoutPanel2.Controls.Add(this.fromDepDate, 2, 3);
+			tableLayoutPanel2.Controls.Add(this.toLoc, 2, 2);
+			tableLayoutPanel2.Controls.Add(this.fromLoc, 2, 1);
+			tableLayoutPanel2.Controls.Add(label5, 0, 5);
+			tableLayoutPanel2.Controls.Add(label2, 1, 6);
+			tableLayoutPanel2.Controls.Add(this.adultCount, 2, 6);
+			tableLayoutPanel2.Controls.Add(label3, 1, 7);
+			tableLayoutPanel2.Controls.Add(label4, 1, 8);
+			tableLayoutPanel2.Controls.Add(this.childrenCount, 2, 7);
+			tableLayoutPanel2.Controls.Add(this.babyCount, 2, 8);
+			tableLayoutPanel2.Controls.Add(label10, 1, 10);
+			tableLayoutPanel2.Controls.Add(this.classSelector, 2, 10);
+			tableLayoutPanel2.Controls.Add(panel1, 2, 11);
+			tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Left;
+			tableLayoutPanel2.Location = new System.Drawing.Point(0, 57);
+			tableLayoutPanel2.Name = "tableLayoutPanel2";
+			tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(5);
+			tableLayoutPanel2.RowCount = 12;
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			tableLayoutPanel2.Size = new System.Drawing.Size(296, 393);
+			tableLayoutPanel2.TabIndex = 3;
 			// 
 			// label1
 			// 
-			this.label1.AutoSize = true;
-			this.tableLayoutPanel2.SetColumnSpan(this.label1, 3);
-			this.label1.Location = new System.Drawing.Point(8, 5);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(151, 13);
-			this.label1.TabIndex = 21;
-			this.label1.Text = "Время и место отправления";
+			label1.AutoSize = true;
+			tableLayoutPanel2.SetColumnSpan(label1, 3);
+			label1.Location = new System.Drawing.Point(8, 5);
+			label1.Name = "label1";
+			label1.Size = new System.Drawing.Size(151, 13);
+			label1.TabIndex = 21;
+			label1.Text = "Время и место отправления";
 			// 
 			// label8
 			// 
-			this.label8.AutoSize = true;
-			this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label8.Location = new System.Drawing.Point(19, 72);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(63, 26);
-			this.label8.TabIndex = 19;
-			this.label8.Text = "Когда:";
-			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label8.AutoSize = true;
+			label8.Dock = System.Windows.Forms.DockStyle.Fill;
+			label8.Location = new System.Drawing.Point(19, 72);
+			label8.Name = "label8";
+			label8.Size = new System.Drawing.Size(63, 26);
+			label8.TabIndex = 19;
+			label8.Text = "Когда:";
+			label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label7
 			// 
-			this.label7.AutoSize = true;
-			this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label7.Location = new System.Drawing.Point(19, 45);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(63, 27);
-			this.label7.TabIndex = 18;
-			this.label7.Text = "Куда:";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label7.AutoSize = true;
+			label7.Dock = System.Windows.Forms.DockStyle.Fill;
+			label7.Location = new System.Drawing.Point(19, 45);
+			label7.Name = "label7";
+			label7.Size = new System.Drawing.Size(63, 27);
+			label7.TabIndex = 18;
+			label7.Text = "Куда:";
+			label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label6
 			// 
-			this.label6.AutoSize = true;
-			this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label6.Location = new System.Drawing.Point(19, 18);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(63, 27);
-			this.label6.TabIndex = 17;
-			this.label6.Text = "Откуда:";
-			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label6.AutoSize = true;
+			label6.Dock = System.Windows.Forms.DockStyle.Fill;
+			label6.Location = new System.Drawing.Point(19, 18);
+			label6.Name = "label6";
+			label6.Size = new System.Drawing.Size(63, 27);
+			label6.TabIndex = 17;
+			label6.Text = "Откуда:";
+			label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// fromDepDate
 			// 
@@ -229,26 +261,26 @@ namespace Client {
 			// 
 			// label5
 			// 
-			this.label5.AutoSize = true;
-			this.tableLayoutPanel2.SetColumnSpan(this.label5, 3);
-			this.label5.Cursor = System.Windows.Forms.Cursors.Default;
-			this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label5.Location = new System.Drawing.Point(8, 98);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(280, 13);
-			this.label5.TabIndex = 10;
-			this.label5.Text = "Пассажиры и класс";
+			label5.AutoSize = true;
+			tableLayoutPanel2.SetColumnSpan(label5, 3);
+			label5.Cursor = System.Windows.Forms.Cursors.Default;
+			label5.Dock = System.Windows.Forms.DockStyle.Fill;
+			label5.Location = new System.Drawing.Point(8, 98);
+			label5.Name = "label5";
+			label5.Size = new System.Drawing.Size(280, 13);
+			label5.TabIndex = 10;
+			label5.Text = "Пассажиры и класс";
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label2.Location = new System.Drawing.Point(19, 111);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(63, 26);
-			this.label2.TabIndex = 22;
-			this.label2.Text = "Взрослые:";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label2.AutoSize = true;
+			label2.Dock = System.Windows.Forms.DockStyle.Fill;
+			label2.Location = new System.Drawing.Point(19, 111);
+			label2.Name = "label2";
+			label2.Size = new System.Drawing.Size(63, 26);
+			label2.TabIndex = 22;
+			label2.Text = "Взрослые:";
+			label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// adultCount
 			// 
@@ -265,25 +297,25 @@ namespace Client {
 			// 
 			// label3
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label3.Location = new System.Drawing.Point(19, 137);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(63, 26);
-			this.label3.TabIndex = 24;
-			this.label3.Text = "Дети:";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label3.AutoSize = true;
+			label3.Dock = System.Windows.Forms.DockStyle.Fill;
+			label3.Location = new System.Drawing.Point(19, 137);
+			label3.Name = "label3";
+			label3.Size = new System.Drawing.Size(63, 26);
+			label3.TabIndex = 24;
+			label3.Text = "Дети:";
+			label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label4
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label4.Location = new System.Drawing.Point(19, 163);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(63, 26);
-			this.label4.TabIndex = 25;
-			this.label4.Text = "Младенцы:";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label4.AutoSize = true;
+			label4.Dock = System.Windows.Forms.DockStyle.Fill;
+			label4.Location = new System.Drawing.Point(19, 163);
+			label4.Name = "label4";
+			label4.Size = new System.Drawing.Size(63, 26);
+			label4.TabIndex = 25;
+			label4.Text = "Младенцы:";
+			label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// childrenCount
 			// 
@@ -303,14 +335,14 @@ namespace Client {
 			// 
 			// label10
 			// 
-			this.label10.AutoSize = true;
-			this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label10.Location = new System.Drawing.Point(19, 189);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(63, 27);
-			this.label10.TabIndex = 28;
-			this.label10.Text = "Класс:";
-			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			label10.AutoSize = true;
+			label10.Dock = System.Windows.Forms.DockStyle.Fill;
+			label10.Location = new System.Drawing.Point(19, 189);
+			label10.Name = "label10";
+			label10.Size = new System.Drawing.Size(63, 27);
+			label10.TabIndex = 28;
+			label10.Text = "Класс:";
+			label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// classSelector
 			// 
@@ -324,12 +356,12 @@ namespace Client {
 			// 
 			// panel1
 			// 
-			this.panel1.Controls.Add(this.findFlightsButton);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel1.Location = new System.Drawing.Point(88, 360);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(200, 25);
-			this.panel1.TabIndex = 30;
+			panel1.Controls.Add(this.findFlightsButton);
+			panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+			panel1.Location = new System.Drawing.Point(88, 360);
+			panel1.Name = "panel1";
+			panel1.Size = new System.Drawing.Size(200, 25);
+			panel1.TabIndex = 30;
 			// 
 			// findFlightsButton
 			// 
@@ -347,55 +379,59 @@ namespace Client {
 			this.findFlightsButton.UseVisualStyleBackColor = false;
 			this.findFlightsButton.Click += new System.EventHandler(this.findFlightsButton_Click);
 			// 
+			// flightsTable
+			// 
+			this.flightsTable.AutoScroll = true;
+			this.flightsTable.ColumnCount = 1;
+			this.flightsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.flightsTable.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flightsTable.Location = new System.Drawing.Point(296, 57);
+			this.flightsTable.Name = "flightsTable";
+			this.flightsTable.Padding = new System.Windows.Forms.Padding(10);
+			this.flightsTable.RowCount = 1;
+			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.flightsTable.Size = new System.Drawing.Size(779, 393);
+			this.flightsTable.TabIndex = 4;
+			// 
 			// SelectFlight
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
-			this.ClientSize = new System.Drawing.Size(984, 450);
-			this.Controls.Add(this.tableLayoutPanel2);
-			this.Controls.Add(this.tableLayoutPanel1);
+			this.ClientSize = new System.Drawing.Size(1075, 450);
+			this.Controls.Add(this.flightsTable);
+			this.Controls.Add(tableLayoutPanel2);
+			this.Controls.Add(tableLayoutPanel1);
 			this.MinimumSize = new System.Drawing.Size(400, 39);
 			this.Name = "SelectFlight";
 			this.Text = "SelectFlight";
-			this.tableLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel2.ResumeLayout(false);
-			this.flowLayoutPanel2.PerformLayout();
-			this.tableLayoutPanel2.ResumeLayout(false);
-			this.tableLayoutPanel2.PerformLayout();
+			tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel3.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(pictureBox1)).EndInit();
+			tableLayoutPanel2.ResumeLayout(false);
+			tableLayoutPanel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adultCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.childrenCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.babyCount)).EndInit();
-			this.panel1.ResumeLayout(false);
+			panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.FlowLayoutPanel loginLayoutPanel;
 		private System.Windows.Forms.DateTimePicker fromDepDate;
 		private CityComboBox toLoc;
 		private CityComboBox fromLoc;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown adultCount;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.NumericUpDown childrenCount;
 		private System.Windows.Forms.NumericUpDown babyCount;
-		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.ComboBox classSelector;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.ToolTip elementHint;
-		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Button findFlightsButton;
+		private System.Windows.Forms.TableLayoutPanel flightsTable;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+		private System.Windows.Forms.Label statusLabel;
 	}
 }

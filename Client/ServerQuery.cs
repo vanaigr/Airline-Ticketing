@@ -9,7 +9,7 @@ using System.Text;
 namespace Client {
 	public delegate void Action(Communication.MessageService serivce);
 	
-	public class ServerQuery : System.Runtime.Remoting.Proxies.RealProxy {
+	public class ServerQuery : System.Runtime.Remoting.Proxies.RealProxy, IDisposable {
 	    private ChannelFactory<Communication.MessageService> factory;
 	
 	    private ServerQuery() : base(typeof(Communication.MessageService)) {
@@ -22,13 +22,23 @@ namespace Client {
 	    public static Communication.MessageService Create() {
 	        return (Communication.MessageService) new ServerQuery().GetTransparentProxy();
 	    }
-	
-	    public override IMessage Invoke(IMessage msg) {
+
+		public void Dispose() {
+			factory.Close();
+		}
+
+		public override IMessage Invoke(IMessage msg) {
 			var methodCall = (IMethodCallMessage) msg;
 	        
 			try {
 				var method = (MethodInfo) methodCall.MethodBase;
+
+				//https://stackoverflow.com/a/10833801/18704284
 				var service = factory.CreateChannel();
+				var ar = ((System.ServiceModel.Channels.IChannel)service).BeginOpen(null, null);
+				if(!ar.AsyncWaitHandle.WaitOne(new TimeSpan(0, 0, 0, 0, 500), true)) throw new TimeoutException("Service is not available");
+				((System.ServiceModel.Channels.IChannel)service).EndOpen(ar);
+   
 	            var result = method.Invoke(service, methodCall.InArgs);
 				((IClientChannel) service).Dispose();
 	            return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);
