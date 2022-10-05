@@ -1,4 +1,6 @@
 ﻿
+using System.Drawing;
+
 namespace Client {
 	partial class SelectFlight {
 		/// <summary>
@@ -26,7 +28,6 @@ namespace Client {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-			System.Windows.Forms.PictureBox pictureBox1;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectFlight));
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 			System.Windows.Forms.Label label1;
@@ -38,9 +39,9 @@ namespace Client {
 			System.Windows.Forms.Label label3;
 			System.Windows.Forms.Label label4;
 			System.Windows.Forms.Label label10;
-			System.Windows.Forms.Panel panel1;
 			this.loginLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.statusLabel = new System.Windows.Forms.Label();
 			this.fromDepDate = new System.Windows.Forms.DateTimePicker();
 			this.toLoc = new Client.SelectFlight.CityComboBox();
@@ -49,11 +50,12 @@ namespace Client {
 			this.childrenCount = new System.Windows.Forms.NumericUpDown();
 			this.babyCount = new System.Windows.Forms.NumericUpDown();
 			this.classSelector = new System.Windows.Forms.ComboBox();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.findFlightsButton = new System.Windows.Forms.Button();
-			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
+			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.flightsTable = new System.Windows.Forms.TableLayoutPanel();
+			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			pictureBox1 = new System.Windows.Forms.PictureBox();
 			tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			label1 = new System.Windows.Forms.Label();
 			label8 = new System.Windows.Forms.Label();
@@ -64,15 +66,18 @@ namespace Client {
 			label3 = new System.Windows.Forms.Label();
 			label4 = new System.Windows.Forms.Label();
 			label10 = new System.Windows.Forms.Label();
-			panel1 = new System.Windows.Forms.Panel();
 			tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(pictureBox1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			tableLayoutPanel2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adultCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.childrenCount)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.babyCount)).BeginInit();
-			panel1.SuspendLayout();
+			this.flowLayoutPanel1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+			this.splitContainer1.Panel1.SuspendLayout();
+			this.splitContainer1.Panel2.SuspendLayout();
+			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -107,7 +112,7 @@ namespace Client {
 			this.tableLayoutPanel3.ColumnCount = 2;
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 510F));
-			this.tableLayoutPanel3.Controls.Add(pictureBox1, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.pictureBox1, 0, 0);
 			this.tableLayoutPanel3.Controls.Add(this.statusLabel, 1, 0);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
@@ -120,14 +125,14 @@ namespace Client {
 			// 
 			// pictureBox1
 			// 
-			pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-			pictureBox1.Location = new System.Drawing.Point(13, 13);
-			pictureBox1.Name = "pictureBox1";
-			pictureBox1.Size = new System.Drawing.Size(15, 25);
-			pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			pictureBox1.TabIndex = 0;
-			pictureBox1.TabStop = false;
-			pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+			this.pictureBox1.Location = new System.Drawing.Point(13, 13);
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(15, 25);
+			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			this.pictureBox1.TabIndex = 0;
+			this.pictureBox1.TabStop = false;
+			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
 			// 
 			// statusLabel
 			// 
@@ -142,9 +147,10 @@ namespace Client {
 			// 
 			tableLayoutPanel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
 			tableLayoutPanel2.ColumnCount = 3;
-			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			tableLayoutPanel2.Controls.Add(label1, 0, 0);
 			tableLayoutPanel2.Controls.Add(label8, 1, 3);
 			tableLayoutPanel2.Controls.Add(label7, 1, 2);
@@ -161,9 +167,9 @@ namespace Client {
 			tableLayoutPanel2.Controls.Add(this.babyCount, 2, 8);
 			tableLayoutPanel2.Controls.Add(label10, 1, 10);
 			tableLayoutPanel2.Controls.Add(this.classSelector, 2, 10);
-			tableLayoutPanel2.Controls.Add(panel1, 2, 11);
-			tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Left;
-			tableLayoutPanel2.Location = new System.Drawing.Point(0, 57);
+			tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 11);
+			tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
 			tableLayoutPanel2.Name = "tableLayoutPanel2";
 			tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(5);
 			tableLayoutPanel2.RowCount = 12;
@@ -179,7 +185,7 @@ namespace Client {
 			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			tableLayoutPanel2.Size = new System.Drawing.Size(296, 393);
+			tableLayoutPanel2.Size = new System.Drawing.Size(272, 393);
 			tableLayoutPanel2.TabIndex = 3;
 			// 
 			// label1
@@ -196,7 +202,7 @@ namespace Client {
 			// 
 			label8.AutoSize = true;
 			label8.Dock = System.Windows.Forms.DockStyle.Fill;
-			label8.Location = new System.Drawing.Point(19, 72);
+			label8.Location = new System.Drawing.Point(18, 72);
 			label8.Name = "label8";
 			label8.Size = new System.Drawing.Size(63, 26);
 			label8.TabIndex = 19;
@@ -207,7 +213,7 @@ namespace Client {
 			// 
 			label7.AutoSize = true;
 			label7.Dock = System.Windows.Forms.DockStyle.Fill;
-			label7.Location = new System.Drawing.Point(19, 45);
+			label7.Location = new System.Drawing.Point(18, 45);
 			label7.Name = "label7";
 			label7.Size = new System.Drawing.Size(63, 27);
 			label7.TabIndex = 18;
@@ -218,7 +224,7 @@ namespace Client {
 			// 
 			label6.AutoSize = true;
 			label6.Dock = System.Windows.Forms.DockStyle.Fill;
-			label6.Location = new System.Drawing.Point(19, 18);
+			label6.Location = new System.Drawing.Point(18, 18);
 			label6.Name = "label6";
 			label6.Size = new System.Drawing.Size(63, 27);
 			label6.TabIndex = 17;
@@ -227,36 +233,34 @@ namespace Client {
 			// 
 			// fromDepDate
 			// 
-			this.fromDepDate.CustomFormat = "d MMMM, dddd";
+			this.fromDepDate.CustomFormat = "d MMM, ddd";
 			this.fromDepDate.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.fromDepDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			this.fromDepDate.Location = new System.Drawing.Point(88, 75);
+			this.fromDepDate.Location = new System.Drawing.Point(87, 75);
 			this.fromDepDate.Name = "fromDepDate";
-			this.fromDepDate.Size = new System.Drawing.Size(200, 20);
+			this.fromDepDate.Size = new System.Drawing.Size(177, 20);
 			this.fromDepDate.TabIndex = 15;
 			// 
 			// toLoc
 			// 
-			this.toLoc.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
 			this.toLoc.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.toLoc.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.toLoc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.toLoc.FormattingEnabled = true;
-			this.toLoc.Location = new System.Drawing.Point(88, 48);
+			this.toLoc.Location = new System.Drawing.Point(87, 48);
 			this.toLoc.Name = "toLoc";
-			this.toLoc.Size = new System.Drawing.Size(200, 21);
+			this.toLoc.Size = new System.Drawing.Size(177, 21);
 			this.toLoc.TabIndex = 14;
 			// 
 			// fromLoc
 			// 
-			this.fromLoc.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
 			this.fromLoc.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.fromLoc.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.fromLoc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.fromLoc.FormattingEnabled = true;
-			this.fromLoc.Location = new System.Drawing.Point(88, 21);
+			this.fromLoc.Location = new System.Drawing.Point(87, 21);
 			this.fromLoc.Name = "fromLoc";
-			this.fromLoc.Size = new System.Drawing.Size(200, 21);
+			this.fromLoc.Size = new System.Drawing.Size(177, 21);
 			this.fromLoc.TabIndex = 13;
 			// 
 			// label5
@@ -267,7 +271,7 @@ namespace Client {
 			label5.Dock = System.Windows.Forms.DockStyle.Fill;
 			label5.Location = new System.Drawing.Point(8, 98);
 			label5.Name = "label5";
-			label5.Size = new System.Drawing.Size(280, 13);
+			label5.Size = new System.Drawing.Size(256, 13);
 			label5.TabIndex = 10;
 			label5.Text = "Пассажиры и класс";
 			// 
@@ -275,7 +279,7 @@ namespace Client {
 			// 
 			label2.AutoSize = true;
 			label2.Dock = System.Windows.Forms.DockStyle.Fill;
-			label2.Location = new System.Drawing.Point(19, 111);
+			label2.Location = new System.Drawing.Point(18, 111);
 			label2.Name = "label2";
 			label2.Size = new System.Drawing.Size(63, 26);
 			label2.TabIndex = 22;
@@ -285,9 +289,9 @@ namespace Client {
 			// adultCount
 			// 
 			this.adultCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.adultCount.Location = new System.Drawing.Point(88, 114);
+			this.adultCount.Location = new System.Drawing.Point(87, 114);
 			this.adultCount.Name = "adultCount";
-			this.adultCount.Size = new System.Drawing.Size(200, 20);
+			this.adultCount.Size = new System.Drawing.Size(177, 20);
 			this.adultCount.TabIndex = 23;
 			this.adultCount.Value = new decimal(new int[] {
             1,
@@ -299,7 +303,7 @@ namespace Client {
 			// 
 			label3.AutoSize = true;
 			label3.Dock = System.Windows.Forms.DockStyle.Fill;
-			label3.Location = new System.Drawing.Point(19, 137);
+			label3.Location = new System.Drawing.Point(18, 137);
 			label3.Name = "label3";
 			label3.Size = new System.Drawing.Size(63, 26);
 			label3.TabIndex = 24;
@@ -310,7 +314,7 @@ namespace Client {
 			// 
 			label4.AutoSize = true;
 			label4.Dock = System.Windows.Forms.DockStyle.Fill;
-			label4.Location = new System.Drawing.Point(19, 163);
+			label4.Location = new System.Drawing.Point(18, 163);
 			label4.Name = "label4";
 			label4.Size = new System.Drawing.Size(63, 26);
 			label4.TabIndex = 25;
@@ -320,24 +324,24 @@ namespace Client {
 			// childrenCount
 			// 
 			this.childrenCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.childrenCount.Location = new System.Drawing.Point(88, 140);
+			this.childrenCount.Location = new System.Drawing.Point(87, 140);
 			this.childrenCount.Name = "childrenCount";
-			this.childrenCount.Size = new System.Drawing.Size(200, 20);
+			this.childrenCount.Size = new System.Drawing.Size(177, 20);
 			this.childrenCount.TabIndex = 26;
 			// 
 			// babyCount
 			// 
 			this.babyCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.babyCount.Location = new System.Drawing.Point(88, 166);
+			this.babyCount.Location = new System.Drawing.Point(87, 166);
 			this.babyCount.Name = "babyCount";
-			this.babyCount.Size = new System.Drawing.Size(200, 20);
+			this.babyCount.Size = new System.Drawing.Size(177, 20);
 			this.babyCount.TabIndex = 27;
 			// 
 			// label10
 			// 
 			label10.AutoSize = true;
 			label10.Dock = System.Windows.Forms.DockStyle.Fill;
-			label10.Location = new System.Drawing.Point(19, 189);
+			label10.Location = new System.Drawing.Point(18, 189);
 			label10.Name = "label10";
 			label10.Size = new System.Drawing.Size(63, 27);
 			label10.TabIndex = 28;
@@ -348,36 +352,55 @@ namespace Client {
 			// 
 			this.classSelector.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.classSelector.FormattingEnabled = true;
-			this.classSelector.Location = new System.Drawing.Point(88, 192);
+			this.classSelector.Location = new System.Drawing.Point(87, 192);
 			this.classSelector.Name = "classSelector";
-			this.classSelector.Size = new System.Drawing.Size(200, 21);
+			this.classSelector.Size = new System.Drawing.Size(177, 21);
 			this.classSelector.TabIndex = 29;
-			this.classSelector.SelectedIndexChanged += new System.EventHandler(this.classSelector_SelectedIndexChanged);
 			// 
-			// panel1
+			// flowLayoutPanel1
 			// 
-			panel1.Controls.Add(this.findFlightsButton);
-			panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-			panel1.Location = new System.Drawing.Point(88, 360);
-			panel1.Name = "panel1";
-			panel1.Size = new System.Drawing.Size(200, 25);
-			panel1.TabIndex = 30;
+			this.flowLayoutPanel1.AutoSize = true;
+			tableLayoutPanel2.SetColumnSpan(this.flowLayoutPanel1, 3);
+			this.flowLayoutPanel1.Controls.Add(this.findFlightsButton);
+			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Right;
+			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.BottomUp;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(183, 219);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(81, 166);
+			this.flowLayoutPanel1.TabIndex = 30;
 			// 
 			// findFlightsButton
 			// 
-			this.findFlightsButton.BackColor = System.Drawing.Color.Transparent;
-			this.findFlightsButton.Dock = System.Windows.Forms.DockStyle.Right;
+			this.findFlightsButton.BackColor = System.Drawing.Color.RoyalBlue;
 			this.findFlightsButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
 			this.findFlightsButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.findFlightsButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.findFlightsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.findFlightsButton.Location = new System.Drawing.Point(125, 0);
+			this.findFlightsButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.findFlightsButton.Location = new System.Drawing.Point(3, 138);
 			this.findFlightsButton.Name = "findFlightsButton";
 			this.findFlightsButton.Size = new System.Drawing.Size(75, 25);
-			this.findFlightsButton.TabIndex = 0;
+			this.findFlightsButton.TabIndex = 2;
 			this.findFlightsButton.Text = "Найти";
 			this.findFlightsButton.UseVisualStyleBackColor = false;
 			this.findFlightsButton.Click += new System.EventHandler(this.findFlightsButton_Click);
+			// 
+			// splitContainer1
+			// 
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.Location = new System.Drawing.Point(0, 57);
+			this.splitContainer1.Name = "splitContainer1";
+			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add(tableLayoutPanel2);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.Controls.Add(this.flightsTable);
+			this.splitContainer1.Size = new System.Drawing.Size(1075, 393);
+			this.splitContainer1.SplitterDistance = 272;
+			this.splitContainer1.TabIndex = 0;
 			// 
 			// flightsTable
 			// 
@@ -385,12 +408,12 @@ namespace Client {
 			this.flightsTable.ColumnCount = 1;
 			this.flightsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.flightsTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flightsTable.Location = new System.Drawing.Point(296, 57);
+			this.flightsTable.Location = new System.Drawing.Point(0, 0);
 			this.flightsTable.Name = "flightsTable";
 			this.flightsTable.Padding = new System.Windows.Forms.Padding(10);
 			this.flightsTable.RowCount = 1;
 			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.flightsTable.Size = new System.Drawing.Size(779, 393);
+			this.flightsTable.Size = new System.Drawing.Size(799, 393);
 			this.flightsTable.TabIndex = 4;
 			// 
 			// SelectFlight
@@ -399,21 +422,24 @@ namespace Client {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.ClientSize = new System.Drawing.Size(1075, 450);
-			this.Controls.Add(this.flightsTable);
-			this.Controls.Add(tableLayoutPanel2);
+			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(tableLayoutPanel1);
 			this.MinimumSize = new System.Drawing.Size(400, 39);
 			this.Name = "SelectFlight";
 			this.Text = "SelectFlight";
 			tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel3.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(pictureBox1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			tableLayoutPanel2.ResumeLayout(false);
 			tableLayoutPanel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.adultCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.childrenCount)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.babyCount)).EndInit();
-			panel1.ResumeLayout(false);
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.splitContainer1.Panel1.ResumeLayout(false);
+			this.splitContainer1.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+			this.splitContainer1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -424,14 +450,17 @@ namespace Client {
 		private System.Windows.Forms.DateTimePicker fromDepDate;
 		private CityComboBox toLoc;
 		private CityComboBox fromLoc;
+		private System.Windows.Forms.ToolTip elementHint;
+		private System.Windows.Forms.TableLayoutPanel flightsTable;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.NumericUpDown adultCount;
 		private System.Windows.Forms.NumericUpDown childrenCount;
 		private System.Windows.Forms.NumericUpDown babyCount;
 		private System.Windows.Forms.ComboBox classSelector;
-		private System.Windows.Forms.ToolTip elementHint;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button findFlightsButton;
-		private System.Windows.Forms.TableLayoutPanel flightsTable;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-		private System.Windows.Forms.Label statusLabel;
+		private System.Windows.Forms.SplitContainer splitContainer1;
+		private System.Windows.Forms.PictureBox pictureBox1;
 	}
 }

@@ -9,6 +9,7 @@ using Communication;
 using System.Runtime.Remoting.Messaging;
 using System.Reflection;
 using System.Linq;
+using FlightsOptions;
 
 namespace AirlineTicketingServer {
 	
@@ -19,7 +20,30 @@ namespace AirlineTicketingServer {
 			private readonly Dictionary<int, string> flightClasses;
 			private readonly List<City> cities;
 
+			class A {
+				public List<int> l;
+			}
+
 			public MainMessageService() {
+				/*var options = new Options {
+					baggageOptions = new BaggageOptions{
+						baggage = new List<Baggage> {
+							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
+							new Baggage(costRub: 5000, count: 2, maxWeightKg: 23)
+						},
+						handLuggage = new List<Baggage>{
+							new Baggage(costRub: 0, count: 1, maxDim: new Size3{ x=55, y=40, z=20 }),
+						},
+					},
+					termsOptions = new TermsOptions {
+						changeFlightCostRub = 3250,
+						refundCostRub = -1
+					},
+					servicesOptions = new ServicesOptions {
+						seatChoiceCostRub = 450
+					}
+				};*/
+
 				flightClasses = flightClasses = new Dictionary<int, string>();
 				cities = new List<City>();
 
@@ -89,15 +113,16 @@ namespace AirlineTicketingServer {
 
 				using(
 				var selectClasses = new SqlCommand(
-					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes] 
-					from [Flights].[FindFlights](@fromCity, @toCity, @time, @class)",
+					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [OptionsBin]
+					from [Flights].[FindFlights](@fromCity, @toCity, @time, @class) 
+					order by [DepartureDatetime] desc",
 					connection
 				)) {
 				selectClasses.CommandType = CommandType.Text;
 				selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
 				selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
 				selectClasses.Parameters.AddWithValue("@time", DateTime.Today.AddDays(2));
-				selectClasses.Parameters.AddWithValue("@class", 0);
+				selectClasses.Parameters.AddWithValue("@class", p.classId);
 
 				connection.Open();
 				using(
@@ -105,7 +130,8 @@ namespace AirlineTicketingServer {
 				while(result.Read()) list.Add(new AvailableFlight{
 					id = (int) result[0], flightName = (string) result[1],
 					airplaneName = (string) result[2], departureTime = (DateTime) result[3],
-					arrivalOffsteMinutes = (int) result[4]
+					arrivalOffsteMinutes = (int) result[4],
+					options = Binary.fromBytes((byte[])result[5])
 				});
 
 				}

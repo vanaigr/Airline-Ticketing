@@ -35,7 +35,7 @@ namespace AirlineTicketingServer {
 					date is passed by parameter because
 					database date can be different from server date
 				*/
-
+				connectionView.Open();
 				var result = command.ExecuteNonQuery();
 			}
 

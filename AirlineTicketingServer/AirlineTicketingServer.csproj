@@ -72,6 +72,8 @@
   <ItemGroup>
     <Compile Include="AvailableFlightsUpdate.cs" />
     <Compile Include="Communication.cs" />
+    <Compile Include="DatabaseOptions.cs" />
+    <Compile Include="FlightsOptions.cs" />
     <Compile Include="Login.cs" />
     <Compile Include="Passanger.cs" />
     <Compile Include="PasswordHashing.cs" />

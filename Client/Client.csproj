@@ -60,11 +60,17 @@
     <Compile Include="..\AirlineTicketingServer\Communication.cs">
       <Link>Communication.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\FlightsOptions.cs">
+      <Link>FlightsOptions.cs</Link>
+    </Compile>
     <Compile Include="FlightDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="FlightDisplay.Designer.cs">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ListItemLabel.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="LoginRegisterForm.cs">
       <SubType>Form</SubType>
@@ -74,10 +80,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resource1.Designer.cs">
+    <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resource1.resx</DependentUpon>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SelectFlight.cs">
       <SubType>Form</SubType>
@@ -86,15 +92,16 @@
       <DependentUpon>SelectFlight.cs</DependentUpon>
     </Compile>
     <Compile Include="ServerQuery.cs" />
+    <Compile Include="TintImage.cs" />
     <EmbeddedResource Include="FlightDisplay.resx">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resource1.resx">
+    <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectFlight.resx">
       <DependentUpon>SelectFlight.cs</DependentUpon>

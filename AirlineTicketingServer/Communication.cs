@@ -20,7 +20,7 @@ namespace Communication {
 		public int adultCount;
 		public int childrenCount;
 		public int babyCount;
-		public int classIndex;
+		public int classId;
 	}
 
 	[Serializable] public struct AvailableFlight {
@@ -30,6 +30,8 @@ namespace Communication {
 
 		public string flightName;
 		public string airplaneName;
+
+		public FlightsOptions.Options options;
 
 		public override string ToString() {
 			var sb = new StringBuilder();
