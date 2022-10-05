@@ -113,7 +113,7 @@ namespace AirlineTicketingServer {
 
 				using(
 				var selectClasses = new SqlCommand(
-					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [OptionsBin]
+					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [AvailableSeatsCount], [OptionsBin]
 					from [Flights].[FindFlights](@fromCity, @toCity, @time, @class) 
 					order by [DepartureDatetime] desc",
 					connection
@@ -131,7 +131,8 @@ namespace AirlineTicketingServer {
 					id = (int) result[0], flightName = (string) result[1],
 					airplaneName = (string) result[2], departureTime = (DateTime) result[3],
 					arrivalOffsteMinutes = (int) result[4],
-					options = Binary.fromBytes((byte[])result[5])
+					options = Binary.fromBytes((byte[])result[6]),
+					availableSeatsCount = (int) result[5]
 				});
 
 				}

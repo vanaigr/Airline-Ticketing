@@ -93,6 +93,9 @@
     </Compile>
     <Compile Include="ServerQuery.cs" />
     <Compile Include="TintImage.cs" />
+    <Compile Include="TransparentPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="FlightDisplay.resx">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
     </EmbeddedResource>
@@ -105,6 +108,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SelectFlight.resx">
       <DependentUpon>SelectFlight.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TransparentPanel.resx">
+      <DependentUpon>TransparentPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -53,11 +53,14 @@ namespace FlightsOptions {
 }
 
 [Serializable] public struct TermsOptions {
-	public short changeFlightCostRub;
-	public short refundCostRub;
+	internal short changeFlightCostRub;
+	internal short refundCostRub;
+
+	public short ChangeFlightCostRub { get { Debug.Assert(CanChangeFlights); return changeFlightCostRub; } }
+	public short RefundCostRub { get { Debug.Assert(Refundable); return refundCostRub; } }
 
 	public bool CanChangeFlights { get { return changeFlightCostRub >= 0; } }
-	public bool Cefundable { get { return refundCostRub >= 0; } }
+	public bool Refundable { get { return refundCostRub >= 0; } }
 }
 
 [Serializable] public struct ServicesOptions {

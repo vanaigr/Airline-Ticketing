@@ -154,7 +154,7 @@ namespace Client {
 				}
 				else foreach(var flight in result) {
 					var flightDisplay = new FlightDisplay();
-					flightDisplay.updateFromFlight(flight, fromCode, toCode, flight.flightName, currentClass.Value, 0);
+					flightDisplay.updateFromFlight(flight, fromCode, toCode, flight.flightName, currentClass.Value);
 					flightDisplay.Dock = DockStyle.Top;
 					flightsTable.RowStyles.Add(new RowStyle());
 					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
@@ -247,6 +247,8 @@ namespace Client {
 
 			fromLoc.SelectedIndex = -1;
 			toLoc.SelectedIndex = -1;
+
+			flightsTable.Controls.Clear();
 		}
 	}
 }

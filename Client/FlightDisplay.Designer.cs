@@ -38,9 +38,9 @@ namespace Client {
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
-			this.baggageOptionsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.termsOptionsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.servicesOptionsTable = new System.Windows.Forms.TableLayoutPanel();
+			this.baggageOptionsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.label4 = new System.Windows.Forms.Label();
 			this.flightName = new System.Windows.Forms.Label();
 			this.classType = new System.Windows.Forms.Label();
@@ -58,7 +58,7 @@ namespace Client {
 			// tableLayoutPanel3
 			// 
 			tableLayoutPanel3.AutoSize = true;
-			tableLayoutPanel3.BackColor = System.Drawing.Color.White;
+			tableLayoutPanel3.BackColor = System.Drawing.Color.Transparent;
 			tableLayoutPanel3.ColumnCount = 3;
 			tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -244,37 +244,17 @@ namespace Client {
 			this.label3.Text = "Услуги";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// baggageOptionsTable
-			// 
-			this.baggageOptionsTable.AutoSize = true;
-			this.baggageOptionsTable.ColumnCount = 1;
-			this.baggageOptionsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.baggageOptionsTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.baggageOptionsTable.Location = new System.Drawing.Point(3, 16);
-			this.baggageOptionsTable.Name = "baggageOptionsTable";
-			this.baggageOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-			this.baggageOptionsTable.RowCount = 1;
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-			this.baggageOptionsTable.Size = new System.Drawing.Size(195, 56);
-			this.baggageOptionsTable.TabIndex = 3;
-			// 
 			// termsOptionsTable
 			// 
 			this.termsOptionsTable.AutoSize = true;
 			this.termsOptionsTable.ColumnCount = 1;
-			this.termsOptionsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.termsOptionsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
 			this.termsOptionsTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.termsOptionsTable.Location = new System.Drawing.Point(204, 16);
 			this.termsOptionsTable.Name = "termsOptionsTable";
-			this.termsOptionsTable.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+			this.termsOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this.termsOptionsTable.RowCount = 1;
-			this.termsOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.termsOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
 			this.termsOptionsTable.Size = new System.Drawing.Size(195, 56);
 			this.termsOptionsTable.TabIndex = 4;
 			// 
@@ -282,15 +262,29 @@ namespace Client {
 			// 
 			this.servicesOptionsTable.AutoSize = true;
 			this.servicesOptionsTable.ColumnCount = 1;
-			this.servicesOptionsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.servicesOptionsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
 			this.servicesOptionsTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.servicesOptionsTable.Location = new System.Drawing.Point(405, 16);
 			this.servicesOptionsTable.Name = "servicesOptionsTable";
-			this.servicesOptionsTable.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+			this.servicesOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this.servicesOptionsTable.RowCount = 1;
-			this.servicesOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.servicesOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
 			this.servicesOptionsTable.Size = new System.Drawing.Size(195, 56);
 			this.servicesOptionsTable.TabIndex = 5;
+			// 
+			// baggageOptionsTable
+			// 
+			this.baggageOptionsTable.AutoSize = true;
+			this.baggageOptionsTable.ColumnCount = 1;
+			this.baggageOptionsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
+			this.baggageOptionsTable.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.baggageOptionsTable.Location = new System.Drawing.Point(3, 16);
+			this.baggageOptionsTable.Name = "baggageOptionsTable";
+			this.baggageOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+			this.baggageOptionsTable.RowCount = 1;
+			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+			this.baggageOptionsTable.Size = new System.Drawing.Size(195, 56);
+			this.baggageOptionsTable.TabIndex = 3;
 			// 
 			// label4
 			// 
@@ -355,10 +349,13 @@ namespace Client {
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
+			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(tableLayoutPanel3);
 			this.MinimumSize = new System.Drawing.Size(750, 100);
 			this.Name = "FlightDisplay";
 			this.Size = new System.Drawing.Size(852, 124);
+			this.MouseLeave += new System.EventHandler(this.FlightDisplay_MouseLeave);
+			this.MouseHover += new System.EventHandler(this.FlightDisplay_MouseHover);
 			tableLayoutPanel3.ResumeLayout(false);
 			tableLayoutPanel3.PerformLayout();
 			tableLayoutPanel4.ResumeLayout(false);

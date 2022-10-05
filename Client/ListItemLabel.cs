@@ -6,17 +6,17 @@ using System.Windows.Forms;
 
 namespace Client {
 	class ListItemLabel : Label {
+		public Color BackColor2 = Color.Transparent;
 		
 		public ListItemLabel() {
 			AutoSize = true;
-			//UseCompatibleTextRendering = true;
+			UseCompatibleTextRendering = true;
 			TextAlign = ContentAlignment.MiddleCenter;
 			Padding = new Padding(3);
 		}
 
-		protected override void OnPaintBackground(PaintEventArgs e) {
-		    e.Graphics.Clear(Parent.BackColor);
-
+		protected override void OnPaint(PaintEventArgs e) {
+			{
 		    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 		    var rect = ClientRectangle;
@@ -26,12 +26,12 @@ namespace Client {
 			var center = new PointF(rect.X + rect.Width/2.0f, rect.Y + rect.Height/2.0f);
 			var dim = Math.Min(rect.Width, rect.Height);
 
-		    using (var brush = new SolidBrush(BackColor)) {
+		    using (var brush = new SolidBrush(BackColor2)) {
 		        e.Graphics.FillEllipse(brush, new RectangleF(center.X - dim/2.0f, center.Y - dim/2.0f, dim, dim));
 		    }
-		}
+			}
 
-		protected override void OnPaint(PaintEventArgs e) {
+			{
 			var flags = 0
 				| TextFormatFlags.SingleLine 
 				| TextFormatFlags.ExternalLeading
@@ -46,11 +46,11 @@ namespace Client {
 			;
 
 			var rect = ClientRectangle;
-
 			TextRenderer.DrawText(
 				e.Graphics, Text, Font, rect,
                 ForeColor, Color.Transparent, flags
 			);
+			}
 		}
 
 		public override Size GetPreferredSize(Size proposedSize) {

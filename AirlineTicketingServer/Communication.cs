@@ -33,12 +33,14 @@ namespace Communication {
 
 		public FlightsOptions.Options options;
 
+		public int availableSeatsCount;
+
 		public override string ToString() {
 			var sb = new StringBuilder();
 
 			sb.AppendFormat(
-				"{{ id={0}, date={1}, name={2}, airplane={3}, arrivalOffsteMinutes={4} }}",
-				id, departureTime, flightName, airplaneName, arrivalOffsteMinutes
+				"{{ id={0}, date={1}, name={2}, airplane={3}, arrivalOffsteMinutes={4}, availableSeatsCount={5} }}",
+				id, departureTime, flightName, airplaneName, arrivalOffsteMinutes, availableSeatsCount
 			);
 
 			return sb.ToString();
