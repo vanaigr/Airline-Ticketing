@@ -34,7 +34,8 @@ namespace Client {
 			panel1.TabIndex = 0;
 			panel1.MouseEnter += new System.EventHandler(this.FlightDisplay_MouseHover);
 			panel1.MouseLeave += new System.EventHandler(this.FlightDisplay_MouseLeave);
-			panel1.Cursor = Cursors.Hand;
+            panel1.Click += new System.EventHandler(this.FlightDisplay_Click);
+            panel1.Cursor = Cursors.Hand;
 
 			this.Controls.Add(panel1);
 			panel1.BringToFront();
@@ -255,5 +256,9 @@ namespace Client {
 		private void FlightDisplay_MouseLeave(object sender, EventArgs e) {
 			this.BackColor = Color.White;
 		}
+
+        private void FlightDisplay_Click(object sender, EventArgs e) {
+            this.OnClick(e);
+        }
 	}
 }

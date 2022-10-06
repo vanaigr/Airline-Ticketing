@@ -219,6 +219,9 @@ namespace AirlineTicketingServer {
 		    }
 		}
 		static void Main(string[] args) {
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            AppDomain.CurrentDomain.SetData("DataDirectory", path);
+
             try {
 				string adress = "net.tcp://localhost:8080";
 				var service = LoggingProxy.Create(new MainMessageService());

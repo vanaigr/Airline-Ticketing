@@ -156,6 +156,7 @@ namespace Client {
 					var flightDisplay = new FlightDisplay();
 					flightDisplay.updateFromFlight(flight, fromCode, toCode, flight.flightName, currentClass.Value);
 					flightDisplay.Dock = DockStyle.Top;
+					//flightDisplay.Click += (a, b) => { Console.WriteLine("a"); };
 					flightsTable.RowStyles.Add(new RowStyle());
 					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 				}
@@ -233,6 +234,8 @@ namespace Client {
 			statusLabel.Text = "";
 			(service as IDisposable)?.Dispose();
 			service = ServerQuery.Create();
+
+			loggedIn = false;
 
 			setupAvailableOptions();
             updateLoginInfo();
