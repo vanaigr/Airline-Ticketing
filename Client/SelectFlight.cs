@@ -39,24 +39,48 @@ namespace Client {
 				var options = service.availableOptions();
 				avaliableFlightClasses = options.flightClasses;
 				cities = options.cities;
+				updateErrorDisplay(false, null);
 			}
 			catch(Exception e) {
+				updateErrorDisplay(true, e.ToString());
+			}
+		}
+
+		void updateErrorDisplay(bool isError, string message) {
+			if(isError) { 
 				statusLabel.ForeColor = Color.Firebrick;
-				var errorMessage = e.ToString();
-				statusLabel.Text = errorMessage;
-				this.elementHint.SetToolTip(this.statusLabel, errorMessage);
+				statusLabel.Text = "Ошибка";
+				this.elementHint.SetToolTip(this.statusLabel, message);
+			}
+			else {
+				statusLabel.ForeColor = SystemColors.ControlText;
+				statusLabel.Text = "";
+				this.elementHint.SetToolTip(this.statusLabel, null);
 			}
 		}
 
 		void updateLoginInfo() {
+			loginLayoutPanel.SuspendLayout();
 			loginLayoutPanel.Controls.Clear();
+
+			{
+				/*
+					HACK: for some inexplicable reason first programmatically added to FlowLayoutPanel 
+					button has its border thickened (if border size is 1 it's displayed as 2 and so on)
+					so this dummy button is added in order for other buttons to look correct
+				*/
+				var label = new Button();
+				label.Size = new Size(0, 0);
+				loginLayoutPanel.Controls.Add(label);
+			}
 
 			if(loggedIn) {
 				var unloginButton = new Button();
 
 				unloginButton.AutoSize = true;
 				unloginButton.BackColor = Color.Transparent;
-				unloginButton.FlatAppearance.BorderColor = SystemColors.ControlLight;
+				unloginButton.FlatAppearance.BorderColor = Color.Gray;
+				unloginButton.FlatAppearance.BorderSize = 1;
 				unloginButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
 				unloginButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
 				unloginButton.FlatStyle = FlatStyle.Flat;
@@ -85,19 +109,19 @@ namespace Client {
 
 				loginButton.AutoSize = true;
 				loginButton.BackColor = Color.Transparent;
-				loginButton.FlatAppearance.BorderColor = SystemColors.ControlLight;
+				loginButton.FlatAppearance.BorderColor = Color.Gray;
 				loginButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
 				loginButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
 				loginButton.FlatStyle = FlatStyle.Flat;
-				loginButton.Location = new Point(11, 68);
-				loginButton.Name = "LoginButton";
-				loginButton.TabIndex = 6;
+				//loginButton.Name = "LoginButton";
 				loginButton.Text = "Войти или зарегестрироваться";
-				loginButton.UseVisualStyleBackColor = false;
 				loginButton.Click += new EventHandler(this.LoginButton_Click);
-
-				loginLayoutPanel.Controls.Add(loginButton);
+				
+				loginLayoutPanel.Controls.Add(loginButton);	
 			}
+
+			loginLayoutPanel.ResumeLayout(false);
+			loginLayoutPanel.PerformLayout();
 		}
 
 		void LoginButton_Click(object sender, EventArgs e) {
@@ -150,16 +174,14 @@ namespace Client {
 					flightsTable.RowStyles.Add(new RowStyle());
 					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 				}
+
+				updateErrorDisplay(false, null);
 			}
 			catch(FaultException<object> ex) {
-				statusLabel.ForeColor = Color.Firebrick;
-				statusLabel.Text = ex.Message;
-				Console.WriteLine(ex);
+				updateErrorDisplay(true, ex.Message);
 			}
 			catch(Exception ex) {
-				statusLabel.ForeColor = Color.Firebrick;
-				statusLabel.Text = "Неизвестная ошибка";
-				Console.WriteLine(ex);
+				updateErrorDisplay(true, "Неизвестная ошибка");
 			}
 		}
 
@@ -235,7 +257,7 @@ namespace Client {
 		}
 
 		void reconnect() {
-			statusLabel.Text = "";
+			updateErrorDisplay(false, null);
 			(service as IDisposable)?.Dispose();
 			service = ServerQuery.Create();
 
@@ -256,6 +278,15 @@ namespace Client {
 			toLoc.SelectedIndex = -1;
 
 			flightsTable.Controls.Clear();
+		}
+
+		//https://stackoverflow.com/a/3526775/18704284
+		private void SelectFlight_KeyDown(object sender, KeyEventArgs e) {
+			if(e.KeyCode == Keys.Escape) {
+				this.ActiveControl = null;
+				e.Handled = true;
+			}
+			else e.Handled = false;
 		}
 	}
 }

@@ -140,6 +140,7 @@ namespace Client {
 			}
 
 			availableSeatsCount.Text = "Свободных мест: " + availableForCurrentClass;
+			availableSeatsCount.Parent.PerformLayout();
 			
 			{ //baggage options
 				baggageOptionsTable.SuspendLayout();
