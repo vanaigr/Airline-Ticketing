@@ -102,39 +102,57 @@ namespace FlightsOptions {
 	    }
 	}
 
-	public static class Binary {
-		public static byte[] toBytes(Options options) {
-			MemoryStream ms = new MemoryStream();
-			BinaryWriter bw = new BinaryWriter(ms);
-	
-			bw.Write(options);
-	
+	public static class BinaryOptions {
+		public static byte[] toBytes(Dictionary<int, Options> optionsForClasses) {
+			using(
+			MemoryStream ms = new MemoryStream()) { 
+			using(
+			BinaryWriter bw = new BinaryWriter(ms)) {
+
+			bw.Write((byte) 0);
+			bw.Write(optionsForClasses.Count);
+			foreach(var classOptions in optionsForClasses) {
+				bw.Write(classOptions.Key);
+				bw.Write(classOptions.Value);
+			}
+			bw.Dispose();
 			return ms.ToArray();
+			}}
 		}
 	
-		public static Options fromBytes(byte[] bytes) {
-			var stream = new MemoryStream(bytes, false);
-			var reader = new BinaryReader(stream);
-			var result = reader.ReadOptions();
+		public static Dictionary<int, Options> fromBytes(byte[] bytes) {
+			using(
+			var stream = new MemoryStream(bytes, false)) { 
+			using(
+			var reader = new BinaryReader(stream)) {
+
+			Debug.Assert(reader.ReadByte() == 0);
+			var count = reader.ReadInt32();
+			var result = new Dictionary<int, Options>(count);
+			for(int i = 0; i < count; i++) { 
+				var key = reader.ReadInt32();
+				var value = reader.ReadOptions();
+				result.Add(key, value);
+			}
 			Debug.Assert(stream.Position == stream.Length);
 			return result;
+			}}
 		}
 	}
 }
 
 namespace AirlineTicketingServer {
 	public static class DatabaseOptions {
-		public static void writeToDatabase(SqlConnectionView connView, Options options, int flightId, int classIndex) {
+		public static void writeToDatabaseFlightOptions(SqlConnectionView connView, Dictionary<int, Options> optionsForClasses, int flightId) {
 			using(
 			var selectClasses = new SqlCommand(
-				@"insert into [Flights].[FlightOptions]([FlightId], [Class], [Data])
-				values (@FlightId, @Class, @Data)",
+				@"insert into [Flights].[FlightOptions]([FlightId], [Data])
+				values (@FlightId, @Data)",
 				connView.connection
 			)) {
 			selectClasses.CommandType = System.Data.CommandType.Text;
 			selectClasses.Parameters.AddWithValue("@FlightId", flightId);
-			selectClasses.Parameters.AddWithValue("@Class", classIndex);
-			selectClasses.Parameters.AddWithValue("@Data", Binary.toBytes(options));
+			selectClasses.Parameters.AddWithValue("@Data", BinaryOptions.toBytes(optionsForClasses));
 	
 			connView.Open();
 			selectClasses.ExecuteNonQuery();
@@ -142,26 +160,25 @@ namespace AirlineTicketingServer {
 			}
 		}
 	
-		public static Options readFromDatabase(SqlConnectionView connView, int flightId, int classIndex) {
+		public static Dictionary<int, Options> readFromDatabaseFlightOptions(SqlConnectionView connView, int flightId) {
 			using(
 			var selectClasses = new SqlCommand(
 				@"select top 1 [fo].[Data]
 				from [Flights].[FlightOptions] as [fo]
-				where [fo].[FlightId] = @FlightId and [fo].[Class] = @Class",
+				where [fo].[FlightId] = @FlightId",
 				connView.connection
 			)) {
 			selectClasses.CommandType = System.Data.CommandType.Text;
 			selectClasses.Parameters.AddWithValue("@FlightId", flightId);
-			selectClasses.Parameters.AddWithValue("@Class", classIndex);
 	
 			connView.Open();
 			using(
 			var result = selectClasses.ExecuteReader()) {
-			Debug.Assert(result.Read());
+			if(!result.Read()) return null;
 			var arr = (byte[]) result[0];
 			result.Close();
 			connView.Dispose();
-			return Binary.fromBytes(arr);
+			return BinaryOptions.fromBytes(arr);
 	
 			}
 			}

@@ -51,6 +51,9 @@
     <Compile Include="..\AirlineTicketingServer\FlightsOptions.cs">
       <Link>FlightsOptions.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\SeatsScheme.cs">
+      <Link>SeatsScheme.cs</Link>
+    </Compile>
     <Compile Include="..\Client\ServerQuery.cs">
       <Link>ServerQuery.cs</Link>
     </Compile>

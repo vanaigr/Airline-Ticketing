@@ -13,17 +13,13 @@ namespace Communication {
 		public List<City> cities;
 	}
 
-	[Serializable] public struct MatchingFlightsParams {
+	[Serializable] public class MatchingFlightsParams {
 		public string fromCode;
 		public string toCode;
 		public DateTime when;
-		public int adultCount;
-		public int childrenCount;
-		public int babyCount;
-		public int classId;
 	}
 
-	[Serializable] public struct AvailableFlight {
+	[Serializable] public class AvailableFlight {
 		public int id;
 		public DateTime departureTime;
 		public int arrivalOffsteMinutes;
@@ -31,16 +27,15 @@ namespace Communication {
 		public string flightName;
 		public string airplaneName;
 
-		public FlightsOptions.Options options;
-
-		public int availableSeatsCount;
+		public Dictionary<int, FlightsOptions.Options> optionsForClasses;
+		public SeatsScheme.Seats seats;
 
 		public override string ToString() {
 			var sb = new StringBuilder();
 
 			sb.AppendFormat(
-				"{{ id={0}, date={1}, name={2}, airplane={3}, arrivalOffsteMinutes={4}, availableSeatsCount={5} }}",
-				id, departureTime, flightName, airplaneName, arrivalOffsteMinutes, availableSeatsCount
+				"{{ id={0}, date={1}, name={2}, airplane={3}, arrivalOffsteMinutes={4} }}",
+				id, departureTime, flightName, airplaneName, arrivalOffsteMinutes
 			);
 
 			return sb.ToString();

@@ -84,6 +84,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DatabaseSeats.cs" />
+    <Compile Include="SeatsScheme.cs" />
     <Compile Include="SqlConnectionView.cs" />
   </ItemGroup>
   <ItemGroup>

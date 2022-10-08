@@ -22,25 +22,6 @@ namespace Client {
 
 		enum Status { free, paid, unavailable }
 
-		public FlightDisplay() {
-			InitializeComponent();
-
-			var panel1 = new Client.TransparentPanel();
-
-			panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			panel1.Location = new System.Drawing.Point(0, 0);
-			panel1.Name = "panel1";
-			panel1.Size = new System.Drawing.Size(852, 124);
-			panel1.TabIndex = 0;
-			panel1.MouseEnter += new System.EventHandler(this.FlightDisplay_MouseHover);
-			panel1.MouseLeave += new System.EventHandler(this.FlightDisplay_MouseLeave);
-            panel1.Click += new System.EventHandler(this.FlightDisplay_Click);
-            panel1.Cursor = Cursors.Hand;
-
-			this.Controls.Add(panel1);
-			panel1.BringToFront();
-		}
-
 		static ListItemLabel listItem(Status status) {
 			var l = new ListItemLabel();
 			if(status == Status.free) {
@@ -80,11 +61,28 @@ namespace Client {
 			table.Controls.Add(textLabel);
 		}
 
+		Dictionary<int, string> classesNames;
+		Communication.AvailableFlight flight;
+		string fromCityCodeText;
+		string toCityCodeText;
+		string flightName;
+
+		public FlightDisplay() {
+			InitializeComponent();
+		}
+
 		public void updateFromFlight(
+			Dictionary<int, string> classesNames,
 			Communication.AvailableFlight flight, 
 			string fromCityCodeText, string toCityCodeText,
-			string flightName, string className
+			string flightName
 		) {
+			this.classesNames = classesNames;
+			this.flight = flight;
+			this.fromCityCodeText = fromCityCodeText;
+			this.toCityCodeText = toCityCodeText;
+			this.flightName = flightName;
+
 			var depart = flight.departureTime;
 			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes);
 
@@ -107,11 +105,45 @@ namespace Client {
 			
 			flightTime.Text = spanText.ToString();
 
-			this.flightName.Text = flightName;
-			this.classType.Text = className;
-			this.availableSeatsCount.Text = "Свободных мест: " + flight.availableSeatsCount;
+			flightNameLabel.Text = flightName;
+			airplaneNameLabel.Text = flight.airplaneName;
 
+			var availableClassesNames = new Dictionary<int, string>();
+			foreach(var key in flight.optionsForClasses.Keys) {
+				availableClassesNames.Add(key, classesNames[key]);
+			}
+			classType.DataSource = new BindingSource{ DataSource = availableClassesNames };
+			classType.DisplayMember = "Value";
+
+			updateOptions();
+		}
+
+		private void FlightDisplay_MouseHover(object sender, EventArgs e) {
+			this.BackColor = Color.FromArgb(255, 240, 240, 240);
+		}
+
+		private void FlightDisplay_MouseLeave(object sender, EventArgs e) {
+			this.BackColor = Color.White;
+		}
+
+		private void classType_SelectedIndexChanged(object sender, EventArgs e) {
+			updateOptions();
+		}
+
+		private void updateOptions() {
+			var selectedClassIndex = ((KeyValuePair<int, string>)classType.SelectedItem).Key;
+			var thisOptions = flight.optionsForClasses[selectedClassIndex];
+
+			var availableForCurrentClass = 0;
+			foreach(var seat in flight.seats) {
+				if(seat.Class == selectedClassIndex && !seat.occupied)availableForCurrentClass ++;
+			}
+
+			availableSeatsCount.Text = "Свободных мест: " + availableForCurrentClass;
+			
 			{ //baggage options
+				baggageOptionsTable.SuspendLayout();
+
 				baggageOptionsTable.Controls.Clear();
 				baggageOptionsTable.RowStyles.Clear();
 				baggageOptionsTable.ColumnStyles.Clear();
@@ -119,7 +151,7 @@ namespace Client {
 				baggageOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 				baggageOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 
-				var bo = flight.options.baggageOptions;
+				var bo = thisOptions.baggageOptions;
 
 				baggageOptionsTable.ColumnCount = 2;
 				
@@ -175,9 +207,13 @@ namespace Client {
 				addBaggageList("Ручная кладь", "Ручная кладь платная", bo.handLuggage);
 
 				baggageOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
+
+				baggageOptionsTable.ResumeLayout();
 			}
 
 			{ //terms options
+				termsOptionsTable.SuspendLayout();
+
 				termsOptionsTable.Controls.Clear();
 				termsOptionsTable.RowStyles.Clear();
 				termsOptionsTable.ColumnStyles.Clear();
@@ -186,31 +222,7 @@ namespace Client {
 				termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 				termsOptionsTable.ColumnCount = 2;
 
-				var options = flight.options.termsOptions;
-				
-				if(options.CanChangeFlights) {
-					if(options.ChangeFlightCostRub == 0) addListItem(termsOptionsTable, Status.free, "Обмен без сборов");
-					else addListItem(termsOptionsTable, Status.paid, "Обмен со сбором " + options.ChangeFlightCostRub + nbs + rub);
-				}
-				else addListItem(termsOptionsTable, Status.unavailable, "Обмен недоступен");
-
-				if(options.Refundable) {
-					if(options.RefundCostRub == 0) addListItem(termsOptionsTable, Status.free, "Полный возврат");
-					else addListItem(termsOptionsTable, Status.paid, "Возврат со сбором " + options.RefundCostRub + nbs + rub);
-				}
-				else addListItem(termsOptionsTable, Status.unavailable, "Возврат недоступен");
-			}
-
-			{ //terms options
-				termsOptionsTable.Controls.Clear();
-				termsOptionsTable.RowStyles.Clear();
-				termsOptionsTable.ColumnStyles.Clear();
-
-				termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-				termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-				termsOptionsTable.ColumnCount = 2;
-
-				var options = flight.options.termsOptions;
+				var options = thisOptions.termsOptions;
 				
 				if(options.CanChangeFlights) {
 					if(options.ChangeFlightCostRub == 0) addListItem(termsOptionsTable, Status.free, "Обмен без сборов");
@@ -224,10 +236,12 @@ namespace Client {
 				}
 				else addListItem(termsOptionsTable, Status.unavailable, "Возврат недоступен");
 
-				termsOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
+				termsOptionsTable.ResumeLayout();
 			}
 
 			{ //services options
+				servicesOptionsTable.SuspendLayout();
+
 				servicesOptionsTable.Controls.Clear();
 				servicesOptionsTable.RowStyles.Clear();
 				servicesOptionsTable.ColumnStyles.Clear();
@@ -236,29 +250,23 @@ namespace Client {
 				servicesOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 				servicesOptionsTable.ColumnCount = 2;
 
-				var options = flight.options.servicesOptions;
+				var options = thisOptions.servicesOptions;
 				
 				if(options.seatChoiceCostRub == 0) {
-					addListItem(servicesOptionsTable, Status.free, "Выбор мекста при регистрации");
+					addListItem(servicesOptionsTable, Status.free, "Выбор места при регистрации");
 				}
 				else {
-					addListItem(servicesOptionsTable, Status.paid, "Выбор мекста платный");
+					addListItem(servicesOptionsTable, Status.paid, "Выбор места платный");
 				}
 
 				servicesOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
+
+				servicesOptionsTable.ResumeLayout();
 			}
 		}
 
-		private void FlightDisplay_MouseHover(object sender, EventArgs e) {
-			this.BackColor = Color.FromArgb(255, 240, 240, 240);
+		private void button1_Click(object sender, EventArgs e) {
+			this.OnClick(e);
 		}
-
-		private void FlightDisplay_MouseLeave(object sender, EventArgs e) {
-			this.BackColor = Color.White;
-		}
-
-        private void FlightDisplay_Click(object sender, EventArgs e) {
-            this.OnClick(e);
-        }
 	}
 }

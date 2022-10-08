@@ -25,14 +25,26 @@ namespace AirlineTicketingServer {
 			}
 
 			public MainMessageService() {
-				/*var options = new Options {
+				/*var seats = new SeatsScheme.Seats{ seats = new SeatsScheme.SeatStatus[27,6], availableSeatsCount = 162 };
+				var s = seats.seats;
+				for(int z = 0; z < 2; z++)
+				for(int x = 0; x < s.GetLength(1); x++) {
+					s[z, x] = new SeatsScheme.SeatStatus{ Class = 3, Occupied = false };
+				}
+
+				for(int z = 2; z < s.GetLength(0); z++)
+				for(int x = 0; x < s.GetLength(1); x++) {
+					s[z, x] = new SeatsScheme.SeatStatus{ Class = 1, Occupied = false };
+				}
+
+				var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
 							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
 							new Baggage(costRub: 5000, count: 2, maxWeightKg: 23)
 						},
 						handLuggage = new List<Baggage>{
-							new Baggage(costRub: 0, count: 1, maxDim: new Size3{ x=55, y=40, z=20 }),
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 10, maxDim: new Size3{ x=55, y=40, z=20 }),
 						},
 					},
 					termsOptions = new TermsOptions {
@@ -42,7 +54,29 @@ namespace AirlineTicketingServer {
 					servicesOptions = new ServicesOptions {
 						seatChoiceCostRub = 450
 					}
-				};*/
+				};
+				var busunessOptions = new Options{
+					baggageOptions = new BaggageOptions{
+						baggage = new List<Baggage> {
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 32),
+							new Baggage(costRub: 2500, count: 2, maxWeightKg: 32),
+							new Baggage(costRub: 5000, count: 3, maxWeightKg: 32)
+						},
+						handLuggage = new List<Baggage>{
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 15, maxDim: new Size3{ x=55, y=40, z=20 }),
+						},
+					},
+					termsOptions = new TermsOptions {
+						changeFlightCostRub = 3250,
+						refundCostRub = -1
+					},
+					servicesOptions = new ServicesOptions {
+						seatChoiceCostRub = 0
+					}
+				};
+				var optionsForClasses = new Dictionary<int, Options>(2);
+				optionsForClasses.Add(1, economOptins);
+				optionsForClasses.Add(3, busunessOptions);*/
 
 				flightClasses = flightClasses = new Dictionary<int, string>();
 				cities = new List<City>();
@@ -74,8 +108,14 @@ namespace AirlineTicketingServer {
 					country = (string) result[2] 
 				});
 				}
-				}
-				}
+
+				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 1);
+				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 3);
+				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 6);
+
+				//DatabaseSeats.writeToDatabaseAirplanesSeats(new SqlConnectionView(connection, false), 15, seats);
+
+				}}
 
 				AvailableFlightsUpdate.checkAndUpdate(new SqlConnectionView(connection, true));
 				}				
@@ -113,16 +153,15 @@ namespace AirlineTicketingServer {
 
 				using(
 				var selectClasses = new SqlCommand(
-					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [AvailableSeatsCount], [OptionsBin]
-					from [Flights].[FindFlights](@fromCity, @toCity, @time, @class) 
+					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [OptionsBin], [SeatsBin]
+					from [Flights].[FindFlights](@fromCity, @toCity, @time) 
 					order by [DepartureDatetime] desc",
 					connection
 				)) {
 				selectClasses.CommandType = CommandType.Text;
 				selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
 				selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
-				selectClasses.Parameters.AddWithValue("@time", DateTime.Today.AddDays(2));
-				selectClasses.Parameters.AddWithValue("@class", p.classId);
+				selectClasses.Parameters.AddWithValue("@time", p.when);
 
 				connection.Open();
 				using(
@@ -131,14 +170,11 @@ namespace AirlineTicketingServer {
 					id = (int) result[0], flightName = (string) result[1],
 					airplaneName = (string) result[2], departureTime = (DateTime) result[3],
 					arrivalOffsteMinutes = (int) result[4],
-					options = Binary.fromBytes((byte[])result[6]),
-					availableSeatsCount = (int) result[5]
+					optionsForClasses = BinaryOptions.fromBytes((byte[])result[5]),
+					seats = BinarySeats.fromBytes((byte[]) result[6])
 				});
-
-				}
-				}
-				}
-
+				}}}
+				Console.WriteLine(list.Count);
 				return list;
 			}
 

@@ -63,6 +63,15 @@
     <Compile Include="..\AirlineTicketingServer\FlightsOptions.cs">
       <Link>FlightsOptions.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\SeatsScheme.cs">
+      <Link>SeatsScheme.cs</Link>
+    </Compile>
+    <Compile Include="FlightBooking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FlightBooking.Designer.cs">
+      <DependentUpon>FlightBooking.cs</DependentUpon>
+    </Compile>
     <Compile Include="FlightDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>

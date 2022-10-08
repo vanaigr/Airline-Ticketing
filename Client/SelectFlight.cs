@@ -26,10 +26,12 @@ namespace Client {
 
 			reconnect();
 
+			try {
 			fromLoc.SelectedIndex = 2;
 			toLoc.SelectedIndex = 1;
 
 			findFlightsButton_Click(findFlightsButton, new EventArgs());
+			} catch(Exception){ }
 		}
 
 		void setupAvailableOptions() {
@@ -37,12 +39,6 @@ namespace Client {
 				var options = service.availableOptions();
 				avaliableFlightClasses = options.flightClasses;
 				cities = options.cities;
-
-				var source = new BindingSource();
-				source.DataSource = avaliableFlightClasses;
-				classSelector.DataSource = source;
-				classSelector.DisplayMember = "Value";
-				classSelector.ValueMember = "Value";
 			}
 			catch(Exception e) {
 				statusLabel.ForeColor = Color.Firebrick;
@@ -128,16 +124,10 @@ namespace Client {
 			try {
 				var fromCode = (fromLoc.SelectedItem as City?)?.code;
 				var toCode = (toLoc.SelectedItem as City?)?.code;
-
-				var currentClass = (KeyValuePair<int, string>) classSelector.SelectedItem;
 				
 				var result = service.matchingFlights(new MatchingFlightsParams{
 					fromCode = fromCode, toCode = toCode,
-					when = fromDepDate.Value,
-					adultCount = (int) adultCount.Value,
-					childrenCount = (int) childrenCount.Value,
-					babyCount = (int) babyCount.Value,
-					classId = currentClass.Key
+					when = fromDepDate.Value
 				});
 
 				while (flightsTable.Controls.Count > 0) flightsTable.Controls[flightsTable.Controls.Count-1].Dispose();
@@ -154,9 +144,9 @@ namespace Client {
 				}
 				else foreach(var flight in result) {
 					var flightDisplay = new FlightDisplay();
-					flightDisplay.updateFromFlight(flight, fromCode, toCode, flight.flightName, currentClass.Value);
+					flightDisplay.updateFromFlight(avaliableFlightClasses, flight, fromCode, toCode, flight.flightName);
 					flightDisplay.Dock = DockStyle.Top;
-					//flightDisplay.Click += (a, b) => { Console.WriteLine("a"); };
+					flightDisplay.Click += (a, b) => { openFlightBooking(flight.id); };
 					flightsTable.RowStyles.Add(new RowStyle());
 					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 				}
@@ -228,6 +218,20 @@ namespace Client {
 
 		private void pictureBox1_Click(object sender, EventArgs e) {
 			reconnect();
+		}
+
+		private Dictionary<int/*flightId*/, FlightBooking> openedBookings = new Dictionary<int, FlightBooking>();
+
+		private void openFlightBooking(int flightId) {
+			FlightBooking booking;
+			if(openedBookings.TryGetValue(flightId, out booking)) {
+				booking.Focus();
+			}
+			else {
+				booking = new FlightBooking(service, flightId);
+				openedBookings.Add(flightId, booking);
+				booking.Show();
+			}
 		}
 
 		void reconnect() {
