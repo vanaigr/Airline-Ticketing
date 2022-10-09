@@ -206,6 +206,7 @@ namespace Client {
 			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.flightsTable.Size = new System.Drawing.Size(1075, 393);
 			this.flightsTable.TabIndex = 4;
+			this.flightsTable.Paint += new System.Windows.Forms.PaintEventHandler(this.flightsTable_Paint);
 			// 
 			// SelectFlight
 			// 
@@ -215,11 +216,9 @@ namespace Client {
 			this.ClientSize = new System.Drawing.Size(1075, 450);
 			this.Controls.Add(this.flightsTable);
 			this.Controls.Add(tableLayoutPanel1);
-			this.KeyPreview = true;
 			this.MinimumSize = new System.Drawing.Size(400, 39);
 			this.Name = "SelectFlight";
 			this.Text = "SelectFlight";
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SelectFlight_KeyDown);
 			tableLayoutPanel1.ResumeLayout(false);
 			tableLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);

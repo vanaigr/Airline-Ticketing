@@ -62,10 +62,10 @@ namespace Client {
 		}
 
 		Dictionary<int, string> classesNames;
-		Communication.AvailableFlight flight;
-		string fromCityCodeText;
-		string toCityCodeText;
-		string flightName;
+		FlightAndCities flightAndCities;
+
+		public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
+		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
 		public FlightDisplay() {
 			InitializeComponent();
@@ -73,21 +73,18 @@ namespace Client {
 
 		public void updateFromFlight(
 			Dictionary<int, string> classesNames,
-			Communication.AvailableFlight flight, 
-			string fromCityCodeText, string toCityCodeText,
-			string flightName
+			FlightAndCities flightAndCities
 		) {
 			this.classesNames = classesNames;
-			this.flight = flight;
-			this.fromCityCodeText = fromCityCodeText;
-			this.toCityCodeText = toCityCodeText;
-			this.flightName = flightName;
+			this.flightAndCities = flightAndCities;
+
+			var flight = flightAndCities.flight;
 
 			var depart = flight.departureTime;
 			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes);
 
-			fromCityCode.Text = fromCityCodeText;
-			toCityCode.Text = toCityCodeText;
+			fromCityCode.Text = flightAndCities.fromCityCode;
+			toCityCode.Text = flightAndCities.toCityCode;
 			
 			fromDate.Text = depart.Date.ToString("M MMM, ddd");
 			toDate.Text = arrive.Date.ToString("M MMM, ddd");
@@ -105,7 +102,7 @@ namespace Client {
 			
 			flightTime.Text = spanText.ToString();
 
-			flightNameLabel.Text = flightName;
+			flightNameLabel.Text = flight.flightName;
 			airplaneNameLabel.Text = flight.airplaneName;
 
 			var availableClassesNames = new Dictionary<int, string>();
@@ -131,6 +128,8 @@ namespace Client {
 		}
 
 		private void updateOptions() {
+			var flight = flightAndCities.flight;
+
 			var selectedClassIndex = ((KeyValuePair<int, string>)classType.SelectedItem).Key;
 			var thisOptions = flight.optionsForClasses[selectedClassIndex];
 

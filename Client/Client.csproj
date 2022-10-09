@@ -72,6 +72,7 @@
     <Compile Include="FlightBooking.Designer.cs">
       <DependentUpon>FlightBooking.cs</DependentUpon>
     </Compile>
+    <Compile Include="FlightAndCities.cs" />
     <Compile Include="FlightDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -87,6 +88,7 @@
     <Compile Include="LoginRegisterForm.Designer.cs">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Misc.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -105,6 +107,9 @@
     <Compile Include="TransparentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="FlightBooking.resx">
+      <DependentUpon>FlightBooking.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FlightDisplay.resx">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
     </EmbeddedResource>

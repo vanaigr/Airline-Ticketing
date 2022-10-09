@@ -19,6 +19,7 @@ namespace Client {
 
 		public LoginRegisterForm(MessageService service) {
 			InitializeComponent();
+			Misc.unfocusOnEscape(this);
 			this.service = service;
 		}
 

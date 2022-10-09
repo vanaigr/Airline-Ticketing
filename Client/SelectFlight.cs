@@ -19,8 +19,11 @@ namespace Client {
 
 		Dictionary<int, string> avaliableFlightClasses;
 		List<City> cities;
+		
 		public SelectFlight() {
             InitializeComponent();
+
+			Misc.unfocusOnEscape(this);
 
 			pictureBox1.Image = TintImage.applyTint(pictureBox1.Image, Color.RoyalBlue);
 
@@ -63,16 +66,7 @@ namespace Client {
 			loginLayoutPanel.SuspendLayout();
 			loginLayoutPanel.Controls.Clear();
 
-			{
-				/*
-					HACK: for some inexplicable reason first programmatically added to FlowLayoutPanel 
-					button has its border thickened (if border size is 1 it's displayed as 2 and so on)
-					so this dummy button is added in order for other buttons to look correct
-				*/
-				var label = new Button();
-				label.Size = new Size(0, 0);
-				loginLayoutPanel.Controls.Add(label);
-			}
+			Misc.addDummyButton(loginLayoutPanel);
 
 			if(loggedIn) {
 				var unloginButton = new Button();
@@ -168,9 +162,10 @@ namespace Client {
 				}
 				else foreach(var flight in result) {
 					var flightDisplay = new FlightDisplay();
-					flightDisplay.updateFromFlight(avaliableFlightClasses, flight, fromCode, toCode, flight.flightName);
+					var flightAndCities = new FlightAndCities{ flight = flight, fromCityCode = fromCode, toCityCode = toCode };
+					flightDisplay.updateFromFlight(avaliableFlightClasses, flightAndCities);
 					flightDisplay.Dock = DockStyle.Top;
-					flightDisplay.Click += (a, b) => { openFlightBooking(flight.id); };
+					flightDisplay.Click += new EventHandler(openFlightBooking);
 					flightsTable.RowStyles.Add(new RowStyle());
 					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 				}
@@ -244,14 +239,25 @@ namespace Client {
 
 		private Dictionary<int/*flightId*/, FlightBooking> openedBookings = new Dictionary<int, FlightBooking>();
 
-		private void openFlightBooking(int flightId) {
+		private void openFlightBooking(object sender, EventArgs e) {
+			var flightDisplay = (FlightDisplay) sender;
+			var fic = flightDisplay.CurrentFlight;
+			var classId = flightDisplay.SelectedClass;
+
 			FlightBooking booking;
-			if(openedBookings.TryGetValue(flightId, out booking)) {
+			if(openedBookings.TryGetValue(fic.flight.id, out booking)) {
 				booking.Focus();
 			}
 			else {
-				booking = new FlightBooking(service, flightId);
-				openedBookings.Add(flightId, booking);
+				var keys = avaliableFlightClasses.Keys.GetEnumerator();
+				int indexOfFirst;
+				for(indexOfFirst = 0; keys.MoveNext() && keys.Current != classId; indexOfFirst++);
+
+				booking = new FlightBooking(service);
+				booking.setFromFlight(avaliableFlightClasses, fic, indexOfFirst);
+				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightBooking) obj).CurrentFlight.flight.id); };
+
+				openedBookings.Add(fic.flight.id, booking);
 				booking.Show();
 			}
 		}
@@ -282,11 +288,16 @@ namespace Client {
 
 		//https://stackoverflow.com/a/3526775/18704284
 		private void SelectFlight_KeyDown(object sender, KeyEventArgs e) {
+			var form = (Form) sender;
 			if(e.KeyCode == Keys.Escape) {
-				this.ActiveControl = null;
+				form.ActiveControl = null;
 				e.Handled = true;
 			}
 			else e.Handled = false;
+		}
+
+		private void flightsTable_Paint(object sender, PaintEventArgs e) {
+			ActiveControl = Misc.addDummyButton(this);
 		}
 	}
 }
