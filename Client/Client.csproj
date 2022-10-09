@@ -89,6 +89,12 @@
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Misc.cs" />
+    <Compile Include="PassangerDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PassangerDisplay.Designer.cs">
+      <DependentUpon>PassangerDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -115,6 +121,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PassangerDisplay.resx">
+      <DependentUpon>PassangerDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -47,6 +47,11 @@ namespace Communication {
 		public string name { get; set; } //display in combobox requires property
 	}
 
+	[Serializable] public struct Passanger {
+		public string fullName;
+		public DateTime birthday;
+	}
+
 	[ServiceContract]
 	public interface MessageService {
 		[FaultContract(typeof(object))] [OperationContract] 

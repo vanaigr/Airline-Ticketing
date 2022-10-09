@@ -148,7 +148,10 @@ namespace Client {
 					when = fromDepDate.Value
 				});
 
-				while (flightsTable.Controls.Count > 0) flightsTable.Controls[flightsTable.Controls.Count-1].Dispose();
+				flightsTable.SuspendLayout();
+
+				flightsTable.Controls.Clear();
+				flightsTable.RowStyles.Clear();
 
 				if(result.Count == 0) {
 					var noResultsLabel = new Label();
@@ -169,6 +172,9 @@ namespace Client {
 					flightsTable.RowStyles.Add(new RowStyle());
 					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 				}
+
+				flightsTable.ResumeLayout(false);
+				flightsTable.PerformLayout();
 
 				updateErrorDisplay(false, null);
 			}
