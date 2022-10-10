@@ -27,7 +27,10 @@ namespace Client {
 			this.service = service;
 			passangersDisplayList.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
-			this.seatSelectTable.BackColor2 = Color.FromArgb(unchecked((int) 0xffbcc5d6));
+			this.seatSelectTable.BackColor2 = Color.LightGray;//Color.FromArgb(unchecked((int) 0xffbcc5d6));
+
+			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 		}
 
 		public void setFromFlight(
@@ -183,16 +186,42 @@ namespace Client {
 			Enabled = Parent.Enabled;
 		}
 
-		public void markFine() {
-			if(Enabled) {
-				BackColor = Color.White;
+		private void setColors() {
+			 if(!Enabled) {
+				BackColor = Color.LightSteelBlue;
+				ForeColor = SystemColors.ControlText;
+			}
+			else if(!error) {
+				if(Value != 0) {
+					BackColor = FlightDisplay.freeColor; 
+					ForeColor = SystemColors.ControlLightLight;
+				}
+				else {
+					BackColor = Color.CornflowerBlue;
+					ForeColor = SystemColors.ControlLightLight;
+				}
+			}
+			else {
+				BackColor = Color.MistyRose;
+				ForeColor = SystemColors.ControlText;
 			}
 		}
 
+		protected override void OnValueChanged(EventArgs e) {
+			base.OnValueChanged(e);
+			setColors();
+		}
+
+		private bool error;
+
+		public void markFine() {
+			error = false;
+			setColors();
+		}
+
 		public void markError() {
-			if(Enabled) {
-				BackColor = Color.MistyRose;
-			}
+			error = true;
+			setColors();
 		}
 	}
 
@@ -336,7 +365,7 @@ namespace Client {
 							var seat = seats[x, z];
 
 							var it = new SeatNumericUpDown();
-							if(seat.classId != classId) {
+							if(seat.classId != classId || seat.occupied) {
 								it.Enabled = false;
 							}
 							it.ValueChanged += (a, b) => update();

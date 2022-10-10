@@ -92,6 +92,7 @@ namespace Client {
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.Color.White;
+			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "PassangerDisplay";
 			this.Size = new System.Drawing.Size(118, 39);

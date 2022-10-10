@@ -16,7 +16,7 @@ namespace Client {
 		private static string nbs = '\u00A0'.ToString();
 
 		private static Color paidColor = Color.FromArgb(255, 0xff, 0x99, 0x1f);
-		private static Color freeColor = Color.FromArgb(255, 0x97, 0xba, 0x1e);
+		public static Color freeColor = Color.FromArgb(255, 0x97, 0xba, 0x1e);
 		private static Color unavailableColor = Color.FromArgb(255, 0x95, 0xa0, 0xb3);
 		private static Color foreColor = Color.White;
 

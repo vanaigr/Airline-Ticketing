@@ -25,6 +25,15 @@ namespace Client {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
+			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+			System.Windows.Forms.Label label2;
+			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this.selectedStatusLabel = new System.Windows.Forms.Label();
+			this.seatSelectTable = new Client.SeatsTable();
+			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+			this.passangersDisplayList = new System.Windows.Forms.TableLayoutPanel();
+			this.button1 = new System.Windows.Forms.Button();
+			this.label1 = new System.Windows.Forms.Label();
 			this.headerContainer = new System.Windows.Forms.TableLayoutPanel();
 			this.button2 = new System.Windows.Forms.Button();
 			this.aitrplaneNameLavel = new System.Windows.Forms.Label();
@@ -32,18 +41,161 @@ namespace Client {
 			this.departureLocationLabel = new System.Windows.Forms.Label();
 			this.departureDatetimeLabel = new System.Windows.Forms.Label();
 			this.classSelector = new System.Windows.Forms.ComboBox();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.passangersDisplayList = new System.Windows.Forms.TableLayoutPanel();
-			this.button1 = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.seatSelectTable = new Client.SeatsTable();
-			this.selectedStatusLabel = new System.Windows.Forms.Label();
 			this.seatHint = new System.Windows.Forms.ToolTip(this.components);
-			this.headerContainer.SuspendLayout();
-			this.tableLayoutPanel1.SuspendLayout();
+			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			label2 = new System.Windows.Forms.Label();
+			tableLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel2.SuspendLayout();
+			this.tableLayoutPanel3.SuspendLayout();
 			this.passangersDisplayList.SuspendLayout();
+			this.headerContainer.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// tableLayoutPanel1
+			// 
+			tableLayoutPanel1.AutoScroll = true;
+			tableLayoutPanel1.ColumnCount = 1;
+			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 2);
+			tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
+			tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			tableLayoutPanel1.Location = new System.Drawing.Point(0, 57);
+			tableLayoutPanel1.Name = "tableLayoutPanel1";
+			tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
+			tableLayoutPanel1.RowCount = 4;
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			tableLayoutPanel1.Size = new System.Drawing.Size(1008, 396);
+			tableLayoutPanel1.TabIndex = 1;
+			// 
+			// tableLayoutPanel2
+			// 
+			this.tableLayoutPanel2.AutoSize = true;
+			this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel2.BackColor = System.Drawing.Color.White;
+			this.tableLayoutPanel2.ColumnCount = 1;
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel2.Controls.Add(label2, 0, 0);
+			this.tableLayoutPanel2.Controls.Add(this.selectedStatusLabel, 0, 2);
+			this.tableLayoutPanel2.Controls.Add(this.seatSelectTable, 0, 1);
+			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel2.Location = new System.Drawing.Point(10, 86);
+			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+			this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(10);
+			this.tableLayoutPanel2.RowCount = 3;
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(988, 93);
+			this.tableLayoutPanel2.TabIndex = 5;
+			// 
+			// label2
+			// 
+			label2.AutoSize = true;
+			label2.Location = new System.Drawing.Point(13, 10);
+			label2.Name = "label2";
+			label2.Size = new System.Drawing.Size(42, 13);
+			label2.TabIndex = 2;
+			label2.Text = "Места:";
+			// 
+			// selectedStatusLabel
+			// 
+			this.selectedStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.selectedStatusLabel.AutoSize = true;
+			this.selectedStatusLabel.Location = new System.Drawing.Point(874, 70);
+			this.selectedStatusLabel.Margin = new System.Windows.Forms.Padding(0);
+			this.selectedStatusLabel.Name = "selectedStatusLabel";
+			this.selectedStatusLabel.Size = new System.Drawing.Size(104, 13);
+			this.selectedStatusLabel.TabIndex = 4;
+			this.selectedStatusLabel.Text = "selectedSeatsStatus";
+			// 
+			// seatSelectTable
+			// 
+			this.seatSelectTable.AutoSize = true;
+			this.seatSelectTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.seatSelectTable.ColumnCount = 1;
+			this.seatSelectTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.seatSelectTable.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.seatSelectTable.Location = new System.Drawing.Point(10, 30);
+			this.seatSelectTable.Margin = new System.Windows.Forms.Padding(0);
+			this.seatSelectTable.Name = "seatSelectTable";
+			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(30, 20, 30, 20);
+			this.seatSelectTable.RowCount = 1;
+			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.seatSelectTable.Size = new System.Drawing.Size(968, 40);
+			this.seatSelectTable.TabIndex = 3;
+			// 
+			// tableLayoutPanel3
+			// 
+			this.tableLayoutPanel3.AutoSize = true;
+			this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel3.BackColor = System.Drawing.Color.White;
+			this.tableLayoutPanel3.ColumnCount = 1;
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel3.Controls.Add(this.passangersDisplayList, 0, 1);
+			this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
+			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(10, 10);
+			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+			this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(10);
+			this.tableLayoutPanel3.RowCount = 2;
+			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(988, 66);
+			this.tableLayoutPanel3.TabIndex = 6;
+			// 
+			// passangersDisplayList
+			// 
+			this.passangersDisplayList.AutoScroll = true;
+			this.passangersDisplayList.AutoSize = true;
+			this.passangersDisplayList.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.passangersDisplayList.ColumnCount = 2;
+			this.passangersDisplayList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.passangersDisplayList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.passangersDisplayList.Controls.Add(this.button1, 0, 0);
+			this.passangersDisplayList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.passangersDisplayList.Location = new System.Drawing.Point(10, 23);
+			this.passangersDisplayList.Margin = new System.Windows.Forms.Padding(0);
+			this.passangersDisplayList.Name = "passangersDisplayList";
+			this.passangersDisplayList.RowCount = 1;
+			this.passangersDisplayList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.passangersDisplayList.Size = new System.Drawing.Size(968, 33);
+			this.passangersDisplayList.TabIndex = 0;
+			// 
+			// button1
+			// 
+			this.button1.AutoSize = true;
+			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.button1.BackColor = System.Drawing.Color.Transparent;
+			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+			this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
+			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.button1.Location = new System.Drawing.Point(3, 3);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(77, 27);
+			this.button1.TabIndex = 1;
+			this.button1.Text = "Добавить";
+			this.button1.UseVisualStyleBackColor = false;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(10, 10);
+			this.label1.Margin = new System.Windows.Forms.Padding(0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(70, 13);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Пассажиры:";
 			// 
 			// headerContainer
 			// 
@@ -145,130 +297,26 @@ namespace Client {
 			this.classSelector.TabIndex = 5;
 			this.classSelector.SelectedIndexChanged += new System.EventHandler(this.classSelector_SelectedIndexChanged);
 			// 
-			// tableLayoutPanel1
-			// 
-			this.tableLayoutPanel1.AutoScroll = true;
-			this.tableLayoutPanel1.ColumnCount = 1;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this.passangersDisplayList, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.label2, 0, 3);
-			this.tableLayoutPanel1.Controls.Add(this.seatSelectTable, 0, 4);
-			this.tableLayoutPanel1.Controls.Add(this.selectedStatusLabel, 0, 5);
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 57);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-			this.tableLayoutPanel1.RowCount = 6;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 396);
-			this.tableLayoutPanel1.TabIndex = 1;
-			// 
-			// passangersDisplayList
-			// 
-			this.passangersDisplayList.AutoScroll = true;
-			this.passangersDisplayList.AutoSize = true;
-			this.passangersDisplayList.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.passangersDisplayList.ColumnCount = 2;
-			this.passangersDisplayList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.passangersDisplayList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.passangersDisplayList.Controls.Add(this.button1, 0, 0);
-			this.passangersDisplayList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.passangersDisplayList.Location = new System.Drawing.Point(10, 23);
-			this.passangersDisplayList.Margin = new System.Windows.Forms.Padding(0);
-			this.passangersDisplayList.Name = "passangersDisplayList";
-			this.passangersDisplayList.RowCount = 1;
-			this.passangersDisplayList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.passangersDisplayList.Size = new System.Drawing.Size(988, 33);
-			this.passangersDisplayList.TabIndex = 0;
-			// 
-			// button1
-			// 
-			this.button1.AutoSize = true;
-			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button1.BackColor = System.Drawing.Color.Transparent;
-			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-			this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
-			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.button1.Location = new System.Drawing.Point(3, 3);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(77, 27);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "Добавить";
-			this.button1.UseVisualStyleBackColor = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(10, 10);
-			this.label1.Margin = new System.Windows.Forms.Padding(0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(70, 13);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "Пассажиры:";
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(13, 66);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(42, 13);
-			this.label2.TabIndex = 2;
-			this.label2.Text = "Места:";
-			// 
-			// seatSelectTable
-			// 
-			this.seatSelectTable.AutoSize = true;
-			this.seatSelectTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.seatSelectTable.ColumnCount = 1;
-			this.seatSelectTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.seatSelectTable.Location = new System.Drawing.Point(10, 79);
-			this.seatSelectTable.Margin = new System.Windows.Forms.Padding(0);
-			this.seatSelectTable.Name = "seatSelectTable";
-			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(30, 20, 30, 20);
-			this.seatSelectTable.RowCount = 1;
-			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Size = new System.Drawing.Size(988, 40);
-			this.seatSelectTable.TabIndex = 3;
-			// 
-			// selectedStatusLabel
-			// 
-			this.selectedStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.selectedStatusLabel.AutoSize = true;
-			this.selectedStatusLabel.Location = new System.Drawing.Point(894, 119);
-			this.selectedStatusLabel.Margin = new System.Windows.Forms.Padding(0);
-			this.selectedStatusLabel.Name = "selectedStatusLabel";
-			this.selectedStatusLabel.Size = new System.Drawing.Size(104, 13);
-			this.selectedStatusLabel.TabIndex = 4;
-			this.selectedStatusLabel.Text = "selectedSeatsStatus";
-			// 
 			// FlightBooking
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1008, 453);
-			this.Controls.Add(this.tableLayoutPanel1);
+			this.Controls.Add(tableLayoutPanel1);
 			this.Controls.Add(this.headerContainer);
 			this.Name = "FlightBooking";
 			this.Text = "FlightBooking";
 			this.Load += new System.EventHandler(this.FlightBooking_Load);
-			this.headerContainer.ResumeLayout(false);
-			this.headerContainer.PerformLayout();
-			this.tableLayoutPanel1.ResumeLayout(false);
-			this.tableLayoutPanel1.PerformLayout();
+			tableLayoutPanel1.ResumeLayout(false);
+			tableLayoutPanel1.PerformLayout();
+			this.tableLayoutPanel2.ResumeLayout(false);
+			this.tableLayoutPanel2.PerformLayout();
+			this.tableLayoutPanel3.ResumeLayout(false);
+			this.tableLayoutPanel3.PerformLayout();
 			this.passangersDisplayList.ResumeLayout(false);
 			this.passangersDisplayList.PerformLayout();
+			this.headerContainer.ResumeLayout(false);
+			this.headerContainer.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -282,14 +330,14 @@ namespace Client {
 		private System.Windows.Forms.Label departureDatetimeLabel;
 		private System.Windows.Forms.Label aitrplaneNameLavel;
 		private System.Windows.Forms.ComboBox classSelector;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.ToolTip seatHint;
+		private System.Windows.Forms.Label selectedStatusLabel;
 		private System.Windows.Forms.TableLayoutPanel passangersDisplayList;
 		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
 		private SeatsTable seatSelectTable;
-		private System.Windows.Forms.Label selectedStatusLabel;
-		private System.Windows.Forms.ToolTip seatHint;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 	}
 }
