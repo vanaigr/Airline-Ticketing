@@ -28,7 +28,7 @@ namespace Communication {
 		public string airplaneName;
 
 		public Dictionary<int, FlightsOptions.Options> optionsForClasses;
-		public SeatsScheme.Seats seats;
+		public SeatsScheme.Seats seatsScheme;
 
 		public override string ToString() {
 			var sb = new StringBuilder();

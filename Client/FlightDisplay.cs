@@ -134,7 +134,9 @@ namespace Client {
 			var thisOptions = flight.optionsForClasses[selectedClassIndex];
 
 			var availableForCurrentClass = 0;
-			foreach(var seat in flight.seats) {
+			var seatsE = flight.seatsScheme.GetSeatsEnumerator();
+			while(seatsE.MoveNext()) {
+				var seat = seatsE.Current;
 				if(seat.Class == selectedClassIndex && !seat.occupied)availableForCurrentClass ++;
 			}
 

@@ -25,19 +25,19 @@ namespace AirlineTicketingServer {
 			}
 
 			public MainMessageService() {
-				/*var seats = new SeatsScheme.Seats{ seats = new SeatsScheme.SeatStatus[27,6], availableSeatsCount = 162 };
-				var s = seats.seats;
-				for(int z = 0; z < 2; z++)
-				for(int x = 0; x < s.GetLength(1); x++) {
-					s[z, x] = new SeatsScheme.SeatStatus{ Class = 3, Occupied = false };
-				}
+				/*var sizes = new SeatsScheme.Point[]{ new SeatsScheme.Point(2, 4), new SeatsScheme.Point(25, 6) };
+				var seats = new List<SeatsScheme.SeatStatus>(2*4 + 25 * 6);
+				for(int i = 0; i < 2*4; i++) seats.Add(
+					new SeatsScheme.SeatStatus{ Class = 3, Occupied = false }
+				);
+				for(int i = 0; i < 25*6; i++) seats.Add(
+					new SeatsScheme.SeatStatus{ Class = 1, Occupied = false }
+				);
+				
+				var seatsScheme = new SeatsScheme.Seats(seats.GetEnumerator(), sizes.Cast<SeatsScheme.Point>().GetEnumerator());*/
 
-				for(int z = 2; z < s.GetLength(0); z++)
-				for(int x = 0; x < s.GetLength(1); x++) {
-					s[z, x] = new SeatsScheme.SeatStatus{ Class = 1, Occupied = false };
-				}
-
-				var economOptins = new Options{
+				
+				/*var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
 							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
@@ -113,7 +113,7 @@ namespace AirlineTicketingServer {
 				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 3);
 				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 6);
 
-				//DatabaseSeats.writeToDatabaseAirplanesSeats(new SqlConnectionView(connection, false), 15, seats);
+				//DatabaseSeats.writeToDatabaseAirplanesSeats(new SqlConnectionView(connection, false), 15, seatsScheme);
 
 				}}
 
@@ -171,7 +171,7 @@ namespace AirlineTicketingServer {
 					airplaneName = (string) result[2], departureTime = (DateTime) result[3],
 					arrivalOffsteMinutes = (int) result[4],
 					optionsForClasses = BinaryOptions.fromBytes((byte[])result[5]),
-					seats = BinarySeats.fromBytes((byte[]) result[6])
+					seatsScheme = BinarySeats.fromBytes((byte[]) result[6])
 				});
 				}}}
 				Console.WriteLine(list.Count);

@@ -10,7 +10,7 @@ namespace Client {
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
-
+		
 		struct PassangerSeat {
 			public Point loc;
 		}
@@ -27,7 +27,7 @@ namespace Client {
 			this.service = service;
 			passangersDisplayList.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
-			this.seatSelectTable.BackColor2 = Color.LightGray;
+			this.seatSelectTable.BackColor2 = Color.FromArgb(unchecked((int) 0xffbcc5d6));
 		}
 
 		public void setFromFlight(
@@ -49,8 +49,6 @@ namespace Client {
 			departureLocationLabel.Text = flightAndCities.fromCityCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
-
-			//Misc.addDummyButton(classSelector.Parent);
 			
 			classSelector.DataSource = new BindingSource{ DataSource = classesNames };
 			classSelector.DisplayMember = "Value";
@@ -62,52 +60,8 @@ namespace Client {
 			recalculateSeats();
 		}
 
-		private void update() {
-			seatSelectTable.SuspendLayout();
-
-			seatSelectTable.Controls.Clear();
-			seatSelectTable.RowStyles.Clear();
-			seatSelectTable.ColumnStyles.Clear();
-
-			var seats = flightAndCities.flight.seats;
-
-			seatSelectTable.ColumnCount = seats.Length + 1;
-			seatSelectTable.RowCount = seats.Width + 1;
-
-			var xPercent = 1.0f / (seats.Width + 1);
-			var zPercent = 1.0f / (seats.Length + 1);
-
-			//columns
-			seatSelectTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, zPercent));
-			for(int z = 0; z < seats.Length; z++) {
-				seatSelectTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, zPercent));
-				seatSelectTable.Controls.Add(new Label{ Text = "" + (1+z), TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Fill, BackColor = Color.Transparent }, 1+z, 0);
-			}
-			//rows
-			seatSelectTable.RowStyles.Add(new ColumnStyle(SizeType.Percent, xPercent));
-			for(int x = 0; x < seats.Width; x++) {
-				seatSelectTable.RowStyles.Add(new ColumnStyle(SizeType.Percent, xPercent));
-				seatSelectTable.Controls.Add(new Label{ Text = (char) ('A' + x) + "", TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Fill, BackColor = Color.Transparent }, 0, 1+x);
-			}
-
-			for(int z = 0; z < seats.Length; z++)
-			for(int x = 0; x < seats.Width ; x++) {
-				var seat = seats[x, z];
-
-				var it = new SeatNumericUpDown();
-				if(seat.classIndex != ((KeyValuePair<int, string>) classSelector.SelectedValue).Key) {
-					it.Enabled = false;
-				}
-				it.ValueChanged += (a, b) => recalculateSeats();
-				seatSelectTable.Controls.Add(it, 1+z, 1+x);
-			}
-
-			seatSelectTable.ResumeLayout(false);
-			seatSelectTable.PerformLayout();
-		}
-
 		private void classSelector_SelectedIndexChanged(object sender, EventArgs e) {
-			update();
+			seatSelectTable.update(flightAndCities, ((KeyValuePair<int, string>) classSelector.SelectedValue).Key, recalculateSeats);
 		}
 
 		private void FlightBooking_Load(object sender, EventArgs e) {
@@ -128,7 +82,7 @@ namespace Client {
 		private void recalculateSeats() {
 			seatSelectTable.SuspendLayout();
 
-			var seats = flightAndCities.flight.seats;
+			var seats = flightAndCities.flight.seatsScheme;
 
 			seatHint.RemoveAll();
 
@@ -139,23 +93,26 @@ namespace Client {
 			var passangerSeats = new List<List<SeatNumericUpDown>>();
 			for(int i = 0; i < passangersCount; i++) passangerSeats.Add(new List<SeatNumericUpDown>(2));
 
-			for(int z = 0; z < seats.Length; z++)
-			for(int x = 0; x < seats.Width ; x++) {
-				var c = (SeatNumericUpDown) seatSelectTable.GetControlFromPosition(z+1, x+1);
-				var v = (int) c.Value;
-				if(v >= 0 && v <= passangerSeats.Count) {
-					if(v != 0) {
-						passangerSeats[v-1].Add(c);
-						this.passangesrsSeat[v-1] = new PassangerSeat{ loc = new Point(x, z) };
-					}
+			for(int z = 0; z < seats.TotalLength; z++) {
+				var width = seats.WidthForRow(z);
+				for(int x = 0; x < width ; x++) {
+					var pos = seatSelectTable.getSeatLocation(new SeatsScheme.Point(z, x));
+					var c = (SeatNumericUpDown) seatSelectTable.GetControlFromPosition(pos.X, pos.Y);
+					var v = (int) c.Value;
+					if(v >= 0 && v <= passangerSeats.Count) {
+						if(v != 0) {
+							passangerSeats[v-1].Add(c);
+							this.passangesrsSeat[v-1] = new PassangerSeat{ loc = new Point(x, z) };
+						}
 
-					c.markFine();
-					seatHint.SetToolTip(c, null);
-				}
-				else {
-					c.markError();
-					seatHint.SetToolTip(c, "Пассажира " + v + " не существует");
-					seatsCorrect = false;
+						c.markFine();
+						seatHint.SetToolTip(c, null);
+					}
+					else {
+						c.markError();
+						seatHint.SetToolTip(c, "Пассажира " + v + " не существует");
+						seatsCorrect = false;
+					}
 				}
 			}
 
@@ -192,15 +149,12 @@ namespace Client {
 			selectedStatusLabel.Text = sb.ToString();
 
 			seatSelectTable.ResumeLayout(false);
-			seatSelectTable.PerformLayout();
 		}
 	}
-
 	class SeatNumericUpDown : NumericUpDown {
 		public SeatNumericUpDown() : base() {
 			Controls.RemoveAt(0);
-			Value = 0;
-			Margin = new Padding(1, 0, 1, 0);
+			Margin = new Padding(1, 3, 1, 0);
 
 			var tb = (TextBox) Controls[0];
 
@@ -210,9 +164,9 @@ namespace Client {
 			this.Padding = new Padding(0);
 			BorderStyle = BorderStyle.None;
 			TextAlign = HorizontalAlignment.Center;
-			Anchor =  AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			//AnchorStyles.Bottom is for some reason centers this element horizontally
-			//Dock = DockStyle.Fill;
+			Anchor = AnchorStyles.Left | AnchorStyles.Right;
+
+			Value = 0;
 		}
 
 		protected override void OnTextBoxResize(object source, EventArgs e) {
@@ -245,7 +199,23 @@ namespace Client {
 	class SeatsTable : TableLayoutPanel {
 		public Color BackColor2;
 
-		public SeatsTable() : base() { DoubleBuffered = true; }
+		private Dictionary<SeatsScheme.Point, Point> seatsLocationToTableLocation;
+
+		private static Dictionary<int, char[]> widthsNaming = new Dictionary<int, char[]>();
+
+		static SeatsTable() {
+			widthsNaming.Add(4, new char[]{ 'A', 'C', 'D', 'F' });
+			widthsNaming.Add(6, new char[]{ 'A', 'B', 'C', 'D', 'E', 'F' });
+		}
+
+		public SeatsTable() : base() { 
+			DoubleBuffered = true; 
+			seatsLocationToTableLocation = new Dictionary<SeatsScheme.Point, Point>();
+		}
+
+		public Point getSeatLocation(SeatsScheme.Point seatPos) {
+			return seatsLocationToTableLocation[seatPos];
+		}
 
 		protected override void OnPaintBackground(PaintEventArgs e) {
 			base.OnPaintBackground(e);
@@ -302,6 +272,86 @@ namespace Client {
 				}
 			}
 			}
+		}
+
+		public void update(FlightAndCities flightAndCities, int classId, Action update) {
+			seatsLocationToTableLocation.Clear();
+
+			this.SuspendLayout();
+
+			this.Controls.Clear();
+			this.RowStyles.Clear();
+			this.ColumnStyles.Clear();
+
+			var seats = flightAndCities.flight.seatsScheme;
+
+			var seatsWidthLCM = 1;
+			for(int i = 0; i < seats.SizesCount; i++) {
+				var size = seats.sizeAtIndex(i);
+				seatsWidthLCM = Math2.lcm(seatsWidthLCM, size.x);
+			}
+
+			this.ColumnCount = seats.TotalLength + seats.SizesCount;
+			this.RowCount = seatsWidthLCM + 1;
+
+			//columns
+			for(int z = 0; z < ColumnCount; z++) {
+				this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+			}
+			//rows
+			for(int x = 0; x < RowCount; x++) {
+				this.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			}
+
+			/*add seats*/ { 
+				int z = 0;
+				int tableZ = 0;
+				for(int i = 0; i < seats.SizesCount; i++) {
+					var size = seats.sizeAtIndex(i);
+
+					var xSpan = seatsWidthLCM / size.x;
+
+					//add row names
+					var widthNaming = widthsNaming[size.x];
+					for(int x = 0; x < size.x; x++) {
+						var label = new Label{ 
+							Text = widthNaming[x].ToString(), 
+							TextAlign = ContentAlignment.MiddleCenter, 
+							Dock = DockStyle.Fill, 
+							BackColor = Color.Transparent 
+						};
+						this.Controls.Add(label, tableZ, 1+x*xSpan);
+						this.SetRowSpan(label, xSpan);
+					}
+					tableZ++;
+
+					for(int zO = 0; zO < size.z; zO++, z++) {
+						//add column name
+						this.Controls.Add(new Label{ 
+							Text = "" + (1+z), TextAlign = ContentAlignment.MiddleCenter, 
+							Dock = DockStyle.Fill, BackColor = Color.Transparent 
+						}, tableZ, 0);
+
+						for(int x = 0; x < size.x; x++) {
+							var seat = seats[x, z];
+
+							var it = new SeatNumericUpDown();
+							if(seat.classId != classId) {
+								it.Enabled = false;
+							}
+							it.ValueChanged += (a, b) => update();
+							var tablePos = new Point(tableZ, 1 + x*xSpan);
+							this.Controls.Add(it, tablePos.X, tablePos.Y);
+							this.SetRowSpan(it, xSpan);
+							seatsLocationToTableLocation.Add(new SeatsScheme.Point{x=x,z=z}, tablePos);
+						}
+						tableZ++;
+					}
+				}
+			}
+
+			this.ResumeLayout(false);
+			this.PerformLayout();
 		}
 
 		static RectangleF point4(float x1, float y1, float x2, float y2) {

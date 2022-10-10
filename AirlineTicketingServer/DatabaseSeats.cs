@@ -8,28 +8,34 @@ using System.Text;
 
 namespace AirlineTicketingServer {
 	static class BinarySeats {
-		public static byte[] toBytes(SeatsScheme.Seats seats) {
-			var length = seats.Width;
-			var width = seats.Length;
-			Debug.Assert(((short) length) == length);
-			Debug.Assert(((short) width) == width);
-
+		public static byte[] toBytes(SeatsScheme.Seats seatsscheme) {
+			
 			using(
-			var stream = new MemoryStream(1*1 + 2*2 + 1*width*length)) {
+			var stream = new MemoryStream(1*1 + 1*2 + 1*2*seatsscheme.SizesCount + 1*seatsscheme.SeatsCount)) {
 			using(
 			var writer = new BinaryWriter(stream)) {
 
 			writer.Write((byte) 0);
-			writer.Write((short) length);
-			writer.Write((short) width);
+			Debug.Assert((short) seatsscheme.SizesCount == seatsscheme.SizesCount);
+			writer.Write((short) seatsscheme.SizesCount);
 
-			for(int z = 0; z < length; z++)
-			for(int x = 0; x < width ; x++) {
-				var seat = seats[x, z];
-				Debug.Assert((seat.classIndex & 0xfu) == seat.classIndex);
-				var data = seat.classIndex | (seat.occupied ? 1u << 7 : 0);
+			var sizes = seatsscheme.GetSizesEnumerator();
+			while(sizes.MoveNext()) {
+				var size = sizes.Current;
+				Debug.Assert((byte) size.x == size.x);
+				Debug.Assert((byte) size.z == size.z);
+				writer.Write((byte) size.x);
+				writer.Write((byte) size.z);
+			}
+
+			var seats = seatsscheme.GetSeatsEnumerator();
+			while(seats.MoveNext()) {
+				var seat = seats.Current;
+				Debug.Assert((seat.classId & 0xfu) == seat.classId);
+				var data = seat.classId | (seat.occupied ? 1u << 7 : 0);
 				writer.Write((byte) data);
 			}
+
 			writer.Dispose();
 			return stream.ToArray();
 			}}
@@ -43,24 +49,31 @@ namespace AirlineTicketingServer {
 
 			var version = reader.ReadByte();
 			Debug.Assert(version == 0);
-			var length = reader.ReadInt16();
-			var width = reader.ReadInt16();
+			var sizesCount = reader.ReadInt16();
+			var sizes = new List<SeatsScheme.Point>(sizesCount);
+			var seatsSum = 0;
+			for(int i = 0; i < sizesCount; i++) {
+				var x = reader.ReadByte();
+				var z = reader.ReadByte();
+				sizes.Add(new SeatsScheme.Point{ x = x, z = z });
+				seatsSum += x * z;
+			}
 
-			var seats = new SeatsScheme.Seats(new SeatsScheme.SeatStatus[width * length], width);
-
-			for(int z = 0; z < length; z++)
-			for(int x = 0; x < width ; x++) {
+			var seats =  new List<SeatsScheme.SeatStatus>(seatsSum);
+			for(int i = 0; i < seatsSum; i++) {
 				var data = reader.ReadByte();
-				seats[x, z] = new SeatsScheme.SeatStatus{
+				seats.Add(new SeatsScheme.SeatStatus{
 					Class = (int)(data & 0xfu),
 					occupied = (data & 0x1000_0000u) != 0
-				};
+				});
 			}
+
+			var seatsScheme = new SeatsScheme.Seats(seats.GetEnumerator(), sizes.GetEnumerator());
 
 			Debug.Assert(stream.Position == stream.Length);
 			reader.Dispose();
 			stream.Dispose();
-			return seats;
+			return seatsScheme;
 			}}
 		}
 	}

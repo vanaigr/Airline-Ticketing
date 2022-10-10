@@ -6,9 +6,7 @@ using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.Text;
 
-namespace Client {
-	public delegate void Action(Communication.MessageService serivce);
-	
+namespace Client {	
 	public class ServerQuery : System.Runtime.Remoting.Proxies.RealProxy, IDisposable {
 	    private ChannelFactory<Communication.MessageService> factory;
 	
