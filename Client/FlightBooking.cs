@@ -26,6 +26,8 @@ namespace Client {
 			Misc.unfocusOnEscape(this);
 			this.service = service;
 			passangersDisplayList.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
+
+			this.seatSelectTable.BackColor2 = Color.LightGray;
 		}
 
 		public void setFromFlight(
@@ -79,13 +81,13 @@ namespace Client {
 			seatSelectTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, zPercent));
 			for(int z = 0; z < seats.Length; z++) {
 				seatSelectTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, zPercent));
-				seatSelectTable.Controls.Add(new Label{ Text = "" + (1+z), TextAlign = System.Drawing.ContentAlignment.MiddleCenter, Dock = DockStyle.Fill }, 1+z, 0);
+				seatSelectTable.Controls.Add(new Label{ Text = "" + (1+z), TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Fill, BackColor = Color.Transparent }, 1+z, 0);
 			}
 			//rows
 			seatSelectTable.RowStyles.Add(new ColumnStyle(SizeType.Percent, xPercent));
 			for(int x = 0; x < seats.Width; x++) {
 				seatSelectTable.RowStyles.Add(new ColumnStyle(SizeType.Percent, xPercent));
-				seatSelectTable.Controls.Add(new Label{ Text = (char) ('A' + x) + "", TextAlign = System.Drawing.ContentAlignment.MiddleCenter, Dock = DockStyle.Fill }, 0, 1+x);
+				seatSelectTable.Controls.Add(new Label{ Text = (char) ('A' + x) + "", TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Fill, BackColor = Color.Transparent }, 0, 1+x);
 			}
 
 			for(int z = 0; z < seats.Length; z++)
@@ -198,18 +200,19 @@ namespace Client {
 		public SeatNumericUpDown() : base() {
 			Controls.RemoveAt(0);
 			Value = 0;
-			Margin = new Padding(0);
+			Margin = new Padding(1, 0, 1, 0);
 
-			var tb = ((TextBox) Controls[0]);
+			var tb = (TextBox) Controls[0];
 
 			tb.Multiline = true;
-			tb.BorderStyle = BorderStyle.Fixed3D;
+			tb.BorderStyle = BorderStyle.None;
 
 			this.Padding = new Padding(0);
 			BorderStyle = BorderStyle.None;
 			TextAlign = HorizontalAlignment.Center;
-			Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			Dock = DockStyle.Fill;
+			Anchor =  AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			//AnchorStyles.Bottom is for some reason centers this element horizontally
+			//Dock = DockStyle.Fill;
 		}
 
 		protected override void OnTextBoxResize(object source, EventArgs e) {
@@ -236,6 +239,73 @@ namespace Client {
 			if(Enabled) {
 				BackColor = Color.MistyRose;
 			}
+		}
+	}
+
+	class SeatsTable : TableLayoutPanel {
+		public Color BackColor2;
+
+		public SeatsTable() : base() { DoubleBuffered = true; }
+
+		protected override void OnPaintBackground(PaintEventArgs e) {
+			base.OnPaintBackground(e);
+			var g = e.Graphics;
+
+			var size = this.Size;
+			var pad = this.Padding;
+
+			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+			using(var b = new SolidBrush(BackColor2)) {
+			var start = new PointF((pad.Left + this.GetColumnWidths()[0]) * 1.5f, pad.Top * 0.7f  + this.GetRowHeights()[0]);
+			var end = new PointF(size.Width - pad.Right * 1.5f, size.Height - pad.Bottom * 0.7f);
+			
+			//draw main body
+			g.FillRectangle(b, point4(start.X, start.Y, end.X, end.Y));
+
+			/*draw back side*/ {
+				var cirDiam = end.Y - start.Y;
+				var cirRad = cirDiam * 0.5f;
+				g.FillEllipse(b, point4(end.X - cirRad, start.Y, end.X + cirRad, end.Y));
+			}
+
+			/*draw front side*/ {
+				var cirDiamX = (end.Y - start.Y) * 3;
+				var cirRadX = cirDiamX * 0.5f;
+				g.FillEllipse(b, point4(start.X - cirRadX, start.Y, start.X + cirRadX, end.Y));
+			}
+
+			/*draw wings*/ {
+				var center = end.X * 0.6f + start.X * 0.4f;
+				var rad = (end.X - start.X) * 0.5f * 0.5f;
+				using(
+				var path = new System.Drawing.Drawing2D.GraphicsPath(System.Drawing.Drawing2D.FillMode.Winding)) {
+				path.StartFigure();
+				path.AddLine(-rad, 0, 0, -rad * 5);
+				path.AddLine(0, -rad * 5, rad * 0.7f, -rad * 5);
+				path.AddLine(rad * 0.7f, -rad * 5, 0, 0);
+				//path.AddLine(0, 0, -rad, 0);
+				path.CloseFigure();
+
+				using(
+				var p2 = (System.Drawing.Drawing2D.GraphicsPath) path.Clone()) {
+				p2.Transform(new System.Drawing.Drawing2D.Matrix(
+					1, 0, 0, 1, center, start.Y+1
+				));
+				g.FillPath(b, p2);
+				}
+
+				path.Transform(new System.Drawing.Drawing2D.Matrix(
+					1, 0, 0, -1, center, end.Y-1
+				));
+				g.FillPath(b, path);
+				}
+			}
+			}
+		}
+
+		static RectangleF point4(float x1, float y1, float x2, float y2) {
+			return new RectangleF(x1, y1, x2 - x1, y2 - y1);
 		}
 	}
 }

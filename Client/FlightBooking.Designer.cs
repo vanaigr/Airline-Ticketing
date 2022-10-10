@@ -37,7 +37,7 @@ namespace Client {
 			this.button1 = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.seatSelectTable = new System.Windows.Forms.TableLayoutPanel();
+			this.seatSelectTable = new Client.SeatsTable();
 			this.selectedStatusLabel = new System.Windows.Forms.Label();
 			this.seatHint = new System.Windows.Forms.ToolTip(this.components);
 			this.headerContainer.SuspendLayout();
@@ -72,7 +72,7 @@ namespace Client {
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.headerContainer.Size = new System.Drawing.Size(1162, 57);
+			this.headerContainer.Size = new System.Drawing.Size(1008, 57);
 			this.headerContainer.TabIndex = 0;
 			// 
 			// button2
@@ -87,7 +87,7 @@ namespace Client {
 			this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.button2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button2.Location = new System.Drawing.Point(1056, 13);
+			this.button2.Location = new System.Drawing.Point(902, 13);
 			this.button2.Name = "button2";
 			this.headerContainer.SetRowSpan(this.button2, 3);
 			this.button2.Size = new System.Drawing.Size(93, 31);
@@ -138,7 +138,7 @@ namespace Client {
 			this.classSelector.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.classSelector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.classSelector.FormattingEnabled = true;
-			this.classSelector.Location = new System.Drawing.Point(919, 18);
+			this.classSelector.Location = new System.Drawing.Point(765, 18);
 			this.classSelector.Name = "classSelector";
 			this.headerContainer.SetRowSpan(this.classSelector, 3);
 			this.classSelector.Size = new System.Drawing.Size(121, 21);
@@ -166,7 +166,7 @@ namespace Client {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1162, 396);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1008, 396);
 			this.tableLayoutPanel1.TabIndex = 1;
 			// 
 			// passangersDisplayList
@@ -184,7 +184,7 @@ namespace Client {
 			this.passangersDisplayList.Name = "passangersDisplayList";
 			this.passangersDisplayList.RowCount = 1;
 			this.passangersDisplayList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.passangersDisplayList.Size = new System.Drawing.Size(1142, 33);
+			this.passangersDisplayList.Size = new System.Drawing.Size(988, 33);
 			this.passangersDisplayList.TabIndex = 0;
 			// 
 			// button1
@@ -236,20 +236,20 @@ namespace Client {
 			this.seatSelectTable.Location = new System.Drawing.Point(10, 79);
 			this.seatSelectTable.Margin = new System.Windows.Forms.Padding(0);
 			this.seatSelectTable.Name = "seatSelectTable";
+			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(30, 20, 30, 20);
 			this.seatSelectTable.RowCount = 1;
 			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Size = new System.Drawing.Size(1142, 1);
+			this.seatSelectTable.Size = new System.Drawing.Size(988, 40);
 			this.seatSelectTable.TabIndex = 3;
 			// 
 			// selectedStatusLabel
 			// 
 			this.selectedStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.selectedStatusLabel.AutoSize = true;
-			this.selectedStatusLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.selectedStatusLabel.Location = new System.Drawing.Point(1029, 79);
+			this.selectedStatusLabel.Location = new System.Drawing.Point(894, 119);
 			this.selectedStatusLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.selectedStatusLabel.Name = "selectedStatusLabel";
-			this.selectedStatusLabel.Size = new System.Drawing.Size(123, 13);
+			this.selectedStatusLabel.Size = new System.Drawing.Size(104, 13);
 			this.selectedStatusLabel.TabIndex = 4;
 			this.selectedStatusLabel.Text = "selectedSeatsStatus";
 			// 
@@ -257,7 +257,7 @@ namespace Client {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1162, 453);
+			this.ClientSize = new System.Drawing.Size(1008, 453);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this.headerContainer);
 			this.Name = "FlightBooking";
@@ -288,7 +288,7 @@ namespace Client {
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TableLayoutPanel seatSelectTable;
+		private SeatsTable seatSelectTable;
 		private System.Windows.Forms.Label selectedStatusLabel;
 		private System.Windows.Forms.ToolTip seatHint;
 	}
