@@ -34,7 +34,7 @@ namespace Client {
 			this.label1 = new System.Windows.Forms.Label();
 			this.button1 = new System.Windows.Forms.Button();
 			this.flowLayoutPanelHeightBug = new System.Windows.Forms.Panel();
-			this.tableLayoutPanel4 = new Client.BugfixFlowLayoutPanel();
+			this.passangersPanel = new Client.BugfixFlowLayoutPanel();
 			this.headerContainer = new System.Windows.Forms.TableLayoutPanel();
 			this.button2 = new System.Windows.Forms.Button();
 			this.aitrplaneNameLavel = new System.Windows.Forms.Label();
@@ -189,26 +189,26 @@ namespace Client {
 			// flowLayoutPanelHeightBug
 			// 
 			this.flowLayoutPanelHeightBug.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.flowLayoutPanelHeightBug.Controls.Add(this.tableLayoutPanel4);
+			this.flowLayoutPanelHeightBug.Controls.Add(this.passangersPanel);
 			this.flowLayoutPanelHeightBug.Dock = System.Windows.Forms.DockStyle.Top;
 			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(93, 23);
 			this.flowLayoutPanelHeightBug.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanelHeightBug.Name = "flowLayoutPanelHeightBug";
 			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(726, 33);
 			this.flowLayoutPanelHeightBug.TabIndex = 2;
-			this.flowLayoutPanelHeightBug.Resize += new System.EventHandler(this.panel1_Resize);
+			this.flowLayoutPanelHeightBug.Resize += new System.EventHandler(this.flowLayoutPanelHeightBug_Resize);
 			// 
-			// tableLayoutPanel4
+			// passangersPanel
 			// 
-			this.tableLayoutPanel4.AutoSize = true;
-			this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Top;
-			this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
-			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(726, 0);
-			this.tableLayoutPanel4.TabIndex = 0;
-			this.tableLayoutPanel4.Resize += new System.EventHandler(this.tableLayoutPanel4_Resize);
+			this.passangersPanel.AutoSize = true;
+			this.passangersPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.passangersPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.passangersPanel.Location = new System.Drawing.Point(0, 0);
+			this.passangersPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.passangersPanel.Name = "passangersPanel";
+			this.passangersPanel.Size = new System.Drawing.Size(726, 0);
+			this.passangersPanel.TabIndex = 0;
+			this.passangersPanel.Resize += new System.EventHandler(this.passangersPanel_Resize);
 			// 
 			// headerContainer
 			// 
@@ -316,13 +316,13 @@ namespace Client {
             this.удалитьToolStripMenuItem});
 			this.passangerMenu.Name = "passangerMenu";
 			this.passangerMenu.Size = new System.Drawing.Size(119, 26);
-			this.passangerMenu.Opening += new System.ComponentModel.CancelEventHandler(this.passangerMenu_Opening);
 			// 
 			// удалитьToolStripMenuItem
 			// 
 			this.удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
 			this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
 			this.удалитьToolStripMenuItem.Text = "Удалить";
+			this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
 			// 
 			// FlightBooking
 			// 
@@ -361,7 +361,7 @@ namespace Client {
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.ToolTip seatHint;
 		private System.Windows.Forms.Label selectedStatusLabel;
-		private BugfixFlowLayoutPanel tableLayoutPanel4;
+		private BugfixFlowLayoutPanel passangersPanel;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Label label1;
 		private SeatsTable seatSelectTable;

@@ -26,7 +26,7 @@ namespace Client {
 
 			Misc.unfocusOnEscape(this);
 			this.service = service;
-			tableLayoutPanel4.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
+			passangersPanel.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
 			this.seatSelectTable.BackColor2 = Color.LightGray;//Color.FromArgb(unchecked((int) 0xffbcc5d6));
 
@@ -99,10 +99,11 @@ namespace Client {
 
 		private void button1_Click(object sender, EventArgs e) {
 			passangers.Add(null);
-			var display = new PassangerDisplay() { Number = passangers.Count-1, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
+			var display = new PassangerDisplay() { Number = passangers.Count, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
 			display.ContextMenuStrip = passangerMenu;
+			display.Click += (a, b) => new PassangerAdd().Show();
 
-			var passangersDisplayList = tableLayoutPanel4;
+			var passangersDisplayList = passangersPanel;
 
 			passangersDisplayList.SuspendLayout();
 			passangersDisplayList.Controls.Add(display);
@@ -186,30 +187,48 @@ namespace Client {
 			seatSelectTable.PerformLayout();
 		}
 
-		private void passangerMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e) {
-			//passangerMenu.
-			//e.Cancel = true;
-		}
-
-		private void tableLayoutPanel4_Resize(object sender, EventArgs e) {
+		private void passangersPanel_Resize(object sender, EventArgs e) {
 			if(ignoreResize__) return;
-			resizeTableLayoutPanel4();
+			resizePassangersPanel();
 		}
 
 		private bool ignoreResize__ = false;
-		private void panel1_Resize(object sender, EventArgs e) {
+		private void flowLayoutPanelHeightBug_Resize(object sender, EventArgs e) {
 			if(ignoreResize__) return;
-			resizeTableLayoutPanel4();
+			resizePassangersPanel();
 		}
 
-		private void resizeTableLayoutPanel4() {
+		private void resizePassangersPanel() {
 			ignoreResize__ = true;
-			var tableSize = tableLayoutPanel4.Size;
+			var tableSize = passangersPanel.Size;
 			flowLayoutPanelHeightBug.SuspendLayout();
 			flowLayoutPanelHeightBug.Size = tableSize;
 			flowLayoutPanelHeightBug.ResumeLayout(false);
 			flowLayoutPanelHeightBug.PerformLayout();
 			ignoreResize__ = false;
+		}
+
+		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
+			passangersPanel.SuspendLayout();
+			seatSelectTable.SuspendLayout(); //is this really needed here?
+
+			var pass = (PassangerDisplay) passangerMenu.SourceControl;
+			var number = pass.Number;
+			foreach(var passDisC in passangersPanel.Controls) {
+				var passDis = (PassangerDisplay) passDisC;
+				if(passDis.Number > number) passDis.Number--;
+			}
+			foreach(var seat in seatSelectTable) {
+				if(seat.Value > number) seat.Value--;
+				else if(seat.Value == number) seat.Value = 0;
+			}
+			pass.Dispose();
+			passangers.RemoveAt(pass.Number-1);
+
+			passangersPanel.ResumeLayout(false);
+			seatSelectTable.ResumeLayout(false);
+			passangersPanel.PerformLayout();
+			seatSelectTable.PerformLayout();
 		}
 	}
 	class SeatNumericUpDown : NumericUpDown {
@@ -302,6 +321,39 @@ namespace Client {
 
 		public Point getSeatLocation(SeatsScheme.Point seatPos) {
 			return seatsLocationToTableLocation[seatPos];
+		}
+
+		public IEnumerator<SeatNumericUpDown> GetEnumerator() {
+			return new SeatsEnumerator(this);
+		}
+
+		private class SeatsEnumerator : IEnumerator<SeatNumericUpDown> {
+			private Dictionary<SeatsScheme.Point, Point>.Enumerator enumerator;
+			private SeatsTable table;
+
+			public SeatsEnumerator(SeatsTable table) {
+				this.table = table;
+				enumerator = this.table.seatsLocationToTableLocation.GetEnumerator();
+			}
+
+			public SeatNumericUpDown Current { get{
+				var loc = enumerator.Current.Value;
+				return (SeatNumericUpDown) table.GetControlFromPosition(loc.X, loc.Y);
+			} }
+
+			object System.Collections.IEnumerator.Current => Current;
+
+			public void Dispose() {
+				enumerator.Dispose();
+			}
+
+			public bool MoveNext() {
+				return enumerator.MoveNext();
+			}
+
+			public void Reset() {
+				throw new NotImplementedException();
+			}
 		}
 
 		protected override void OnPaintBackground(PaintEventArgs e) {
