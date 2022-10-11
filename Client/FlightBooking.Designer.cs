@@ -31,9 +31,10 @@ namespace Client {
 			this.selectedStatusLabel = new System.Windows.Forms.Label();
 			this.seatSelectTable = new Client.SeatsTable();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-			this.passangersDisplayList = new System.Windows.Forms.TableLayoutPanel();
-			this.button1 = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
+			this.button1 = new System.Windows.Forms.Button();
+			this.flowLayoutPanelHeightBug = new System.Windows.Forms.Panel();
+			this.tableLayoutPanel4 = new Client.BugfixFlowLayoutPanel();
 			this.headerContainer = new System.Windows.Forms.TableLayoutPanel();
 			this.button2 = new System.Windows.Forms.Button();
 			this.aitrplaneNameLavel = new System.Windows.Forms.Label();
@@ -42,13 +43,16 @@ namespace Client {
 			this.departureDatetimeLabel = new System.Windows.Forms.Label();
 			this.classSelector = new System.Windows.Forms.ComboBox();
 			this.seatHint = new System.Windows.Forms.ToolTip(this.components);
+			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			label2 = new System.Windows.Forms.Label();
 			tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
-			this.passangersDisplayList.SuspendLayout();
+			this.flowLayoutPanelHeightBug.SuspendLayout();
 			this.headerContainer.SuspendLayout();
+			this.passangerMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
@@ -67,7 +71,7 @@ namespace Client {
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel1.Size = new System.Drawing.Size(1008, 396);
+			tableLayoutPanel1.Size = new System.Drawing.Size(849, 400);
 			tableLayoutPanel1.TabIndex = 1;
 			// 
 			// tableLayoutPanel2
@@ -90,7 +94,7 @@ namespace Client {
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(988, 93);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(829, 93);
 			this.tableLayoutPanel2.TabIndex = 5;
 			// 
 			// label2
@@ -106,7 +110,7 @@ namespace Client {
 			// 
 			this.selectedStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.selectedStatusLabel.AutoSize = true;
-			this.selectedStatusLabel.Location = new System.Drawing.Point(874, 70);
+			this.selectedStatusLabel.Location = new System.Drawing.Point(715, 70);
 			this.selectedStatusLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.selectedStatusLabel.Name = "selectedStatusLabel";
 			this.selectedStatusLabel.Size = new System.Drawing.Size(104, 13);
@@ -126,7 +130,7 @@ namespace Client {
 			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(30, 20, 30, 20);
 			this.seatSelectTable.RowCount = 1;
 			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Size = new System.Drawing.Size(968, 40);
+			this.seatSelectTable.Size = new System.Drawing.Size(809, 40);
 			this.seatSelectTable.TabIndex = 3;
 			// 
 			// tableLayoutPanel3
@@ -134,10 +138,12 @@ namespace Client {
 			this.tableLayoutPanel3.AutoSize = true;
 			this.tableLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel3.BackColor = System.Drawing.Color.White;
-			this.tableLayoutPanel3.ColumnCount = 1;
+			this.tableLayoutPanel3.ColumnCount = 2;
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel3.Controls.Add(this.passangersDisplayList, 0, 1);
 			this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.button1, 0, 1);
+			this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanelHeightBug, 1, 1);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(10, 10);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -146,40 +152,33 @@ namespace Client {
 			this.tableLayoutPanel3.RowCount = 2;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(988, 66);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(829, 66);
 			this.tableLayoutPanel3.TabIndex = 6;
 			// 
-			// passangersDisplayList
+			// label1
 			// 
-			this.passangersDisplayList.AutoScroll = true;
-			this.passangersDisplayList.AutoSize = true;
-			this.passangersDisplayList.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.passangersDisplayList.ColumnCount = 2;
-			this.passangersDisplayList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.passangersDisplayList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.passangersDisplayList.Controls.Add(this.button1, 0, 0);
-			this.passangersDisplayList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.passangersDisplayList.Location = new System.Drawing.Point(10, 23);
-			this.passangersDisplayList.Margin = new System.Windows.Forms.Padding(0);
-			this.passangersDisplayList.Name = "passangersDisplayList";
-			this.passangersDisplayList.RowCount = 1;
-			this.passangersDisplayList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.passangersDisplayList.Size = new System.Drawing.Size(968, 33);
-			this.passangersDisplayList.TabIndex = 0;
+			this.label1.AutoSize = true;
+			this.tableLayoutPanel3.SetColumnSpan(this.label1, 2);
+			this.label1.Location = new System.Drawing.Point(10, 10);
+			this.label1.Margin = new System.Windows.Forms.Padding(0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(70, 13);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Пассажиры:";
 			// 
 			// button1
 			// 
 			this.button1.AutoSize = true;
 			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.button1.BackColor = System.Drawing.Color.Transparent;
-			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.button1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.button1.Location = new System.Drawing.Point(3, 3);
+			this.button1.Location = new System.Drawing.Point(13, 26);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(77, 27);
 			this.button1.TabIndex = 1;
@@ -187,15 +186,29 @@ namespace Client {
 			this.button1.UseVisualStyleBackColor = false;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// label1
+			// flowLayoutPanelHeightBug
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(10, 10);
-			this.label1.Margin = new System.Windows.Forms.Padding(0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(70, 13);
-			this.label1.TabIndex = 1;
-			this.label1.Text = "Пассажиры:";
+			this.flowLayoutPanelHeightBug.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowLayoutPanelHeightBug.Controls.Add(this.tableLayoutPanel4);
+			this.flowLayoutPanelHeightBug.Dock = System.Windows.Forms.DockStyle.Top;
+			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(93, 23);
+			this.flowLayoutPanelHeightBug.Margin = new System.Windows.Forms.Padding(0);
+			this.flowLayoutPanelHeightBug.Name = "flowLayoutPanelHeightBug";
+			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(726, 33);
+			this.flowLayoutPanelHeightBug.TabIndex = 2;
+			this.flowLayoutPanelHeightBug.Resize += new System.EventHandler(this.panel1_Resize);
+			// 
+			// tableLayoutPanel4
+			// 
+			this.tableLayoutPanel4.AutoSize = true;
+			this.tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Top;
+			this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(726, 0);
+			this.tableLayoutPanel4.TabIndex = 0;
+			this.tableLayoutPanel4.Resize += new System.EventHandler(this.tableLayoutPanel4_Resize);
 			// 
 			// headerContainer
 			// 
@@ -224,7 +237,7 @@ namespace Client {
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.headerContainer.Size = new System.Drawing.Size(1008, 57);
+			this.headerContainer.Size = new System.Drawing.Size(849, 57);
 			this.headerContainer.TabIndex = 0;
 			// 
 			// button2
@@ -239,7 +252,7 @@ namespace Client {
 			this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.button2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button2.Location = new System.Drawing.Point(902, 13);
+			this.button2.Location = new System.Drawing.Point(743, 13);
 			this.button2.Name = "button2";
 			this.headerContainer.SetRowSpan(this.button2, 3);
 			this.button2.Size = new System.Drawing.Size(93, 31);
@@ -290,18 +303,32 @@ namespace Client {
 			this.classSelector.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.classSelector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.classSelector.FormattingEnabled = true;
-			this.classSelector.Location = new System.Drawing.Point(765, 18);
+			this.classSelector.Location = new System.Drawing.Point(606, 18);
 			this.classSelector.Name = "classSelector";
 			this.headerContainer.SetRowSpan(this.classSelector, 3);
 			this.classSelector.Size = new System.Drawing.Size(121, 21);
 			this.classSelector.TabIndex = 5;
 			this.classSelector.SelectedIndexChanged += new System.EventHandler(this.classSelector_SelectedIndexChanged);
 			// 
+			// passangerMenu
+			// 
+			this.passangerMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.удалитьToolStripMenuItem});
+			this.passangerMenu.Name = "passangerMenu";
+			this.passangerMenu.Size = new System.Drawing.Size(119, 26);
+			this.passangerMenu.Opening += new System.ComponentModel.CancelEventHandler(this.passangerMenu_Opening);
+			// 
+			// удалитьToolStripMenuItem
+			// 
+			this.удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
+			this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+			this.удалитьToolStripMenuItem.Text = "Удалить";
+			// 
 			// FlightBooking
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1008, 453);
+			this.ClientSize = new System.Drawing.Size(849, 457);
 			this.Controls.Add(tableLayoutPanel1);
 			this.Controls.Add(this.headerContainer);
 			this.Name = "FlightBooking";
@@ -313,10 +340,11 @@ namespace Client {
 			this.tableLayoutPanel2.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
-			this.passangersDisplayList.ResumeLayout(false);
-			this.passangersDisplayList.PerformLayout();
+			this.flowLayoutPanelHeightBug.ResumeLayout(false);
+			this.flowLayoutPanelHeightBug.PerformLayout();
 			this.headerContainer.ResumeLayout(false);
 			this.headerContainer.PerformLayout();
+			this.passangerMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -333,11 +361,14 @@ namespace Client {
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.ToolTip seatHint;
 		private System.Windows.Forms.Label selectedStatusLabel;
-		private System.Windows.Forms.TableLayoutPanel passangersDisplayList;
+		private BugfixFlowLayoutPanel tableLayoutPanel4;
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Label label1;
 		private SeatsTable seatSelectTable;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+		private System.Windows.Forms.ContextMenuStrip passangerMenu;
+		private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
+		private System.Windows.Forms.Panel flowLayoutPanelHeightBug;
 	}
 }

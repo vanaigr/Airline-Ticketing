@@ -8,6 +8,8 @@ namespace Client {
 	public partial class FlightBooking : Form {
 		private Communication.MessageService service;
 
+		private List<Communication.Passanger> passangers;
+
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
 		
@@ -17,20 +19,23 @@ namespace Client {
 
 		private PassangerSeat[] passangesrsSeat = new PassangerSeat[0];
 
-		private int passangersCount;
-
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
 		public FlightBooking(Communication.MessageService service) {
 			InitializeComponent();
+
 			Misc.unfocusOnEscape(this);
 			this.service = service;
-			passangersDisplayList.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
+			tableLayoutPanel4.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
 			this.seatSelectTable.BackColor2 = Color.LightGray;//Color.FromArgb(unchecked((int) 0xffbcc5d6));
 
 			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+			passangers = new List<Communication.Passanger>();
+
+			button1_Click(null, null);
 		}
 
 		public void setFromFlight(
@@ -38,8 +43,6 @@ namespace Client {
 			FlightAndCities flightAndCities,
 			int selectedClassId
 		) {
-			this.passangersCount = 0;
-
 			//filter classes that are present in seats scheme
 			var classesSet = new HashSet<int>();
 			var seatE = flightAndCities.flight.seatsScheme.GetSeatsEnumerator();
@@ -95,29 +98,34 @@ namespace Client {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
+			passangers.Add(null);
+			var display = new PassangerDisplay() { Number = passangers.Count-1, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
+			display.ContextMenuStrip = passangerMenu;
+
+			var passangersDisplayList = tableLayoutPanel4;
+
 			passangersDisplayList.SuspendLayout();
-			passangersDisplayList.ColumnStyles.Insert(1, new ColumnStyle(SizeType.AutoSize));
-			passangersDisplayList.Controls.Add(new PassangerDisplay(passangersCount+1) { Dock = DockStyle.Fill });
-			passangersDisplayList.ColumnCount++;
+			passangersDisplayList.Controls.Add(display);
 			passangersDisplayList.ResumeLayout(false);
 			passangersDisplayList.PerformLayout();
-			passangersCount ++;
+
 			recalculateSeats();
 		}
 
 		private void recalculateSeats() {
+			if(flightAndCities == null) return;
 			seatSelectTable.SuspendLayout();
-
+			
 			var seats = flightAndCities.flight.seatsScheme;
 
 			seatHint.RemoveAll();
 
-			this.passangesrsSeat = new PassangerSeat[passangersCount];
+			this.passangesrsSeat = new PassangerSeat[passangers.Count];
 			var seatsCorrect = true;
 			int autofilledCount = 0;
 
 			var passangerSeats = new List<List<SeatNumericUpDown>>();
-			for(int i = 0; i < passangersCount; i++) passangerSeats.Add(new List<SeatNumericUpDown>(2));
+			for(int i = 0; i < passangers.Count; i++) passangerSeats.Add(new List<SeatNumericUpDown>(2));
 
 			for(int z = 0; z < seats.TotalLength; z++) {
 				var width = seats.WidthForRow(z);
@@ -156,10 +164,10 @@ namespace Client {
 			}
 
 			var sb = new StringBuilder();
-			if(autofilledCount != passangersCount) {
+			if(autofilledCount != passangers.Count) {
 				if(sb.Length != 0) sb.Append(", в");
 				else sb.Append("В");
-				sb.Append("ыбрано вручную: ").Append(passangersCount - autofilledCount);
+				sb.Append("ыбрано вручную: ").Append(passangers.Count - autofilledCount);
 			}
 			if(autofilledCount != 0) {
 				if(sb.Length != 0) sb.Append(", в");
@@ -176,6 +184,32 @@ namespace Client {
 
 			seatSelectTable.ResumeLayout(false);
 			seatSelectTable.PerformLayout();
+		}
+
+		private void passangerMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e) {
+			//passangerMenu.
+			//e.Cancel = true;
+		}
+
+		private void tableLayoutPanel4_Resize(object sender, EventArgs e) {
+			if(ignoreResize__) return;
+			resizeTableLayoutPanel4();
+		}
+
+		private bool ignoreResize__ = false;
+		private void panel1_Resize(object sender, EventArgs e) {
+			if(ignoreResize__) return;
+			resizeTableLayoutPanel4();
+		}
+
+		private void resizeTableLayoutPanel4() {
+			ignoreResize__ = true;
+			var tableSize = tableLayoutPanel4.Size;
+			flowLayoutPanelHeightBug.SuspendLayout();
+			flowLayoutPanelHeightBug.Size = tableSize;
+			flowLayoutPanelHeightBug.ResumeLayout(false);
+			flowLayoutPanelHeightBug.PerformLayout();
+			ignoreResize__ = false;
 		}
 	}
 	class SeatNumericUpDown : NumericUpDown {
@@ -409,6 +443,27 @@ namespace Client {
 
 		static RectangleF point4(float x1, float y1, float x2, float y2) {
 			return new RectangleF(x1, y1, x2 - x1, y2 - y1);
+		}
+	}
+
+	public class BugfixFlowLayoutPanel : FlowLayoutPanel {
+		public BugfixFlowLayoutPanel() : base() {
+		}
+
+		protected override void SetClientSizeCore(int x, int y) {
+			base.SetClientSizeCore(x, y);
+		}
+
+		private bool ignore__ = true;
+		public override Size GetPreferredSize(Size proposedSize) {
+			if(ignore__) return base.GetPreferredSize(proposedSize);
+			ignore__ = true;
+			this.AutoSize = false;
+			this.Size = new Size();
+			this.AutoSize = true;
+			this.Size = new Size();
+			ignore__ = false;
+			return base.GetPreferredSize(proposedSize);
 		}
 	}
 }

@@ -11,10 +11,16 @@ namespace Client {
 	public partial class PassangerDisplay : UserControl {
 		int number;
 
-		public PassangerDisplay(int number) {
-			InitializeComponent();
+		Communication.Passanger passanger;
 
-			this.number = number;
+		public Communication.Passanger Passanger{
+			get{ return passanger; }
+			set{ passanger = value; set(); }
+		}
+
+		public int Number{ get => number; set{ number = value; setNumberLabel(); } }
+		public PassangerDisplay() : base() {
+			InitializeComponent();
 
 			this.SuspendLayout();
 			var clickArea = new TransparentPanel();
@@ -26,18 +32,26 @@ namespace Client {
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
-			setEmpty();
+			set();
 		}
 
-		void set(string fullName, DateTime birthday) {
-			this.FullNameLabel.Text = fullName;
-			this.BirthdayLabel.Text = birthday.ToString("dd.MM.yyyy");
-			this.numberLabel.Text = "" + number;
+		public PassangerDisplay(int number) : this() {
+			Number = number;
 		}
-		void setEmpty() {
-			this.FullNameLabel.Text = "Не задан";
-			this.BirthdayLabel.Text = "";
-			this.numberLabel.Text = "" + number;
+
+		private void set() {
+			if(passanger == null) {
+				FullNameLabel.Text = "Не задан";
+				BirthdayLabel.Text = "";
+			}
+			else {
+				FullNameLabel.Text = passanger.fullName;
+				BirthdayLabel.Text = passanger.birthday.ToString("dd.MM.yyyy");
+			}
+		}
+
+		private void setNumberLabel() {
+			this.numberLabel.Text = number.ToString().PadLeft(2, ' ');
 		}
 	}
 }

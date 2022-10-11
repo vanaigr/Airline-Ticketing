@@ -47,7 +47,7 @@ namespace Communication {
 		public string name { get; set; } //display in combobox requires property
 	}
 
-	[Serializable] public struct Passanger {
+	[Serializable] public class Passanger {
 		public string fullName;
 		public DateTime birthday;
 	}

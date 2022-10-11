@@ -89,6 +89,12 @@
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Misc.cs" />
+    <Compile Include="PassangerAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PassangerAdd.Designer.cs">
+      <DependentUpon>PassangerAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="PassangerDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
