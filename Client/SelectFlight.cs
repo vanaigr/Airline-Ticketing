@@ -253,14 +253,11 @@ namespace Client {
 			FlightBooking booking;
 			if(openedBookings.TryGetValue(fic.flight.id, out booking)) {
 				booking.Focus();
+				booking.setSelectedClass(classId);
 			}
 			else {
-				var keys = avaliableFlightClasses.Keys.GetEnumerator();
-				int indexOfFirst;
-				for(indexOfFirst = 0; keys.MoveNext() && keys.Current != classId; indexOfFirst++);
-
 				booking = new FlightBooking(service);
-				booking.setFromFlight(avaliableFlightClasses, fic, indexOfFirst);
+				booking.setFromFlight(avaliableFlightClasses, fic, classId);
 				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightBooking) obj).CurrentFlight.flight.id); };
 
 				openedBookings.Add(fic.flight.id, booking);

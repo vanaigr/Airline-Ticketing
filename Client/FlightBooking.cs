@@ -36,11 +36,23 @@ namespace Client {
 		public void setFromFlight(
 			Dictionary<int, string> classesNames,
 			FlightAndCities flightAndCities,
-			int selectedClassIndex
+			int selectedClassId
 		) {
 			this.passangersCount = 0;
 
-			this.classesNames = classesNames;
+			//filter classes that are present in seats scheme
+			var classesSet = new HashSet<int>();
+			var seatE = flightAndCities.flight.seatsScheme.GetSeatsEnumerator();
+			while(seatE.MoveNext()) {
+				var seat = seatE.Current;
+				classesSet.Add(seat.classId);
+			}
+			this.classesNames = new Dictionary<int, string>();
+			foreach(var classId in classesSet) {
+				this.classesNames.Add(classId, classesNames[classId]);
+			}
+
+			//this.classesNames = classesNames;
 			this.flightAndCities = flightAndCities;
 
 			var flight = flightAndCities.flight;
@@ -53,9 +65,11 @@ namespace Client {
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
 			
-			classSelector.DataSource = new BindingSource{ DataSource = classesNames };
+			classSelector.SuspendLayout();
+			classSelector.DataSource = new BindingSource{ DataSource = this.classesNames };
 			classSelector.DisplayMember = "Value";
-			classSelector.SelectedIndex = selectedClassIndex;
+			setSelectedClass(selectedClassId);
+			classSelector.ResumeLayout(false);
 			classSelector.PerformLayout();
 
 			Misc.addDummyButton(classSelector.Parent);
@@ -63,8 +77,17 @@ namespace Client {
 			recalculateSeats();
 		}
 
+		public void setSelectedClass(int selectedClassId) {
+			var classE = classesNames.GetEnumerator();
+			var i = 0;
+			for(; classE.MoveNext() && classE.Current.Key != selectedClassId; i++);
+			classSelector.SelectedIndex = i;
+
+		}
+
 		private void classSelector_SelectedIndexChanged(object sender, EventArgs e) {
 			seatSelectTable.update(flightAndCities, ((KeyValuePair<int, string>) classSelector.SelectedValue).Key, recalculateSeats);
+			recalculateSeats();
 		}
 
 		private void FlightBooking_Load(object sender, EventArgs e) {
@@ -152,6 +175,7 @@ namespace Client {
 			selectedStatusLabel.Text = sb.ToString();
 
 			seatSelectTable.ResumeLayout(false);
+			seatSelectTable.PerformLayout();
 		}
 	}
 	class SeatNumericUpDown : NumericUpDown {
@@ -188,7 +212,7 @@ namespace Client {
 
 		private void setColors() {
 			 if(!Enabled) {
-				BackColor = Color.LightSteelBlue;
+				BackColor = Color.FromArgb(unchecked((int) 0xff98a3b8u));//Color.LightSteelBlue;
 				ForeColor = SystemColors.ControlText;
 			}
 			else if(!error) {
