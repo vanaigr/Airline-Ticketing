@@ -48,6 +48,9 @@
     <Compile Include="..\AirlineTicketingServer\Communication.cs">
       <Link>Communication.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\Documents.cs">
+      <Link>Documents.cs</Link>
+    </Compile>
     <Compile Include="..\AirlineTicketingServer\FlightsOptions.cs">
       <Link>FlightsOptions.cs</Link>
     </Compile>

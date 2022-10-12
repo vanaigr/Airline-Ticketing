@@ -48,8 +48,11 @@ namespace Communication {
 	}
 
 	[Serializable] public class Passanger {
-		public string fullName;
+		public string name;
+		public string surname;
+		public string middleName;
 		public DateTime birthday;
+		public Documents.Document document;
 	}
 
 	[ServiceContract]
@@ -68,5 +71,7 @@ namespace Communication {
 
 		[FaultContract(typeof(object))] [OperationContract] 
 		List<AvailableFlight> matchingFlights(MatchingFlightsParams p);	
+
+
 	}
 }
