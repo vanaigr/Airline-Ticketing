@@ -12,15 +12,16 @@ using Communication;
 namespace Client {
 	public partial class SelectFlight : Form {
 		private MessageService service;
+		private Customer customer;
 
-		string Login;
-		string Password;
-		bool loggedIn;
+		private bool loggedIn{ get => customer.login != null && customer.password != null; }
 
 		Dictionary<int, string> avaliableFlightClasses;
 		List<City> cities;
 		
 		public SelectFlight() {
+			customer = new Customer();
+
             InitializeComponent();
 
 			Misc.unfocusOnEscape(this);
@@ -94,7 +95,7 @@ namespace Client {
 				accountName.Name = "AccountName";
 				accountName.Padding = new Padding(8);
 				accountName.TabIndex = 0;
-				accountName.Text = Login;
+				accountName.Text = customer.login;
 
 				loginLayoutPanel.Controls.Add(accountName);
 			}
@@ -119,22 +120,15 @@ namespace Client {
 		}
 
 		void LoginButton_Click(object sender, EventArgs e) {
-			var form = new LoginRegisterForm(service);
+			var form = new LoginRegisterForm(service, customer);
 			var result = form.ShowDialog();
 			if(result == DialogResult.OK) {
-				Login = form.Login;
-				Password = form.Password;
-				loggedIn = true;
-
 				updateLoginInfo();
 			}
 		}
 
 		void UnloginButton_Click(object sender, EventArgs e) {
-			Login = null;
-			Password = null;
-			loggedIn = false;
-
+			customer.unlogin();
 			updateLoginInfo();
 		}
 
@@ -256,7 +250,7 @@ namespace Client {
 				booking.setSelectedClass(classId);
 			}
 			else {
-				booking = new FlightBooking(service);
+				booking = new FlightBooking(service, customer);
 				booking.setFromFlight(avaliableFlightClasses, fic, classId);
 				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightBooking) obj).CurrentFlight.flight.id); };
 
@@ -270,7 +264,7 @@ namespace Client {
 			(service as IDisposable)?.Dispose();
 			service = ServerQuery.Create();
 
-			loggedIn = false;
+			customer.unlogin();
 
 			setupAvailableOptions();
             updateLoginInfo();

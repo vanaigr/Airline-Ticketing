@@ -131,6 +131,9 @@
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PassangerAdd.resx">
+      <DependentUpon>PassangerAdd.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PassangerDisplay.resx">
       <DependentUpon>PassangerDisplay.cs</DependentUpon>
     </EmbeddedResource>

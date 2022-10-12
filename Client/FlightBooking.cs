@@ -7,6 +7,7 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class FlightBooking : Form {
 		private Communication.MessageService service;
+		private Communication.Customer customer;
 
 		private List<Communication.Passanger> passangers;
 
@@ -21,11 +22,13 @@ namespace Client {
 
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
-		public FlightBooking(Communication.MessageService service) {
+		public FlightBooking(Communication.MessageService service, Communication.Customer customer) {
+			this.service = service;
+			this.customer = customer;
+
 			InitializeComponent();
 
 			Misc.unfocusOnEscape(this);
-			this.service = service;
 			passangersPanel.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
 			this.seatSelectTable.BackColor2 = Color.LightGray;//Color.FromArgb(unchecked((int) 0xffbcc5d6));
@@ -101,7 +104,9 @@ namespace Client {
 			passangers.Add(null);
 			var display = new PassangerDisplay() { Number = passangers.Count, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
 			display.ContextMenuStrip = passangerMenu;
-			display.Click += (a, b) => new PassangerAdd().Show();
+			display.Click += (a, b) => new PassangerAdd(service, customer).Show();
+			display.ShowNumber = true;
+			display.ToolTip = passangerTooltip;
 
 			var passangersDisplayList = passangersPanel;
 

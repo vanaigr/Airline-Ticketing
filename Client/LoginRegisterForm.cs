@@ -12,15 +12,15 @@ using Communication;
 namespace Client {
 
 	public partial class LoginRegisterForm : Form {
-		public string Login { get; private set; }
-		public string Password { get; private set; }
-
+		Customer customer;
 		MessageService service;
 
-		public LoginRegisterForm(MessageService service) {
+		public LoginRegisterForm(MessageService service, Customer customer) {
+			this.service = service;
+			this.customer = customer;
+
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
-			this.service = service;
 		}
 
 		private void RegisterButton_Click(object sender, EventArgs e) {
@@ -28,7 +28,9 @@ namespace Client {
 			var password = PasswordText.Text;
 
 			try {
-				service.register(login, password);
+				var newCust = new Customer(login, password);
+				service.register(newCust);
+				customer.setFrom(newCust);
 
 				label1.ForeColor = SystemColors.ControlText;
 				label1.Text = "Аккаунт зарегистрирован";
@@ -46,15 +48,15 @@ namespace Client {
 		private void LoginButton_Click(object sender, EventArgs e) {
 			var login = LoginText.Text;
 			var password = PasswordText.Text;
-
+			
 			try {
-				service.logIn(login, password);
+				var newCust = new Customer(login, password);
+				service.logIn(newCust);
+				customer.setFrom(newCust);
 
 				label1.ForeColor = SystemColors.ControlText;
 				label1.Text = "";
-
-				Login = login;
-				Password = password;
+				
 				DialogResult = DialogResult.OK;
 				Close();
 			}

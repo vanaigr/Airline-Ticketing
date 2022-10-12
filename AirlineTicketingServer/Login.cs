@@ -10,12 +10,10 @@ namespace AirlineTicketingServer {
 		static readonly Random rand = new Random();
 		static readonly int saltLength = 10;
 
-		public static bool register(string login, string password) {
+		public static bool register(SqlConnectionView cv, string login, string password) {
+			using(cv) {
 			using(
-			var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-			
-			using(
-			var command = new SqlCommand("Customers.addCustomer", connection)) {
+			var command = new SqlCommand("Customers.addCustomer", cv.connection)) {
 
 			var salt = new byte[saltLength];
 			rand.NextBytes(salt);
@@ -24,22 +22,21 @@ namespace AirlineTicketingServer {
 				salt, Encoding.ASCII.GetBytes(password)
 			);
 
-			command.CommandType = System.Data.CommandType.StoredProcedure;
+			command.CommandType = CommandType.StoredProcedure;
 			command.Parameters.AddWithValue("@Login", Encoding.ASCII.GetBytes(login));
 			command.Parameters.AddWithValue("@Salt", salt);
 			command.Parameters.AddWithValue("@PasswordHash", passE);
 			command.Parameters.Add(new SqlParameter("@CustomerID", SqlDbType.Int));
 			command.Parameters["@CustomerID"].Direction = ParameterDirection.Output;
 
-			connection.Open();
+			cv.Open();
 			command.ExecuteNonQuery();
-			connection.Close();
+			command.Dispose();
+			cv.Dispose();
 
 			var idParam = command.Parameters["@CustomerID"].Value;
 			return idParam != DBNull.Value;
-
-			}
-			}
+			}}
 		}
 
 
@@ -52,10 +49,8 @@ namespace AirlineTicketingServer {
 			public int userID;
 		}
 
-		public static LoginResult login(string login, string password) {
-			using(
-			var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-			
+		public static LoginResult login(SqlConnectionView cv, string login, string password) {
+			using(cv) {
 			using(
 			var command = new SqlCommand(
 				@"SELECT TOP 1
@@ -64,18 +59,24 @@ namespace AirlineTicketingServer {
 				  [LoginInfo].[PasswordHash] AS PasswordHash
 				FROM [Customers].[LoginInfo] AS [LoginInfo]
 				WHERE [LoginInfo].[Login] = @Login", 
-				connection
+				cv.connection
 			)) {
 			command.CommandType = System.Data.CommandType.Text;
 			command.Parameters.AddWithValue("@Login", Encoding.ASCII.GetBytes(login));
 
-			connection.Open();
-			var result = command.ExecuteReader();
+			cv.Open();
+			using(
+			var result = command.ExecuteReader()) {
 
 			if(result.Read()) {
 				var passEInDB = (byte[]) result["PasswordHash"];
 				var salt = (byte[])result["Salt"];
+				var id = (int) result["ID"];
+				result.Close();
+				command.Dispose();
+				cv.Dispose();
 				Debug.Assert(salt.Length == saltLength);
+
 				var passE = PasswordHashing.computePasswordHash(
 					salt, Encoding.ASCII.GetBytes(password)
 				);
@@ -92,7 +93,7 @@ namespace AirlineTicketingServer {
 
 				if(passEqual) return new LoginResult {
 					status = LoginResultStatus.OK,
-					userID = (int) result["ID"]
+					userID = id
 				};
 				else return new LoginResult {
 					status = LoginResultStatus.WRONG_PASSWORD
@@ -101,14 +102,7 @@ namespace AirlineTicketingServer {
 			else return new LoginResult {
 				status = LoginResultStatus.USER_NOT_EXISTS
 			};
-			
-			}
-			}
-		}
-
-		public struct CheckResult {
-			public bool ok;
-			public string error;
+			}}}
 		}
 		
 		static readonly string forbiddenSymbols = "[^A-Za-z0-9!@#$%%^&*();:?\\-=_+\\.]";
@@ -132,11 +126,11 @@ namespace AirlineTicketingServer {
 
 			if(error) return new CheckResult{
 				ok = false,
-				error = result.ToString()
+				errorMsg = result.ToString()
 			};
 			else return new CheckResult{
 				ok = true,
-				error = ""
+				errorMsg = ""
 			};
 		}
 
@@ -161,11 +155,11 @@ namespace AirlineTicketingServer {
 
 			if(error) return new CheckResult {
 				ok = false,
-				error = result.ToString()
+				errorMsg = result.ToString()
 			};
 			else return new CheckResult {
 				ok = true,
-				error = ""
+				errorMsg = ""
 			};
 		}
 	}

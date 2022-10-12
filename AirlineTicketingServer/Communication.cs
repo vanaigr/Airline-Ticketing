@@ -7,6 +7,26 @@ using System.ServiceModel;
 using System.Text;
 
 namespace Communication {
+	
+	[Serializable] public class Customer {
+		public string login, password;
+
+		public Customer() { }
+
+		public Customer(string login, string password) {
+			this.login = login;
+			this.password = password;
+		}
+
+		internal void unlogin() {
+			login = null; password = null;
+		}
+
+		internal void setFrom(Customer o) {
+			login = o.login;
+			password = o.password;
+		}
+	}
 
 	[Serializable] public struct AvailableOptionsResponse {
 		public Dictionary<int, string> flightClasses;
@@ -58,11 +78,11 @@ namespace Communication {
 	[ServiceContract]
 	public interface MessageService {
 		[FaultContract(typeof(object))] [OperationContract] 
-		void register(string login, string password);
+		void register(Customer customer);
 
 
 		[FaultContract(typeof(object))] [OperationContract] 
-		void logIn(string login, string password);		
+		void logIn(Customer customer);		
 		
 
 		[FaultContract(typeof(object))] [OperationContract] 
@@ -72,6 +92,13 @@ namespace Communication {
 		[FaultContract(typeof(object))] [OperationContract] 
 		List<AvailableFlight> matchingFlights(MatchingFlightsParams p);	
 
+		[FaultContract(typeof(object))] [OperationContract] 
+		Dictionary<int, Passanger> getPassangers(Customer customer);
 
+		[FaultContract(typeof(object))] [OperationContract] 
+		int addPassanger(Customer customer, Passanger passanger);
+
+		[FaultContract(typeof(object))] [OperationContract] 
+		int replacePassanger(Customer customer, int index, Passanger passanger);
 	}
 }

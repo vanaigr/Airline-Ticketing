@@ -45,6 +45,7 @@ namespace Client {
 			this.seatHint = new System.Windows.Forms.ToolTip(this.components);
 			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.passangerTooltip = new System.Windows.Forms.ToolTip(this.components);
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			label2 = new System.Windows.Forms.Label();
 			tableLayoutPanel1.SuspendLayout();
@@ -370,5 +371,6 @@ namespace Client {
 		private System.Windows.Forms.ContextMenuStrip passangerMenu;
 		private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
 		private System.Windows.Forms.Panel flowLayoutPanelHeightBug;
+		private System.Windows.Forms.ToolTip passangerTooltip;
 	}
 }

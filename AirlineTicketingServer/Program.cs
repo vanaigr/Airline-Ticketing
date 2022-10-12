@@ -121,15 +121,15 @@ namespace AirlineTicketingServer {
 				}				
 			}
 
-			string testLoginPasswordValid(string login, string password) {
-				if(login == null) login = "";
-				if(password == null) password = "";
-				var invalidLogin = LoginRegister.checkLogin(login);
-				var invalidPassword = LoginRegister.checkPassword(password);
+			string testLoginPasswordValid(Customer c) {
+				if(c.login == null) c.login = "";
+				if(c.password == null) c.password = "";
+				var invalidLogin = LoginRegister.checkLogin(c.login);
+				var invalidPassword = LoginRegister.checkPassword(c.password);
 
 				if(!invalidLogin.ok || !invalidPassword.ok) {
-					var loginError = invalidLogin.error;
-					var passError = invalidPassword.error;
+					var loginError = invalidLogin.errorMsg;
+					var passError = invalidPassword.errorMsg;
 					return loginError + "\n" + passError;
 				}
 				else return null;
@@ -178,30 +178,69 @@ namespace AirlineTicketingServer {
 				return list;
 			}
 
-			public void register(string login, string password) {
-				var error = testLoginPasswordValid(login, password);
+			public void register(Customer c) {
+				var error = testLoginPasswordValid(c);
 				if(error != null) throw new FaultException<object>(null, error);
 
-				var registered = LoginRegister.register(login, password);
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var registered = LoginRegister.register(new SqlConnectionView(connection, true), c.login, c.password);
+				connection.Dispose();
 
 				if(!registered) throw new FaultException<object>(
 					null, 
 					"Аккаунт с таким именем пользователя уже существует"
 				);
+				}
 			}
 
-			public void logIn(string login, string password) {
-				var error = testLoginPasswordValid(login, password);
-				if(error != null) throw new FaultException<object>(null, error);
+			public void logIn(Customer c) {
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				getUserId(new SqlConnectionView(connection, true), c);
+				}
+			}
 
-				var loggedIn = LoginRegister.login(login, password);
+			private int getUserId(SqlConnectionView cv, Customer c) {
+				using(cv) {
+				var error = testLoginPasswordValid(c);
+				if(error != null) throw new FaultException<object>(null, error);
+				
+				var loggedIn = LoginRegister.login(cv, c.login, c.password);
+				cv.Dispose();
 
 				if(loggedIn.status == LoginRegister.LoginResultStatus.USER_NOT_EXISTS) 
 					 throw new FaultException<object>(null, "Пользователь с данным логином не найден");
 				else if(loggedIn.status == LoginRegister.LoginResultStatus.WRONG_PASSWORD) 
 					throw new FaultException<object>(null, "Неправильный пароль");
 
-				//var userId = loggedIn.userID;
+				return loggedIn.userID;
+				}
+			}
+
+			int MessageService.addPassanger(Customer c, Passanger passanger) {
+				var it = ValidatePassanger.validate(passanger);
+				if(it.error) throw new FaultException<object>(null, it.errorMsg);
+
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var userId = getUserId(new SqlConnectionView(connection, false), c);
+				return DatabasePassanger.add(new SqlConnectionView(connection, true), userId, passanger);
+				}
+			}
+
+			int MessageService.replacePassanger(Customer c, int index, Passanger passanger) {
+				var it = ValidatePassanger.validate(passanger);
+				if(it.error) throw new FaultException<object>(null, it.errorMsg);
+
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var userId = getUserId(new SqlConnectionView(connection, false), c);
+				return DatabasePassanger.replace(new SqlConnectionView(connection, true), userId, index, passanger);
+				}
+			}
+
+			public Dictionary<int, Passanger> getPassangers(Customer c) {
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var userId = getUserId(new SqlConnectionView(connection, false), c);
+				return DatabasePassanger.getAll(new SqlConnectionView(connection, true), userId);
+				}
 			}
 		}
 
@@ -238,7 +277,7 @@ namespace AirlineTicketingServer {
 		        catch (Exception e) {
 					watch.Stop();
 					Console.WriteLine(
-						"Error while responding ({0} ms) to `{1}`: {2}",
+						"\nError while responding ({0} ms) to `{1}`: {2}\n",
 						watch?.Elapsed.TotalMilliseconds,
 						(msg as IMethodCallMessage)?.MethodName,
 						e.ToString()
