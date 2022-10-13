@@ -453,8 +453,13 @@ namespace Client {
 
 			//columns
 			for(int z = 0; z < ColumnCount; z++) {
-				this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+				this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 			}
+			//https://stackoverflow.com/q/36169745/18704284
+			//hack around the fact that last column tekes more space than others
+			this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0));
+			this.ColumnCount++;
+
 			//rows
 			for(int x = 0; x < RowCount; x++) {
 				this.RowStyles.Add(new RowStyle(SizeType.AutoSize));
