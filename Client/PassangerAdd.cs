@@ -44,34 +44,59 @@ namespace Client {
 
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
-
-			try{
-			updatePassangersDisplay();} catch(Exception){ }
-
-			
 		}
 
 		private void updatePassangersDisplay() {
 			passangers.Clear();
 			noPassangerSelection();
-
-			passangersDisplay.SuspendLayout();
-			passangersDisplay.Controls.Clear();
-			passangersDisplay.RowStyles.Clear();
-
-			var passangersOnly = service.getPassangers(customer);
 			
-			passangersDisplay.RowCount = passangers.Count;
+			var triedLoggingIn = false;
+			do{
+				var response = service.getPassangers(customer);
 
-			foreach(var passanger in passangersOnly) {
-				var display = addPassangerDisplay(passanger.Value, passanger.Key);
-				passangers.Add(passanger.Key, new PassangerAndDisplay {
-						passanger = passanger.Value, display = display
-				});
+				if(response) {
+					var passangersOnly = response.s;
+
+					passangersDisplay.SuspendLayout();
+					passangersDisplay.Controls.Clear();
+					passangersDisplay.RowStyles.Clear();
+
+					passangersDisplay.RowCount = passangers.Count;
+
+					foreach(var passanger in passangersOnly) {
+						var display = addPassangerDisplay(passanger.Value, passanger.Key);
+						passangers.Add(passanger.Key, new PassangerAndDisplay {
+							passanger = passanger.Value, display = display
+						});
+					}
+
+					passangersDisplay.ResumeLayout(false);
+					passangersDisplay.PerformLayout();
+
+					break;
+				}
+				else if(triedLoggingIn) break;
+				else {
+					promptFillCustomer(response.f.message);
+					triedLoggingIn = true;
+				}
+			} while(true);
+		}
+
+		private void promptFillCustomer(string msg) {
+			var text = "Данные о пользователе должны быть заполнены корректно";
+			statusLabel.Text = text;
+			statusTooltip.SetToolTip(statusLabel, text);
+
+			var lrf = new LoginRegisterForm(service, customer);
+			lrf.setError(msg);
+
+			lrf.ShowDialog();
+
+			if(lrf.DialogResult == DialogResult.OK) {
+				statusLabel.Text = null;
+				statusTooltip.SetToolTip(statusLabel, null);
 			}
-
-			passangersDisplay.ResumeLayout(false);
-			passangersDisplay.PerformLayout();
 		}
 
 		private void addButton_Click(object sender, EventArgs e) {
@@ -94,7 +119,7 @@ namespace Client {
 
 			deleteButton.Enabled = true;
 			selectedPassanger = pd;
-			selectedPassanger.BackColor = Color.CornflowerBlue;
+			selectedPassanger.BackColor = Color.LightGray;
 
             var p = selectedPassanger.Passanger;
             nameText.Text = p.name;
@@ -102,6 +127,9 @@ namespace Client {
             middleNameText.Text = p.middleName;
             birthdayDatetime.Value = p.birthday;
             //TODO: fill document
+
+			saveButton.Text = "Сохранить";
+			saveAndCloseButton.Text = "Сохранить и выйти";
 		}
 
 		private void noPassangerSelection() {
@@ -109,6 +137,9 @@ namespace Client {
 			if(selectedPassanger != null) selectedPassanger.BackColor = Color.White;
 			selectedPassanger = null;
 			lastPassanger = new Communication.Passanger();
+
+			saveButton.Text = "Добавить";
+			saveAndCloseButton.Text = "Добавить и выйти";
 		}
 
 		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, int index) {
@@ -120,6 +151,7 @@ namespace Client {
 			};
 			it.Click += (a, b) => passangerSelected((PassangerDisplay) a);
 
+			passangersDisplay.RowCount++;
 			passangersDisplay.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			passangersDisplay.Controls.Add(it);
 
@@ -142,29 +174,60 @@ namespace Client {
 
 			try {
 				if(selectedPassanger == null) { 
-					var index = service.addPassanger(customer, passanger);
-					var display = addPassangerDisplay(passanger, index);
-					passangers.Add(index, new PassangerAndDisplay {
-						passanger = passanger,
-						display = display
-					});
-					passangerSelected(display);
+					var response = service.addPassanger(customer, passanger);
+					if(response) { 
+						var index = response.s;
+						var display = addPassangerDisplay(passanger, index);
+						passangers.Add(index, new PassangerAndDisplay {
+							passanger = passanger,
+							display = display
+						});
+						passangerSelected(display);
+
+						statusLabel.Text = "";
+						statusTooltip.SetToolTip(statusLabel, null);
+					}
+					else if(response.f.isLoginError) {
+						promptFillCustomer(response.f.LoginError.message);
+					}
+					else {
+						var msg = response.f.InputError.message;
+						statusLabel.Text = msg;
+						statusTooltip.SetToolTip(statusLabel, msg);
+					}
 				}
 				else if(lastPassanger != passanger) {
-					var index = service.replacePassanger(customer, selectedPassanger.Number, passanger);
-					passangers[index].passanger = passanger;
-					passangerSelected(selectedPassanger);
+					var response = service.replacePassanger(customer, selectedPassanger.Number, passanger);
+					if(response) { 
+						var index = response.s;
+						passangers[index].passanger = passanger;
+						passangerSelected(selectedPassanger);
+
+						statusLabel.Text = "";
+						statusTooltip.SetToolTip(statusLabel, null);
+					}
+					else if(response.f.isLoginError) {
+						promptFillCustomer(response.f.LoginError.message);
+					}
+					else {
+						var msg = response.f.InputError.message;
+						statusLabel.Text = msg;
+						statusTooltip.SetToolTip(statusLabel, msg);
+					}
 				}
-				
-				statusLabel.Text = "";
-				statusTooltip.SetToolTip(statusLabel, null);
-			} catch(FaultException<object> e) {
-				statusLabel.Text = e.Message;
-				statusTooltip.SetToolTip(statusLabel, e.ToString());
-			} catch(Exception e) {
+			}
+			catch(Exception e) {
 				statusLabel.Text = "Неизвестная ошибка";
 				statusTooltip.SetToolTip(statusLabel, e.ToString());
 			}
+		}
+
+		private void PassangerAdd_Load(object sender, EventArgs e) {
+			updatePassangersDisplay();
+		}
+
+		private void PassangerAdd_Shown(object sender, EventArgs e) {
+
 		}
 	}
 }

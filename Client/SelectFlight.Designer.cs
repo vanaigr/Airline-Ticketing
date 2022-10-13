@@ -116,6 +116,7 @@ namespace Client {
 			// 
 			this.statusLabel.AutoSize = true;
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Left;
+			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
 			this.statusLabel.Location = new System.Drawing.Point(34, 10);
 			this.statusLabel.Name = "statusLabel";
 			this.statusLabel.Size = new System.Drawing.Size(0, 31);

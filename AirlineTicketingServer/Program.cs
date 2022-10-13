@@ -10,12 +10,13 @@ using System.Runtime.Remoting.Messaging;
 using System.Reflection;
 using System.Linq;
 using FlightsOptions;
+using System.Text;
 
 namespace AirlineTicketingServer {
 	
 	class Program {
 		
-		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = false)]
 		class MainMessageService : MessageService {
 			private readonly Dictionary<int, string> flightClasses;
 			private readonly List<City> cities;
@@ -122,7 +123,7 @@ namespace AirlineTicketingServer {
 				}				
 			}
 
-			string testLoginPasswordValid(Customer c) {
+			Either<object, LoginError> testLoginPasswordValid(Customer c) {
 				if(c.login == null) c.login = "";
 				if(c.password == null) c.password = "";
 				var invalidLogin = LoginRegister.checkLogin(c.login);
@@ -131,9 +132,9 @@ namespace AirlineTicketingServer {
 				if(!invalidLogin.ok || !invalidPassword.ok) {
 					var loginError = invalidLogin.errorMsg;
 					var passError = invalidPassword.errorMsg;
-					return loginError + "\n" + passError;
+					return Either<object, LoginError>.Failure(new LoginError(loginError + "\n" + passError));
 				}
-				else return null;
+				else return Either<object, LoginError>.Success(null);
 			}
 
 			public AvailableOptionsResponse availableOptions() {
@@ -143,10 +144,12 @@ namespace AirlineTicketingServer {
 				};
 			}
 
-			public List<AvailableFlight> matchingFlights(MatchingFlightsParams p) {
-				if(p.fromCode == null) throw new FaultException<object>(null, "Город вылета должен быть заполнен");
-				if(p.toCode == null) throw new FaultException<object>(null, "Город прилёта должен быть заполнен");
-				if(p.when == null) throw new FaultException<object>(null, "Дата вылета должа быть заполнена");
+			public Either<List<AvailableFlight>, InputError> matchingFlights(MatchingFlightsParams p) {
+				var err = ErrorString.Create();
+				if(p.fromCode == null) err.ac("город вылета должен быть заполнен");
+				if(p.toCode == null) err.ac("город прилёта должен быть заполнен");
+				if(p.when == null) err.ac("дата вылета должа быть заполнена");
+				if(err) return Either<List<AvailableFlight>, InputError>.Failure(new InputError(err.Message));
 				
 				var list = new List<AvailableFlight>();
 				using(
@@ -175,71 +178,82 @@ namespace AirlineTicketingServer {
 					seatsScheme = BinarySeats.fromBytes((byte[]) result[6])
 				});
 				}}}
-				return list;
+				return Either<List<AvailableFlight>, InputError>.Success(list);
 			}
 
-			public void register(Customer c) {
-				var error = testLoginPasswordValid(c);
-				if(error != null) throw new FaultException<object>(null, error);
+			public Either<object, LoginError> register(Customer c) {
+				var result = testLoginPasswordValid(c);
+				if(!result.IsSuccess) return result;
 
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var registered = LoginRegister.register(new SqlConnectionView(connection, true), c.login, c.password);
 				connection.Dispose();
 
-				if(!registered) throw new FaultException<object>(
-					null, 
-					"Аккаунт с таким именем пользователя уже существует"
+				if(registered) return Either<object, LoginError>.Success(null);
+				else return Either<object, LoginError>.Failure(
+					new LoginError("Аккаунт с таким именем пользователя уже существует")
 				);
 				}
 			}
 
-			public void logIn(Customer c) {
+			public Either<object, LoginError> logIn(Customer c) {
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-				getUserId(new SqlConnectionView(connection, true), c);
+				var res = getUserId(new SqlConnectionView(connection, true), c);
+				if(res.IsSuccess) return Either<object, LoginError>.Success(null);
+				else return Either<object, LoginError>.Failure(res.f);
 				}
 			}
 
-			private int getUserId(SqlConnectionView cv, Customer c) {
+			private Either<int, LoginError> getUserId(SqlConnectionView cv, Customer c) {
 				using(cv) {
 				var error = testLoginPasswordValid(c);
-				if(error != null) throw new FaultException<object>(null, error);
+				if(!error.IsSuccess) return Either<int, LoginError>.Failure(error.Failure());
 				
 				var loggedIn = LoginRegister.login(cv, c.login, c.password);
 				cv.Dispose();
 
 				if(loggedIn.status == LoginRegister.LoginResultStatus.USER_NOT_EXISTS) 
-					 throw new FaultException<object>(null, "Пользователь с данным логином не найден");
+					 return Either<int, LoginError>.Failure(new LoginError("Пользователь с данным логином не найден"));
 				else if(loggedIn.status == LoginRegister.LoginResultStatus.WRONG_PASSWORD) 
-					throw new FaultException<object>(null, "Неправильный пароль");
+					return Either<int, LoginError>.Failure(new LoginError("Неправильный пароль"));
 
-				return loggedIn.userID;
+				return Either<int, LoginError>.Success(loggedIn.userID);
 				}
 			}
 
-			int MessageService.addPassanger(Customer c, Passanger passanger) {
+			Either<int, PassangerError> MessageService.addPassanger(Customer c, Passanger passanger) {
 				var it = ValidatePassanger.validate(passanger);
-				if(it.error) throw new FaultException<object>(null, it.errorMsg);
+				if(it.error) return Either<int, PassangerError>.Failure(new PassangerError{ InputError = new InputError(it.errorMsg) });
 
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-				var userId = getUserId(new SqlConnectionView(connection, false), c);
-				return DatabasePassanger.add(new SqlConnectionView(connection, true), userId, passanger);
+				var userIdRes = getUserId(new SqlConnectionView(connection, false), c);
+				if(!userIdRes.IsSuccess) return Either<int, PassangerError>.Failure(new PassangerError{ LoginError = userIdRes.Failure() });
+				return Either<int, PassangerError>.Success(
+					DatabasePassanger.add(new SqlConnectionView(connection, true), userIdRes.Success(), passanger)
+				);
 				}
 			}
 
-			int MessageService.replacePassanger(Customer c, int index, Passanger passanger) {
+			Either<int, PassangerError> MessageService.replacePassanger(Customer c, int index, Passanger passanger) {
 				var it = ValidatePassanger.validate(passanger);
-				if(it.error) throw new FaultException<object>(null, it.errorMsg);
+				if(it.error) return Either<int, PassangerError>.Failure(new PassangerError{ InputError = new InputError(it.errorMsg) });
 
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-				var userId = getUserId(new SqlConnectionView(connection, false), c);
-				return DatabasePassanger.replace(new SqlConnectionView(connection, true), userId, index, passanger);
+				var userIdRes = getUserId(new SqlConnectionView(connection, false), c);
+				if(!userIdRes.IsSuccess) return Either<int, PassangerError>.Failure(new PassangerError{ LoginError = userIdRes.Failure() });
+				return Either<int, PassangerError>.Success(
+					DatabasePassanger.replace(new SqlConnectionView(connection, true), userIdRes.Success(), index, passanger)
+				);
 				}
 			}
 
-			public Dictionary<int, Passanger> getPassangers(Customer c) {
+			Either<Dictionary<int, Passanger>, LoginError> MessageService.getPassangers(Customer c) {
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-				var userId = getUserId(new SqlConnectionView(connection, false), c);
-				return DatabasePassanger.getAll(new SqlConnectionView(connection, true), userId);
+				var userIdRes = getUserId(new SqlConnectionView(connection, false), c);
+				if(!userIdRes.IsSuccess) return Either<Dictionary<int, Passanger>, LoginError>.Failure(userIdRes.Failure());
+				return Either<Dictionary<int, Passanger>, LoginError>.Success(
+					DatabasePassanger.getAll(new SqlConnectionView(connection, true), userIdRes.Success())
+				);
 				}
 			}
 		}
@@ -266,12 +280,23 @@ namespace AirlineTicketingServer {
 					watch.Start();
 		            var result = method.Invoke(instance, methodCall.InArgs);
 					watch.Stop();
-					Console.WriteLine(
-						"Responding ({0}ms) to `{1}` with `{2}`",
-						watch.Elapsed.TotalMilliseconds,
-						methodCall.MethodName,
-						result
+
+					var sb = new StringBuilder();
+
+					sb.AppendFormat(
+						"Responding ({0}ms) to `{1}` with `{2}` = {{ ",
+						watch.Elapsed.TotalMilliseconds, methodCall.MethodName, result.GetType()
 					);
+
+					var first = true;
+					foreach(var field in result.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)) {
+						if(!first) sb.Append(", ");
+						sb.Append(field.GetValue(result)?.GetType().ToString() ?? "null");
+						first = false;
+					}
+					sb.Append(" }");
+
+					Console.WriteLine("{0}", sb.ToString());
 		            return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);
 		        }
 		        catch (Exception e) {
@@ -284,10 +309,7 @@ namespace AirlineTicketingServer {
 					);
 
 		            if (e is TargetInvocationException && e.InnerException != null) {
-						if(e.InnerException is FaultException<object>) {
-							return new ReturnMessage(e.InnerException, msg as IMethodCallMessage);
-						}
-		                else return new ReturnMessage(new FaultException<object>(null, "Неизвестная ошибка"), msg as IMethodCallMessage);
+						return new ReturnMessage(e.InnerException, msg as IMethodCallMessage);
 					} 
 					else throw e;
 		        }

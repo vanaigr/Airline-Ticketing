@@ -42,7 +42,6 @@ namespace Client {
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.passangersDisplay = new System.Windows.Forms.TableLayoutPanel();
 			this.deleteButton = new System.Windows.Forms.Button();
-			this.addButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
 			this.saveAndCloseButton = new System.Windows.Forms.Button();
@@ -50,6 +49,7 @@ namespace Client {
 			this.statusLabel = new System.Windows.Forms.Label();
 			this.passangerTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.addButton = new System.Windows.Forms.Button();
 			label1 = new System.Windows.Forms.Label();
 			label2 = new System.Windows.Forms.Label();
 			label3 = new System.Windows.Forms.Label();
@@ -307,24 +307,6 @@ namespace Client {
 			this.deleteButton.UseVisualStyleBackColor = false;
 			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
 			// 
-			// addButton
-			// 
-			this.addButton.BackColor = System.Drawing.Color.RoyalBlue;
-			this.addButton.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.addButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-			this.addButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
-			this.addButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.addButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.addButton.Location = new System.Drawing.Point(108, 424);
-			this.addButton.Margin = new System.Windows.Forms.Padding(1, 0, 0, 0);
-			this.addButton.Name = "addButton";
-			this.addButton.Size = new System.Drawing.Size(104, 23);
-			this.addButton.TabIndex = 3;
-			this.addButton.Text = "Добавить";
-			this.addButton.UseVisualStyleBackColor = false;
-			this.addButton.Click += new System.EventHandler(this.addButton_Click);
-			// 
 			// tableLayoutPanel2
 			// 
 			this.tableLayoutPanel2.ColumnCount = 1;
@@ -415,6 +397,24 @@ namespace Client {
 			this.statusTooltip.InitialDelay = 500;
 			this.statusTooltip.ReshowDelay = 100;
 			// 
+			// addButton
+			// 
+			this.addButton.BackColor = System.Drawing.Color.RoyalBlue;
+			this.addButton.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.addButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+			this.addButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
+			this.addButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.addButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.addButton.Location = new System.Drawing.Point(108, 424);
+			this.addButton.Margin = new System.Windows.Forms.Padding(1, 0, 0, 0);
+			this.addButton.Name = "addButton";
+			this.addButton.Size = new System.Drawing.Size(104, 23);
+			this.addButton.TabIndex = 3;
+			this.addButton.Text = "Создать";
+			this.addButton.UseVisualStyleBackColor = false;
+			this.addButton.Click += new System.EventHandler(this.addButton_Click);
+			// 
 			// PassangerAdd
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -423,6 +423,8 @@ namespace Client {
 			this.Controls.Add(this.splitContainer1);
 			this.Name = "PassangerAdd";
 			this.Text = "PassangerAdd";
+			this.Load += new System.EventHandler(this.PassangerAdd_Load);
+			this.Shown += new System.EventHandler(this.PassangerAdd_Shown);
 			tableLayoutPanel3.ResumeLayout(false);
 			tableLayoutPanel3.PerformLayout();
 			tableLayoutPanel4.ResumeLayout(false);
@@ -449,7 +451,6 @@ namespace Client {
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.TableLayoutPanel passangersDisplay;
 		private System.Windows.Forms.Button deleteButton;
-		private System.Windows.Forms.Button addButton;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.ToolTip passangerTooltip;
 		private System.Windows.Forms.TextBox nameText;
@@ -463,5 +464,6 @@ namespace Client {
 		private System.Windows.Forms.Button saveButton;
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.ToolTip statusTooltip;
+		private System.Windows.Forms.Button addButton;
 	}
 }

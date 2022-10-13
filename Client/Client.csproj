@@ -70,6 +70,9 @@
     <Compile Include="..\AirlineTicketingServer\SeatsScheme.cs">
       <Link>SeatsScheme.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\Validation.cs">
+      <Link>Validation.cs</Link>
+    </Compile>
     <Compile Include="FlightBooking.cs">
       <SubType>Form</SubType>
     </Compile>

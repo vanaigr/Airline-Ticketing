@@ -13,7 +13,42 @@ namespace AirlineTicketingServer {
 		public static CheckResult Ok() { return new CheckResult{ ok = true }; }
 	}
 
-	public static class StringBuildexExt {
+	public struct ErrorString {
+		private bool error;
+		private StringBuilder sb;
+
+		public string Message{ get{ return sb.ToString(); } }
+
+		public delegate void Appender(StringBuilder it);
+
+		public static ErrorString Create() {
+			return new ErrorString{
+				error = false, sb = new StringBuilder()
+			};
+		}
+
+		public void ac(String msg) {
+			error = true;
+			sb.AC(msg);
+		}
+
+		public void append(Appender a) {
+			error = true;
+			a(sb);
+		}
+
+		public bool Error{ get{ return error; } }
+
+		public static bool operator true(ErrorString it) {
+			return it.Error;
+		}
+
+		public static bool operator false(ErrorString it) {
+			return !it.Error;
+		}
+	}
+
+	public static class StringBuilderExt {
 		//append capitalized if first or else add comma
 		public static StringBuilder AC(this StringBuilder sb, string param) {
 			if(sb.Length == 0) sb.Append(char.ToUpper(param[0]));

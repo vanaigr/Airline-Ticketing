@@ -188,7 +188,7 @@ namespace AirlineTicketingServer {
 				param.SqlDbType = SqlDbType.Structured;  
 				param.TypeName = "[Flights].[AvailableFlightInsert]";  
 
-				command.ExecuteNonQuery();
+				command.ExecuteNonQuery(); //note: exception might be thrown
 				command.Dispose();
 				connectionView.Dispose();
 			}

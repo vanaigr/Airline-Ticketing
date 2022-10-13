@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -87,31 +88,77 @@ namespace Communication {
 			return !(f == s);
 		}
 	}
+	
+	[Serializable] public class Either<TS, TF> {
+		private bool isFirst;
+		private TS first;
+		private TF second;
+
+		public static Either<TS, TF> Success(TS value) {
+			return new Either<TS, TF>{ isFirst = true, first = value };
+		}
+
+		public static Either<TS, TF> Failure(TF value) {
+			return new Either<TS, TF>{ isFirst = false, second = value };
+		}
+
+		public bool IsSuccess { get{ return isFirst; } }
+
+		public TS s{ get{ return Success(); } }
+		public TF f{ get{ return Failure(); } }
+
+		public TS Success() {
+			Debug.Assert(isFirst);
+			return first;
+		}
+
+		public TF Failure() {
+			Debug.Assert(!isFirst);
+			return second;
+		}
+
+		public static bool operator true(Either<TS, TF> it) { return it.IsSuccess; }
+		public static bool operator false(Either<TS, TF> it) { return !it.IsSuccess; }
+	}
+
+	[Serializable] public struct LoginError { 
+		public string message; 
+
+		public LoginError(string message) { this.message = message; }
+	}
+
+	[Serializable] public struct InputError { 
+		public string message; 
+
+		public InputError(string message) { this.message = message; }
+	}
+
+	[Serializable] public struct PassangerError { 
+		int error;
+		LoginError loginError;
+		InputError inputError;
+
+		public LoginError LoginError{ get{ Debug.Assert(error == 0); return loginError; } set{ error = 0; loginError = value; } }
+		public InputError InputError{ get{ Debug.Assert(error == 1); return inputError; } set{ error = 1; inputError = value; } }
+
+		public bool isLoginError{ get{ return error == 0; } }
+		public bool isInputError{ get{ return error == 1; } }
+	}
 
 	[ServiceContract]
 	public interface MessageService {
-		[FaultContract(typeof(object))] [OperationContract] 
-		void register(Customer customer);
+		[OperationContract] Either<object, LoginError> register(Customer customer);
 
-
-		[FaultContract(typeof(object))] [OperationContract] 
-		void logIn(Customer customer);		
+		[OperationContract] Either<object, LoginError> logIn(Customer customer);	
 		
+		[OperationContract] AvailableOptionsResponse availableOptions();	
 
-		[FaultContract(typeof(object))] [OperationContract] 
-		AvailableOptionsResponse availableOptions();	
+		[OperationContract] Either<List<AvailableFlight>, InputError> matchingFlights(MatchingFlightsParams p);	
 
+		[OperationContract] Either<Dictionary<int, Passanger>, LoginError> getPassangers(Customer customer);
 
-		[FaultContract(typeof(object))] [OperationContract] 
-		List<AvailableFlight> matchingFlights(MatchingFlightsParams p);	
+		[OperationContract] Either<int, PassangerError> addPassanger(Customer customer, Passanger passanger);
 
-		[FaultContract(typeof(object))] [OperationContract] 
-		Dictionary<int, Passanger> getPassangers(Customer customer);
-
-		[FaultContract(typeof(object))] [OperationContract] 
-		int addPassanger(Customer customer, Passanger passanger);
-
-		[FaultContract(typeof(object))] [OperationContract] 
-		int replacePassanger(Customer customer, int index, Passanger passanger);
+		[OperationContract] Either<int, PassangerError> replacePassanger(Customer customer, int index, Passanger passanger);
 	}
 }

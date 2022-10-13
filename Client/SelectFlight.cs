@@ -43,21 +43,19 @@ namespace Client {
 				var options = service.availableOptions();
 				avaliableFlightClasses = options.flightClasses;
 				cities = options.cities;
-				updateErrorDisplay(false, null);
+				updateErrorDisplay(false, null, null);
 			}
 			catch(Exception e) {
-				updateErrorDisplay(true, e.ToString());
+				updateErrorDisplay(true, null, e);
 			}
 		}
 
-		void updateErrorDisplay(bool isError, string message) {
+		void updateErrorDisplay(bool isError, string message, Exception e) {
 			if(isError) { 
-				statusLabel.ForeColor = Color.Firebrick;
-				statusLabel.Text = "Ошибка";
-				this.elementHint.SetToolTip(this.statusLabel, message);
+				statusLabel.Text = message ?? "Неизвестная ошибка";
+				this.elementHint.SetToolTip(this.statusLabel, "" + e);
 			}
 			else {
-				statusLabel.ForeColor = SystemColors.ControlText;
 				statusLabel.Text = "";
 				this.elementHint.SetToolTip(this.statusLabel, null);
 			}
@@ -137,48 +135,52 @@ namespace Client {
 				var fromCode = (fromLoc.SelectedItem as City?)?.code;
 				var toCode = (toLoc.SelectedItem as City?)?.code;
 				
-				var result = service.matchingFlights(new MatchingFlightsParams{
+				var response = service.matchingFlights(new MatchingFlightsParams{
 					fromCode = fromCode, toCode = toCode,
 					when = fromDepDate.Value
 				});
 
-				flightsTable.SuspendLayout();
+				if(response) {
+					var result = response.s;
 
-				flightsTable.Controls.Clear();
-				flightsTable.RowStyles.Clear();
+					flightsTable.SuspendLayout();
 
-				if(result.Count == 0) {
-					var noResultsLabel = new Label();
-					noResultsLabel.Font = new Font(noResultsLabel.Font.FontFamily, 12);
-					noResultsLabel.Text = "Результаты не найдены";
-					noResultsLabel.TextAlign = ContentAlignment.TopCenter;
+					flightsTable.Controls.Clear();
+					flightsTable.RowStyles.Clear();
 
-					noResultsLabel.Dock = DockStyle.Top;
-					flightsTable.RowStyles.Add(new RowStyle());
-					flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
+					if(result.Count == 0) {
+						var noResultsLabel = new Label();
+						noResultsLabel.Font = new Font(noResultsLabel.Font.FontFamily, 12);
+						noResultsLabel.Text = "Результаты не найдены";
+						noResultsLabel.TextAlign = ContentAlignment.TopCenter;
+
+						noResultsLabel.Dock = DockStyle.Top;
+						flightsTable.RowStyles.Add(new RowStyle());
+						flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
+					}
+					else foreach(var flight in result) {
+						var flightDisplay = new FlightDisplay();
+						var flightAndCities = new FlightAndCities{
+							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
+						};
+						flightDisplay.updateFromFlight(avaliableFlightClasses, flightAndCities);
+						flightDisplay.Dock = DockStyle.Top;
+						flightDisplay.Click += new EventHandler(openFlightBooking);
+						flightsTable.RowStyles.Add(new RowStyle());
+						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
+					}
+
+					flightsTable.ResumeLayout(false);
+					flightsTable.PerformLayout();
+
+					updateErrorDisplay(false, null, null);
 				}
-				else foreach(var flight in result) {
-					var flightDisplay = new FlightDisplay();
-					var flightAndCities = new FlightAndCities{
-						flight = flight, fromCityCode = fromCode, toCityCode = toCode,
-					};
-					flightDisplay.updateFromFlight(avaliableFlightClasses, flightAndCities);
-					flightDisplay.Dock = DockStyle.Top;
-					flightDisplay.Click += new EventHandler(openFlightBooking);
-					flightsTable.RowStyles.Add(new RowStyle());
-					flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
+				else {
+					updateErrorDisplay(true, response.f.message, null);
 				}
-
-				flightsTable.ResumeLayout(false);
-				flightsTable.PerformLayout();
-
-				updateErrorDisplay(false, null);
 			}
-			catch(FaultException<object> ex) {
-				updateErrorDisplay(true, ex.Message);
-			}
-			catch(Exception ex) {
-				updateErrorDisplay(true, "Неизвестная ошибка");
+			catch(FaultException<ExceptionDetail> ex) {
+				updateErrorDisplay(true, null, ex);
 			}
 		}
 
@@ -262,7 +264,7 @@ namespace Client {
 		}
 
 		void reconnect() {
-			updateErrorDisplay(false, null);
+			updateErrorDisplay(false, null, null);
 			(service as IDisposable)?.Dispose();
 			service = ServerQuery.Create();
 

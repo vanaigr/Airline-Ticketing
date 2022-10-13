@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.ServiceModel;
@@ -21,6 +22,15 @@ namespace Client {
 
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
+			
+			LoginText.Text = customer.login;
+			PasswordText.Text = customer.password;
+		}
+
+		public void setError(string message) {
+			statusLabel.ForeColor = Color.Firebrick;
+			statusLabel.Text = message;
+			statusTooltip.SetToolTip(statusLabel, message);
 		}
 
 		private void RegisterButton_Click(object sender, EventArgs e) {
@@ -29,19 +39,22 @@ namespace Client {
 
 			try {
 				var newCust = new Customer(login, password);
-				service.register(newCust);
-				customer.setFrom(newCust);
+				var response = service.register(newCust);
+				if(response) { 
+					Console.WriteLine(response.IsSuccess);
+					customer.setFrom(newCust);
 
-				label1.ForeColor = SystemColors.ControlText;
-				label1.Text = "Аккаунт зарегистрирован";
-			} 
-			catch(FaultException<object> ex) {
-				label1.ForeColor = Color.Firebrick;
-				label1.Text = ex.Message;
+					statusLabel.ForeColor = SystemColors.ControlText;
+					statusLabel.Text = "Аккаунт зарегистрирован";
+				}
+				else {
+					setError(response.f.message);
+				}
 			}
-			catch(Exception ex) {
-				label1.ForeColor = Color.Firebrick;
-				label1.Text = "Неизвестная ошибка: " + ex;
+			catch(FaultException<ExceptionDetail> ex) {
+				statusLabel.ForeColor = Color.Firebrick;
+				statusLabel.Text = "Неизвестная ошибка";
+				statusTooltip.SetToolTip(statusLabel, ex.ToString());
 			}
 		}
 
@@ -51,22 +64,24 @@ namespace Client {
 			
 			try {
 				var newCust = new Customer(login, password);
-				service.logIn(newCust);
-				customer.setFrom(newCust);
+				var response = service.logIn(newCust);
+				if(response) {
+					customer.setFrom(newCust);
 
-				label1.ForeColor = SystemColors.ControlText;
-				label1.Text = "";
-				
-				DialogResult = DialogResult.OK;
-				Close();
+					statusLabel.ForeColor = SystemColors.ControlText;
+					statusLabel.Text = "";
+					
+					DialogResult = DialogResult.OK;
+					Close();
+				}
+				else {
+					setError(response.f.message);
+				}
 			}
-			catch(FaultException<object> ex) {
-				label1.ForeColor = Color.Firebrick;
-				label1.Text = ex.Message;
-			}
-			catch(Exception ex) {
-				label1.ForeColor = Color.Firebrick;
-				label1.Text = "Неизвестная ошибка: " + ex;
+			catch(FaultException<ExceptionDetail> ex) {
+				statusLabel.ForeColor = Color.Firebrick;
+				statusLabel.Text = "Неизвестная ошибка";
+				statusTooltip.SetToolTip(statusLabel, ex.ToString());
 			}
 		}
 
