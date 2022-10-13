@@ -16,8 +16,8 @@ namespace Client {
 
 		private ToolTip toolTip;
 		public ToolTip ToolTip{
-			get => toolTip;
-			set {
+			get{ return toolTip; }
+			set{
 				var tt = toolTip?.GetToolTip(this);
 				toolTip?.SetToolTip(this, null);
 				toolTip = value;
@@ -31,14 +31,14 @@ namespace Client {
 		}
 
 		public bool ShowNumber{
-			get => showNumber;
+			get{ return showNumber; }
 			set{
 				showNumber = value;
 				setNumberLabel();
 			}
 		}
 
-		public int Number{ get => number; set{ number = value; setNumberLabel(); } }
+		public int Number{ get{ return number; } set{ number = value; setNumberLabel(); } }
 		public PassangerDisplay() : base() {
 			InitializeComponent();
 

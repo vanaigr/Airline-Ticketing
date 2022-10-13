@@ -29,7 +29,7 @@ namespace Documents {
 		public static readonly int id = 0;
 		private long number;
 		public long Number{ 
-			get => number; 
+			get{ return number; } 
 			set{
 				if(value >= 1000000000L && value < 10000000000L) //value is 10 digits long
 					number = value;
@@ -45,7 +45,7 @@ namespace Documents {
 		private string name, surname, middleName;
 
 		public int Number{ 
-			get => number; 
+			get{ return number; } 
 			set{
 				if(value >= 100000000 && value < 1000000000) //value is 9 digits long
 					number = value;
@@ -53,11 +53,11 @@ namespace Documents {
 			}
 		}
 		public DateTime ExpirationDate{ 
-			get => expirationDate; 
+			get{ return expirationDate; } 
 			set{ expirationDate = value.Date; }
 		}
 		public string Name{ 
-			get => name; 
+			get{ return name; } 
 			set{
 				if(value == null || value.Length == 0) throw new IncorrectValue("Имя должно быть заполнено");
 				foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) 
@@ -66,7 +66,7 @@ namespace Documents {
 			}
 		}
 		public string Surname{ 
-			get => surname; 
+			get{ return surname; } 
 			set{
 				if(value == null || value.Length == 0) throw new IncorrectValue("Фамилия должна быть заполнена");
 				foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) 
@@ -75,7 +75,7 @@ namespace Documents {
 			}
 		}
 		public string MiddleName{ 
-			get => middleName; 
+			get{ return middleName; } 
 			set{
 				if(value != null) foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) 
 					throw new IncorrectValue("Фамилия должна содержать только латинские буквы или символ дефиса");

@@ -64,7 +64,7 @@ namespace AirlineTicketingServer {
 				var data = reader.ReadByte();
 				seats.Add(new SeatsScheme.SeatStatus{
 					Class = (int)(data & 0xfu),
-					occupied = (data & 0x1000_0000u) != 0
+					occupied = (data & 0x10000000u) != 0
 				});
 			}
 

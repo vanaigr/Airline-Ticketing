@@ -9,7 +9,7 @@ namespace Client {
 		private Communication.MessageService service;
 		private Communication.Customer customer;
 
-		private List<Communication.Passanger> passangers;
+		private List<int?> passangers;
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
@@ -36,7 +36,7 @@ namespace Client {
 			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
-			passangers = new List<Communication.Passanger>();
+			passangers = new List<int?>();
 
 			button1_Click(null, null);
 		}
@@ -104,7 +104,7 @@ namespace Client {
 			passangers.Add(null);
 			var display = new PassangerDisplay() { Number = passangers.Count, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
 			display.ContextMenuStrip = passangerMenu;
-			display.Click += (a, b) => new PassangerAdd(service, customer).Show();
+			display.Click += (a, b) => selectPassanger((PassangerDisplay) a);
 			display.ShowNumber = true;
 			display.ToolTip = passangerTooltip;
 
@@ -117,6 +117,19 @@ namespace Client {
 
 			recalculateSeats();
 		}
+
+        private void selectPassanger(PassangerDisplay it) {
+			var oldIndex = passangers[it.Number-1];
+            var selectionForm = new PassangerAdd(service, customer);
+			try { selectionForm.SelectedPassangerIndex = oldIndex; } catch(Exception) { }
+            selectionForm.ShowDialog();
+            var selectedPassanger = selectionForm.SelectedPassanger;
+            if(selectedPassanger != null) {
+                int selectedPassangerIndex = (int) selectionForm.SelectedPassangerIndex;
+                passangers[it.Number-1] = selectedPassangerIndex;
+                it.Passanger = selectedPassanger;
+            }
+        }
 
 		private void recalculateSeats() {
 			if(flightAndCities == null) return;

@@ -10,15 +10,37 @@ using System.Windows.Forms;
 
 namespace Client {
 	public partial class PassangerAdd : Form {
+		class PassangerAndDisplay {
+			public Communication.Passanger passanger;
+			public PassangerDisplay display;
+		}
 		private Communication.MessageService service;
 		private Communication.Customer customer;
-		private Dictionary<int, Communication.Passanger> passangers; 
+		private Dictionary<int, PassangerAndDisplay> passangers; 
 
+		private Communication.Passanger lastPassanger;
 		private PassangerDisplay selectedPassanger;
+
+        public Communication.Passanger SelectedPassanger{
+            get{
+				return selectedPassanger?.Passanger;
+			}
+        }
+
+        public int? SelectedPassangerIndex {
+            get{
+				return selectedPassanger?.Number;
+			}
+			set{
+				if(value == null) noPassangerSelection();
+				else passangerSelected(passangers[(int)value].display);
+			}
+        }
 
 		public PassangerAdd(Communication.MessageService sq, Communication.Customer customer) {
 			this.service = sq;
 			this.customer = customer;
+			this.passangers = new Dictionary<int, PassangerAndDisplay>();
 
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
@@ -26,20 +48,26 @@ namespace Client {
 			try{
 			updatePassangersDisplay();} catch(Exception){ }
 
-			noPassangerSelection();
+			
 		}
 
 		private void updatePassangersDisplay() {
+			passangers.Clear();
+			noPassangerSelection();
+
 			passangersDisplay.SuspendLayout();
 			passangersDisplay.Controls.Clear();
 			passangersDisplay.RowStyles.Clear();
 
-			passangers = service.getPassangers(customer);
+			var passangersOnly = service.getPassangers(customer);
 			
 			passangersDisplay.RowCount = passangers.Count;
 
-			foreach(var passanger in passangers) {
-				addPassangerDisplay(passanger.Value, passanger.Key);
+			foreach(var passanger in passangersOnly) {
+				var display = addPassangerDisplay(passanger.Value, passanger.Key);
+				passangers.Add(passanger.Key, new PassangerAndDisplay {
+						passanger = passanger.Value, display = display
+				});
 			}
 
 			passangersDisplay.ResumeLayout(false);
@@ -48,6 +76,12 @@ namespace Client {
 
 		private void addButton_Click(object sender, EventArgs e) {
 			noPassangerSelection();
+			
+            nameText.Text = "";
+            surnameText.Text = "";
+            middleNameText.Text = "";
+            birthdayDatetime.Value = DateTime.Today;
+            //TODO: fill document
 		}
 
 		private void deleteButton_Click(object sender, EventArgs e) {
@@ -56,13 +90,25 @@ namespace Client {
 		}
 
 		private void passangerSelected(PassangerDisplay pd) {
+			noPassangerSelection();
+
 			deleteButton.Enabled = true;
 			selectedPassanger = pd;
+			selectedPassanger.BackColor = Color.CornflowerBlue;
+
+            var p = selectedPassanger.Passanger;
+            nameText.Text = p.name;
+            surnameText.Text = p.surname;
+            middleNameText.Text = p.middleName;
+            birthdayDatetime.Value = p.birthday;
+            //TODO: fill document
 		}
 
 		private void noPassangerSelection() {
 			deleteButton.Enabled = false;
+			if(selectedPassanger != null) selectedPassanger.BackColor = Color.White;
 			selectedPassanger = null;
+			lastPassanger = new Communication.Passanger();
 		}
 
 		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, int index) {
@@ -82,7 +128,7 @@ namespace Client {
 
 		private void saveAndCloseButton_Click(object sender, EventArgs e) {
 			saveButton_Click(sender, e);
-			this.Close();
+			this.DialogResult = DialogResult.OK;
 		}
 
 		private void saveButton_Click(object sender, EventArgs eventArgs) {
@@ -95,19 +141,22 @@ namespace Client {
 			};
 
 			try {
-				int index;
 				if(selectedPassanger == null) { 
-					index = service.addPassanger(customer, passanger);
+					var index = service.addPassanger(customer, passanger);
 					var display = addPassangerDisplay(passanger, index);
-					selectedPassanger = display;
+					passangers.Add(index, new PassangerAndDisplay {
+						passanger = passanger,
+						display = display
+					});
+					passangerSelected(display);
 				}
-				else {
-					index = service.replacePassanger(customer, selectedPassanger.Number, passanger);
-					selectedPassanger.Passanger = passanger;
+				else if(lastPassanger != passanger) {
+					var index = service.replacePassanger(customer, selectedPassanger.Number, passanger);
+					passangers[index].passanger = passanger;
+					passangerSelected(selectedPassanger);
 				}
-				passangers.Add(index, passanger);
 				
-				statusLabel.Text = "лёха";
+				statusLabel.Text = "";
 				statusTooltip.SetToolTip(statusLabel, null);
 			} catch(FaultException<object> e) {
 				statusLabel.Text = e.Message;

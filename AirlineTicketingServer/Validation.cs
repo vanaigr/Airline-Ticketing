@@ -7,7 +7,7 @@ namespace AirlineTicketingServer {
 	public struct CheckResult {
 		public bool ok;
 		public string errorMsg;
-		public bool error{ get => !ok; }
+		public bool error{ get{ return !ok; } }
 
 		public static CheckResult Err(string msg) { return new CheckResult{ ok = false, errorMsg = msg }; }
 		public static CheckResult Ok() { return new CheckResult{ ok = true }; }

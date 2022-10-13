@@ -86,8 +86,8 @@ namespace Client {
 			fromCityCode.Text = flightAndCities.fromCityCode;
 			toCityCode.Text = flightAndCities.toCityCode;
 			
-			fromDate.Text = depart.Date.ToString("M MMM, ddd");
-			toDate.Text = arrive.Date.ToString("M MMM, ddd");
+			fromDate.Text = depart.Date.ToString("d MMM, ddd");
+			toDate.Text = arrive.Date.ToString("d MMM, ddd");
 			
 			fromTime.Text = depart.TimeOfDay.ToString(@"h\:mm");
 			toTime.Text = arrive.TimeOfDay.ToString(@"h\:mm");
@@ -127,6 +127,52 @@ namespace Client {
 			updateOptions();
 		}
 
+        private void addBaggageList(string label, string baggagePaid, List<FlightsOptions.Baggage> baggages) { //appendBaggage
+            var sb = new StringBuilder();
+			var freeBaggage = new List<FlightsOptions.Baggage>();
+			var paidBaggage = new List<FlightsOptions.Baggage>();
+			
+			foreach(var baggage in baggages) {
+				if(baggage.IsFree) {
+					freeBaggage.Add(baggage);
+				}
+				else {
+					paidBaggage.Add(baggage);
+				}
+			}
+
+			foreach(var baggage in freeBaggage) {
+				sb.Clear().Append(label).Append(' ');
+				sb.Append(baggage.Count);
+				if(baggage.Count == 1) sb.Append(" сумка");
+				else sb.Append(" сумок");
+				if(baggage.RestrictionWeight) {
+					sb.Append(" до ")
+					  .Append(baggage.WeightKgRestrictionPerSingle)
+					  .Append(nbs)
+					  .Append("кг");
+				}
+				if(baggage.RestrictionWeight && baggage.RestrictionSize) sb.Append(",");
+				if(baggage.RestrictionSize) {
+					sb.Append(" до ") 
+					  .Append(baggage.SizeRestrictionPerSingle.x)
+					  .Append('x')
+					  .Append(baggage.SizeRestrictionPerSingle.y)
+					  .Append('x')
+					  .Append(baggage.SizeRestrictionPerSingle.z)
+					  .Append(nbs)
+					  .Append("см");
+				}
+				if((baggage.RestrictionWeight || baggage.RestrictionSize) && baggage.Count != 1) sb.Append(" за шт.");
+
+				addListItem(baggageOptionsTable, Status.free, sb.ToString());
+			}
+
+			if(freeBaggage.Count == 0) {
+				addListItem(baggageOptionsTable, Status.paid, baggagePaid);;
+			}
+		}
+
 		private void updateOptions() {
 			var flight = flightAndCities.flight;
 
@@ -159,51 +205,6 @@ namespace Client {
 				
 
 				var sb = new StringBuilder();
-
-				void addBaggageList(string label, string baggagePaid, List<FlightsOptions.Baggage> baggages) { //appendBaggage
-					var freeBaggage = new List<FlightsOptions.Baggage>();
-					var paidBaggage = new List<FlightsOptions.Baggage>();
-					
-					foreach(var baggage in baggages) {
-						if(baggage.IsFree) {
-							freeBaggage.Add(baggage);
-						}
-						else {
-							paidBaggage.Add(baggage);
-						}
-					}
-
-					foreach(var baggage in freeBaggage) {
-						sb.Clear().Append(label).Append(' ');
-						sb.Append(baggage.Count);
-						if(baggage.Count == 1) sb.Append(" сумка");
-						else sb.Append(" сумок");
-						if(baggage.RestrictionWeight) {
-							sb.Append(" до ")
-							  .Append(baggage.WeightKgRestrictionPerSingle)
-							  .Append(nbs)
-							  .Append("кг");
-						}
-						if(baggage.RestrictionWeight && baggage.RestrictionSize) sb.Append(",");
-						if(baggage.RestrictionSize) {
-							sb.Append(" до ") 
-							  .Append(baggage.SizeRestrictionPerSingle.x)
-							  .Append('x')
-							  .Append(baggage.SizeRestrictionPerSingle.y)
-							  .Append('x')
-							  .Append(baggage.SizeRestrictionPerSingle.z)
-							  .Append(nbs)
-							  .Append("см");
-						}
-						if((baggage.RestrictionWeight || baggage.RestrictionSize) && baggage.Count != 1) sb.Append(" за шт.");
-
-						addListItem(baggageOptionsTable, Status.free, sb.ToString());
-					}
-
-					if(freeBaggage.Count == 0) {
-						addListItem(baggageOptionsTable, Status.paid, baggagePaid);;
-					}
-				}
 
 				addBaggageList("Багаж", "Багаж платный", bo.baggage);
 				addBaggageList("Ручная кладь", "Ручная кладь платная", bo.handLuggage);

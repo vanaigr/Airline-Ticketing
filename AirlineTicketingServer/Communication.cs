@@ -67,12 +67,25 @@ namespace Communication {
 		public string name { get; set; } //display in combobox requires property
 	}
 
+    [KnownType(typeof(Documents.Passport))]
+    [KnownType(typeof(Documents.InternationalPassport))]
 	[Serializable] public class Passanger {
 		public string name;
 		public string surname;
 		public string middleName;
 		public DateTime birthday;
 		public Documents.Document document;
+
+		public static bool operator==(Passanger f, Passanger s) {
+			if (System.Object.ReferenceEquals(f, s)) return true;
+			else if (((object)f == null) || ((object)s == null)) return false;
+			else return f.name == s.name && f.surname == s.surname && f.middleName == s.middleName
+					&& f.birthday == s.birthday && f.document == s.document;
+		}
+
+		public static bool operator!=(Passanger f, Passanger s) {
+			return !(f == s);
+		}
 	}
 
 	[ServiceContract]

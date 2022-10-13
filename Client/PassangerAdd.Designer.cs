@@ -376,6 +376,7 @@ namespace Client {
 			this.saveAndCloseButton.TabIndex = 5;
 			this.saveAndCloseButton.Text = "Сохранить и выйти";
 			this.saveAndCloseButton.UseVisualStyleBackColor = false;
+			this.saveAndCloseButton.Click += new System.EventHandler(this.saveAndCloseButton_Click);
 			// 
 			// saveButton
 			// 

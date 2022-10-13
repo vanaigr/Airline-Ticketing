@@ -18,7 +18,7 @@ namespace AirlineTicketingServer {
 			}
 			if(it.surname == null || it.surname.Length < 1) {
 				err = true;
-				sb.AC("фамилия должна быть заполнено");
+				sb.AC("фамилия должна быть заполнена");
 			}
 			
 			if(err) return CheckResult.Err(sb.ToString());

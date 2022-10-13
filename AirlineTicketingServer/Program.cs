@@ -98,6 +98,7 @@ namespace AirlineTicketingServer {
 				var result = selectClasses.ExecuteReader()) {
 				while(result.Read()) flightClasses.Add((int) result[0], (string) result[1]);
 				}
+				selectClasses.Dispose();
 
 				selectCities.Connection = connection;
 				using(
@@ -162,7 +163,7 @@ namespace AirlineTicketingServer {
 				selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
 				selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
 				selectClasses.Parameters.AddWithValue("@time", p.when);
-
+				
 				connection.Open();
 				using(
 				var result = selectClasses.ExecuteReader()) {
@@ -174,7 +175,6 @@ namespace AirlineTicketingServer {
 					seatsScheme = BinarySeats.fromBytes((byte[]) result[6])
 				});
 				}}}
-				Console.WriteLine(list.Count);
 				return list;
 			}
 

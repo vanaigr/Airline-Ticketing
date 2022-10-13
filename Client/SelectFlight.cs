@@ -14,7 +14,7 @@ namespace Client {
 		private MessageService service;
 		private Customer customer;
 
-		private bool loggedIn{ get => customer.login != null && customer.password != null; }
+		private bool loggedIn{ get{ return customer.login != null && customer.password != null; } }
 
 		Dictionary<int, string> avaliableFlightClasses;
 		List<City> cities;
@@ -159,7 +159,9 @@ namespace Client {
 				}
 				else foreach(var flight in result) {
 					var flightDisplay = new FlightDisplay();
-					var flightAndCities = new FlightAndCities{ flight = flight, fromCityCode = fromCode, toCityCode = toCode };
+					var flightAndCities = new FlightAndCities{
+						flight = flight, fromCityCode = fromCode, toCityCode = toCode,
+					};
 					flightDisplay.updateFromFlight(avaliableFlightClasses, flightAndCities);
 					flightDisplay.Dock = DockStyle.Top;
 					flightDisplay.Click += new EventHandler(openFlightBooking);
