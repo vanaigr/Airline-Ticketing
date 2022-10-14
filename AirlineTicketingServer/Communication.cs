@@ -11,6 +11,7 @@ namespace Communication {
 	
 	[Serializable] public class Customer {
 		public string login, password;
+		public Dictionary<int, Communication.Passanger> passangers; 
 
 		public Customer() { }
 
@@ -26,6 +27,10 @@ namespace Communication {
 		internal void setFrom(Customer o) {
 			login = o.login;
 			password = o.password;
+		}
+
+		public bool LoggedIn{
+			get{ return login != null && password != null; }
 		}
 	}
 
@@ -59,22 +64,18 @@ namespace Communication {
 
     [KnownType(typeof(Documents.Passport))]
     [KnownType(typeof(Documents.InternationalPassport))]
-	[Serializable] public class Passanger {
+	[Serializable] public sealed class Passanger {
 		public string name;
 		public string surname;
 		public string middleName;
 		public DateTime birthday;
 		public Documents.Document document;
 
-		public static bool operator==(Passanger f, Passanger s) {
-			if (System.Object.ReferenceEquals(f, s)) return true;
-			else if (((object)f == null) || ((object)s == null)) return false;
-			else return f.name == s.name && f.surname == s.surname && f.middleName == s.middleName
-					&& f.birthday == s.birthday && f.document == s.document;
-		}
-
-		public static bool operator!=(Passanger f, Passanger s) {
-			return !(f == s);
+		public override bool Equals(object o) {
+			if (o == null || !(o is Passanger)) return false;
+			var s = (Passanger) o;
+			return Equals(name, s.name) && Equals(surname, s.surname) && Equals(middleName, s.middleName)
+					&& Equals(birthday, s.birthday) && Equals(document, s.document);
 		}
 	}
 	

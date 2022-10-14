@@ -10,52 +10,45 @@ using System.Windows.Forms;
 
 namespace Client {
 	public partial class PassangerAdd : Form {
-		class PassangerAndDisplay {
-			public Communication.Passanger passanger;
-			public PassangerDisplay display;
-		}
 		private Communication.MessageService service;
 		private Communication.Customer customer;
-		private Dictionary<int, PassangerAndDisplay> passangers; 
+		private Dictionary<int, PassangerDisplay> passangersDisplays; 
 
-		private Communication.Passanger lastPassanger;
-		private PassangerDisplay selectedPassanger;
+		private int? selectedPassangerId;
 
         public Communication.Passanger SelectedPassanger{
             get{
-				return selectedPassanger?.Passanger;
+				Communication.Passanger p;
+				if(customer.LoggedIn && selectedPassangerId != null
+					&& customer.passangers.TryGetValue((int) selectedPassangerId, out p)
+				) return p;
+				else return null;
 			}
         }
 
         public int? SelectedPassangerIndex {
             get{
-				return selectedPassanger?.Number;
+				return selectedPassangerId;
 			}
 			set{
-				if(value == null) noPassangerSelection();
-				else passangerSelected(passangers[(int)value].display);
+				selectedPassangerId = value;
 			}
         }
 
 		public PassangerAdd(Communication.MessageService sq, Communication.Customer customer) {
 			this.service = sq;
 			this.customer = customer;
-			this.passangers = new Dictionary<int, PassangerAndDisplay>();
+			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
 
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
 		}
 
-		private void updatePassangersDisplay() {
-			passangers.Clear();
-			noPassangerSelection();
-			
+		private void setupPassangersDisplay() {
 			var triedLoggingIn = false;
 			do{
-				var response = service.getPassangers(customer);
-
-				if(response) {
-					var passangersOnly = response.s;
+				if(customer.LoggedIn) {
+					var passangers = customer.passangers;
 
 					passangersDisplay.SuspendLayout();
 					passangersDisplay.Controls.Clear();
@@ -63,11 +56,9 @@ namespace Client {
 
 					passangersDisplay.RowCount = passangers.Count;
 
-					foreach(var passanger in passangersOnly) {
+					foreach(var passanger in passangers) {
 						var display = addPassangerDisplay(passanger.Value, passanger.Key);
-						passangers.Add(passanger.Key, new PassangerAndDisplay {
-							passanger = passanger.Value, display = display
-						});
+						passangersDisplays.Add(passanger.Key, display);
 					}
 
 					passangersDisplay.ResumeLayout(false);
@@ -77,21 +68,24 @@ namespace Client {
 				}
 				else if(triedLoggingIn) break;
 				else {
-					promptFillCustomer(response.f.message);
+					promptFillCustomer();
 					triedLoggingIn = true;
 				}
 			} while(true);
+
+			if(selectedPassangerId == null) noPassangerSelection();
+			else passangerSelected((int) selectedPassangerId);
 		}
 
-		private void promptFillCustomer(string msg) {
+		private void promptFillCustomer(string msg = null) {
 			var text = "Данные о пользователе должны быть заполнены корректно";
 			statusLabel.Text = text;
 			statusTooltip.SetToolTip(statusLabel, text);
 
 			var lrf = new LoginRegisterForm(service, customer);
-			lrf.setError(msg);
 
 			lrf.ShowDialog();
+			if(msg != null) lrf.setError(msg);
 
 			if(lrf.DialogResult == DialogResult.OK) {
 				statusLabel.Text = null;
@@ -110,18 +104,20 @@ namespace Client {
 		}
 
 		private void deleteButton_Click(object sender, EventArgs e) {
-			selectedPassanger?.Dispose();
+			PassangerDisplay it;
+			if(selectedPassangerId != null) passangersDisplays[(int) selectedPassangerId]?.Dispose();
+
 			noPassangerSelection();
 		}
 
-		private void passangerSelected(PassangerDisplay pd) {
+		private void passangerSelected(int passangerId) {
 			noPassangerSelection();
 
 			deleteButton.Enabled = true;
-			selectedPassanger = pd;
-			selectedPassanger.BackColor = Color.LightGray;
+			selectedPassangerId = passangerId;
+			passangersDisplays[passangerId].BackColor = Color.LightGray;
 
-            var p = selectedPassanger.Passanger;
+            var p = customer.passangers[passangerId];
             nameText.Text = p.name;
             surnameText.Text = p.surname;
             middleNameText.Text = p.middleName;
@@ -134,9 +130,8 @@ namespace Client {
 
 		private void noPassangerSelection() {
 			deleteButton.Enabled = false;
-			if(selectedPassanger != null) selectedPassanger.BackColor = Color.White;
-			selectedPassanger = null;
-			lastPassanger = new Communication.Passanger();
+			if(selectedPassangerId != null) passangersDisplays[(int) selectedPassangerId].BackColor = Color.White;
+			selectedPassangerId = null;
 
 			saveButton.Text = "Добавить";
 			saveAndCloseButton.Text = "Добавить и выйти";
@@ -149,7 +144,7 @@ namespace Client {
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
 				ToolTip = passangerTooltip,
 			};
-			it.Click += (a, b) => passangerSelected((PassangerDisplay) a);
+			it.Click += (a, b) => passangerSelected(((PassangerDisplay) a).Number);
 
 			passangersDisplay.RowCount++;
 			passangersDisplay.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -159,11 +154,16 @@ namespace Client {
 		}
 
 		private void saveAndCloseButton_Click(object sender, EventArgs e) {
-			saveButton_Click(sender, e);
-			this.DialogResult = DialogResult.OK;
+			if(addPassanger()) {
+				this.DialogResult = DialogResult.OK;
+			}
 		}
 
 		private void saveButton_Click(object sender, EventArgs eventArgs) {
+			addPassanger();
+		}
+
+		private bool addPassanger() {
 			var passanger = new Communication.Passanger{
 				name = nameText.Text,
 				surname = surnameText.Text,
@@ -173,19 +173,19 @@ namespace Client {
 			};
 
 			try {
-				if(selectedPassanger == null) { 
+				if(selectedPassangerId == null) { 
 					var response = service.addPassanger(customer, passanger);
 					if(response) { 
 						var index = response.s;
 						var display = addPassangerDisplay(passanger, index);
-						passangers.Add(index, new PassangerAndDisplay {
-							passanger = passanger,
-							display = display
-						});
-						passangerSelected(display);
+						customer.passangers.Add(index, passanger);
+						passangersDisplays.Add(index, display);
+						passangerSelected(index);
 
 						statusLabel.Text = "";
 						statusTooltip.SetToolTip(statusLabel, null);
+
+						return true;
 					}
 					else if(response.f.isLoginError) {
 						promptFillCustomer(response.f.LoginError.message);
@@ -196,15 +196,21 @@ namespace Client {
 						statusTooltip.SetToolTip(statusLabel, msg);
 					}
 				}
-				else if(lastPassanger != passanger) {
-					var response = service.replacePassanger(customer, selectedPassanger.Number, passanger);
+				else if(
+					!customer.passangers[(int) selectedPassangerId].Equals(passanger)
+				) {
+					Console.WriteLine("AAAA");
+					
+					var response = service.replacePassanger(customer, (int) selectedPassangerId, passanger);
 					if(response) { 
 						var index = response.s;
-						passangers[index].passanger = passanger;
-						passangerSelected(selectedPassanger);
+						customer.passangers[index] = passanger;
+						passangerSelected((int) selectedPassangerId);
 
 						statusLabel.Text = "";
 						statusTooltip.SetToolTip(statusLabel, null);
+
+						return true;
 					}
 					else if(response.f.isLoginError) {
 						promptFillCustomer(response.f.LoginError.message);
@@ -214,20 +220,21 @@ namespace Client {
 						statusLabel.Text = msg;
 						statusTooltip.SetToolTip(statusLabel, msg);
 					}
+				}
+				else {
+					return true;
 				}
 			}
 			catch(Exception e) {
 				statusLabel.Text = "Неизвестная ошибка";
 				statusTooltip.SetToolTip(statusLabel, e.ToString());
 			}
+
+			return false;
 		}
 
 		private void PassangerAdd_Load(object sender, EventArgs e) {
-			updatePassangersDisplay();
-		}
-
-		private void PassangerAdd_Shown(object sender, EventArgs e) {
-
+			setupPassangersDisplay();
 		}
 	}
 }

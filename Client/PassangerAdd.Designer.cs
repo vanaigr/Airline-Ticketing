@@ -424,7 +424,6 @@ namespace Client {
 			this.Name = "PassangerAdd";
 			this.Text = "PassangerAdd";
 			this.Load += new System.EventHandler(this.PassangerAdd_Load);
-			this.Shown += new System.EventHandler(this.PassangerAdd_Shown);
 			tableLayoutPanel3.ResumeLayout(false);
 			tableLayoutPanel3.PerformLayout();
 			tableLayoutPanel4.ResumeLayout(false);

@@ -389,6 +389,7 @@ namespace AirlineTicketingServer {
 						first = false;
 					}
 					sb.Append(" }");
+					sb.Append("\n");
 
 					Console.WriteLine("{0}", sb.ToString());
 		            return new ReturnMessage(result, null, 0, methodCall.LogicalCallContext, methodCall);

@@ -67,16 +67,18 @@ namespace Client {
 				var response = service.logIn(newCust);
 				if(response) {
 					customer.setFrom(newCust);
-
-					statusLabel.ForeColor = SystemColors.ControlText;
-					statusLabel.Text = "";
-					
-					DialogResult = DialogResult.OK;
-					Close();
+					var response2 = service.getPassangers(customer);
+					if(response2) {
+						customer.passangers = response2.s;
+						statusLabel.ForeColor = SystemColors.ControlText;
+						statusLabel.Text = "";
+						
+						DialogResult = DialogResult.OK;
+						Close();
+					}
+					else setError(response2.f.message);
 				}
-				else {
-					setError(response.f.message);
-				}
+				else setError(response.f.message);
 			}
 			catch(FaultException<ExceptionDetail> ex) {
 				statusLabel.ForeColor = Color.Firebrick;

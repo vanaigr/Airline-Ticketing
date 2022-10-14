@@ -25,7 +25,7 @@ namespace Documents {
 
 	[Serializable] public class Document {}
 
-	[Serializable] public class Passport : Document {
+	[Serializable] public sealed class Passport : Document {
 		public static readonly int id = 0;
 		private long number;
 		public long Number{ 
@@ -36,9 +36,15 @@ namespace Documents {
 				else throw new IncorrectValue("Номер паспорта должен состоять из 10 цифр");
 			}
 		}
+
+		public override bool Equals(object o) {
+			if(o == null || !(o is Passport)) return false;
+			var s = (Passport) o;
+			return Equals(number, s.number);
+		}
 	}
 		
-	[Serializable] public class InternationalPassport : Document {
+	[Serializable] public sealed class InternationalPassport : Document {
 		public static readonly int id = 1;
 		private int number;
 		private DateTime expirationDate;
@@ -81,6 +87,13 @@ namespace Documents {
 					throw new IncorrectValue("Фамилия должна содержать только латинские буквы или символ дефиса");
 				middleName = value;
 			}
+		}
+
+		public override bool Equals(object o) {
+			if(o == null || !(o is InternationalPassport)) return false;
+			var s = (InternationalPassport) o;
+			return Equals(number, s.number) && Equals(expirationDate, s.expirationDate)
+				&& Equals(name, s.name) && Equals(surname, s.surname) && Equals(middleName, s.middleName);
 		}
 	}
 
