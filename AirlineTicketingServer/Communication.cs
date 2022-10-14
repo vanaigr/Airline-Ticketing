@@ -49,18 +49,7 @@ namespace Communication {
 		public string airplaneName;
 
 		public Dictionary<int, FlightsOptions.Options> optionsForClasses;
-		public SeatsScheme.Seats seatsScheme;
-
-		public override string ToString() {
-			var sb = new StringBuilder();
-
-			sb.AppendFormat(
-				"{{ id={0}, date={1}, name={2}, airplane={3}, arrivalOffsteMinutes={4} }}",
-				id, departureTime, flightName, airplaneName, arrivalOffsteMinutes
-			);
-
-			return sb.ToString();
-		}
+		public SeatsScheme.Seats seats;
 	}
 
 	[Serializable] public struct City {
@@ -160,5 +149,7 @@ namespace Communication {
 		[OperationContract] Either<int, PassangerError> addPassanger(Customer customer, Passanger passanger);
 
 		[OperationContract] Either<int, PassangerError> replacePassanger(Customer customer, int index, Passanger passanger);
+
+		//[OperationContract] Either<SeatsScheme.Seats, InputError> availableFlightDetails(int availableFlightId);
 	}
 }

@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Linq;
 using FlightsOptions;
 using System.Text;
+using SeatsScheme;
 
 namespace AirlineTicketingServer {
 	
@@ -21,24 +22,19 @@ namespace AirlineTicketingServer {
 			private readonly Dictionary<int, string> flightClasses;
 			private readonly List<City> cities;
 
-			class A {
-				public List<int> l;
-			}
-
 			public MainMessageService() {
-				/*var sizes = new SeatsScheme.Point[]{ new SeatsScheme.Point(2, 4), new SeatsScheme.Point(25, 6) };
-				var seats = new List<SeatsScheme.SeatStatus>(2*4 + 25 * 6);
-				for(int i = 0; i < 2*4; i++) seats.Add(
-					new SeatsScheme.SeatStatus{ Class = 3, Occupied = false }
-				);
-				for(int i = 0; i < 25*6; i++) seats.Add(
-					new SeatsScheme.SeatStatus{ Class = 1, Occupied = false }
-				);
 				
-				var seatsScheme = new SeatsScheme.Seats(seats.GetEnumerator(), sizes.Cast<SeatsScheme.Point>().GetEnumerator());*/
+				
+				var sizes = new Point[]{ new Point(2, 4), new Point(25, 6) };
+				var seatsClasses = new List<byte>(2*4 + 25 * 6);
+				for(int i = 0; i < 2*4; i++) seatsClasses.Add(3);
+				for(int i = 0; i < 25*6; i++) seatsClasses.Add(1);
+				
+				var seatsScheme = new SeatsScheme.SeatsScheme(sizes.Cast<SeatsScheme.Point>().GetEnumerator());
+				var seatsAndClasses = new SeatsSchemeAndClasses{ scheme = seatsScheme, classes = seatsClasses.ToArray() };
 
 				
-				/*var economOptins = new Options{
+				var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
 							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
@@ -77,7 +73,7 @@ namespace AirlineTicketingServer {
 				};
 				var optionsForClasses = new Dictionary<int, Options>(2);
 				optionsForClasses.Add(1, economOptins);
-				optionsForClasses.Add(3, busunessOptions);*/
+				optionsForClasses.Add(3, busunessOptions);
 
 				flightClasses = flightClasses = new Dictionary<int, string>();
 				cities = new List<City>();
@@ -110,14 +106,31 @@ namespace AirlineTicketingServer {
 					country = (string) result[2] 
 				});
 				}
+				}}
 
 				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 1);
+				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 2);
 				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 3);
-				//DatabaseOptions.writeToDatabaseFlightOptions(new SqlConnectionView(connection, false), optionsForClasses, 6);
 
-				//DatabaseSeats.writeToDatabaseAirplanesSeats(new SqlConnectionView(connection, false), 15, seatsScheme);
-
-				}}
+				/*{
+					var connView = new SqlConnectionView(connection, false);
+					using(
+					var selectClassesCommand = new SqlCommand(
+						@"insert into [Flights].[Airplanes]([Name], [SeatsCount], [SeatsScheme])
+						values (@Name, @SeatsCount, @SeatsScheme)",
+						connView.connection
+					)) {
+					selectClassesCommand.CommandType = System.Data.CommandType.Text;
+					selectClassesCommand.Parameters.AddWithValue("@Name", "Airbus A320");
+					selectClassesCommand.Parameters.AddWithValue("@SeatsCount", 158);
+					selectClassesCommand.Parameters.AddWithValue("@SeatsScheme", BinarySeats.toBytes(seatsAndClasses));
+	
+					connView.Open();
+					selectClassesCommand.ExecuteNonQuery();
+					}
+					connView.Dispose();
+					Console.WriteLine("AAAAAAA");
+				}*/
 
 				AvailableFlightsUpdate.checkAndUpdate(new SqlConnectionView(connection, true));
 				}				
@@ -144,6 +157,19 @@ namespace AirlineTicketingServer {
 				};
 			}
 
+			struct RawAvailableFlight {
+				public int id;
+				public DateTime departureTime;
+				public int arrivalOffsteMinutes;
+
+				public string flightName;
+				public string airplaneName;
+
+				public byte[] optionsBin;
+				public byte[] seatsAndClasses;
+				public byte[] seatsOccupation;
+			}
+
 			public Either<List<AvailableFlight>, InputError> matchingFlights(MatchingFlightsParams p) {
 				var err = ErrorString.Create();
 				if(p.fromCode == null) err.ac("город вылета должен быть заполнен");
@@ -151,13 +177,13 @@ namespace AirlineTicketingServer {
 				if(p.when == null) err.ac("дата вылета должа быть заполнена");
 				if(err) return Either<List<AvailableFlight>, InputError>.Failure(new InputError(err.Message));
 				
-				var list = new List<AvailableFlight>();
-				using(
-				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var rawAvailableFlights = new List<RawAvailableFlight>();
 
 				using(
+				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				using(
 				var selectClasses = new SqlCommand(
-					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [OptionsBin], [SeatsBin]
+					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [OptionsBin], [SeatsAndClasses], [SeatsOccupation]
 					from [Flights].[FindFlights](@fromCity, @toCity, @time) 
 					order by [DepartureDatetime] desc",
 					connection
@@ -166,18 +192,38 @@ namespace AirlineTicketingServer {
 				selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
 				selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
 				selectClasses.Parameters.AddWithValue("@time", p.when);
-				
+
 				connection.Open();
 				using(
 				var result = selectClasses.ExecuteReader()) {
-				while(result.Read()) list.Add(new AvailableFlight{
+				while(result.Read()) rawAvailableFlights.Add(new RawAvailableFlight{
 					id = (int) result[0], flightName = (string) result[1],
 					airplaneName = (string) result[2], departureTime = (DateTime) result[3],
 					arrivalOffsteMinutes = (int) result[4],
-					optionsForClasses = BinaryOptions.fromBytes((byte[])result[5]),
-					seatsScheme = BinarySeats.fromBytes((byte[]) result[6])
+					optionsBin = (byte[]) result[5],
+					seatsAndClasses = (byte[]) result[6],
+					seatsOccupation = (byte[]) result[7],
 				});
 				}}}
+
+				var list = new List<AvailableFlight>(rawAvailableFlights.Count);
+				for(int i = rawAvailableFlights.Count-1; i >= 0 ; i--) {
+					var raf = rawAvailableFlights[i];
+					rawAvailableFlights.RemoveAt(i);
+					var sac = BinarySeats.fromBytes(raf.seatsAndClasses);
+					list.Add(new AvailableFlight{
+						id = raf.id,
+						departureTime = raf.departureTime,
+						arrivalOffsteMinutes = raf.arrivalOffsteMinutes,
+
+						flightName = raf.flightName,
+						airplaneName = raf.airplaneName,
+
+						optionsForClasses = BinaryOptions.fromBytes(raf.optionsBin),
+						seats = new SeatsScheme.Seats(sac.scheme, sac.classes, raf.seatsOccupation)
+					});
+				}
+
 				return Either<List<AvailableFlight>, InputError>.Success(list);
 			}
 
@@ -256,6 +302,54 @@ namespace AirlineTicketingServer {
 				);
 				}
 			}
+
+			/*public Either<Seats, InputError> availableFlightDetails(int availableFlightId) {
+				byte[] seatsSchemeBin = null;
+				var occupiedSeatsIndices = new List<int>();
+
+				using(
+				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				using(
+				var selectClasses = new SqlCommand(
+					@"
+					select [ap].[SeatsScheme]
+					from (
+						select [af].[FlightInfo] as [Id]
+						from [Flights].[AvailableFlights] as [af]
+						where [af].[Id] = @AvailableFlight
+					) as [fiId]
+					inner join [Flights].[FlightsInfo] as [fi]
+					on [fi].[Id] = [fiId].[Id]
+					inner join [Flights].[Airplanes] as [ap]
+					on [ap].[Id] = [fi].[AirplaneID];
+					
+					select [afs].[SeatIndex]
+					from [Flights].[AvailableFlightsSeats] as [afs]
+					where [afs].[AvailableFligth] = @AvailableFlight;",
+					connection
+				)) {
+				selectClasses.CommandType = CommandType.Text;
+				selectClasses.Parameters.AddWithValue("@AvailableFlight", availableFlightId);
+
+				connection.Open();
+				using(
+				var result = selectClasses.ExecuteReader()) {
+				//read seatsScheme
+				if(result.Read()) seatsSchemeBin = (byte[]) result[0];
+
+				//read occupied seats
+				if(!result.NextResult()) throw new Exception("No second result");
+				while(result.Read()) occupiedSeatsIndices.Add((int) result[0]);
+				}}}
+
+				if(seatsSchemeBin == null) return Either<Seats, InputError>.Failure(new InputError{ message = "Данного рейса не существует" });
+
+				var scheme = BinarySeatsScheme.fromBytes(seatsSchemeBin);
+				
+				return Either<Seats, InputError>.Success(
+					new SeatsScheme.Seats(scheme, occupiedSeatsIndices)
+				);
+			}*/
 		}
 
 		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]

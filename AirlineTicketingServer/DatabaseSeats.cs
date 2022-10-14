@@ -7,15 +7,22 @@ using System.Linq;
 using System.Text;
 
 namespace AirlineTicketingServer {
+	public struct SeatsSchemeAndClasses {
+		public SeatsScheme.SeatsScheme scheme;
+		public byte[] classes;
+	}
 	static class BinarySeats {
-		public static byte[] toBytes(SeatsScheme.Seats seatsscheme) {
-			
+		public static byte[] toBytes(SeatsSchemeAndClasses sac) {
+			SeatsScheme.SeatsScheme seatsscheme = sac.scheme;
+			byte[] classes = sac.classes;
+			Debug.Assert(seatsscheme.SeatsCount == classes.Length);
+
 			using(
 			var stream = new MemoryStream(1*1 + 1*2 + 1*2*seatsscheme.SizesCount + 1*seatsscheme.SeatsCount)) {
 			using(
 			var writer = new BinaryWriter(stream)) {
 
-			writer.Write((byte) 0);
+			writer.Write((byte) 1);
 			Debug.Assert((short) seatsscheme.SizesCount == seatsscheme.SizesCount);
 			writer.Write((short) seatsscheme.SizesCount);
 
@@ -28,27 +35,21 @@ namespace AirlineTicketingServer {
 				writer.Write((byte) size.z);
 			}
 
-			var seats = seatsscheme.GetSeatsEnumerator();
-			while(seats.MoveNext()) {
-				var seat = seats.Current;
-				Debug.Assert((seat.classId & 0xfu) == seat.classId);
-				var data = seat.classId | (seat.occupied ? 1u << 7 : 0);
-				writer.Write((byte) data);
-			}
+			foreach(var seatClass in classes) writer.Write(seatClass);
 
 			writer.Dispose();
 			return stream.ToArray();
 			}}
 		}
 
-		public static SeatsScheme.Seats fromBytes(byte[] bytes) {
+		public static SeatsSchemeAndClasses fromBytes(byte[] bytes) {
 			using(
 			var stream = new MemoryStream(bytes, false)) {
 			using(
 			var reader = new BinaryReader(stream)) {
 
 			var version = reader.ReadByte();
-			Debug.Assert(version == 0);
+			Debug.Assert(version == 1);
 			var sizesCount = reader.ReadInt16();
 			var sizes = new List<SeatsScheme.Point>(sizesCount);
 			var seatsSum = 0;
@@ -59,86 +60,19 @@ namespace AirlineTicketingServer {
 				seatsSum += x * z;
 			}
 
-			var seats =  new List<SeatsScheme.SeatStatus>(seatsSum);
-			for(int i = 0; i < seatsSum; i++) {
-				var data = reader.ReadByte();
-				seats.Add(new SeatsScheme.SeatStatus{
-					Class = (int)(data & 0xfu),
-					occupied = (data & 0x10000000u) != 0
-				});
-			}
+			var seats =  new List<byte>(seatsSum);
+			for(int i = 0; i < seatsSum; i++) seats.Add(reader.ReadByte());
 
-			var seatsScheme = new SeatsScheme.Seats(seats.GetEnumerator(), sizes.GetEnumerator());
+			var seatsSchemeAndClasses = new SeatsSchemeAndClasses{
+				scheme = new SeatsScheme.SeatsScheme(sizes.GetEnumerator()),
+				classes = seats.ToArray()
+			};
 
 			Debug.Assert(stream.Position == stream.Length);
 			reader.Dispose();
 			stream.Dispose();
-			return seatsScheme;
+			return seatsSchemeAndClasses;
 			}}
-		}
-	}
-
-	static class DatabaseSeats {
-		public static SeatsScheme.Seats readFromDatabaseAvailableFlights(SqlConnectionView cv, int flightId, int classId) {
-			using(
-			var selectClasses = new SqlCommand(
-				@"select top 1 [fs].[Seats]
-				from [Flights].[AvailableFlightsSeats] as [fs]
-				where [fs].[AvailableFlight] = @FlightId and [fs].[Class] = @Class",
-				cv.connection
-			)) {
-			selectClasses.CommandType = System.Data.CommandType.Text;
-			selectClasses.Parameters.AddWithValue("@FlightId", flightId);
-			selectClasses.Parameters.AddWithValue("@Class", classId);
-	
-			cv.Open();
-			using(
-			var result = selectClasses.ExecuteReader()) {
-			if(!result.Read()) return null;
-			var arr = (byte[]) result[0];
-			result.Close();
-			cv.Dispose();
-
-			return BinarySeats.fromBytes(arr);
-			}}
-		}
-
-		public static void writeToDatabaseAvailableFlights(SqlConnectionView connView, int flightId, SeatsScheme.Seats seats) {
-			var arr = BinarySeats.toBytes(seats);
-			
-			using(
-			var selectClasses = new SqlCommand(
-				@"insert into [Flights].[AvailableFlightsSeats]([FlightId], [Seats])
-				values (@FlightId, @Seats)",
-				connView.connection
-			)) {
-			selectClasses.CommandType = System.Data.CommandType.Text;
-			selectClasses.Parameters.AddWithValue("@FlightId", flightId);
-			selectClasses.Parameters.AddWithValue("@Seats", arr);
-	
-			connView.Open();
-			selectClasses.ExecuteNonQuery();
-			connView.Dispose();
-			}
-		}
-
-		public static void writeToDatabaseAirplanesSeats(SqlConnectionView connView, int airplane, SeatsScheme.Seats seats) {
-			var arr = BinarySeats.toBytes(seats);
-			
-			using(
-			var selectClasses = new SqlCommand(
-				@"insert into [Flights].[AirplanesSeats]([Airplane], [StartingScheme])
-				values (@Airplane, @StartingScheme)",
-				connView.connection
-			)) {
-			selectClasses.CommandType = System.Data.CommandType.Text;
-			selectClasses.Parameters.AddWithValue("@Airplane", airplane);
-			selectClasses.Parameters.AddWithValue("@StartingScheme", arr);
-	
-			connView.Open();
-			selectClasses.ExecuteNonQuery();
-			connView.Dispose();
-			}
 		}
 	}
 }

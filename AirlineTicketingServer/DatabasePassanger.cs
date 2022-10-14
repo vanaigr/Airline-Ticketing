@@ -39,11 +39,11 @@ namespace AirlineTicketingServer {
 			var command = new SqlCommand(@"
 				select [pi].[Index], [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
 				from [Customers].[PassangerInfo] as [pi] 
-				where [pi].[Id] = @Id
+				where [pi].[Customer] = @Customer
 				order by [pi].[Index] asc
 			", cv.connection)) {
 			command.CommandType = System.Data.CommandType.Text;
-			command.Parameters.AddWithValue("Id", customerId);
+			command.Parameters.AddWithValue("@Customer", customerId);
 
 			var rawPassangers = new List<RawPassanger>();
 
@@ -83,7 +83,7 @@ namespace AirlineTicketingServer {
 			var command = new SqlCommand(@"
 				select [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
 				from [Customers].[PassangerInfo] as [pi] 
-				where [pi].[Id] = @Id and [pi].[Index] = @Index", 
+				where [pi].[Customer] = @Id and [pi].[Index] = @Index", 
 				cv.connection
 			)) {
 			command.CommandType = System.Data.CommandType.Text;

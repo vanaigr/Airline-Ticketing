@@ -41,17 +41,16 @@ namespace Client {
 			button1_Click(null, null);
 		}
 
-		public void setFromFlight(
+		public bool setFromFlight(
 			Dictionary<int, string> classesNames,
 			FlightAndCities flightAndCities,
 			int selectedClassId
 		) {
 			//filter classes that are present in seats scheme
 			var classesSet = new HashSet<int>();
-			var seatE = flightAndCities.flight.seatsScheme.GetSeatsEnumerator();
-			while(seatE.MoveNext()) {
-				var seat = seatE.Current;
-				classesSet.Add(seat.classId);
+
+			foreach(var seat in flightAndCities.flight.seats) {
+				classesSet.Add(seat.Class);
 			}
 			this.classesNames = new Dictionary<int, string>();
 			foreach(var classId in classesSet) {
@@ -81,6 +80,8 @@ namespace Client {
 			Misc.addDummyButton(classSelector.Parent);
 
 			recalculateSeats();
+
+			return true;
 		}
 
 		public void setSelectedClass(int selectedClassId) {
@@ -92,7 +93,7 @@ namespace Client {
 		}
 
 		private void classSelector_SelectedIndexChanged(object sender, EventArgs e) {
-			seatSelectTable.update(flightAndCities, ((KeyValuePair<int, string>) classSelector.SelectedValue).Key, recalculateSeats);
+			seatSelectTable.update(flightAndCities.flight.seats, ((KeyValuePair<int, string>) classSelector.SelectedValue).Key, recalculateSeats);
 			recalculateSeats();
 		}
 
@@ -134,10 +135,10 @@ namespace Client {
 		private void recalculateSeats() {
 			if(flightAndCities == null) return;
 			seatSelectTable.SuspendLayout();
-			
-			var seats = flightAndCities.flight.seatsScheme;
 
 			seatHint.RemoveAll();
+
+			var seatsScheme = flightAndCities.flight.seats.Scheme;
 
 			this.passangesrsSeat = new PassangerSeat[passangers.Count];
 			var seatsCorrect = true;
@@ -146,8 +147,8 @@ namespace Client {
 			var passangerSeats = new List<List<SeatNumericUpDown>>();
 			for(int i = 0; i < passangers.Count; i++) passangerSeats.Add(new List<SeatNumericUpDown>(2));
 
-			for(int z = 0; z < seats.TotalLength; z++) {
-				var width = seats.WidthForRow(z);
+			for(int z = 0; z < seatsScheme.TotalLength; z++) {
+				var width = seatsScheme.WidthForRow(z);
 				for(int x = 0; x < width ; x++) {
 					var pos = seatSelectTable.getSeatLocation(new SeatsScheme.Point(z, x));
 					var c = (SeatNumericUpDown) seatSelectTable.GetControlFromPosition(pos.X, pos.Y);
@@ -431,7 +432,7 @@ namespace Client {
 			}
 		}
 
-		public void update(FlightAndCities flightAndCities, int classId, Action update) {
+		public void update(SeatsScheme.Seats seats, int classId, Action update) {
 			seatsLocationToTableLocation.Clear();
 
 			this.SuspendLayout();
@@ -440,15 +441,15 @@ namespace Client {
 			this.RowStyles.Clear();
 			this.ColumnStyles.Clear();
 
-			var seats = flightAndCities.flight.seatsScheme;
+			var seatsScheme = seats.Scheme;
 
 			var seatsWidthLCM = 1;
-			for(int i = 0; i < seats.SizesCount; i++) {
-				var size = seats.sizeAtIndex(i);
+			for(int i = 0; i < seatsScheme.SizesCount; i++) {
+				var size = seatsScheme.sizeAtIndex(i);
 				seatsWidthLCM = Math2.lcm(seatsWidthLCM, size.x);
 			}
 
-			this.ColumnCount = seats.TotalLength + seats.SizesCount;
+			this.ColumnCount = seatsScheme.TotalLength + seatsScheme.SizesCount;
 			this.RowCount = seatsWidthLCM + 1;
 
 			//columns
@@ -468,8 +469,8 @@ namespace Client {
 			/*add seats*/ { 
 				int z = 0;
 				int tableZ = 0;
-				for(int i = 0; i < seats.SizesCount; i++) {
-					var size = seats.sizeAtIndex(i);
+				for(int i = 0; i < seatsScheme.SizesCount; i++) {
+					var size = seatsScheme.sizeAtIndex(i);
 
 					var xSpan = seatsWidthLCM / size.x;
 
@@ -495,10 +496,9 @@ namespace Client {
 						}, tableZ, 0);
 
 						for(int x = 0; x < size.x; x++) {
-							var seat = seats[x, z];
-
 							var it = new SeatNumericUpDown();
-							if(seat.classId != classId || seat.occupied) {
+							var seat = seats[x, z];
+							if(seat.Class != classId || seat.Occupied) {
 								it.Enabled = false;
 							}
 							it.ValueChanged += (a, b) => update();
