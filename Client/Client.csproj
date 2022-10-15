@@ -73,11 +73,11 @@
     <Compile Include="..\AirlineTicketingServer\Validation.cs">
       <Link>Validation.cs</Link>
     </Compile>
-    <Compile Include="FlightBooking.cs">
+    <Compile Include="FlightDetailsFill.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FlightBooking.Designer.cs">
-      <DependentUpon>FlightBooking.cs</DependentUpon>
+    <Compile Include="FlightDetailsFill.Designer.cs">
+      <DependentUpon>FlightDetailsFill.cs</DependentUpon>
     </Compile>
     <Compile Include="FlightAndCities.cs" />
     <Compile Include="FlightDisplay.cs">
@@ -96,11 +96,11 @@
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Misc.cs" />
-    <Compile Include="PassangerAdd.cs">
+    <Compile Include="PassangerUpdate.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PassangerAdd.Designer.cs">
-      <DependentUpon>PassangerAdd.cs</DependentUpon>
+    <Compile Include="PassangerUpdate.Designer.cs">
+      <DependentUpon>PassangerUpdate.cs</DependentUpon>
     </Compile>
     <Compile Include="PassangerData.cs" />
     <Compile Include="PassangerDisplay.cs">
@@ -127,8 +127,8 @@
     <Compile Include="TransparentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <EmbeddedResource Include="FlightBooking.resx">
-      <DependentUpon>FlightBooking.cs</DependentUpon>
+    <EmbeddedResource Include="FlightDetailsFill.resx">
+      <DependentUpon>FlightDetailsFill.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FlightDisplay.resx">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
@@ -136,8 +136,8 @@
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PassangerAdd.resx">
-      <DependentUpon>PassangerAdd.cs</DependentUpon>
+    <EmbeddedResource Include="PassangerUpdate.resx">
+      <DependentUpon>PassangerUpdate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PassangerDisplay.resx">
       <DependentUpon>PassangerDisplay.cs</DependentUpon>

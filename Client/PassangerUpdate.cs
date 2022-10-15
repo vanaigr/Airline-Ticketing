@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class PassangerAdd : Form {
+	public partial class PassangerUpdate : Form {
 		private Communication.MessageService service;
 		private CustomerData customer;
 		private Dictionary<int, PassangerDisplay> passangersDisplays; 
@@ -100,7 +100,7 @@ namespace Client {
 			}
         }
 
-		public PassangerAdd(Communication.MessageService sq, CustomerData customer, int? defaultPassangerId) {
+		public PassangerUpdate(Communication.MessageService sq, CustomerData customer, int? defaultPassangerId) {
 			this.service = sq;
 			this.customer = customer;
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();

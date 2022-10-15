@@ -1,6 +1,6 @@
 ﻿
 namespace Client {
-	partial class PassangerAdd {
+	partial class PassangerUpdate {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>

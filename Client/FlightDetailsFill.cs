@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class FlightBooking : Form {
+	public partial class FlightDetailsFill : Form {
 		private Communication.MessageService service;
 		private CustomerData customer;
 
-		private List<int?> passangers;
+		struct PassangerData {
+			public int? passangerIndex;
+			public int? seatIndex;
+		}
+
+		private List<PassangerData> passangers;
 		private List<PassangerDisplay> displays;
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
-		
-		struct PassangerSeat {
-			public Point loc;
-		}
-
-		private PassangerSeat[] passangesrsSeat = new PassangerSeat[0];
 
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
-		public FlightBooking(Communication.MessageService service, CustomerData customer) {
+		public FlightDetailsFill(Communication.MessageService service, CustomerData customer) {
 			this.service = service;
 			this.customer = customer;
 
@@ -37,7 +37,7 @@ namespace Client {
 			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
-			passangers = new List<int?>();
+			passangers = new List<PassangerData>();
 			displays = new List<PassangerDisplay>();
 
 			button1_Click(null, null);
@@ -104,7 +104,7 @@ namespace Client {
 		}
 
 		private void button1_Click(object sender, EventArgs e) {
-			passangers.Add(null);
+			passangers.Add(new PassangerData{ passangerIndex = null, seatIndex = null });
 			var display = new PassangerDisplay() { Number = passangers.Count, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
 			displays.Add(display);
 			display.ContextMenuStrip = passangerMenu;
@@ -123,24 +123,27 @@ namespace Client {
 		}
 
         private void selectPassanger(PassangerDisplay it) {
-			var oldIndex = passangers[it.Number-1];
-            var selectionForm = new PassangerAdd(service, customer, oldIndex);
+			var oldPassanger = passangers[it.Number-1];
+            var selectionForm = new PassangerUpdate(service, customer, oldPassanger.passangerIndex);
             var result = selectionForm.ShowDialog();
 			if(result == DialogResult.OK) {
-				passangers[it.Number-1] = selectionForm.SelectedPassangerIndex;
+				var newPassanger = passangers[it.Number-1];
+				newPassanger.passangerIndex = selectionForm.SelectedPassangerIndex;
+				passangers[it.Number-1] = newPassanger;
 				it.Passanger = selectionForm.SelectedPassanger;
 			}
 
 			for(int i = 0; i < passangers.Count; i++) {
-				var id = passangers[i];
-				if(id != null) {
+				var passangerData = passangers[i];
+				if(passangerData.passangerIndex != null) {
 					Communication.Passanger passanger;
-					var exists = customer.passangers.TryGetValue((int) id, out passanger);
+					var exists = customer.passangers.TryGetValue((int) passangerData.passangerIndex, out passanger);
 					if(exists) {
 						displays[i].Passanger = passanger;
 					}
 					else {
-						passangers[i] = null;
+						passangerData.passangerIndex = null;
+						passangers[i] = passangerData;
 						displays[i].Passanger = null;
 					}		
 				}
@@ -154,13 +157,13 @@ namespace Client {
 			seatHint.RemoveAll();
 
 			var seatsScheme = flightAndCities.flight.seats.Scheme;
-
-			this.passangesrsSeat = new PassangerSeat[passangers.Count];
+			
 			var seatsCorrect = true;
 			int autofilledCount = 0;
 
-			var passangerSeats = new List<List<SeatNumericUpDown>>();
-			for(int i = 0; i < passangers.Count; i++) passangerSeats.Add(new List<SeatNumericUpDown>(2));
+			var passangesrsSeatLocation = new int[passangers.Count];
+			var passangerSeatsDisplays = new List<SeatNumericUpDown>[passangers.Count];
+			for(int i = 0; i < passangers.Count; i++) passangerSeatsDisplays[i] = new List<SeatNumericUpDown>();
 
 			for(int z = 0; z < seatsScheme.TotalLength; z++) {
 				var width = seatsScheme.WidthForRow(z);
@@ -168,10 +171,10 @@ namespace Client {
 					var pos = seatSelectTable.getSeatLocation(new SeatsScheme.Point(z, x));
 					var c = (SeatNumericUpDown) seatSelectTable.GetControlFromPosition(pos.X, pos.Y);
 					var v = (int) c.Value;
-					if(v >= 0 && v <= passangerSeats.Count) {
+					if(v >= 0 && v-1 < passangers.Count) {
 						if(v != 0) {
-							passangerSeats[v-1].Add(c);
-							this.passangesrsSeat[v-1] = new PassangerSeat{ loc = new Point(x, z) };
+							passangerSeatsDisplays[v-1].Add(c);
+							passangesrsSeatLocation[v-1] = seatsScheme.coordToIndex(x, z);
 						}
 
 						c.markFine();
@@ -185,17 +188,22 @@ namespace Client {
 				}
 			}
 
-			for(int p = 0; p < passangerSeats.Count; p++) {
-				var pSeats = passangerSeats[p];
-				if(pSeats.Count > 1) {
+			for(int p = 0; p < passangers.Count; p++) {
+				var displays = passangerSeatsDisplays[p];
+				if(displays.Count == 1) {
+					var passanger = passangers[p];
+					passanger.seatIndex = passangesrsSeatLocation[p];
+					passangers[p] = passanger;
+				}
+				else if(displays.Count > 1) {
 					seatsCorrect = false;
-					foreach(var c in pSeats) {
+					foreach(var c in displays) {
+						Debug.Assert(c.Value == passangers[p].passangerIndex);
 						c.markError();
-						seatHint.SetToolTip(c, "Для пассажира " + ((int) c.Value) + " задано " + pSeats.Count + " мест");
+						seatHint.SetToolTip(c, "Для пассажира " + ((int) c.Value) + " задано " + displays.Count + " мест");
 					}
 				}
-
-				if(pSeats.Count == 0) autofilledCount++;
+				else autofilledCount++;
 			}
 
 			var sb = new StringBuilder();
@@ -264,6 +272,16 @@ namespace Client {
 			seatSelectTable.ResumeLayout(false);
 			passangersPanel.PerformLayout();
 			seatSelectTable.PerformLayout();
+		}
+
+		private void continueButton_Click(object sender, EventArgs e) {
+			foreach(var passanger in passangers) if(passanger.passangerIndex == null) {
+				MessageBox.Show(
+					"Данные для всех пассажиров должны бвть заданы", "", MessageBoxButtons.OK,
+					MessageBoxIcon.Error
+				);
+				return;
+			}
 		}
 	}
 	class SeatNumericUpDown : NumericUpDown {

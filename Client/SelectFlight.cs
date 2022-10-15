@@ -242,22 +242,22 @@ namespace Client {
 			reconnect();
 		}
 
-		private Dictionary<int/*flightId*/, FlightBooking> openedBookings = new Dictionary<int, FlightBooking>();
+		private Dictionary<int/*flightId*/, FlightDetailsFill> openedBookings = new Dictionary<int, FlightDetailsFill>();
 
 		private void openFlightBooking(object sender, EventArgs e) {
 			var flightDisplay = (FlightDisplay) sender;
 			var fic = flightDisplay.CurrentFlight;
 			var classId = flightDisplay.SelectedClass;
 
-			FlightBooking booking;
+			FlightDetailsFill booking;
 			if(openedBookings.TryGetValue(fic.flight.id, out booking)) {
 				booking.Focus();
 				booking.setSelectedClass(classId);
 			}
 			else {
-				booking = new FlightBooking(service, customer);
+				booking = new FlightDetailsFill(service, customer);
 				booking.setFromFlight(avaliableFlightClasses, fic, classId);
-				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightBooking) obj).CurrentFlight.flight.id); };
+				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
 
 				openedBookings.Add(fic.flight.id, booking);
 				booking.Show();

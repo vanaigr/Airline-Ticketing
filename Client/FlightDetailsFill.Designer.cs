@@ -1,6 +1,6 @@
 ﻿
 namespace Client {
-	partial class FlightBooking {
+	partial class FlightDetailsFill {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -36,7 +36,7 @@ namespace Client {
 			this.flowLayoutPanelHeightBug = new System.Windows.Forms.Panel();
 			this.passangersPanel = new Client.BugfixFlowLayoutPanel();
 			this.headerContainer = new System.Windows.Forms.TableLayoutPanel();
-			this.button2 = new System.Windows.Forms.Button();
+			this.continueButton = new System.Windows.Forms.Button();
 			this.aitrplaneNameLavel = new System.Windows.Forms.Label();
 			this.flightNameLabel = new System.Windows.Forms.Label();
 			this.departureLocationLabel = new System.Windows.Forms.Label();
@@ -224,7 +224,7 @@ namespace Client {
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.headerContainer.Controls.Add(this.button2, 6, 0);
+			this.headerContainer.Controls.Add(this.continueButton, 6, 0);
 			this.headerContainer.Controls.Add(this.aitrplaneNameLavel, 0, 2);
 			this.headerContainer.Controls.Add(this.flightNameLabel, 0, 0);
 			this.headerContainer.Controls.Add(this.departureLocationLabel, 1, 0);
@@ -241,25 +241,26 @@ namespace Client {
 			this.headerContainer.Size = new System.Drawing.Size(849, 57);
 			this.headerContainer.TabIndex = 0;
 			// 
-			// button2
+			// continueButton
 			// 
-			this.button2.AutoSize = true;
-			this.button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button2.BackColor = System.Drawing.Color.RoyalBlue;
-			this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.button2.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-			this.button2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
-			this.button2.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.button2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button2.Location = new System.Drawing.Point(743, 13);
-			this.button2.Name = "button2";
-			this.headerContainer.SetRowSpan(this.button2, 3);
-			this.button2.Size = new System.Drawing.Size(93, 31);
-			this.button2.TabIndex = 6;
-			this.button2.Text = "Продолжить";
-			this.button2.UseVisualStyleBackColor = false;
+			this.continueButton.AutoSize = true;
+			this.continueButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.continueButton.BackColor = System.Drawing.Color.RoyalBlue;
+			this.continueButton.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.continueButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+			this.continueButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
+			this.continueButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.continueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.continueButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.continueButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.continueButton.Location = new System.Drawing.Point(743, 13);
+			this.continueButton.Name = "continueButton";
+			this.headerContainer.SetRowSpan(this.continueButton, 3);
+			this.continueButton.Size = new System.Drawing.Size(93, 31);
+			this.continueButton.TabIndex = 6;
+			this.continueButton.Text = "Продолжить";
+			this.continueButton.UseVisualStyleBackColor = false;
+			this.continueButton.Click += new System.EventHandler(this.continueButton_Click);
 			// 
 			// aitrplaneNameLavel
 			// 
@@ -359,7 +360,7 @@ namespace Client {
 		private System.Windows.Forms.Label departureDatetimeLabel;
 		private System.Windows.Forms.Label aitrplaneNameLavel;
 		private System.Windows.Forms.ComboBox classSelector;
-		private System.Windows.Forms.Button button2;
+		private System.Windows.Forms.Button continueButton;
 		private System.Windows.Forms.ToolTip seatHint;
 		private System.Windows.Forms.Label selectedStatusLabel;
 		private BugfixFlowLayoutPanel passangersPanel;

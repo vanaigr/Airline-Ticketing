@@ -62,6 +62,11 @@ namespace Communication {
 					&& Equals(birthday, s.birthday) && Equals(document, s.document);
 		}
 	}
+
+	[Serializable] public struct PassangerAndSeat {
+		public int passangerIndex;
+		public int? seatIndex;
+	}
 	
 	[Serializable] public sealed class Either<TS, TF> {
 		private bool isFirst;
@@ -107,7 +112,7 @@ namespace Communication {
 		public InputError(string message) { this.message = message; }
 	}
 
-	[Serializable] public struct PassangerError { 
+	[Serializable] public struct LoginOrInputError { 
 		int error;
 		LoginError loginError;
 		InputError inputError;
@@ -131,10 +136,12 @@ namespace Communication {
 
 		[OperationContract] Either<Dictionary<int, Passanger>, LoginError> getPassangers(Customer customer);
 
-		[OperationContract] Either<int, PassangerError> addPassanger(Customer customer, Passanger passanger);
+		[OperationContract] Either<int, LoginOrInputError> addPassanger(Customer customer, Passanger passanger);
 
-		[OperationContract] Either<int, PassangerError> replacePassanger(Customer customer, int index, Passanger passanger);
+		[OperationContract] Either<int, LoginOrInputError> replacePassanger(Customer customer, int index, Passanger passanger);
 
 		[OperationContract] Either<object, LoginError> removePassanger(Customer customer, int index);
+
+		//[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer customer, List<PassangerAndSeat> passangerAndSeats, int flightId);
 	}
 }

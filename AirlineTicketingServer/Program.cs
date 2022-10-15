@@ -267,27 +267,27 @@ namespace AirlineTicketingServer {
 				}
 			}
 
-			Either<int, PassangerError> MessageService.addPassanger(Customer c, Passanger passanger) {
+			Either<int, LoginOrInputError> MessageService.addPassanger(Customer c, Passanger passanger) {
 				var it = ValidatePassanger.validate(passanger);
-				if(it.error) return Either<int, PassangerError>.Failure(new PassangerError{ InputError = new InputError(it.errorMsg) });
+				if(it.error) return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{ InputError = new InputError(it.errorMsg) });
 
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var userIdRes = getUserId(new SqlConnectionView(connection, false), c);
-				if(!userIdRes.IsSuccess) return Either<int, PassangerError>.Failure(new PassangerError{ LoginError = userIdRes.Failure() });
-				return Either<int, PassangerError>.Success(
+				if(!userIdRes.IsSuccess) return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+				return Either<int, LoginOrInputError>.Success(
 					DatabasePassanger.add(new SqlConnectionView(connection, true), userIdRes.Success(), passanger)
 				);
 				}
 			}
 
-			Either<int, PassangerError> MessageService.replacePassanger(Customer c, int index, Passanger passanger) {
+			Either<int, LoginOrInputError> MessageService.replacePassanger(Customer c, int index, Passanger passanger) {
 				var it = ValidatePassanger.validate(passanger);
-				if(it.error) return Either<int, PassangerError>.Failure(new PassangerError{ InputError = new InputError(it.errorMsg) });
+				if(it.error) return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{ InputError = new InputError(it.errorMsg) });
 
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var userIdRes = getUserId(new SqlConnectionView(connection, false), c);
-				if(!userIdRes.IsSuccess) return Either<int, PassangerError>.Failure(new PassangerError{ LoginError = userIdRes.Failure() });
-				return Either<int, PassangerError>.Success(
+				if(!userIdRes.IsSuccess) return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+				return Either<int, LoginOrInputError>.Success(
 					DatabasePassanger.replace(new SqlConnectionView(connection, true), userIdRes.Success(), index, passanger)
 				);
 				}
