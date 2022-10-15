@@ -102,6 +102,7 @@
     <Compile Include="PassangerAdd.Designer.cs">
       <DependentUpon>PassangerAdd.cs</DependentUpon>
     </Compile>
+    <Compile Include="PassangerData.cs" />
     <Compile Include="PassangerDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>

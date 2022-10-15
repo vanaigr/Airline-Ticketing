@@ -7,9 +7,10 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class FlightBooking : Form {
 		private Communication.MessageService service;
-		private Communication.Customer customer;
+		private CustomerData customer;
 
 		private List<int?> passangers;
+		private List<PassangerDisplay> displays;
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
@@ -22,7 +23,7 @@ namespace Client {
 
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
-		public FlightBooking(Communication.MessageService service, Communication.Customer customer) {
+		public FlightBooking(Communication.MessageService service, CustomerData customer) {
 			this.service = service;
 			this.customer = customer;
 
@@ -37,6 +38,7 @@ namespace Client {
 			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
 			passangers = new List<int?>();
+			displays = new List<PassangerDisplay>();
 
 			button1_Click(null, null);
 		}
@@ -104,6 +106,7 @@ namespace Client {
 		private void button1_Click(object sender, EventArgs e) {
 			passangers.Add(null);
 			var display = new PassangerDisplay() { Number = passangers.Count, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
+			displays.Add(display);
 			display.ContextMenuStrip = passangerMenu;
 			display.Click += (a, b) => selectPassanger((PassangerDisplay) a);
 			display.ShowNumber = true;
@@ -127,7 +130,21 @@ namespace Client {
 				passangers[it.Number-1] = selectionForm.SelectedPassangerIndex;
 				it.Passanger = selectionForm.SelectedPassanger;
 			}
-			//TODO update all the passanger displays because other passangers may have changed
+
+			for(int i = 0; i < passangers.Count; i++) {
+				var id = passangers[i];
+				if(id != null) {
+					Communication.Passanger passanger;
+					var exists = customer.passangers.TryGetValue((int) id, out passanger);
+					if(exists) {
+						displays[i].Passanger = passanger;
+					}
+					else {
+						passangers[i] = null;
+						displays[i].Passanger = null;
+					}		
+				}
+			}
         }
 
 		private void recalculateSeats() {
@@ -239,8 +256,9 @@ namespace Client {
 				if(seat.Value > number) seat.Value--;
 				else if(seat.Value == number) seat.Value = 0;
 			}
-			pass.Dispose();
 			passangers.RemoveAt(pass.Number-1);
+			displays.RemoveAt(pass.Number-1);
+			pass.Dispose();
 
 			passangersPanel.ResumeLayout(false);
 			seatSelectTable.ResumeLayout(false);

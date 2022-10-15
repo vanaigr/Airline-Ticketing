@@ -303,6 +303,15 @@ namespace AirlineTicketingServer {
 				}
 			}
 
+			public Either<object, LoginError> removePassanger(Customer customer, int index) {
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
+				if(!userIdRes.IsSuccess) return Either<object, LoginError>.Failure(userIdRes.Failure());
+				DatabasePassanger.remove(new SqlConnectionView(connection, true), userIdRes.s, index);
+				return Either<object, LoginError>.Success(null);
+				}
+			}
+
 			/*public Either<Seats, InputError> availableFlightDetails(int availableFlightId) {
 				byte[] seatsSchemeBin = null;
 				var occupiedSeatsIndices = new List<int>();

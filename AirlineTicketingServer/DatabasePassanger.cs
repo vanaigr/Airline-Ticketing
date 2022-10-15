@@ -167,5 +167,22 @@ namespace AirlineTicketingServer {
 			return (int) command.Parameters["@NewIndex"].Value;
 			}}}
 		}
+
+		public static void remove(SqlConnectionView cv, int customerId, int index) {
+			using(cv) {
+			using(
+			var command = new SqlCommand(@"
+				delete from [Customers].[PassangerInfo] 
+				where [Customer] = @Customer and [Index] = @Index",
+				cv.connection
+			)) {
+			command.CommandType = System.Data.CommandType.Text;
+			command.Parameters.AddWithValue("@Customer", customerId);
+			command.Parameters.AddWithValue("@Index", System.Data.SqlDbType.Int);
+
+			cv.Open();
+			command.ExecuteNonQuery();
+			}}
+		}
 	}
 }

@@ -9,28 +9,12 @@ using System.Text;
 
 namespace Communication {
 	
-	[Serializable] public class Customer {
+	[Serializable] public struct Customer {
 		public string login, password;
-		public Dictionary<int, Communication.Passanger> passangers; 
-
-		public Customer() { }
 
 		public Customer(string login, string password) {
 			this.login = login;
 			this.password = password;
-		}
-
-		internal void unlogin() {
-			login = null; password = null;
-		}
-
-		internal void setFrom(Customer o) {
-			login = o.login;
-			password = o.password;
-		}
-
-		public bool LoggedIn{
-			get{ return login != null && password != null; }
 		}
 	}
 
@@ -39,13 +23,13 @@ namespace Communication {
 		public List<City> cities;
 	}
 
-	[Serializable] public class MatchingFlightsParams {
+	[Serializable] public sealed class MatchingFlightsParams {
 		public string fromCode;
 		public string toCode;
 		public DateTime when;
 	}
 
-	[Serializable] public class AvailableFlight {
+	[Serializable] public sealed class AvailableFlight {
 		public int id;
 		public DateTime departureTime;
 		public int arrivalOffsteMinutes;
@@ -79,7 +63,7 @@ namespace Communication {
 		}
 	}
 	
-	[Serializable] public class Either<TS, TF> {
+	[Serializable] public sealed class Either<TS, TF> {
 		private bool isFirst;
 		private TS first;
 		private TF second;
@@ -151,6 +135,6 @@ namespace Communication {
 
 		[OperationContract] Either<int, PassangerError> replacePassanger(Customer customer, int index, Passanger passanger);
 
-		//[OperationContract] Either<SeatsScheme.Seats, InputError> availableFlightDetails(int availableFlightId);
+		[OperationContract] Either<object, LoginError> removePassanger(Customer customer, int index);
 	}
 }

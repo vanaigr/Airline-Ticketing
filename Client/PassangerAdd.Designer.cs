@@ -50,6 +50,9 @@ namespace Client {
 			this.editButton = new System.Windows.Forms.Button();
 			this.passangerTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.изменитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			label1 = new System.Windows.Forms.Label();
 			label2 = new System.Windows.Forms.Label();
 			label3 = new System.Windows.Forms.Label();
@@ -64,6 +67,7 @@ namespace Client {
 			this.tableLayoutPanel5.SuspendLayout();
 			this.tableLayoutPanel6.SuspendLayout();
 			tableLayoutPanel7.SuspendLayout();
+			this.passangerMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -256,6 +260,7 @@ namespace Client {
 			// 
 			// passangersDisplay
 			// 
+			this.passangersDisplay.AutoScroll = true;
 			this.passangersDisplay.ColumnCount = 1;
 			this.passangersDisplay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.passangersDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -435,6 +440,28 @@ namespace Client {
 			this.statusTooltip.InitialDelay = 500;
 			this.statusTooltip.ReshowDelay = 100;
 			// 
+			// passangerMenu
+			// 
+			this.passangerMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.удалитьToolStripMenuItem,
+            this.изменитьToolStripMenuItem});
+			this.passangerMenu.Name = "passangerMenu";
+			this.passangerMenu.Size = new System.Drawing.Size(129, 48);
+			// 
+			// удалитьToolStripMenuItem
+			// 
+			this.удалитьToolStripMenuItem.Name = "удалитьToolStripMenuItem";
+			this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+			this.удалитьToolStripMenuItem.Text = "Удалить";
+			this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
+			// 
+			// изменитьToolStripMenuItem
+			// 
+			this.изменитьToolStripMenuItem.Name = "изменитьToolStripMenuItem";
+			this.изменитьToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+			this.изменитьToolStripMenuItem.Text = "Изменить";
+			this.изменитьToolStripMenuItem.Click += new System.EventHandler(this.изменитьToolStripMenuItem_Click);
+			// 
 			// PassangerAdd
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -455,6 +482,7 @@ namespace Client {
 			this.tableLayoutPanel6.PerformLayout();
 			tableLayoutPanel7.ResumeLayout(false);
 			tableLayoutPanel7.PerformLayout();
+			this.passangerMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -477,5 +505,8 @@ namespace Client {
 		private System.Windows.Forms.Button deleteButton;
 		private System.Windows.Forms.Button editButton;
 		private System.Windows.Forms.TableLayoutPanel passangerDataTable;
+		private System.Windows.Forms.ContextMenuStrip passangerMenu;
+		private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem изменитьToolStripMenuItem;
 	}
 }

@@ -12,15 +12,13 @@ using Communication;
 namespace Client {
 	public partial class SelectFlight : Form {
 		private MessageService service;
-		private Customer customer;
-
-		private bool loggedIn{ get{ return customer.login != null && customer.password != null; } }
+		private CustomerData customer;
 
 		Dictionary<int, string> avaliableFlightClasses;
 		List<City> cities;
 		
 		public SelectFlight() {
-			customer = new Customer();
+			customer = new CustomerData();
 
             InitializeComponent();
 
@@ -36,8 +34,8 @@ namespace Client {
 
 			findFlightsButton_Click(findFlightsButton, new EventArgs());
 
-			customer = new Customer{ login = "User123", password = "789456123" };
-			customer.passangers = service.getPassangers(customer).s;
+			customer = new CustomerData("User123", "789456123");
+			customer.passangers = service.getPassangers((Customer) customer.customer).s;
 			} catch(Exception){ }
 		}
 
@@ -70,7 +68,7 @@ namespace Client {
 
 			Misc.addDummyButton(loginLayoutPanel);
 
-			if(loggedIn) {
+			if(customer.LoggedIn) {
 				var unloginButton = new Button();
 
 				unloginButton.AutoSize = true;
@@ -96,7 +94,7 @@ namespace Client {
 				accountName.Name = "AccountName";
 				accountName.Padding = new Padding(8);
 				accountName.TabIndex = 0;
-				accountName.Text = customer.login;
+				accountName.Text = customer.customer?.login;
 
 				loginLayoutPanel.Controls.Add(accountName);
 			}

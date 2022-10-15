@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class PassangerAdd : Form {
 		private Communication.MessageService service;
-		private Communication.Customer customer;
+		private CustomerData customer;
 		private Dictionary<int, PassangerDisplay> passangersDisplays; 
 
 		private int? selectedPassangerId;
@@ -23,8 +23,6 @@ namespace Client {
 
 		private State curState;
 		private void setStateAdd() {
-			Debug.Assert(curState == State.select || curState == State.none);
-
 			curState = State.add;
 			
 			deleteButton.Enabled = false;
@@ -42,8 +40,6 @@ namespace Client {
 		}
 				
 		private void setStateSelect(int newSelectedPassangerId) {
-			if(!promptSaveCustomer()) return;
-
 			curState = State.select;
 
 			deleteButton.Enabled = true;
@@ -61,11 +57,10 @@ namespace Client {
 		}
 
 		private void setStateEdit() {
-			Debug.Assert(curState == State.select || curState == State.none);
 			curState = State.edit;
 
 			deleteButton.Enabled = true;
-			editButton.Enabled = true;
+			editButton.Enabled = false;
 			passangerDataTable.Enabled = true;
 
 			saveButton.Visible = true;
@@ -74,8 +69,6 @@ namespace Client {
 		}
 
 		public void setStateNone() {
-			if(!promptSaveCustomer()) return;
-
 			curState = State.none;
 
 			deleteButton.Enabled = false;
@@ -88,7 +81,7 @@ namespace Client {
 			clearPassangerData();
 
 			saveButton.Visible = false;
-			saveAndCloseButton.Text = "Отмена";
+			saveAndCloseButton.Text = "Выйти";
 		}
 
         public Communication.Passanger SelectedPassanger{
@@ -107,7 +100,7 @@ namespace Client {
 			}
         }
 
-		public PassangerAdd(Communication.MessageService sq, Communication.Customer customer, int? defaultPassangerId) {
+		public PassangerAdd(Communication.MessageService sq, CustomerData customer, int? defaultPassangerId) {
 			this.service = sq;
 			this.customer = customer;
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
@@ -115,6 +108,7 @@ namespace Client {
 			InitializeComponent();
 			Misc.unfocusOnEscape(this, (a, e) => {
 				if(this.ActiveControl == null) {
+					if(!promptSaveCustomer()) return;
 					setStateNone();
 					e.Handled = true;
 				}
@@ -228,12 +222,16 @@ namespace Client {
 
 		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, int index) {
 			var it = new PassangerDisplay{ 
-				Passanger = passanger, Number = 999999, //999... is temporary placed in order to test wheter it is used anywhere or not
+				Passanger = passanger, Number = index,
 				Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
 				ToolTip = passangerTooltip,
 			};
-			it.Click += (a, b) => setStateSelect(index);
+			it.Click += (a, b) => {
+				if(!promptSaveCustomer()) return;
+				setStateSelect(((PassangerDisplay) a).Number);
+			};
+			it.ContextMenuStrip = passangerMenu;
 
 			passangersDisplay.RowCount++;
 			passangersDisplay.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -310,7 +308,7 @@ namespace Client {
 		}
 
 		private Tuple<bool, int> saveNewPassanger(Communication.Passanger passanger) {
-			var response = service.addPassanger(customer, passanger);
+			var response = service.addPassanger((Communication.Customer) customer.customer, passanger);
 			if(response) { 
 				var index = response.s;
 				var display = addPassangerDisplay(passanger, index);
@@ -335,7 +333,7 @@ namespace Client {
 		}
 
 		private Tuple<bool, int> saveEditedPassanger(Communication.Passanger passanger, int passangerId) {
-			var response = service.replacePassanger(customer, passangerId, passanger);
+			var response = service.replacePassanger((Communication.Customer) customer.customer, passangerId, passanger);
 			if(response) { 
 				var id = response.s;
 				customer.passangers[id] = passanger;
@@ -357,17 +355,49 @@ namespace Client {
 			return new Tuple<bool, int>(false, 0);
 		}
 
+		private bool removePassanger(int index) {
+			var response = service.removePassanger((Communication.Customer) customer.customer, index);
+			if(response) { 
+				if(index == selectedPassangerId) setStateNone();
+				passangersDisplays[index].Dispose();
+				passangersDisplays.Remove(index);
+				customer.passangers.Remove(index);
+
+				return true;
+			}
+			else {
+				promptFillCustomer(response.f.message);
+			}
+			return false;
+			
+		}
+
 		private void editButton_Click(object sender, EventArgs e) {
+			Debug.Assert(curState == State.select || curState == State.none);
 			setStateEdit();
 		}
 
 		private void addButton_Click(object sender, EventArgs e) {
+			Debug.Assert(curState == State.select || curState == State.none);
 			setStateAdd();
 		}
 
 		private void deleteButton_Click(object sender, EventArgs e) {
-			if(selectedPassangerId != null) passangersDisplays[(int) selectedPassangerId]?.Dispose();
-			setStateNone();
+			removePassanger((int) selectedPassangerId);
+		}
+
+		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
+			var pass = (PassangerDisplay) passangerMenu.SourceControl;
+			var number = pass.Number;
+			removePassanger(number);
+		}
+
+		private void изменитьToolStripMenuItem_Click(object sender, EventArgs e) {
+			var pass = (PassangerDisplay) passangerMenu.SourceControl;
+			var number = pass.Number;
+			if(!promptSaveCustomer()) return;
+			setStateSelect(number);
+			setStateEdit();
 		}
 	}
 }

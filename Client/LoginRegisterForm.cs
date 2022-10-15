@@ -13,18 +13,18 @@ using Communication;
 namespace Client {
 
 	public partial class LoginRegisterForm : Form {
-		Customer customer;
+		CustomerData customer;
 		MessageService service;
 
-		public LoginRegisterForm(MessageService service, Customer customer) {
+		public LoginRegisterForm(MessageService service, CustomerData customer) {
 			this.service = service;
 			this.customer = customer;
 
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
 			
-			LoginText.Text = customer.login;
-			PasswordText.Text = customer.password;
+			LoginText.Text = customer.customer?.login;
+			PasswordText.Text = customer.customer?.password;
 		}
 
 		public void setError(string message) {
@@ -66,9 +66,9 @@ namespace Client {
 				var newCust = new Customer(login, password);
 				var response = service.logIn(newCust);
 				if(response) {
-					customer.setFrom(newCust);
-					var response2 = service.getPassangers(customer);
+					var response2 = service.getPassangers(newCust);
 					if(response2) {
+						customer.setFrom(newCust);
 						customer.passangers = response2.s;
 						statusLabel.ForeColor = SystemColors.ControlText;
 						statusLabel.Text = "";
