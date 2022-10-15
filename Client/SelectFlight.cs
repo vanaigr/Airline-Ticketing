@@ -35,6 +35,9 @@ namespace Client {
 			toLoc.SelectedIndex = 1;
 
 			findFlightsButton_Click(findFlightsButton, new EventArgs());
+
+			customer = new Customer{ login = "User123", password = "789456123" };
+			customer.passangers = service.getPassangers(customer).s;
 			} catch(Exception){ }
 		}
 

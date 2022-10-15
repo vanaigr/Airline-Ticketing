@@ -121,15 +121,13 @@ namespace Client {
 
         private void selectPassanger(PassangerDisplay it) {
 			var oldIndex = passangers[it.Number-1];
-            var selectionForm = new PassangerAdd(service, customer);
-			try { selectionForm.SelectedPassangerIndex = oldIndex; } catch(Exception) { }
-            selectionForm.ShowDialog();
-            var selectedPassanger = selectionForm.SelectedPassanger;
-            if(selectedPassanger != null) {
-                int selectedPassangerIndex = (int) selectionForm.SelectedPassangerIndex;
-                passangers[it.Number-1] = selectedPassangerIndex;
-                it.Passanger = selectedPassanger;
-            }
+            var selectionForm = new PassangerAdd(service, customer, oldIndex);
+            var result = selectionForm.ShowDialog();
+			if(result == DialogResult.OK) {
+				passangers[it.Number-1] = selectionForm.SelectedPassangerIndex;
+				it.Passanger = selectionForm.SelectedPassanger;
+			}
+			//TODO update all the passanger displays because other passangers may have changed
         }
 
 		private void recalculateSeats() {

@@ -29,13 +29,10 @@ namespace Client {
 			form.KeyPreview = true;
 
 			form.KeyDown += (a, e) => {
-				if(e.KeyCode == Keys.Escape) {
+				inner?.Invoke(a, e);
+				if(!e.Handled && e.KeyCode == Keys.Escape) {
 					form.ActiveControl = null;
 					e.Handled = true;
-				}
-				else {
-					e.Handled = false;
-					inner?.Invoke(a, e);
 				}
 			};
 		}
