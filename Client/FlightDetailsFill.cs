@@ -37,6 +37,8 @@ namespace Client {
 			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
+			Misc.fixFlowLayoutPanelHeight(passangersPanel);
+
 			passangers = new List<PassangerData>();
 			displays = new List<PassangerDisplay>();
 
@@ -48,14 +50,8 @@ namespace Client {
 			FlightAndCities flightAndCities,
 			int selectedClassId
 		) {
-			//filter classes that are present in seats scheme
-			var classesSet = new HashSet<int>();
-
-			foreach(var seat in flightAndCities.flight.seats) {
-				classesSet.Add(seat.Class);
-			}
 			this.classesNames = new Dictionary<int, string>();
-			foreach(var classId in classesSet) {
+			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
 				this.classesNames.Add(classId, classesNames[classId]);
 			}
 
@@ -124,14 +120,17 @@ namespace Client {
 
         private void selectPassanger(PassangerDisplay it) {
 			var oldPassanger = passangers[it.Number-1];
-            var selectionForm = new PassangerUpdate(service, customer, oldPassanger.passangerIndex);
-            var result = selectionForm.ShowDialog();
-			if(result == DialogResult.OK) {
-				var newPassanger = passangers[it.Number-1];
-				newPassanger.passangerIndex = selectionForm.SelectedPassangerIndex;
-				passangers[it.Number-1] = newPassanger;
-				it.Passanger = selectionForm.SelectedPassanger;
-			}
+            var selectionForm = new PassangerSettings(
+				service, customer, oldPassanger.passangerIndex, 
+				flightAndCities.flight.optionsForClasses, classesNames
+			);
+			var result = selectionForm.ShowDialog();
+			//if(result == DialogResult.OK) {
+			//	var newPassanger = passangers[it.Number-1];
+			//	newPassanger.passangerIndex = selectionForm.SelectedPassangerIndex;
+			//	passangers[it.Number-1] = newPassanger;
+			//	it.Passanger = selectionForm.SelectedPassanger;
+			//}
 
 			for(int i = 0; i < passangers.Count; i++) {
 				var passangerData = passangers[i];
@@ -229,35 +228,15 @@ namespace Client {
 			seatSelectTable.PerformLayout();
 		}
 
-		private void passangersPanel_Resize(object sender, EventArgs e) {
-			if(ignoreResize__) return;
-			resizePassangersPanel();
-		}
-
-		private bool ignoreResize__ = false;
-		private void flowLayoutPanelHeightBug_Resize(object sender, EventArgs e) {
-			if(ignoreResize__) return;
-			resizePassangersPanel();
-		}
-
-		private void resizePassangersPanel() {
-			ignoreResize__ = true;
-			var tableSize = passangersPanel.Size;
-			flowLayoutPanelHeightBug.SuspendLayout();
-			flowLayoutPanelHeightBug.Size = tableSize;
-			flowLayoutPanelHeightBug.ResumeLayout(false);
-			flowLayoutPanelHeightBug.PerformLayout();
-			ignoreResize__ = false;
-		}
-
 		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
 			passangersPanel.SuspendLayout();
 			seatSelectTable.SuspendLayout(); //is this really needed here?
 
+			if(passangers.Count == 1) return;
+
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
 			var number = pass.Number;
-			foreach(var passDisC in passangersPanel.Controls) {
-				var passDis = (PassangerDisplay) passDisC;
+			foreach(var passDis in displays) {
 				if(passDis.Number > number) passDis.Number--;
 			}
 			foreach(var seat in seatSelectTable) {
@@ -291,6 +270,12 @@ namespace Client {
 
 			var tb = (TextBox) Controls[0];
 
+
+			tb.MouseWheel += (a, e) => {
+				Console.WriteLine("CCCCCCCCCCC");
+				((HandledMouseEventArgs) e).Handled = true;
+			};
+
 			tb.Multiline = true;
 			tb.BorderStyle = BorderStyle.None;
 
@@ -309,11 +294,6 @@ namespace Client {
 		protected override void UpdateEditText() {
 		    if (this.Value != 0) base.UpdateEditText();
 		    else base.Text = "";
-		}
-
-		protected override void OnParentEnabledChanged(EventArgs e) {
-			base.OnParentEnabledChanged(e);
-			Enabled = Parent.Enabled;
 		}
 
 		private void setColors() {
@@ -352,6 +332,10 @@ namespace Client {
 		public void markError() {
 			error = true;
 			setColors();
+		}
+
+		protected override void OnMouseWheel(MouseEventArgs e) {
+			//base.OnMouseWheel(e);
 		}
 	}
 
@@ -532,7 +516,7 @@ namespace Client {
 						for(int x = 0; x < size.x; x++) {
 							var it = new SeatNumericUpDown();
 							var seat = seats[x, z];
-							if(seat.Class != classId || seat.Occupied) {
+							if(seat.Occupied) { //|| seat.Class != classId
 								it.Enabled = false;
 							}
 							it.ValueChanged += (a, b) => update();
@@ -552,27 +536,6 @@ namespace Client {
 
 		static RectangleF point4(float x1, float y1, float x2, float y2) {
 			return new RectangleF(x1, y1, x2 - x1, y2 - y1);
-		}
-	}
-
-	public class BugfixFlowLayoutPanel : FlowLayoutPanel {
-		public BugfixFlowLayoutPanel() : base() {
-		}
-
-		protected override void SetClientSizeCore(int x, int y) {
-			base.SetClientSizeCore(x, y);
-		}
-
-		private bool ignore__ = true;
-		public override Size GetPreferredSize(Size proposedSize) {
-			if(ignore__) return base.GetPreferredSize(proposedSize);
-			ignore__ = true;
-			this.AutoSize = false;
-			this.Size = new Size();
-			this.AutoSize = true;
-			this.Size = new Size();
-			ignore__ = false;
-			return base.GetPreferredSize(proposedSize);
 		}
 	}
 }

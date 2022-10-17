@@ -35,15 +35,15 @@ namespace FlightsOptions {
 	}
 
 	public bool IsFree{ get{ return costRub == 0; } }
-	public short TotalCostRub{ get{ Debug.Assert(!IsFree); return costRub; } }
+	//public short TotalCostRub{ get{ Debug.Assert(!IsFree); return costRub; } }
 
-	public short Count{ get{ return count; } }
+	//public short Count{ get{ return count; } }
 
 	public bool RestrictionWeight{ get{ return maxWeightKg != 0; } }
 	public bool RestrictionSize{ get{ return maxDim != new Size3(); } }
 
-	public short WeightKgRestrictionPerSingle{ get{ Debug.Assert(RestrictionWeight); return maxWeightKg; } }
-	public Size3 SizeRestrictionPerSingle{ get{ Debug.Assert(RestrictionSize); return maxDim; } }
+	//public short WeightKgRestrictionPerSingle{ get{ Debug.Assert(RestrictionWeight); return maxWeightKg; } }
+	//public Size3 SizeRestrictionPerSingle{ get{ Debug.Assert(RestrictionSize); return maxDim; } }
 }
 
 [Serializable] public class BaggageOptions {

@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class PassangerUpdate : Form {
+	public partial class PassangerUpdate : UserControl {
 		private Communication.MessageService service;
 		private CustomerData customer;
 		private Dictionary<int, PassangerDisplay> passangersDisplays; 
@@ -36,7 +36,6 @@ namespace Client {
 
 			saveButton.Visible = true;
 			saveButton.Text = "Добавить";
-			saveAndCloseButton.Text = "Добавить и выйти";
 		}
 				
 		private void setStateSelect(int newSelectedPassangerId) {
@@ -48,12 +47,11 @@ namespace Client {
 
 			if(selectedPassangerId != null) passangersDisplays[(int) selectedPassangerId].BackColor = Color.White;
 			selectedPassangerId = newSelectedPassangerId;
-			passangersDisplays[newSelectedPassangerId].BackColor = Color.LightGray;
+			passangersDisplays[newSelectedPassangerId].BackColor = Color.Gainsboro;
 			
 			setDataFromPassanger(customer.passangers[newSelectedPassangerId]);
 
 			saveButton.Visible = false;
-			saveAndCloseButton.Text = "Выбрать и выйти";
 		}
 
 		private void setStateEdit() {
@@ -65,7 +63,6 @@ namespace Client {
 
 			saveButton.Visible = true;
 			saveButton.Text = "Сохранить";
-			saveAndCloseButton.Text = "Сохранить и выйти";
 		}
 
 		public void setStateNone() {
@@ -81,7 +78,6 @@ namespace Client {
 			clearPassangerData();
 
 			saveButton.Visible = false;
-			saveAndCloseButton.Text = "Выйти";
 		}
 
         public Communication.Passanger SelectedPassanger{
@@ -100,20 +96,29 @@ namespace Client {
 			}
         }
 
-		public PassangerUpdate(Communication.MessageService sq, CustomerData customer, int? defaultPassangerId) {
+		public PassangerUpdate() {
+			InitializeComponent();
+			//Misc.unfocusOnEscape(this, (a, e) => {
+			//	if(this.ActiveControl == null) {
+			//		if(!promptSaveCustomer()) return;
+			//		setStateNone();
+			//		e.Handled = true;
+			//	}
+			//});
+			//Misc.addDummyButton(this);
+
+			
+		}
+
+		public void selectNone() {
+			if(!promptSaveCustomer()) return;
+			setStateNone();
+		}
+
+		public void init(Communication.MessageService sq, CustomerData customer, int? defaultPassangerId) {
 			this.service = sq;
 			this.customer = customer;
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
-
-			InitializeComponent();
-			Misc.unfocusOnEscape(this, (a, e) => {
-				if(this.ActiveControl == null) {
-					if(!promptSaveCustomer()) return;
-					setStateNone();
-					e.Handled = true;
-				}
-			});
-			Misc.addDummyButton(this);
 
 			setupPassangersDisplay(defaultPassangerId);
 		}
@@ -240,45 +245,25 @@ namespace Client {
 			return it;
 		}
 
-		private void saveAndCloseButton_Click(object sender, EventArgs e) {
-			var result = save();
-			if(result != null) this.DialogResult = (DialogResult) result;
-		}
-
 		private void saveButton_Click(object sender, EventArgs eventArgs) {
 			save();
 		}
 
-		private DialogResult? save() {
+		private void save() {
 			var passanger = formPassangerFromData();
 			if(curState == State.add) {
 				var result = saveNewPassanger(passanger);
-				if(result.Item1) {
-					setStateSelect(result.Item2); 
-					return DialogResult.OK;
-				}
+				if(result.Item1) setStateSelect(result.Item2); 
 			}
 			else if(curState == State.edit) {
 				var passangerId = (int) selectedPassangerId;
 				var oldPassanger = customer.passangers[passangerId];
 				if(!oldPassanger.Equals(passanger)) {
 					var result = saveEditedPassanger(passanger, passangerId);
-					if(result.Item1) {
-						setStateSelect(result.Item2);
-						return DialogResult.OK;
-					}
+					if(result.Item1) setStateSelect(result.Item2);
 				}
-				else return DialogResult.OK;
 			}
-			else if(curState == State.select) {
-				return DialogResult.OK;
-			}
-			else {
-				Debug.Assert(curState == State.none);
-				return DialogResult.Cancel;
-			}
-
-			return null;
+			else Debug.Assert(curState == State.select || curState == State.none);
 		}
 
 		private Communication.Passanger formPassangerFromData() { 
@@ -383,12 +368,20 @@ namespace Client {
 		}
 
 		private void deleteButton_Click(object sender, EventArgs e) {
-			removePassanger((int) selectedPassangerId);
+			var result = MessageBox.Show(
+				"Вы точно хотите удалить данного пассажира?", "",
+				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
+			);
+			if(result == DialogResult.Yes) removePassanger((int) selectedPassangerId);
 		}
 
 		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
 			var number = pass.Number;
+			var result = MessageBox.Show(
+				"Вы точно хотите удалить данного пассажира?", "",
+				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
+			);
 			removePassanger(number);
 		}
 

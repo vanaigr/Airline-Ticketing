@@ -73,6 +73,12 @@
     <Compile Include="..\AirlineTicketingServer\Validation.cs">
       <Link>Validation.cs</Link>
     </Compile>
+    <Compile Include="BaggageOption.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BaggageOption.Designer.cs">
+      <DependentUpon>BaggageOption.cs</DependentUpon>
+    </Compile>
     <Compile Include="FlightDetailsFill.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,8 +102,14 @@
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Misc.cs" />
+    <Compile Include="PassangerOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PassangerOptions.Designer.cs">
+      <DependentUpon>PassangerOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="PassangerUpdate.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PassangerUpdate.Designer.cs">
       <DependentUpon>PassangerUpdate.cs</DependentUpon>
@@ -116,6 +128,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PassangerSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PassangerSettings.Designer.cs">
+      <DependentUpon>PassangerSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="SelectFlight.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +145,9 @@
     <Compile Include="TransparentPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="BaggageOption.resx">
+      <DependentUpon>BaggageOption.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FlightDetailsFill.resx">
       <DependentUpon>FlightDetailsFill.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,6 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PassangerOptions.resx">
+      <DependentUpon>PassangerOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PassangerUpdate.resx">
       <DependentUpon>PassangerUpdate.cs</DependentUpon>
@@ -145,6 +169,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PassangerSettings.resx">
+      <DependentUpon>PassangerSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SelectFlight.resx">
       <DependentUpon>SelectFlight.cs</DependentUpon>

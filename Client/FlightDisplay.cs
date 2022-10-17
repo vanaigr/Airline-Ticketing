@@ -143,27 +143,27 @@ namespace Client {
 
 			foreach(var baggage in freeBaggage) {
 				sb.Clear().Append(label).Append(' ');
-				sb.Append(baggage.Count);
-				if(baggage.Count == 1) sb.Append(" сумка");
+				sb.Append(baggage.count);
+				if(baggage.count == 1) sb.Append(" сумка");
 				else sb.Append(" сумок");
 				if(baggage.RestrictionWeight) {
 					sb.Append(" до ")
-					  .Append(baggage.WeightKgRestrictionPerSingle)
+					  .Append(baggage.maxWeightKg)
 					  .Append(nbs)
 					  .Append("кг");
 				}
 				if(baggage.RestrictionWeight && baggage.RestrictionSize) sb.Append(",");
 				if(baggage.RestrictionSize) {
 					sb.Append(" до ") 
-					  .Append(baggage.SizeRestrictionPerSingle.x)
+					  .Append(baggage.maxDim.x)
 					  .Append('x')
-					  .Append(baggage.SizeRestrictionPerSingle.y)
+					  .Append(baggage.maxDim.y)
 					  .Append('x')
-					  .Append(baggage.SizeRestrictionPerSingle.z)
+					  .Append(baggage.maxDim.z)
 					  .Append(nbs)
 					  .Append("см");
 				}
-				if((baggage.RestrictionWeight || baggage.RestrictionSize) && baggage.Count != 1) sb.Append(" за шт.");
+				if((baggage.RestrictionWeight || baggage.RestrictionSize) && baggage.count != 1) sb.Append(" за шт.");
 
 				addListItem(baggageOptionsTable, Status.free, sb.ToString());
 			}

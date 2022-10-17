@@ -36,6 +36,34 @@ namespace Client {
 				}
 			};
 		}
+
+		public static void fixFlowLayoutPanelHeight(FlowLayoutPanel it) {
+			new FlowLayoutPanelHeightBugfix(it);
+		}
+
+		private class FlowLayoutPanelHeightBugfix {
+			private bool ignoreResize__ = false;
+			private FlowLayoutPanel panel;
+			private Control parent;
+
+			public FlowLayoutPanelHeightBugfix(FlowLayoutPanel it) {
+				this.panel = it;
+				this.parent = it.Parent;
+				parent.Resize += new EventHandler(resizeFix);
+				it.Resize += new EventHandler(resizeFix);
+			}
+
+			private void resizeFix(object sender, EventArgs e) {
+				if(ignoreResize__) return;
+				ignoreResize__ = true;
+				var tableSize = panel.Size;
+				parent.SuspendLayout();
+				parent.Size = tableSize;
+				parent.ResumeLayout(false);
+				parent.PerformLayout();
+				ignoreResize__ = false;
+			}
+		}
 	}
 
 	static class Math2 {

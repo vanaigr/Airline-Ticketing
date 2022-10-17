@@ -42,7 +42,6 @@ namespace Client {
 			this.documentTypeCombobox = new System.Windows.Forms.ComboBox();
 			this.passangersDisplay = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-			this.saveAndCloseButton = new System.Windows.Forms.Button();
 			this.saveButton = new System.Windows.Forms.Button();
 			this.statusLabel = new System.Windows.Forms.Label();
 			this.addButton = new System.Windows.Forms.Button();
@@ -188,6 +187,8 @@ namespace Client {
 			// 
 			// tableLayoutPanel8
 			// 
+			tableLayoutPanel8.AutoSize = true;
+			tableLayoutPanel8.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			tableLayoutPanel8.ColumnCount = 2;
 			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -197,11 +198,12 @@ namespace Client {
 			tableLayoutPanel8.Controls.Add(tableLayoutPanel7, 0, 1);
 			tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
 			tableLayoutPanel8.Location = new System.Drawing.Point(0, 0);
+			tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
 			tableLayoutPanel8.Name = "tableLayoutPanel8";
 			tableLayoutPanel8.RowCount = 2;
 			tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel8.Size = new System.Drawing.Size(800, 450);
+			tableLayoutPanel8.Size = new System.Drawing.Size(792, 505);
 			tableLayoutPanel8.TabIndex = 0;
 			// 
 			// passangerDataTable
@@ -212,7 +214,7 @@ namespace Client {
 			this.passangerDataTable.Controls.Add(tableLayoutPanel4, 0, 0);
 			this.passangerDataTable.Controls.Add(this.tableLayoutPanel5, 0, 2);
 			this.passangerDataTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.passangerDataTable.Location = new System.Drawing.Point(236, 0);
+			this.passangerDataTable.Location = new System.Drawing.Point(228, 0);
 			this.passangerDataTable.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerDataTable.Name = "passangerDataTable";
 			this.passangerDataTable.Padding = new System.Windows.Forms.Padding(6);
@@ -223,7 +225,7 @@ namespace Client {
 			this.passangerDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.passangerDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.passangerDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.passangerDataTable.Size = new System.Drawing.Size(564, 413);
+			this.passangerDataTable.Size = new System.Drawing.Size(564, 468);
 			this.passangerDataTable.TabIndex = 1;
 			// 
 			// tableLayoutPanel5
@@ -270,7 +272,7 @@ namespace Client {
 			this.passangersDisplay.Padding = new System.Windows.Forms.Padding(6);
 			this.passangersDisplay.RowCount = 1;
 			this.passangersDisplay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.passangersDisplay.Size = new System.Drawing.Size(236, 413);
+			this.passangersDisplay.Size = new System.Drawing.Size(228, 468);
 			this.passangersDisplay.TabIndex = 4;
 			// 
 			// tableLayoutPanel6
@@ -278,17 +280,16 @@ namespace Client {
 			this.tableLayoutPanel6.AutoSize = true;
 			this.tableLayoutPanel6.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel6.BackColor = System.Drawing.Color.White;
-			this.tableLayoutPanel6.ColumnCount = 5;
+			this.tableLayoutPanel6.ColumnCount = 3;
 			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
-			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel6.Controls.Add(this.saveAndCloseButton, 4, 0);
+			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel6.Controls.Add(this.saveButton, 2, 0);
 			this.tableLayoutPanel6.Controls.Add(this.statusLabel, 0, 0);
 			this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel6.Location = new System.Drawing.Point(236, 413);
+			this.tableLayoutPanel6.Location = new System.Drawing.Point(228, 468);
 			this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel6.Name = "tableLayoutPanel6";
 			this.tableLayoutPanel6.Padding = new System.Windows.Forms.Padding(6);
@@ -297,38 +298,18 @@ namespace Client {
 			this.tableLayoutPanel6.Size = new System.Drawing.Size(564, 37);
 			this.tableLayoutPanel6.TabIndex = 2;
 			// 
-			// saveAndCloseButton
-			// 
-			this.saveAndCloseButton.AutoSize = true;
-			this.saveAndCloseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.saveAndCloseButton.BackColor = System.Drawing.Color.RoyalBlue;
-			this.saveAndCloseButton.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.saveAndCloseButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-			this.saveAndCloseButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
-			this.saveAndCloseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.saveAndCloseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.saveAndCloseButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.saveAndCloseButton.Location = new System.Drawing.Point(443, 6);
-			this.saveAndCloseButton.Margin = new System.Windows.Forms.Padding(0);
-			this.saveAndCloseButton.Name = "saveAndCloseButton";
-			this.saveAndCloseButton.Size = new System.Drawing.Size(115, 25);
-			this.saveAndCloseButton.TabIndex = 5;
-			this.saveAndCloseButton.Text = "Сохранить и выйти";
-			this.saveAndCloseButton.UseVisualStyleBackColor = false;
-			this.saveAndCloseButton.Click += new System.EventHandler(this.saveAndCloseButton_Click);
-			// 
 			// saveButton
 			// 
 			this.saveButton.AutoSize = true;
 			this.saveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.saveButton.BackColor = System.Drawing.Color.Transparent;
+			this.saveButton.BackColor = System.Drawing.Color.RoyalBlue;
 			this.saveButton.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.saveButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.saveButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.saveButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.saveButton.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.saveButton.Location = new System.Drawing.Point(368, 6);
+			this.saveButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.saveButton.Location = new System.Drawing.Point(486, 6);
 			this.saveButton.Margin = new System.Windows.Forms.Padding(0);
 			this.saveButton.Name = "saveButton";
 			this.saveButton.Size = new System.Drawing.Size(72, 25);
@@ -347,7 +328,7 @@ namespace Client {
 			this.statusLabel.Location = new System.Drawing.Point(9, 9);
 			this.statusLabel.Margin = new System.Windows.Forms.Padding(3);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(353, 19);
+			this.statusLabel.Size = new System.Drawing.Size(471, 19);
 			this.statusLabel.TabIndex = 7;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -355,7 +336,7 @@ namespace Client {
 			// 
 			tableLayoutPanel7.AutoSize = true;
 			tableLayoutPanel7.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			tableLayoutPanel7.BackColor = System.Drawing.Color.WhiteSmoke;
+			tableLayoutPanel7.BackColor = System.Drawing.Color.White;
 			tableLayoutPanel7.ColumnCount = 5;
 			tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
 			tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
@@ -366,13 +347,13 @@ namespace Client {
 			tableLayoutPanel7.Controls.Add(this.deleteButton, 2, 0);
 			tableLayoutPanel7.Controls.Add(this.editButton, 0, 0);
 			tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-			tableLayoutPanel7.Location = new System.Drawing.Point(0, 413);
+			tableLayoutPanel7.Location = new System.Drawing.Point(0, 468);
 			tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
 			tableLayoutPanel7.Name = "tableLayoutPanel7";
 			tableLayoutPanel7.Padding = new System.Windows.Forms.Padding(6);
 			tableLayoutPanel7.RowCount = 1;
 			tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			tableLayoutPanel7.Size = new System.Drawing.Size(236, 37);
+			tableLayoutPanel7.Size = new System.Drawing.Size(228, 37);
 			tableLayoutPanel7.TabIndex = 2;
 			// 
 			// addButton
@@ -387,10 +368,10 @@ namespace Client {
 			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.addButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.addButton.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.addButton.Location = new System.Drawing.Point(156, 6);
+			this.addButton.Location = new System.Drawing.Point(152, 6);
 			this.addButton.Margin = new System.Windows.Forms.Padding(0);
 			this.addButton.Name = "addButton";
-			this.addButton.Size = new System.Drawing.Size(74, 25);
+			this.addButton.Size = new System.Drawing.Size(70, 25);
 			this.addButton.TabIndex = 4;
 			this.addButton.Text = "Добавить";
 			this.addButton.UseVisualStyleBackColor = false;
@@ -407,10 +388,10 @@ namespace Client {
 			this.deleteButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.deleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.deleteButton.Location = new System.Drawing.Point(81, 6);
+			this.deleteButton.Location = new System.Drawing.Point(79, 6);
 			this.deleteButton.Margin = new System.Windows.Forms.Padding(0);
 			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.Size = new System.Drawing.Size(72, 25);
+			this.deleteButton.Size = new System.Drawing.Size(70, 25);
 			this.deleteButton.TabIndex = 3;
 			this.deleteButton.Text = "Удалить";
 			this.deleteButton.UseVisualStyleBackColor = false;
@@ -428,7 +409,7 @@ namespace Client {
 			this.editButton.Location = new System.Drawing.Point(6, 6);
 			this.editButton.Margin = new System.Windows.Forms.Padding(0);
 			this.editButton.Name = "editButton";
-			this.editButton.Size = new System.Drawing.Size(72, 25);
+			this.editButton.Size = new System.Drawing.Size(70, 25);
 			this.editButton.TabIndex = 5;
 			this.editButton.Text = "Изменить";
 			this.editButton.UseVisualStyleBackColor = true;
@@ -462,14 +443,16 @@ namespace Client {
 			this.изменитьToolStripMenuItem.Text = "Изменить";
 			this.изменитьToolStripMenuItem.Click += new System.EventHandler(this.изменитьToolStripMenuItem_Click);
 			// 
-			// PassangerAdd
+			// PassangerUpdate
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.AutoSize = true;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(tableLayoutPanel8);
-			this.Name = "PassangerAdd";
-			this.Text = "PassangerAdd";
+			this.Margin = new System.Windows.Forms.Padding(0);
+			this.Name = "PassangerUpdate";
+			this.Size = new System.Drawing.Size(792, 505);
 			tableLayoutPanel4.ResumeLayout(false);
 			tableLayoutPanel4.PerformLayout();
 			tableLayoutPanel8.ResumeLayout(false);
@@ -484,6 +467,7 @@ namespace Client {
 			tableLayoutPanel7.PerformLayout();
 			this.passangerMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -496,7 +480,6 @@ namespace Client {
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
 		private System.Windows.Forms.ComboBox documentTypeCombobox;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
-		private System.Windows.Forms.Button saveAndCloseButton;
 		private System.Windows.Forms.Button saveButton;
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.ToolTip statusTooltip;

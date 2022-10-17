@@ -25,16 +25,16 @@ namespace AirlineTicketingServer {
 			public MainMessageService() {
 				
 				
-				var sizes = new Point[]{ new Point(2, 4), new Point(25, 6) };
+				/*var sizes = new Point[]{ new Point(2, 4), new Point(25, 6) };
 				var seatsClasses = new List<byte>(2*4 + 25 * 6);
 				for(int i = 0; i < 2*4; i++) seatsClasses.Add(3);
 				for(int i = 0; i < 25*6; i++) seatsClasses.Add(1);
 				
 				var seatsScheme = new SeatsScheme.SeatsScheme(sizes.Cast<SeatsScheme.Point>().GetEnumerator());
-				var seatsAndClasses = new SeatsSchemeAndClasses{ scheme = seatsScheme, classes = seatsClasses.ToArray() };
+				var seatsAndClasses = new SeatsSchemeAndClasses{ scheme = seatsScheme, classes = seatsClasses.ToArray() };*/
 
 				
-				var economOptins = new Options{
+				/*var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
 							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
@@ -73,7 +73,7 @@ namespace AirlineTicketingServer {
 				};
 				var optionsForClasses = new Dictionary<int, Options>(2);
 				optionsForClasses.Add(1, economOptins);
-				optionsForClasses.Add(3, busunessOptions);
+				optionsForClasses.Add(3, busunessOptions);*/
 
 				flightClasses = flightClasses = new Dictionary<int, string>();
 				cities = new List<City>();
