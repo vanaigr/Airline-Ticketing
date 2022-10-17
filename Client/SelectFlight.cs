@@ -247,16 +247,14 @@ namespace Client {
 		private void openFlightBooking(object sender, EventArgs e) {
 			var flightDisplay = (FlightDisplay) sender;
 			var fic = flightDisplay.CurrentFlight;
-			var classId = flightDisplay.SelectedClass;
 
 			FlightDetailsFill booking;
 			if(openedBookings.TryGetValue(fic.flight.id, out booking)) {
 				booking.Focus();
-				booking.setSelectedClass(classId);
 			}
 			else {
 				booking = new FlightDetailsFill(service, customer);
-				booking.setFromFlight(avaliableFlightClasses, fic, classId);
+				booking.setFromFlight(avaliableFlightClasses, fic);
 				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
 
 				openedBookings.Add(fic.flight.id, booking);

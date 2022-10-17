@@ -10,13 +10,13 @@ namespace Client {
 		private Communication.MessageService service;
 		private CustomerData customer;
 
-		struct PassangerData {
+		class PassangerData {
 			public int? passangerIndex;
 			public int? seatIndex;
+			public PassangerDisplay display;
 		}
 
-		private List<PassangerData> passangers;
-		private List<PassangerDisplay> displays;
+		private List<PassangerData> currentPassangers;
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
@@ -39,16 +39,12 @@ namespace Client {
 
 			Misc.fixFlowLayoutPanelHeight(passangersPanel);
 
-			passangers = new List<PassangerData>();
-			displays = new List<PassangerDisplay>();
-
-			button1_Click(null, null);
+			currentPassangers = new List<PassangerData>();
 		}
 
 		public bool setFromFlight(
 			Dictionary<int, string> classesNames,
-			FlightAndCities flightAndCities,
-			int selectedClassId
+			FlightAndCities flightAndCities
 		) {
 			this.classesNames = new Dictionary<int, string>();
 			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
@@ -67,89 +63,70 @@ namespace Client {
 			departureLocationLabel.Text = flightAndCities.fromCityCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
-			
-			classSelector.SuspendLayout();
-			classSelector.DataSource = new BindingSource{ DataSource = this.classesNames };
-			classSelector.DisplayMember = "Value";
-			setSelectedClass(selectedClassId);
-			classSelector.ResumeLayout(false);
-			classSelector.PerformLayout();
 
-			Misc.addDummyButton(classSelector.Parent);
+			seatSelectTable.update(flightAndCities.flight.seats, addOrUpdatePassanger);
 
-			recalculateSeats();
+			updateSeatsStatusText();
 
 			return true;
-		}
-
-		public void setSelectedClass(int selectedClassId) {
-			var classE = classesNames.GetEnumerator();
-			var i = 0;
-			for(; classE.MoveNext() && classE.Current.Key != selectedClassId; i++);
-			classSelector.SelectedIndex = i;
-
-		}
-
-		private void classSelector_SelectedIndexChanged(object sender, EventArgs e) {
-			seatSelectTable.update(flightAndCities.flight.seats, ((KeyValuePair<int, string>) classSelector.SelectedValue).Key, recalculateSeats);
-			recalculateSeats();
 		}
 
 		private void FlightBooking_Load(object sender, EventArgs e) {
 			ActiveControl = Misc.addDummyButton(this);
 		}
 
-		private void button1_Click(object sender, EventArgs e) {
-			passangers.Add(new PassangerData{ passangerIndex = null, seatIndex = null });
-			var display = new PassangerDisplay() { Number = passangers.Count, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
-			displays.Add(display);
-			display.ContextMenuStrip = passangerMenu;
-			display.Click += (a, b) => selectPassanger((PassangerDisplay) a);
-			display.ShowNumber = true;
-			display.ToolTip = passangerTooltip;
-
-			var passangersDisplayList = passangersPanel;
-
-			passangersDisplayList.SuspendLayout();
-			passangersDisplayList.Controls.Add(display);
-			passangersDisplayList.ResumeLayout(false);
-			passangersDisplayList.PerformLayout();
-
-			recalculateSeats();
-		}
-
-        private void selectPassanger(PassangerDisplay it) {
-			var oldPassanger = passangers[it.Number-1];
+        private void selectCurrentPassanger(int index) {
+			var oldPassanger = currentPassangers[index];
             var selectionForm = new PassangerSettings(
 				service, customer, oldPassanger.passangerIndex, 
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
-			//if(result == DialogResult.OK) {
-			//	var newPassanger = passangers[it.Number-1];
-			//	newPassanger.passangerIndex = selectionForm.SelectedPassangerIndex;
-			//	passangers[it.Number-1] = newPassanger;
-			//	it.Passanger = selectionForm.SelectedPassanger;
-			//}
+			
+			if(result != DialogResult.Cancel && selectionForm.PassangerIndex != null) {
+				var passangerIndex = result == DialogResult.Abort ? null : selectionForm.PassangerIndex;
+				var newPassanger = currentPassangers[index];
+				newPassanger.passangerIndex = passangerIndex;
+				newPassanger.display.Passanger = passangerIndex != null ?
+					customer.passangers[(int) passangerIndex] : null;
 
-			for(int i = 0; i < passangers.Count; i++) {
-				var passangerData = passangers[i];
+				if(passangerIndex == null) deletePassanger(index);
+			}
+
+			for(int i = 0; i < currentPassangers.Count; i++) {
+				var passangerData = currentPassangers[i];
 				if(passangerData.passangerIndex != null) {
 					Communication.Passanger passanger;
 					var exists = customer.passangers.TryGetValue((int) passangerData.passangerIndex, out passanger);
 					if(exists) {
-						displays[i].Passanger = passanger;
+						passangerData.display.Passanger = passanger;
 					}
 					else {
 						passangerData.passangerIndex = null;
-						passangers[i] = passangerData;
-						displays[i].Passanger = null;
+						passangerData.display.Passanger = null;
+						currentPassangers[i] = passangerData;
 					}		
 				}
 			}
         }
 
-		private void recalculateSeats() {
+		private void addOrUpdatePassanger(SeatButton button, SeatsScheme.Point location) {
+			int index;
+			if(button.Value == null) {
+				index = addPassanger();
+				currentPassangers[index].seatIndex = flightAndCities.flight.seats.Scheme.coordToIndex(location.x, location.z);
+				button.Value = index;
+			}
+			else index = (int) button.Value;
+			
+
+			selectCurrentPassanger(index);
+		}
+
+		private void updateSeatsStatusText() {
+			//TODO
+		}
+		/*private void recalculateSeats() {
 			if(flightAndCities == null) return;
 			seatSelectTable.SuspendLayout();
 
@@ -226,35 +203,21 @@ namespace Client {
 
 			seatSelectTable.ResumeLayout(false);
 			seatSelectTable.PerformLayout();
-		}
+		}*/
 
 		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
 			passangersPanel.SuspendLayout();
 			seatSelectTable.SuspendLayout(); //is this really needed here?
 
-			if(passangers.Count == 1) return;
+			if(currentPassangers.Count == 1) return;
 
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
 			var number = pass.Number;
-			foreach(var passDis in displays) {
-				if(passDis.Number > number) passDis.Number--;
-			}
-			foreach(var seat in seatSelectTable) {
-				if(seat.Value > number) seat.Value--;
-				else if(seat.Value == number) seat.Value = 0;
-			}
-			passangers.RemoveAt(pass.Number-1);
-			displays.RemoveAt(pass.Number-1);
-			pass.Dispose();
-
-			passangersPanel.ResumeLayout(false);
-			seatSelectTable.ResumeLayout(false);
-			passangersPanel.PerformLayout();
-			seatSelectTable.PerformLayout();
+			deletePassanger(number);
 		}
 
 		private void continueButton_Click(object sender, EventArgs e) {
-			foreach(var passanger in passangers) if(passanger.passangerIndex == null) {
+			foreach(var passanger in currentPassangers) if(passanger.passangerIndex == null) {
 				MessageBox.Show(
 					"Данные для всех пассажиров должны бвть заданы", "", MessageBoxButtons.OK,
 					MessageBoxIcon.Error
@@ -262,80 +225,86 @@ namespace Client {
 				return;
 			}
 		}
+
+		private void addAutoseat_Click(object sender, EventArgs e) {
+			addPassanger();
+		}
+
+		private int addPassanger() {
+			var index = currentPassangers.Count;
+
+			var display = new PassangerDisplay() { Number = index, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
+			currentPassangers.Add(new PassangerData{ passangerIndex = null, seatIndex = null, display = display });
+			
+			display.ContextMenuStrip = passangerMenu;
+			display.Click += (a, b) => selectCurrentPassanger(((PassangerDisplay) a).Number);
+			display.ShowNumber = true;
+			display.ToolTip = passangerTooltip;
+
+			var passangersDisplayList = passangersPanel;
+
+			passangersDisplayList.SuspendLayout();
+			passangersDisplayList.Controls.Add(display);
+			passangersDisplayList.ResumeLayout(false);
+			passangersDisplayList.PerformLayout();
+
+			updateSeatsStatusText();
+
+			return index;
+		}
+
+		private void deletePassanger(int index) {
+			for(int i = index+1; i < currentPassangers.Count; i++) {
+				var curPassanger = currentPassangers[i];
+				curPassanger.display.Number = i-1;
+			}
+			foreach(var seat in seatSelectTable) {
+				if(seat.Value > index) seat.Value--;
+				else if(seat.Value == index) seat.Value = null;
+			}
+			currentPassangers[index].display.Dispose();
+			currentPassangers.RemoveAt(index);
+
+			passangersPanel.ResumeLayout(false);
+			seatSelectTable.ResumeLayout(false);
+			passangersPanel.PerformLayout();
+			seatSelectTable.PerformLayout();
+		}
 	}
-	class SeatNumericUpDown : NumericUpDown {
-		public SeatNumericUpDown() : base() {
-			Controls.RemoveAt(0);
-			Margin = new Padding(1, 3, 1, 0);
 
-			var tb = (TextBox) Controls[0];
+	class SeatButton : Label {
+		private int? value;
 
-
-			tb.MouseWheel += (a, e) => {
-				Console.WriteLine("CCCCCCCCCCC");
-				((HandledMouseEventArgs) e).Handled = true;
-			};
-
-			tb.Multiline = true;
-			tb.BorderStyle = BorderStyle.None;
-
-			this.Padding = new Padding(0);
-			BorderStyle = BorderStyle.None;
-			TextAlign = HorizontalAlignment.Center;
-			Anchor = AnchorStyles.Left | AnchorStyles.Right;
-
-			Value = 0;
+		public int? Value {
+			get{ return value; }
+			set{
+				if(value == null) Text = "";
+				else Text = "" + value;
+				this.value = value;
+				setColors();
+			}
 		}
 
-		protected override void OnTextBoxResize(object source, EventArgs e) {
-			Controls[0].Width = Width;
-		}
-		
-		protected override void UpdateEditText() {
-		    if (this.Value != 0) base.UpdateEditText();
-		    else base.Text = "";
+		public SeatButton() : base() {
+			TextAlign = ContentAlignment.MiddleCenter;
+			Dock = DockStyle.Fill;
+			Margin = new Padding(3);
+			Value = null;
 		}
 
 		private void setColors() {
 			 if(!Enabled) {
-				BackColor = Color.FromArgb(unchecked((int) 0xff98a3b8u));//Color.LightSteelBlue;
+				BackColor = Color.FromArgb(unchecked((int) 0xff98a3b8u));
 				ForeColor = SystemColors.ControlText;
 			}
-			else if(!error) {
-				if(Value != 0) {
-					BackColor = FlightDisplay.freeColor; 
-					ForeColor = SystemColors.ControlLightLight;
-				}
-				else {
-					BackColor = Color.CornflowerBlue;
-					ForeColor = SystemColors.ControlLightLight;
-				}
+			else if(Value != null) {
+				BackColor = FlightDisplay.freeColor; 
+				ForeColor = SystemColors.ControlLightLight;
 			}
 			else {
-				BackColor = Color.MistyRose;
-				ForeColor = SystemColors.ControlText;
+				BackColor = Color.CornflowerBlue;
+				ForeColor = SystemColors.ControlLightLight;
 			}
-		}
-
-		protected override void OnValueChanged(EventArgs e) {
-			base.OnValueChanged(e);
-			setColors();
-		}
-
-		private bool error;
-
-		public void markFine() {
-			error = false;
-			setColors();
-		}
-
-		public void markError() {
-			error = true;
-			setColors();
-		}
-
-		protected override void OnMouseWheel(MouseEventArgs e) {
-			//base.OnMouseWheel(e);
 		}
 	}
 
@@ -360,11 +329,11 @@ namespace Client {
 			return seatsLocationToTableLocation[seatPos];
 		}
 
-		public IEnumerator<SeatNumericUpDown> GetEnumerator() {
+		public IEnumerator<SeatButton> GetEnumerator() {
 			return new SeatsEnumerator(this);
 		}
 
-		private class SeatsEnumerator : IEnumerator<SeatNumericUpDown> {
+		private class SeatsEnumerator : IEnumerator<SeatButton> {
 			private Dictionary<SeatsScheme.Point, Point>.Enumerator enumerator;
 			private SeatsTable table;
 
@@ -373,9 +342,9 @@ namespace Client {
 				enumerator = this.table.seatsLocationToTableLocation.GetEnumerator();
 			}
 
-			public SeatNumericUpDown Current { get{
+			public SeatButton Current { get{
 				var loc = enumerator.Current.Value;
-				return (SeatNumericUpDown) table.GetControlFromPosition(loc.X, loc.Y);
+				return (SeatButton) table.GetControlFromPosition(loc.X, loc.Y);
 			} }
 
 			object System.Collections.IEnumerator.Current => Current;
@@ -450,7 +419,9 @@ namespace Client {
 			}
 		}
 
-		public void update(SeatsScheme.Seats seats, int classId, Action update) {
+		public delegate void ButtonClicked(SeatButton button, SeatsScheme.Point seatLoc);
+
+		public void update(SeatsScheme.Seats seats, ButtonClicked clicked) {
 			seatsLocationToTableLocation.Clear();
 
 			this.SuspendLayout();
@@ -514,16 +485,17 @@ namespace Client {
 						}, tableZ, 0);
 
 						for(int x = 0; x < size.x; x++) {
-							var it = new SeatNumericUpDown();
+							var seatLoc = new SeatsScheme.Point{x=x,z=z};
 							var seat = seats[x, z];
-							if(seat.Occupied) { //|| seat.Class != classId
-								it.Enabled = false;
-							}
-							it.ValueChanged += (a, b) => update();
+
+							var it = new SeatButton();
+							if(seat.Occupied) it.Enabled = false;
+							it.Click += (a, b) => clicked(it, seatLoc);
+
 							var tablePos = new Point(tableZ, 1 + x*xSpan);
 							this.Controls.Add(it, tablePos.X, tablePos.Y);
 							this.SetRowSpan(it, xSpan);
-							seatsLocationToTableLocation.Add(new SeatsScheme.Point{x=x,z=z}, tablePos);
+							seatsLocationToTableLocation.Add(seatLoc, tablePos);
 						}
 						tableZ++;
 					}

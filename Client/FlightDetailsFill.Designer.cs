@@ -32,9 +32,9 @@ namespace Client {
 			this.seatSelectTable = new Client.SeatsTable();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
-			this.button1 = new System.Windows.Forms.Button();
 			this.flowLayoutPanelHeightBug = new System.Windows.Forms.Panel();
 			this.passangersPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.addAutoseat = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.headerContainer = new System.Windows.Forms.TableLayoutPanel();
 			this.continueButton = new System.Windows.Forms.Button();
@@ -42,7 +42,6 @@ namespace Client {
 			this.flightNameLabel = new System.Windows.Forms.Label();
 			this.departureLocationLabel = new System.Windows.Forms.Label();
 			this.departureDatetimeLabel = new System.Windows.Forms.Label();
-			this.classSelector = new System.Windows.Forms.ComboBox();
 			this.seatHint = new System.Windows.Forms.ToolTip(this.components);
 			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -93,7 +92,7 @@ namespace Client {
 			this.tableLayoutPanel2.Controls.Add(this.selectedStatusLabel, 0, 4);
 			this.tableLayoutPanel2.Controls.Add(this.seatSelectTable, 0, 2);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel2.Location = new System.Drawing.Point(10, 94);
+			this.tableLayoutPanel2.Location = new System.Drawing.Point(10, 105);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.Padding = new System.Windows.Forms.Padding(10);
@@ -152,8 +151,8 @@ namespace Client {
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
-			this.tableLayoutPanel3.Controls.Add(this.button1, 0, 2);
 			this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanelHeightBug, 1, 2);
+			this.tableLayoutPanel3.Controls.Add(this.addAutoseat, 0, 2);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(10, 10);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -163,7 +162,7 @@ namespace Client {
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(829, 74);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(829, 85);
 			this.tableLayoutPanel3.TabIndex = 6;
 			// 
 			// label1
@@ -178,34 +177,14 @@ namespace Client {
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Пассажиры:";
 			// 
-			// button1
-			// 
-			this.button1.AutoSize = true;
-			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button1.BackColor = System.Drawing.Color.Transparent;
-			this.button1.Dock = System.Windows.Forms.DockStyle.Top;
-			this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-			this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
-			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.button1.Location = new System.Drawing.Point(13, 34);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(77, 27);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "Добавить";
-			this.button1.UseVisualStyleBackColor = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
 			// flowLayoutPanelHeightBug
 			// 
 			this.flowLayoutPanelHeightBug.Controls.Add(this.passangersPanel);
 			this.flowLayoutPanelHeightBug.Dock = System.Windows.Forms.DockStyle.Top;
-			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(93, 31);
+			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(118, 31);
 			this.flowLayoutPanelHeightBug.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanelHeightBug.Name = "flowLayoutPanelHeightBug";
-			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(726, 33);
+			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(701, 33);
 			this.flowLayoutPanelHeightBug.TabIndex = 2;
 			// 
 			// passangersPanel
@@ -216,13 +195,28 @@ namespace Client {
 			this.passangersPanel.Location = new System.Drawing.Point(0, 0);
 			this.passangersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.passangersPanel.Name = "passangersPanel";
-			this.passangersPanel.Size = new System.Drawing.Size(726, 0);
+			this.passangersPanel.Size = new System.Drawing.Size(701, 0);
 			this.passangersPanel.TabIndex = 0;
+			// 
+			// addAutoseat
+			// 
+			this.addAutoseat.AutoSize = true;
+			this.addAutoseat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.addAutoseat.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
+			this.addAutoseat.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.addAutoseat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.addAutoseat.Location = new System.Drawing.Point(13, 34);
+			this.addAutoseat.Name = "addAutoseat";
+			this.addAutoseat.Size = new System.Drawing.Size(102, 38);
+			this.addAutoseat.TabIndex = 3;
+			this.addAutoseat.Text = "Добавить без\r\nвыбора сидения";
+			this.addAutoseat.UseVisualStyleBackColor = true;
+			this.addAutoseat.Click += new System.EventHandler(this.addAutoseat_Click);
 			// 
 			// panel1
 			// 
 			this.panel1.AutoSize = true;
-			this.panel1.Location = new System.Drawing.Point(13, 207);
+			this.panel1.Location = new System.Drawing.Point(13, 218);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(0, 0);
 			this.panel1.TabIndex = 8;
@@ -232,20 +226,18 @@ namespace Client {
 			this.headerContainer.AutoSize = true;
 			this.headerContainer.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.headerContainer.BackColor = System.Drawing.Color.White;
-			this.headerContainer.ColumnCount = 7;
+			this.headerContainer.ColumnCount = 6;
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			this.headerContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.headerContainer.Controls.Add(this.continueButton, 6, 0);
+			this.headerContainer.Controls.Add(this.continueButton, 5, 0);
 			this.headerContainer.Controls.Add(this.aitrplaneNameLavel, 0, 2);
 			this.headerContainer.Controls.Add(this.flightNameLabel, 0, 0);
 			this.headerContainer.Controls.Add(this.departureLocationLabel, 1, 0);
 			this.headerContainer.Controls.Add(this.departureDatetimeLabel, 1, 2);
-			this.headerContainer.Controls.Add(this.classSelector, 4, 0);
 			this.headerContainer.Dock = System.Windows.Forms.DockStyle.Top;
 			this.headerContainer.Location = new System.Drawing.Point(0, 0);
 			this.headerContainer.Name = "headerContainer";
@@ -320,18 +312,6 @@ namespace Client {
 			this.departureDatetimeLabel.TabIndex = 2;
 			this.departureDatetimeLabel.Text = "departureDatetime";
 			// 
-			// classSelector
-			// 
-			this.classSelector.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.classSelector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.classSelector.FormattingEnabled = true;
-			this.classSelector.Location = new System.Drawing.Point(606, 16);
-			this.classSelector.Name = "classSelector";
-			this.headerContainer.SetRowSpan(this.classSelector, 3);
-			this.classSelector.Size = new System.Drawing.Size(121, 21);
-			this.classSelector.TabIndex = 5;
-			this.classSelector.SelectedIndexChanged += new System.EventHandler(this.classSelector_SelectedIndexChanged);
-			// 
 			// passangerMenu
 			// 
 			this.passangerMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -379,12 +359,10 @@ namespace Client {
 		private System.Windows.Forms.Label departureLocationLabel;
 		private System.Windows.Forms.Label departureDatetimeLabel;
 		private System.Windows.Forms.Label aitrplaneNameLavel;
-		private System.Windows.Forms.ComboBox classSelector;
 		private System.Windows.Forms.Button continueButton;
 		private System.Windows.Forms.ToolTip seatHint;
 		private System.Windows.Forms.Label selectedStatusLabel;
 		private System.Windows.Forms.FlowLayoutPanel passangersPanel;
-		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.Label label1;
 		private SeatsTable seatSelectTable;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
@@ -394,5 +372,6 @@ namespace Client {
 		private System.Windows.Forms.Panel flowLayoutPanelHeightBug;
 		private System.Windows.Forms.ToolTip passangerTooltip;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Button addAutoseat;
 	}
 }
