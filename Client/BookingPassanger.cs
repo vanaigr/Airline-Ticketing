@@ -6,7 +6,7 @@ using System.Text;
 namespace Client {
 	public class BookingPassanger {
 		public int? passangerIndex;
-		public bool useIndex;
+		public bool manualSeatSelected;
 		public int seatIndex;
 		public int seatClassId;
 		public Dictionary<int, int> baggageOptionIndexForClass;
@@ -22,7 +22,7 @@ namespace Client {
 
 		public BookingPassanger Copy() { return new BookingPassanger {
 			passangerIndex = this.passangerIndex,
-			useIndex = this.useIndex,
+			manualSeatSelected = this.manualSeatSelected,
 			seatIndex = this.seatIndex,
 			seatClassId = this.seatClassId,
 			baggageOptionIndexForClass = new Dictionary<int, int>(baggageOptionIndexForClass),

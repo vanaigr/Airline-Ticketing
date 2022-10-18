@@ -73,9 +73,10 @@ namespace Client {
 			// 
 			label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			label1.AutoSize = true;
+			label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			label1.Location = new System.Drawing.Point(8, 15);
 			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(36, 13);
+			label1.Size = new System.Drawing.Size(37, 13);
 			label1.TabIndex = 0;
 			label1.Text = "Имя:*";
 			// 
@@ -83,9 +84,10 @@ namespace Client {
 			// 
 			label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			label2.AutoSize = true;
-			label2.Location = new System.Drawing.Point(188, 15);
+			label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			label2.Location = new System.Drawing.Point(189, 15);
 			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(63, 13);
+			label2.Size = new System.Drawing.Size(62, 13);
 			label2.TabIndex = 1;
 			label2.Text = "Фамилия:*";
 			// 
@@ -93,9 +95,10 @@ namespace Client {
 			// 
 			label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			label3.AutoSize = true;
-			label3.Location = new System.Drawing.Point(368, 15);
+			label3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			label3.Location = new System.Drawing.Point(370, 15);
 			label3.Name = "label3";
-			label3.Size = new System.Drawing.Size(57, 13);
+			label3.Size = new System.Drawing.Size(60, 13);
 			label3.TabIndex = 2;
 			label3.Text = "Отчество:";
 			// 
@@ -127,61 +130,63 @@ namespace Client {
 			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel4.Size = new System.Drawing.Size(552, 123);
+			tableLayoutPanel4.Size = new System.Drawing.Size(553, 128);
 			tableLayoutPanel4.TabIndex = 0;
 			// 
 			// nameText
 			// 
 			this.nameText.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.nameText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.nameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.nameText.Location = new System.Drawing.Point(8, 31);
 			this.nameText.Name = "nameText";
-			this.nameText.Size = new System.Drawing.Size(174, 22);
+			this.nameText.Size = new System.Drawing.Size(175, 25);
 			this.nameText.TabIndex = 3;
 			// 
 			// surnameText
 			// 
 			this.surnameText.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.surnameText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.surnameText.Location = new System.Drawing.Point(188, 31);
+			this.surnameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.surnameText.Location = new System.Drawing.Point(189, 31);
 			this.surnameText.Name = "surnameText";
-			this.surnameText.Size = new System.Drawing.Size(174, 22);
+			this.surnameText.Size = new System.Drawing.Size(175, 25);
 			this.surnameText.TabIndex = 4;
 			// 
 			// middleNameText
 			// 
 			this.middleNameText.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.middleNameText.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.middleNameText.Location = new System.Drawing.Point(368, 31);
+			this.middleNameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.middleNameText.Location = new System.Drawing.Point(370, 31);
 			this.middleNameText.Name = "middleNameText";
-			this.middleNameText.Size = new System.Drawing.Size(176, 22);
+			this.middleNameText.Size = new System.Drawing.Size(175, 25);
 			this.middleNameText.TabIndex = 5;
 			// 
 			// label4
 			// 
 			label4.AutoSize = true;
-			label4.Location = new System.Drawing.Point(8, 66);
+			label4.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			label4.Location = new System.Drawing.Point(8, 69);
 			label4.Name = "label4";
-			label4.Size = new System.Drawing.Size(93, 13);
+			label4.Size = new System.Drawing.Size(98, 13);
 			label4.TabIndex = 6;
 			label4.Text = "Дата рождения:*";
 			// 
 			// birthdayDatetime
 			// 
-			this.birthdayDatetime.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.birthdayDatetime.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.birthdayDatetime.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-			this.birthdayDatetime.Location = new System.Drawing.Point(8, 82);
+			this.birthdayDatetime.Location = new System.Drawing.Point(8, 85);
 			this.birthdayDatetime.Name = "birthdayDatetime";
-			this.birthdayDatetime.Size = new System.Drawing.Size(174, 23);
+			this.birthdayDatetime.Size = new System.Drawing.Size(174, 25);
 			this.birthdayDatetime.TabIndex = 7;
 			// 
 			// label5
 			// 
 			label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			label5.AutoSize = true;
+			label5.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			label5.Location = new System.Drawing.Point(8, 15);
 			label5.Name = "label5";
-			label5.Size = new System.Drawing.Size(90, 13);
+			label5.Size = new System.Drawing.Size(94, 13);
 			label5.TabIndex = 1;
 			label5.Text = "Тип документа:*";
 			// 
@@ -190,8 +195,8 @@ namespace Client {
 			tableLayoutPanel8.AutoSize = true;
 			tableLayoutPanel8.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			tableLayoutPanel8.ColumnCount = 2;
-			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
 			tableLayoutPanel8.Controls.Add(this.passangerDataTable, 1, 0);
 			tableLayoutPanel8.Controls.Add(this.passangersDisplay, 0, 0);
 			tableLayoutPanel8.Controls.Add(this.tableLayoutPanel6, 1, 1);
@@ -203,7 +208,7 @@ namespace Client {
 			tableLayoutPanel8.RowCount = 2;
 			tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel8.Size = new System.Drawing.Size(792, 505);
+			tableLayoutPanel8.Size = new System.Drawing.Size(807, 505);
 			tableLayoutPanel8.TabIndex = 0;
 			// 
 			// passangerDataTable
@@ -214,7 +219,7 @@ namespace Client {
 			this.passangerDataTable.Controls.Add(tableLayoutPanel4, 0, 0);
 			this.passangerDataTable.Controls.Add(this.tableLayoutPanel5, 0, 2);
 			this.passangerDataTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.passangerDataTable.Location = new System.Drawing.Point(228, 0);
+			this.passangerDataTable.Location = new System.Drawing.Point(242, 0);
 			this.passangerDataTable.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerDataTable.Name = "passangerDataTable";
 			this.passangerDataTable.Padding = new System.Windows.Forms.Padding(6);
@@ -225,7 +230,7 @@ namespace Client {
 			this.passangerDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.passangerDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.passangerDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.passangerDataTable.Size = new System.Drawing.Size(564, 468);
+			this.passangerDataTable.Size = new System.Drawing.Size(565, 468);
 			this.passangerDataTable.TabIndex = 1;
 			// 
 			// tableLayoutPanel5
@@ -240,24 +245,24 @@ namespace Client {
 			this.tableLayoutPanel5.Controls.Add(this.documentTypeCombobox, 0, 1);
 			this.tableLayoutPanel5.Controls.Add(label5, 0, 0);
 			this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel5.Location = new System.Drawing.Point(6, 149);
+			this.tableLayoutPanel5.Location = new System.Drawing.Point(6, 154);
 			this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel5.Name = "tableLayoutPanel5";
 			this.tableLayoutPanel5.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);
 			this.tableLayoutPanel5.RowCount = 2;
 			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel5.Size = new System.Drawing.Size(552, 73);
+			this.tableLayoutPanel5.Size = new System.Drawing.Size(553, 74);
 			this.tableLayoutPanel5.TabIndex = 1;
 			// 
 			// documentTypeCombobox
 			// 
 			this.documentTypeCombobox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.documentTypeCombobox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.documentTypeCombobox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.documentTypeCombobox.FormattingEnabled = true;
 			this.documentTypeCombobox.Location = new System.Drawing.Point(8, 31);
 			this.documentTypeCombobox.Name = "documentTypeCombobox";
-			this.documentTypeCombobox.Size = new System.Drawing.Size(174, 24);
+			this.documentTypeCombobox.Size = new System.Drawing.Size(175, 25);
 			this.documentTypeCombobox.TabIndex = 0;
 			// 
 			// passangersDisplay
@@ -272,7 +277,7 @@ namespace Client {
 			this.passangersDisplay.Padding = new System.Windows.Forms.Padding(6);
 			this.passangersDisplay.RowCount = 1;
 			this.passangersDisplay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.passangersDisplay.Size = new System.Drawing.Size(228, 468);
+			this.passangersDisplay.Size = new System.Drawing.Size(242, 468);
 			this.passangersDisplay.TabIndex = 4;
 			// 
 			// tableLayoutPanel6
@@ -289,13 +294,13 @@ namespace Client {
 			this.tableLayoutPanel6.Controls.Add(this.saveButton, 2, 0);
 			this.tableLayoutPanel6.Controls.Add(this.statusLabel, 0, 0);
 			this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel6.Location = new System.Drawing.Point(228, 468);
+			this.tableLayoutPanel6.Location = new System.Drawing.Point(242, 468);
 			this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel6.Name = "tableLayoutPanel6";
 			this.tableLayoutPanel6.Padding = new System.Windows.Forms.Padding(6);
 			this.tableLayoutPanel6.RowCount = 1;
 			this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel6.Size = new System.Drawing.Size(564, 37);
+			this.tableLayoutPanel6.Size = new System.Drawing.Size(565, 37);
 			this.tableLayoutPanel6.TabIndex = 2;
 			// 
 			// saveButton
@@ -309,7 +314,7 @@ namespace Client {
 			this.saveButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.saveButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.saveButton.Location = new System.Drawing.Point(486, 6);
+			this.saveButton.Location = new System.Drawing.Point(487, 6);
 			this.saveButton.Margin = new System.Windows.Forms.Padding(0);
 			this.saveButton.Name = "saveButton";
 			this.saveButton.Size = new System.Drawing.Size(72, 25);
@@ -328,7 +333,7 @@ namespace Client {
 			this.statusLabel.Location = new System.Drawing.Point(9, 9);
 			this.statusLabel.Margin = new System.Windows.Forms.Padding(3);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(471, 19);
+			this.statusLabel.Size = new System.Drawing.Size(472, 19);
 			this.statusLabel.TabIndex = 7;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -353,7 +358,7 @@ namespace Client {
 			tableLayoutPanel7.Padding = new System.Windows.Forms.Padding(6);
 			tableLayoutPanel7.RowCount = 1;
 			tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			tableLayoutPanel7.Size = new System.Drawing.Size(228, 37);
+			tableLayoutPanel7.Size = new System.Drawing.Size(242, 37);
 			tableLayoutPanel7.TabIndex = 2;
 			// 
 			// addButton
@@ -366,12 +371,12 @@ namespace Client {
 			this.addButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.addButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.addButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.addButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.addButton.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.addButton.Location = new System.Drawing.Point(152, 6);
+			this.addButton.Location = new System.Drawing.Point(160, 6);
 			this.addButton.Margin = new System.Windows.Forms.Padding(0);
 			this.addButton.Name = "addButton";
-			this.addButton.Size = new System.Drawing.Size(70, 25);
+			this.addButton.Size = new System.Drawing.Size(76, 25);
 			this.addButton.TabIndex = 4;
 			this.addButton.Text = "Добавить";
 			this.addButton.UseVisualStyleBackColor = false;
@@ -387,11 +392,11 @@ namespace Client {
 			this.deleteButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.deleteButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.deleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.deleteButton.Location = new System.Drawing.Point(79, 6);
+			this.deleteButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.deleteButton.Location = new System.Drawing.Point(83, 6);
 			this.deleteButton.Margin = new System.Windows.Forms.Padding(0);
 			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.Size = new System.Drawing.Size(70, 25);
+			this.deleteButton.Size = new System.Drawing.Size(74, 25);
 			this.deleteButton.TabIndex = 3;
 			this.deleteButton.Text = "Удалить";
 			this.deleteButton.UseVisualStyleBackColor = false;
@@ -406,10 +411,11 @@ namespace Client {
 			this.editButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.editButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.editButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.editButton.Location = new System.Drawing.Point(6, 6);
 			this.editButton.Margin = new System.Windows.Forms.Padding(0);
 			this.editButton.Name = "editButton";
-			this.editButton.Size = new System.Drawing.Size(70, 25);
+			this.editButton.Size = new System.Drawing.Size(74, 25);
 			this.editButton.TabIndex = 5;
 			this.editButton.Text = "Изменить";
 			this.editButton.UseVisualStyleBackColor = true;
@@ -452,7 +458,7 @@ namespace Client {
 			this.Controls.Add(tableLayoutPanel8);
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "PassangerList";
-			this.Size = new System.Drawing.Size(792, 505);
+			this.Size = new System.Drawing.Size(807, 505);
 			tableLayoutPanel4.ResumeLayout(false);
 			tableLayoutPanel4.PerformLayout();
 			tableLayoutPanel8.ResumeLayout(false);

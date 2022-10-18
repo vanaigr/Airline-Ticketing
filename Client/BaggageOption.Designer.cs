@@ -28,6 +28,7 @@ namespace Client {
 			this.mainParamLabel = new System.Windows.Forms.Label();
 			this.axilParamLabel = new System.Windows.Forms.Label();
 			this.priceLabel = new System.Windows.Forms.Label();
+			this.touchArea = new Client.TransparentPanel();
 			this.mainTable.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -35,6 +36,7 @@ namespace Client {
 			// 
 			this.mainTable.AutoSize = true;
 			this.mainTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.mainTable.BackColor = System.Drawing.Color.Transparent;
 			this.mainTable.ColumnCount = 3;
 			this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.mainTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -97,12 +99,23 @@ namespace Client {
 			this.priceLabel.Text = "price";
 			this.priceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
+			// touchArea
+			// 
+			this.touchArea.AutoSize = true;
+			this.touchArea.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.touchArea.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.touchArea.Location = new System.Drawing.Point(0, 0);
+			this.touchArea.Name = "touchArea";
+			this.touchArea.Size = new System.Drawing.Size(85, 60);
+			this.touchArea.TabIndex = 3;
+			// 
 			// BaggageOption
 			// 
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.Color.White;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Controls.Add(this.touchArea);
 			this.Controls.Add(this.mainTable);
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "BaggageOption";
@@ -120,5 +133,6 @@ namespace Client {
 		private System.Windows.Forms.Label mainParamLabel;
 		private System.Windows.Forms.Label axilParamLabel;
 		private System.Windows.Forms.Label priceLabel;
+		private TransparentPanel touchArea;
 	}
 }

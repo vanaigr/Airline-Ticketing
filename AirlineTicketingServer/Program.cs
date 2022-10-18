@@ -37,6 +37,7 @@ namespace AirlineTicketingServer {
 				/*var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
+							new Baggage(costRub: 0, count: 0),
 							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
 							new Baggage(costRub: 5000, count: 2, maxWeightKg: 23)
 						},
@@ -50,7 +51,8 @@ namespace AirlineTicketingServer {
 					},
 					servicesOptions = new ServicesOptions {
 						seatChoiceCostRub = 450
-					}
+					},
+					basePriceRub = 2400
 				};
 				var busunessOptions = new Options{
 					baggageOptions = new BaggageOptions{
@@ -69,7 +71,8 @@ namespace AirlineTicketingServer {
 					},
 					servicesOptions = new ServicesOptions {
 						seatChoiceCostRub = 0
-					}
+					},
+					basePriceRub = 3500
 				};
 				var optionsForClasses = new Dictionary<int, Options>(2);
 				optionsForClasses.Add(1, economOptins);

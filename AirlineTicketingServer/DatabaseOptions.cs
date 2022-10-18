@@ -83,22 +83,27 @@ namespace FlightsOptions {
 			return new ServicesOptions{ seatChoiceCostRub = seatChoiceCostRub };
 	    }
 		public static void Write(this BinaryWriter it, ServicesOptions v) {
-			it.Write((byte)0);
+			it.Write((byte) 0);
 			it.Write(v.seatChoiceCostRub);
 	    }
 	
 		public static Options ReadOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 0);
+			Debug.Assert(it.ReadByte() == 1);
 			var baggageOptions = it.ReadBaggageOptions();
 			var termsOptions = it.ReadTermsOptions();
 			var servicesOptions = it.ReadServicesOptions();
-			return new Options{ baggageOptions = baggageOptions, termsOptions = termsOptions, servicesOptions = servicesOptions };
+			var basePrice = it.ReadInt32();
+			return new Options{ 
+				baggageOptions = baggageOptions, termsOptions = termsOptions, servicesOptions = servicesOptions,
+				basePriceRub = basePrice
+			};
 	    }
 		public static void Write(this BinaryWriter it, Options v) {
-			it.Write((byte)0);
+			it.Write((byte)1);
 			it.Write(v.baggageOptions);
 			it.Write(v.termsOptions);
 			it.Write(v.servicesOptions);
+			it.Write(v.basePriceRub);
 	    }
 	}
 

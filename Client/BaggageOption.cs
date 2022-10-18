@@ -25,6 +25,9 @@ namespace Client {
 
 		public BaggageOption() {
 			InitializeComponent();
+
+			touchArea.Click += (a, b) => this.OnClick(b);
+			touchArea.BringToFront();
 		}
 
 		private void updateDisplay() {
@@ -35,7 +38,7 @@ namespace Client {
 			priceLabel.Text = "";
 			
 
-			if(baggage == null) {
+			if(baggage.count == 0) {
 				mainParamLabel.Text = "Без багажа";
 			}
 			else if(baggage.RestrictionWeight) {
@@ -50,14 +53,15 @@ namespace Client {
 
 			}
 			else if(baggage.RestrictionSize) {
-				mainParamLabel.Text = baggage.count + " x чемодан*";
+				mainParamLabel.Text = baggage.count + " x сумка*";
 
 				var md = baggage.maxDim;
 				axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
 			}
+			else mainParamLabel.Text = baggage.count + " x сумка";
 
 			
-			if(baggage == null || baggage.IsFree) priceLabel.Text = "Бесплатно";
+			if(baggage.IsFree) priceLabel.Text = "Бесплатно";
 			else priceLabel.Text = baggage.costRub + " руб.";
 
 			mainTable.ResumeLayout(false);

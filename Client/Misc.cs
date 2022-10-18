@@ -9,6 +9,8 @@ using System.ComponentModel;
 
 namespace Client {
 	static class Misc {
+		public static Color selectionColor3 = Color.FromArgb(255, Color.FromArgb(0x00EAEAEA));
+
 		public static Control addDummyButton(Control it) {
 			/*
 				HACK: for some reason first (or maybe last) programmatically added  focusable control receives focus

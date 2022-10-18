@@ -22,7 +22,7 @@ namespace Client {
 
 		private int seatClassId {
 			get {
-				if(seatSelect.Checked) return seatHandling.classAt((int)passanger.seatIndex);
+				if(passanger.manualSeatSelected) return seatHandling.classAt(passanger.seatIndex);
 				else return passanger.seatClassId;
 			}
 		}
@@ -71,7 +71,7 @@ namespace Client {
 			
 			this.seatPositionTextbox.Text = seatHandling.getSeatString(passanger.seatIndex);
 			
-			seatSelect.Checked = passanger.useIndex;
+			seatSelect.Checked = passanger.manualSeatSelected;
 
 			this.seatClassCombobox.DataSource = new BindingSource{ DataSource = classesNames };
 			seatClassCombobox.DisplayMember = "Value";
@@ -87,18 +87,20 @@ namespace Client {
 
 		private void seatSelect_CheckedChanged(object sender, EventArgs e) {
 			if(ignore__) return;
-			passanger.useIndex = seatSelect.Checked;
+			passanger.manualSeatSelected = seatSelect.Checked;
 			updateClass();
 			updateSeatSelectDisplay();
 		}
 
 		private void updateSeatSelectDisplay() {
-			if(passanger.useIndex) {
+			if(passanger.manualSeatSelected) {
 				seatPositionTextbox.Visible = true;
+				seatClassLabel.Visible = true;
 				seatClassCombobox.Visible = false;
 			}
 			else {
 				seatPositionTextbox.Visible = false;
+				seatClassLabel.Visible = false;
 				seatClassCombobox.Visible = true;
 			}
 		}
@@ -158,7 +160,8 @@ namespace Client {
 		}
 
 		private void updateClass() {
-			passangerOptions.setForClass(seatClassId);
+			seatClassLabel.Text = "(" + classesNames[seatClassId] + ")";
+			passangerOptions.updateForClassAndSeat(seatClassId);
 		}
 
 		private void seatClassCombobox_SelectedIndexChanged(object sender, EventArgs e) {

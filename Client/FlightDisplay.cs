@@ -134,11 +134,15 @@ namespace Client {
 			
 			foreach(var baggage in baggages) {
 				if(baggage.IsFree) {
-					freeBaggage.Add(baggage);
+					if(baggage.count != 0) freeBaggage.Add(baggage);
 				}
 				else {
 					paidBaggage.Add(baggage);
 				}
+			}
+
+			if(freeBaggage.Count == 0) {
+				addListItem(baggageOptionsTable, Status.paid, baggagePaid);
 			}
 
 			foreach(var baggage in freeBaggage) {
@@ -166,10 +170,6 @@ namespace Client {
 				if((baggage.RestrictionWeight || baggage.RestrictionSize) && baggage.count != 1) sb.Append(" за шт.");
 
 				addListItem(baggageOptionsTable, Status.free, sb.ToString());
-			}
-
-			if(freeBaggage.Count == 0) {
-				addListItem(baggageOptionsTable, Status.paid, baggagePaid);;
 			}
 		}
 

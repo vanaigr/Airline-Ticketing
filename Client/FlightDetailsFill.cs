@@ -89,15 +89,13 @@ namespace Client {
 			var result = selectionForm.ShowDialog();
 			
 			if(result == DialogResult.OK) {
-				var customerPassangerIndex = newBookingPassanger.passangerIndex;
-
-				if(passanger.useIndex) {
+				if(passanger.manualSeatSelected) {
 					var seatLoc = seatSelectTable.getSeatLocation(passanger.seatIndex);
 					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
 					seat.Value = null;
 				}
 				
-				if(newBookingPassanger.useIndex) {
+				if(newBookingPassanger.manualSeatSelected) {
 					var seatLoc = seatSelectTable.getSeatLocation(newBookingPassanger.seatIndex);
 					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
 					seat.Value = index;
@@ -136,7 +134,7 @@ namespace Client {
 			else index = (int) button.Value;
 
 			var passanger = bookingPassangers[index];
-			passanger.useIndex = true;
+			passanger.manualSeatSelected = true;
 			passanger.seatIndex = flightAndCities.flight.seats.Scheme.coordToIndex(location.x, location.z);
 			button.Value = index;
 
@@ -148,7 +146,7 @@ namespace Client {
 		private void updateSeatsStatusText() {
 			var autofilledCount = 0;
 			foreach(var passanger in bookingPassangers) {
-				if(!passanger.useIndex) autofilledCount++;
+				if(!passanger.manualSeatSelected) autofilledCount++;
 			}
 
 			var sb = new StringBuilder();
@@ -175,13 +173,57 @@ namespace Client {
 		}
 
 		private void continueButton_Click(object sender, EventArgs e) {
-			foreach(var passanger in bookingPassangers) if(passanger.passangerIndex == null) {
-				MessageBox.Show(
-					"Данные для всех пассажиров должны быть заданы", "", MessageBoxButtons.OK,
-					MessageBoxIcon.Error
-				);
+			for(int i = 0; i < bookingPassangers.Count; i++) {
+				var passanger = bookingPassangers[i];
+
+				Validation.ErrorString es = Validation.ErrorString.Create();
+
+				var sb = new StringBuilder().Append("Для пассажира ").Append("" + i).Append(" должны быть заданы: ");
+
+				if(passanger.passangerIndex == null) {
+					es.ac("данные пассажира");
+				}
+
+				int passangerSeatClassId;
+				if(passanger.manualSeatSelected) {
+					passangerSeatClassId = flightAndCities.flight.seats.Class(passanger.seatIndex);
+				}
+				else passangerSeatClassId = passanger.seatClassId;
+
+				int baggageIndex;
+				bool isBaggageSelected = passanger.baggageOptionIndexForClass.TryGetValue(passangerSeatClassId, out baggageIndex);
+
+				int handLuggageIndex;
+				bool isHandLuggageSelected = passanger.handLuggageOptionIndexForClass.TryGetValue(passangerSeatClassId, out handLuggageIndex);
+
+				if(!isBaggageSelected) {
+					es.ac("данные багажа");
+				}
+
+				if(!isHandLuggageSelected) {
+					es.ac("данные ручной клади");
+				}
+
+				if(es.Error) {
+					var errorString = sb.Append(es.Message).ToString();
+
+					statusLabel.Text = errorString;
+					statusTooltip.SetToolTip(statusLabel, errorString);
+					return;
+				}
+			}
+
+			if(bookingPassangers.Count == 0) {
+				var errorString = "Должен присутствовать хотя бы один пассажир";
+
+				statusLabel.Text = errorString;
+				statusTooltip.SetToolTip(statusLabel, errorString);
+
 				return;
 			}
+
+			statusLabel.Text = null;
+			statusTooltip.SetToolTip(statusLabel, null);
 		}
 
 		private void addAutoseat_Click(object sender, EventArgs e) {
@@ -279,7 +321,7 @@ namespace Client {
 
 			bool PassangerSettings.SeatHandling.canPlaceAt(int index) {
 				for(int i = 0; i < passangers.Count; i++) {
-					if(i != baggagePassangerIndex && (passangers[i].useIndex && passangers[i].seatIndex == index)) {
+					if(i != baggagePassangerIndex && (passangers[i].manualSeatSelected && passangers[i].seatIndex == index)) {
 						return false;
 					}
 				}

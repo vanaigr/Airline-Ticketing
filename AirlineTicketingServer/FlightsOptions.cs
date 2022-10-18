@@ -9,11 +9,12 @@ namespace FlightsOptions {
 [Serializable] public struct Size3 {
 	public short x, y, z;
 
-	public static bool operator==(Size3 f, Size3 s) { 
-		return f.x == s.x && f.y == s.y && f.z == s.z;
+	public override bool Equals(Object o) { 
+		if(o == null || !(o is Size3)) return false;
+		var s = (Size3) o;
+		return x == s.x && y == s.y && z == s.z;
 	}
 
-	public static bool operator!=(Size3 f, Size3 s) {  return !(f == s); }
 }
 
 [Serializable] public class Baggage {
@@ -24,8 +25,8 @@ namespace FlightsOptions {
 
 	public Baggage(short count, short costRub = 0, short maxWeightKg = 0, Size3 maxDim = new Size3()) {
 		Debug.Assert(
-			costRub >= 0 && count > 0 && maxWeightKg >= 0
-			&& ((maxDim.x > 0 && maxDim.y > 0 && maxDim.z > 0) || (maxDim == new Size3()))
+			costRub >= 0 && count >= 0 && maxWeightKg >= 0
+			&& ((maxDim.x > 0 && maxDim.y > 0 && maxDim.z > 0) || Equals(maxDim, new Size3()))
 		);
 
 		this.costRub = costRub;
@@ -35,21 +36,13 @@ namespace FlightsOptions {
 	}
 
 	public bool IsFree{ get{ return costRub == 0; } }
-	//public short TotalCostRub{ get{ Debug.Assert(!IsFree); return costRub; } }
-
-	//public short Count{ get{ return count; } }
-
 	public bool RestrictionWeight{ get{ return maxWeightKg != 0; } }
-	public bool RestrictionSize{ get{ return maxDim != new Size3(); } }
-
-	//public short WeightKgRestrictionPerSingle{ get{ Debug.Assert(RestrictionWeight); return maxWeightKg; } }
-	//public Size3 SizeRestrictionPerSingle{ get{ Debug.Assert(RestrictionSize); return maxDim; } }
+	public bool RestrictionSize{ get{ return !Equals(maxDim, new Size3()); } }
 }
 
 [Serializable] public class BaggageOptions {
 	public List<Baggage> baggage;
 	public List<Baggage> handLuggage;
-	public Size3 e;
 }
 
 [Serializable] public struct TermsOptions {
@@ -71,6 +64,7 @@ namespace FlightsOptions {
 	public BaggageOptions baggageOptions;
 	public TermsOptions termsOptions;
 	public ServicesOptions servicesOptions;
+	public int basePriceRub;
 }
 
 [Serializable] public class SelectedBaggageOptions {

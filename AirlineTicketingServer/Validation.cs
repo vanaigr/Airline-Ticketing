@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AirlineTicketingServer {
+namespace Validation {
 	public struct CheckResult {
 		public bool ok;
 		public string errorMsg;
@@ -27,14 +27,28 @@ namespace AirlineTicketingServer {
 			};
 		}
 
-		public void ac(String msg) {
+		public ErrorString ac(String msg) {
 			error = true;
 			sb.AC(msg);
+			return this;
 		}
 
-		public void append(Appender a) {
+		public ErrorString append(string a) {
+			error = true;
+			sb.Append(a);
+			return this;
+		}
+
+		public ErrorString append(int a) {
+			error = true;
+			sb.Append(a);
+			return this;
+		}
+
+		public ErrorString append(Appender a) {
 			error = true;
 			a(sb);
+			return this;
 		}
 
 		public bool Error{ get{ return error; } }

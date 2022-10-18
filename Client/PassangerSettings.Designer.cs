@@ -37,6 +37,7 @@ namespace Client {
 			this.seatSelect = new System.Windows.Forms.CheckBox();
 			this.seatPositionTextbox = new System.Windows.Forms.TextBox();
 			this.seatClassCombobox = new Client.Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor();
+			this.seatClassLabel = new System.Windows.Forms.Label();
 			this.mainTabs.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -49,20 +50,21 @@ namespace Client {
 			this.mainTabs.Controls.Add(this.tabPage1);
 			this.mainTabs.Controls.Add(this.tabPage2);
 			this.mainTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.mainTabs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.mainTabs.Location = new System.Drawing.Point(0, 0);
 			this.mainTabs.Margin = new System.Windows.Forms.Padding(0);
 			this.mainTabs.Name = "mainTabs";
 			this.mainTabs.SelectedIndex = 0;
-			this.mainTabs.Size = new System.Drawing.Size(800, 413);
+			this.mainTabs.Size = new System.Drawing.Size(803, 436);
 			this.mainTabs.TabIndex = 0;
 			// 
 			// tabPage1
 			// 
 			this.tabPage1.Controls.Add(this.passangerUpdate);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Location = new System.Drawing.Point(4, 24);
 			this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(792, 387);
+			this.tabPage1.Size = new System.Drawing.Size(795, 408);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Данные пассажира";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -75,16 +77,16 @@ namespace Client {
 			this.passangerUpdate.Location = new System.Drawing.Point(0, 0);
 			this.passangerUpdate.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerUpdate.Name = "passangerUpdate";
-			this.passangerUpdate.Size = new System.Drawing.Size(792, 387);
+			this.passangerUpdate.Size = new System.Drawing.Size(795, 408);
 			this.passangerUpdate.TabIndex = 0;
 			// 
 			// tabPage2
 			// 
 			this.tabPage2.Controls.Add(this.passangerOptions);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(792, 387);
+			this.tabPage2.Size = new System.Drawing.Size(792, 385);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Опции";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -96,7 +98,7 @@ namespace Client {
 			this.passangerOptions.Location = new System.Drawing.Point(0, 0);
 			this.passangerOptions.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerOptions.Name = "passangerOptions";
-			this.passangerOptions.Size = new System.Drawing.Size(792, 387);
+			this.passangerOptions.Size = new System.Drawing.Size(792, 385);
 			this.passangerOptions.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -112,7 +114,7 @@ namespace Client {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 450);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(803, 473);
 			this.tableLayoutPanel1.TabIndex = 1;
 			// 
 			// tableLayoutPanel2
@@ -120,28 +122,30 @@ namespace Client {
 			this.tableLayoutPanel2.AutoSize = true;
 			this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.BackColor = System.Drawing.Color.RoyalBlue;
-			this.tableLayoutPanel2.ColumnCount = 8;
+			this.tableLayoutPanel2.ColumnCount = 9;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.Controls.Add(this.applyButton, 7, 0);
-			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 6, 0);
+			this.tableLayoutPanel2.Controls.Add(this.applyButton, 8, 0);
+			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 7, 0);
 			this.tableLayoutPanel2.Controls.Add(this.deleteButton, 0, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatSelect, 2, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatPositionTextbox, 3, 0);
-			this.tableLayoutPanel2.Controls.Add(this.seatClassCombobox, 4, 0);
+			this.tableLayoutPanel2.Controls.Add(this.seatClassCombobox, 5, 0);
+			this.tableLayoutPanel2.Controls.Add(this.seatClassLabel, 4, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 413);
+			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 436);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 1;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(800, 37);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(803, 37);
 			this.tableLayoutPanel2.TabIndex = 2;
 			// 
 			// applyButton
@@ -153,7 +157,7 @@ namespace Client {
 			this.applyButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
 			this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.applyButton.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.applyButton.Location = new System.Drawing.Point(718, 6);
+			this.applyButton.Location = new System.Drawing.Point(721, 6);
 			this.applyButton.Margin = new System.Windows.Forms.Padding(6);
 			this.applyButton.Name = "applyButton";
 			this.applyButton.Size = new System.Drawing.Size(76, 25);
@@ -170,7 +174,7 @@ namespace Client {
 			this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.cancelButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.cancelButton.Location = new System.Drawing.Point(648, 6);
+			this.cancelButton.Location = new System.Drawing.Point(651, 6);
 			this.cancelButton.Margin = new System.Windows.Forms.Padding(6);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(58, 25);
@@ -230,18 +234,30 @@ namespace Client {
 			this.seatClassCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.seatClassCombobox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.seatClassCombobox.FormattingEnabled = true;
-			this.seatClassCombobox.Location = new System.Drawing.Point(297, 8);
+			this.seatClassCombobox.Location = new System.Drawing.Point(355, 8);
 			this.seatClassCombobox.Margin = new System.Windows.Forms.Padding(0);
 			this.seatClassCombobox.Name = "seatClassCombobox";
 			this.seatClassCombobox.Size = new System.Drawing.Size(100, 21);
 			this.seatClassCombobox.TabIndex = 6;
 			this.seatClassCombobox.SelectedIndexChanged += new System.EventHandler(this.seatClassCombobox_SelectedIndexChanged);
 			// 
+			// seatClassLabel
+			// 
+			this.seatClassLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.seatClassLabel.AutoSize = true;
+			this.seatClassLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.seatClassLabel.Location = new System.Drawing.Point(300, 12);
+			this.seatClassLabel.Name = "seatClassLabel";
+			this.seatClassLabel.Size = new System.Drawing.Size(52, 13);
+			this.seatClassLabel.TabIndex = 7;
+			this.seatClassLabel.Text = "seatClass";
+			this.seatClassLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// PassangerSettings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(803, 473);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "PassangerSettings";
 			this.Text = "Выбор места";
@@ -273,5 +289,6 @@ namespace Client {
 		private System.Windows.Forms.TextBox seatPositionTextbox;
 		private System.Windows.Forms.CheckBox seatSelect;
 		private Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor seatClassCombobox;
+		private System.Windows.Forms.Label seatClassLabel;
 	}
 }

@@ -52,7 +52,7 @@ namespace Client {
 
 			if(selectedPassangerId != null) passangersDisplays[(int) selectedPassangerId].BackColor = Color.White;
 			selectedPassangerId = newSelectedPassangerId;
-			passangersDisplays[newSelectedPassangerId].BackColor = Color.Gainsboro;
+			passangersDisplays[newSelectedPassangerId].BackColor = Misc.selectionColor3;
 			
 			setDataFromPassanger(customer.passangers[newSelectedPassangerId]);
 
