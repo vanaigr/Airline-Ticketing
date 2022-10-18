@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using System.ComponentModel;
+
 namespace Client {
 	static class Misc {
 		public static Control addDummyButton(Control it) {
@@ -102,6 +104,44 @@ namespace Client {
 			p.PerformLayout();
 		}
 
+		//https://stackoverflow.com/a/66310028/18704284
+		public class ComboboxThatCanAtLeastHaveCustomizableBackgroundColor : ComboBox
+		{
+		
+		    public ComboboxThatCanAtLeastHaveCustomizableBackgroundColor()
+		    {
+		        BorderColor = Color.DimGray;
+				FlatStyle = FlatStyle.Flat;
+		    }
+		
+		    [Browsable(true)]
+		    [Category("Appearance")]
+		    [DefaultValue(typeof(Color), "DimGray")]
+		    public Color BorderColor { get; set; }
+		
+		    private const int WM_PAINT = 0xF;
+		    private int buttonWidth = SystemInformation.HorizontalScrollBarArrowWidth;
+		    protected override void WndProc(ref Message m)
+		    {
+		        base.WndProc(ref m);
+		        if (m.Msg == WM_PAINT)
+		        {
+		            using (var g = Graphics.FromHwnd(Handle))
+		            {
+		                // Uncomment this if you don't want the "highlight border".
+		                /*
+		                using (var p = new Pen(this.BorderColor, 1))
+		                {
+		                    g.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
+		                }*/
+		                using (var p = new Pen(this.BorderColor, 2))
+		                {
+		                    g.DrawRectangle(p, 0, 0, Width , Height );
+		                }
+		            }
+		        }
+		    }
+		}
 	}
 
 	static class Math2 {

@@ -152,7 +152,7 @@ namespace Client {
 			this.Controls.Add(this.LoginText);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Name = "LoginRegisterForm";
-			this.Text = "Form1";
+			this.Text = "Вход и регистрация";
 			((System.ComponentModel.ISupportInitialize)(this.showPassword)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

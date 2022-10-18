@@ -29,7 +29,6 @@ namespace Client {
 			System.Windows.Forms.Label label2;
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.selectedStatusLabel = new System.Windows.Forms.Label();
-			this.seatSelectTable = new Client.SeatsTable();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.flowLayoutPanelHeightBug = new System.Windows.Forms.Panel();
@@ -46,6 +45,7 @@ namespace Client {
 			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.passangerTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.seatSelectTable = new Client.SeatsTable();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			label2 = new System.Windows.Forms.Label();
 			tableLayoutPanel1.SuspendLayout();
@@ -125,22 +125,6 @@ namespace Client {
 			this.selectedStatusLabel.Size = new System.Drawing.Size(104, 13);
 			this.selectedStatusLabel.TabIndex = 4;
 			this.selectedStatusLabel.Text = "selectedSeatsStatus";
-			// 
-			// seatSelectTable
-			// 
-			this.seatSelectTable.AutoSize = true;
-			this.seatSelectTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.seatSelectTable.ColumnCount = 1;
-			this.seatSelectTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.seatSelectTable.Location = new System.Drawing.Point(10, 31);
-			this.seatSelectTable.Margin = new System.Windows.Forms.Padding(0);
-			this.seatSelectTable.Name = "seatSelectTable";
-			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(40, 20, 30, 20);
-			this.seatSelectTable.RowCount = 1;
-			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Size = new System.Drawing.Size(840, 40);
-			this.seatSelectTable.TabIndex = 3;
 			// 
 			// tableLayoutPanel3
 			// 
@@ -329,6 +313,22 @@ namespace Client {
 			this.удалитьToolStripMenuItem.Text = "Удалить";
 			this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
 			// 
+			// seatSelectTable
+			// 
+			this.seatSelectTable.AutoSize = true;
+			this.seatSelectTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.seatSelectTable.ColumnCount = 1;
+			this.seatSelectTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.seatSelectTable.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.seatSelectTable.Location = new System.Drawing.Point(10, 31);
+			this.seatSelectTable.Margin = new System.Windows.Forms.Padding(0);
+			this.seatSelectTable.Name = "seatSelectTable";
+			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(40, 20, 30, 20);
+			this.seatSelectTable.RowCount = 1;
+			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.seatSelectTable.Size = new System.Drawing.Size(840, 40);
+			this.seatSelectTable.TabIndex = 3;
+			// 
 			// FlightDetailsFill
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -337,7 +337,7 @@ namespace Client {
 			this.Controls.Add(tableLayoutPanel1);
 			this.Controls.Add(this.headerContainer);
 			this.Name = "FlightDetailsFill";
-			this.Text = "FlightBooking";
+			this.Text = "Бронирование мест";
 			this.Load += new System.EventHandler(this.FlightBooking_Load);
 			tableLayoutPanel1.ResumeLayout(false);
 			tableLayoutPanel1.PerformLayout();

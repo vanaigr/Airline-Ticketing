@@ -66,7 +66,7 @@ namespace Client {
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1075, 58);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1075, 57);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// loginLayoutPanel
@@ -200,12 +200,12 @@ namespace Client {
 			this.flightsTable.ColumnCount = 1;
 			this.flightsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.flightsTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flightsTable.Location = new System.Drawing.Point(0, 58);
+			this.flightsTable.Location = new System.Drawing.Point(0, 57);
 			this.flightsTable.Name = "flightsTable";
 			this.flightsTable.Padding = new System.Windows.Forms.Padding(10);
 			this.flightsTable.RowCount = 1;
 			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.flightsTable.Size = new System.Drawing.Size(1075, 392);
+			this.flightsTable.Size = new System.Drawing.Size(1075, 393);
 			this.flightsTable.TabIndex = 4;
 			this.flightsTable.Paint += new System.Windows.Forms.PaintEventHandler(this.flightsTable_Paint);
 			// 
@@ -219,7 +219,7 @@ namespace Client {
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.MinimumSize = new System.Drawing.Size(400, 39);
 			this.Name = "SelectFlight";
-			this.Text = "SelectFlight";
+			this.Text = "Выбор рейса";
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);

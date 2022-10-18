@@ -34,8 +34,9 @@ namespace Client {
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.deleteButton = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
+			this.seatSelect = new System.Windows.Forms.CheckBox();
 			this.seatPositionTextbox = new System.Windows.Forms.TextBox();
+			this.seatClassCombobox = new Client.Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor();
 			this.mainTabs.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -119,19 +120,21 @@ namespace Client {
 			this.tableLayoutPanel2.AutoSize = true;
 			this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.BackColor = System.Drawing.Color.RoyalBlue;
-			this.tableLayoutPanel2.ColumnCount = 7;
+			this.tableLayoutPanel2.ColumnCount = 8;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.Controls.Add(this.applyButton, 6, 0);
-			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 5, 0);
+			this.tableLayoutPanel2.Controls.Add(this.applyButton, 7, 0);
+			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 6, 0);
 			this.tableLayoutPanel2.Controls.Add(this.deleteButton, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this.label1, 2, 0);
+			this.tableLayoutPanel2.Controls.Add(this.seatSelect, 2, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatPositionTextbox, 3, 0);
+			this.tableLayoutPanel2.Controls.Add(this.seatClassCombobox, 4, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 413);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -193,27 +196,44 @@ namespace Client {
 			this.deleteButton.UseVisualStyleBackColor = true;
 			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
 			// 
-			// label1
+			// seatSelect
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.label1.Location = new System.Drawing.Point(97, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(78, 37);
-			this.label1.TabIndex = 3;
-			this.label1.Text = "Номер места:";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.seatSelect.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.seatSelect.AutoSize = true;
+			this.seatSelect.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.seatSelect.Location = new System.Drawing.Point(97, 10);
+			this.seatSelect.Name = "seatSelect";
+			this.seatSelect.Size = new System.Drawing.Size(97, 17);
+			this.seatSelect.TabIndex = 5;
+			this.seatSelect.Text = "Номер места:";
+			this.seatSelect.UseVisualStyleBackColor = true;
+			this.seatSelect.CheckedChanged += new System.EventHandler(this.seatSelect_CheckedChanged);
 			// 
 			// seatPositionTextbox
 			// 
 			this.seatPositionTextbox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.seatPositionTextbox.BackColor = System.Drawing.Color.White;
-			this.seatPositionTextbox.Location = new System.Drawing.Point(181, 8);
+			this.seatPositionTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.seatPositionTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.seatPositionTextbox.Location = new System.Drawing.Point(197, 8);
+			this.seatPositionTextbox.Margin = new System.Windows.Forms.Padding(0);
 			this.seatPositionTextbox.Name = "seatPositionTextbox";
-			this.seatPositionTextbox.Size = new System.Drawing.Size(100, 20);
+			this.seatPositionTextbox.Size = new System.Drawing.Size(100, 21);
 			this.seatPositionTextbox.TabIndex = 4;
 			this.seatPositionTextbox.Leave += new System.EventHandler(this.seatPositionTextbox_Leave);
+			// 
+			// seatClassCombobox
+			// 
+			this.seatClassCombobox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.seatClassCombobox.BackColor = System.Drawing.Color.White;
+			this.seatClassCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.seatClassCombobox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.seatClassCombobox.FormattingEnabled = true;
+			this.seatClassCombobox.Location = new System.Drawing.Point(297, 8);
+			this.seatClassCombobox.Margin = new System.Windows.Forms.Padding(0);
+			this.seatClassCombobox.Name = "seatClassCombobox";
+			this.seatClassCombobox.Size = new System.Drawing.Size(100, 21);
+			this.seatClassCombobox.TabIndex = 6;
 			// 
 			// PassangerSettings
 			// 
@@ -222,7 +242,7 @@ namespace Client {
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "PassangerSettings";
-			this.Text = "SappangerSettings";
+			this.Text = "Выбор места";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PassangerSettings_FormClosing);
 			this.mainTabs.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
@@ -248,7 +268,8 @@ namespace Client {
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.Button deleteButton;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox seatPositionTextbox;
+		private System.Windows.Forms.CheckBox seatSelect;
+		private Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor seatClassCombobox;
 	}
 }

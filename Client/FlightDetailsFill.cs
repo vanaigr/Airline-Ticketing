@@ -12,6 +12,7 @@ namespace Client {
 		class PassangerData {
 			public int? passangerIndex;
 			public int? seatIndex;
+			public int falbackSeatClassId;
 			public PassangerDisplay display;
 		}
 
@@ -81,9 +82,10 @@ namespace Client {
 				currentPassangers, index,
 				flightAndCities.flight.seats.Scheme, passanger.seatIndex
 			);
+
             var selectionForm = new PassangerSettings(
 				service, customer, passanger.passangerIndex, 
-				newSeatIndex,
+				passanger.falbackSeatClassId, newSeatIndex, 
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
@@ -100,12 +102,22 @@ namespace Client {
 				passanger.passangerIndex = customerPassangerIndex;
 				passanger.display.Passanger = customerPassangerIndex != null ?
 					customer.passangers[(int) customerPassangerIndex] : null;
-				passanger.seatIndex = newSeatIndex.Index;
+
+				if(selectionForm.useSeatIndex) {
+					passanger.seatIndex = (int) newSeatIndex.Index;
+				}
+				else {
+					passanger.seatIndex = null;
+					passanger.falbackSeatClassId = selectionForm.seatClassId;
+				}
 				
 				if(passanger.seatIndex != null) {
 					var seatLoc = seatSelectTable.getSeatLocation((int) passanger.seatIndex);
 					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
 					seat.Value = index;
+				}
+				else {
+					
 				}
 			}
 			else if(result == DialogResult.Abort) {
@@ -192,8 +204,16 @@ namespace Client {
 		private int addPassanger() {
 			var index = currentPassangers.Count;
 
+			var enumerator = classesNames.Keys.GetEnumerator();
+			enumerator.MoveNext();
+
 			var display = new PassangerDisplay() { Number = index };
-			currentPassangers.Add(new PassangerData{ passangerIndex = null, seatIndex = null, display = display });
+			currentPassangers.Add(new PassangerData{ 
+				passangerIndex = null, seatIndex = null, falbackSeatClassId = enumerator.Current, 
+				display = display 
+			});
+
+			enumerator.Dispose();
 			
 			display.ContextMenuStrip = passangerMenu;
 			display.Click += (a, b) => selectCurrentPassanger(((PassangerDisplay) a).Number);
@@ -250,23 +270,15 @@ namespace Client {
 			}
 
 			public string get() {
-				if(index == null) {
-					return "";
-				}
-				else {
-					var coord = scheme.indexToCoord((int) index);
-					var width = scheme.WidthForRow(coord.z);
-					return SeatsScheme.WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z+1);
-				}
+				if(index == null) return null;
+
+				var coord = scheme.indexToCoord((int) index);
+				var width = scheme.WidthForRow(coord.z);
+				return SeatsScheme.WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z+1);
 			}
 
 			public bool set(string t) {
 				try {
-					if(t == "") {
-						index = null;
-						return true;
-					}
-
 					var z = int.Parse(t.Substring(1)) - 1;
 					var width = scheme.WidthForRow(z);
 					var naming = SeatsScheme.WidthsNaming.widthsNaming[width];
@@ -286,7 +298,6 @@ namespace Client {
 					return true;
 				}
 				catch(Exception ex) {
-					index = null;
 					return false;
 				}
 			}
