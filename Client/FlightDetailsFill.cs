@@ -9,14 +9,8 @@ namespace Client {
 		private Communication.MessageService service;
 		private CustomerData customer;
 
-		class PassangerData {
-			public int? passangerIndex;
-			public int? seatIndex;
-			public int falbackSeatClassId;
-			public PassangerDisplay display;
-		}
-
-		private List<PassangerData> currentPassangers;
+		private List<PassangerDisplay> curPassangersDisplays;
+		private List<BookingPassanger> bookingPassangers;
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
@@ -40,7 +34,8 @@ namespace Client {
 
 			Misc.fixFlowLayoutPanelHeight(passangersPanel);
 
-			currentPassangers = new List<PassangerData>();
+			bookingPassangers = new List<BookingPassanger>();
+			curPassangersDisplays = new List<PassangerDisplay>();
 		}
 
 		public bool setFromFlight(
@@ -77,65 +72,56 @@ namespace Client {
 		}
 
         private void selectCurrentPassanger(int index) {
-			var passanger = currentPassangers[index];
-			var newSeatIndex = new SeatStringFromScheme(
-				currentPassangers, index,
-				flightAndCities.flight.seats.Scheme, passanger.seatIndex
+			var passanger = bookingPassangers[index];
+
+			var seatHandling = new SeatHandlingFromScheme(
+				bookingPassangers, flightAndCities.flight.seats,
+				index
 			);
 
+			var newBookingPassanger = passanger.Copy();
+
             var selectionForm = new PassangerSettings(
-				service, customer, passanger.passangerIndex, 
-				passanger.falbackSeatClassId, newSeatIndex, 
+				service, customer,
+				seatHandling, newBookingPassanger,
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
 			
 			if(result == DialogResult.OK) {
-				var customerPassangerIndex = selectionForm.PassangerIndex;
+				var customerPassangerIndex = newBookingPassanger.passangerIndex;
 
-				if(passanger.seatIndex != null) {
-					var seatLoc = seatSelectTable.getSeatLocation((int) passanger.seatIndex);
+				if(passanger.useIndex) {
+					var seatLoc = seatSelectTable.getSeatLocation(passanger.seatIndex);
 					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
 					seat.Value = null;
 				}
-
-				passanger.passangerIndex = customerPassangerIndex;
-				passanger.display.Passanger = customerPassangerIndex != null ?
-					customer.passangers[(int) customerPassangerIndex] : null;
-
-				if(selectionForm.useSeatIndex) {
-					passanger.seatIndex = (int) newSeatIndex.Index;
-				}
-				else {
-					passanger.seatIndex = null;
-					passanger.falbackSeatClassId = selectionForm.seatClassId;
-				}
 				
-				if(passanger.seatIndex != null) {
-					var seatLoc = seatSelectTable.getSeatLocation((int) passanger.seatIndex);
+				if(newBookingPassanger.useIndex) {
+					var seatLoc = seatSelectTable.getSeatLocation(newBookingPassanger.seatIndex);
 					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
 					seat.Value = index;
 				}
-				else {
-					
-				}
+
+				bookingPassangers[index] = newBookingPassanger;
 			}
 			else if(result == DialogResult.Abort) {
 				deletePassanger(index);
 			}
 
-			for(int i = 0; i < currentPassangers.Count; i++) {
-				var passangerData = currentPassangers[i];
+			for(int i = 0; i < bookingPassangers.Count; i++) {
+				var passangerData = bookingPassangers[i];
+				var display = curPassangersDisplays[i];
 				if(passangerData.passangerIndex != null) {
 					Communication.Passanger p;
 					var exists = customer.passangers.TryGetValue((int) passangerData.passangerIndex, out p);
 					if(exists) {
-						passangerData.display.Passanger = p;
+						display.Passanger = p;
 					}
 					else {
 						passangerData.passangerIndex = null;
-						passangerData.display.Passanger = null;
-						currentPassangers[i] = passangerData;
+						display.Passanger = null;
+						bookingPassangers[i] = passangerData;
 					}		
 				}
 			}
@@ -145,12 +131,14 @@ namespace Client {
 
 		private void addOrUpdatePassanger(SeatButton button, SeatsScheme.Point location) {
 			int index;
-			if(button.Value == null) {
-				index = addPassanger();
-				currentPassangers[index].seatIndex = flightAndCities.flight.seats.Scheme.coordToIndex(location.x, location.z);
-				button.Value = index;
-			}
+
+			if(button.Value == null) index = addPassanger();
 			else index = (int) button.Value;
+
+			var passanger = bookingPassangers[index];
+			passanger.useIndex = true;
+			passanger.seatIndex = flightAndCities.flight.seats.Scheme.coordToIndex(location.x, location.z);
+			button.Value = index;
 
 			updateSeatsStatusText();
 			
@@ -159,15 +147,15 @@ namespace Client {
 
 		private void updateSeatsStatusText() {
 			var autofilledCount = 0;
-			foreach(var passanger in currentPassangers) {
-				if(passanger.seatIndex == null) autofilledCount++;
+			foreach(var passanger in bookingPassangers) {
+				if(!passanger.useIndex) autofilledCount++;
 			}
 
 			var sb = new StringBuilder();
-			if(autofilledCount != currentPassangers.Count) {
+			if(autofilledCount != bookingPassangers.Count) {
 				if(sb.Length != 0) sb.Append(", в");
 				else sb.Append("В");
-				sb.Append("ыбрано вручную: ").Append(currentPassangers.Count - autofilledCount);
+				sb.Append("ыбрано вручную: ").Append(bookingPassangers.Count - autofilledCount);
 			}
 			if(autofilledCount != 0) {
 				if(sb.Length != 0) sb.Append(", в");
@@ -187,7 +175,7 @@ namespace Client {
 		}
 
 		private void continueButton_Click(object sender, EventArgs e) {
-			foreach(var passanger in currentPassangers) if(passanger.passangerIndex == null) {
+			foreach(var passanger in bookingPassangers) if(passanger.passangerIndex == null) {
 				MessageBox.Show(
 					"Данные для всех пассажиров должны быть заданы", "", MessageBoxButtons.OK,
 					MessageBoxIcon.Error
@@ -202,16 +190,14 @@ namespace Client {
 		}
 
 		private int addPassanger() {
-			var index = currentPassangers.Count;
+			var index = bookingPassangers.Count;
 
 			var enumerator = classesNames.Keys.GetEnumerator();
 			enumerator.MoveNext();
 
 			var display = new PassangerDisplay() { Number = index };
-			currentPassangers.Add(new PassangerData{ 
-				passangerIndex = null, seatIndex = null, falbackSeatClassId = enumerator.Current, 
-				display = display 
-			});
+			bookingPassangers.Add(new BookingPassanger(enumerator.Current));
+			curPassangersDisplays.Add(display);
 
 			enumerator.Dispose();
 			
@@ -234,16 +220,16 @@ namespace Client {
 			passangersPanel.SuspendLayout();
 			seatSelectTable.SuspendLayout(); //is this really needed here?
 
-			for(int i = index+1; i < currentPassangers.Count; i++) {
-				var curPassanger = currentPassangers[i];
-				curPassanger.display.Number = i-1;
+			for(int i = index+1; i < bookingPassangers.Count; i++) {
+				var display = curPassangersDisplays[i];
+				display.Number = i-1;
 			}
 			foreach(var seat in seatSelectTable) {
 				if(seat.Value > index) seat.Value--;
 				else if(seat.Value == index) seat.Value = null;
 			}
-			currentPassangers[index].display.Dispose();
-			currentPassangers.RemoveAt(index);
+			curPassangersDisplays[index].Dispose();
+			bookingPassangers.RemoveAt(index);
 
 			passangersPanel.ResumeLayout(false);
 			seatSelectTable.ResumeLayout(false);
@@ -251,55 +237,53 @@ namespace Client {
 			seatSelectTable.PerformLayout();
 		}
 
-		class SeatStringFromScheme : PassangerSettings.SeatString {
-			private List<PassangerData> passangers;
-			private int passangerIndex;
-			private SeatsScheme.SeatsScheme scheme;
-			private int? index;
+		class SeatHandlingFromScheme : PassangerSettings.SeatHandling {
+			private List<BookingPassanger> passangers;
+			private SeatsScheme.Seats seats;
+			private int baggagePassangerIndex;
 
-			public int? Index{ get{ return index; } }
-
-			public SeatStringFromScheme(
-				List<PassangerData> passangers, int passangerIndex,
-				SeatsScheme.SeatsScheme scheme, int? index
+			public SeatHandlingFromScheme(
+				List<BookingPassanger> passangers,
+				SeatsScheme.Seats seats,
+				int baggagePassangerIndex
 			) {
 				this.passangers = passangers;
-				this.passangerIndex = passangerIndex;
-				this.scheme = scheme;
-				this.index = index;
+				this.seats = seats;
+				this.baggagePassangerIndex = baggagePassangerIndex;
 			}
 
-			public string get() {
-				if(index == null) return null;
-
-				var coord = scheme.indexToCoord((int) index);
-				var width = scheme.WidthForRow(coord.z);
-				return SeatsScheme.WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z+1);
+			int PassangerSettings.SeatHandling.classAt(int index) {
+				return seats.Class(index);
 			}
 
-			public bool set(string t) {
+			public string getSeatString(int index) {
+				var coord = seats.Scheme.indexToCoord(index);
+				var width = seats.Scheme.WidthForRow(coord.z);
+				return SeatsScheme.WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z + 1);
+			}
+
+			int? PassangerSettings.SeatHandling.indexFromSeatString(string t) {
 				try {
 					var z = int.Parse(t.Substring(1)) - 1;
-					var width = scheme.WidthForRow(z);
+					var width = seats.Scheme.WidthForRow(z);
 					var naming = SeatsScheme.WidthsNaming.widthsNaming[width];
 					var x = 0;
 					for(; x < naming.Length; x++) if(char.ToLowerInvariant(naming[x]) == char.ToLowerInvariant(t[0])) break;
 
-					var newIndex = scheme.coordToIndex(x, z);
-
-					for(int i = 0; i < passangers.Count; i++) {
-						if(i != passangerIndex && passangers[i].seatIndex == newIndex) {
-							return false;
-						}
-					}
-
-					index = newIndex;
-
-					return true;
+					return seats.Scheme.coordToIndex(x, z);
 				}
 				catch(Exception ex) {
-					return false;
+					return null;
 				}
+			}
+
+			bool PassangerSettings.SeatHandling.canPlaceAt(int index) {
+				for(int i = 0; i < passangers.Count; i++) {
+					if(i != baggagePassangerIndex && (passangers[i].useIndex && passangers[i].seatIndex == index)) {
+						return false;
+					}
+				}
+				return true;
 			}
 		}
 	}

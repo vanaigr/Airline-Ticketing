@@ -47,6 +47,7 @@ namespace SeatsScheme {
 				}
 				prevBefore = beforeZ;
 			}
+			if(SeatsCount > index) return new Point { x = index - prevBefore, z = totalLength - 1 };
 			throw new IndexOutOfRangeException();
 		}
 

@@ -79,6 +79,7 @@
     <Compile Include="BaggageOption.Designer.cs">
       <DependentUpon>BaggageOption.cs</DependentUpon>
     </Compile>
+    <Compile Include="BookingPassanger.cs" />
     <Compile Include="FlightDetailsFill.cs">
       <SubType>Form</SubType>
     </Compile>

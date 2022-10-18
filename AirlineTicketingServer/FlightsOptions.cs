@@ -73,5 +73,14 @@ namespace FlightsOptions {
 	public ServicesOptions servicesOptions;
 }
 
+[Serializable] public class SelectedBaggageOptions {
+	int baggageIndex;
+	int handLuggageIndex;
+}
+
+[Serializable] public class SelectedOptions {
+	public SelectedBaggageOptions baggageOptions;
+}
+
 }
 

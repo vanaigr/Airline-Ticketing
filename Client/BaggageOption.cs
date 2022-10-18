@@ -21,102 +21,44 @@ namespace Client {
 			}
 		}
 
+		public int Index;
+
 		public BaggageOption() {
 			InitializeComponent();
-		}
-
-		private void addPaddingRow() {
-			mainTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 3));
-			mainTable.RowCount++;
 		}
 
 		private void updateDisplay() {
 			mainTable.SuspendLayout();
 
-			mainTable.RowStyles.Clear();
-			mainTable.Controls.Clear();
-			mainTable.RowCount = 0;
-
-			//mainTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
-			//mainTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70));
+			mainParamLabel.Text = "";
+			axilParamLabel.Text = "";
+			priceLabel.Text = "";
+			
 
 			if(baggage == null) {
-				mainTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-				mainTable.RowCount++;
-
-				var countLabel = new Label();
-				countLabel.Font = new Font(countLabel.Font.FontFamily, 10.0f);
-				countLabel.TextAlign = ContentAlignment.MiddleCenter;
-				countLabel.Dock = DockStyle.Fill;
-				countLabel.Text = "Без багажа";
-
-				mainTable.Controls.Add(countLabel, 0, mainTable.RowCount-1);
+				mainParamLabel.Text = "Без багажа";
 			}
 			else if(baggage.RestrictionWeight) {
-				{
-					mainTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-					mainTable.RowCount++;
-
-					var countLabel = new Label();
-					countLabel.Font = new Font(countLabel.Font.FontFamily, 10.0f);
-					countLabel.TextAlign = ContentAlignment.MiddleCenter;
-					countLabel.Dock = DockStyle.Fill;
-					countLabel.Text = baggage.count + " x " + baggage.maxWeightKg + " кг" + (
-						baggage.RestrictionSize ? "*" : ""	
-					);
-
-					mainTable.Controls.Add(countLabel, 0, mainTable.RowCount-1);
-				}
+				mainParamLabel.Text = baggage.count + " x " + baggage.maxWeightKg + " кг" + (
+					baggage.RestrictionSize ? "*" : ""	
+				);
 
 				if(baggage.RestrictionSize) {
-					//addPaddingRow();
-
-					mainTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-					mainTable.RowCount++;
-
-					var sizeRestriction = new Label();
-					sizeRestriction.ForeColor = Color.LightGray;
-					sizeRestriction.TextAlign = ContentAlignment.MiddleCenter;
-					sizeRestriction.Dock = DockStyle.Fill;
 					var md = baggage.maxDim;
-					sizeRestriction.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
-
-					mainTable.Controls.Add(sizeRestriction, 0, mainTable.RowCount-1);
+					axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
 				}
 
 			}
 			else if(baggage.RestrictionSize) {
-				mainTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-				mainTable.RowCount++;
+				mainParamLabel.Text = baggage.count + " x чемодан*";
 
-				var countLabel = new Label();
-				countLabel.Font = new Font(countLabel.Font.FontFamily, 10.0f);
-				countLabel.TextAlign = ContentAlignment.MiddleCenter;
-				countLabel.Dock = DockStyle.Fill;
-				countLabel.Text = baggage.count + " x " + baggage.maxWeightKg + " кг" + (
-					baggage.RestrictionSize ? "*" : ""	
-				);
-
-				mainTable.Controls.Add(countLabel, 0, mainTable.RowCount-1);
-			}
-			else {
-				
+				var md = baggage.maxDim;
+				axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
 			}
 
-			{
-				addPaddingRow();
-
-				mainTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-				mainTable.RowCount++;
-
-				var price = new Label();
-				price.TextAlign = ContentAlignment.MiddleCenter;
-				price.Dock = DockStyle.Fill;
-				if(baggage == null || baggage.IsFree) price.Text = "Бесплатно";
-				else price.Text = baggage.costRub + " руб.";
-
-				mainTable.Controls.Add(price, 0, mainTable.RowCount-1);
-			}
+			
+			if(baggage == null || baggage.IsFree) priceLabel.Text = "Бесплатно";
+			else priceLabel.Text = baggage.costRub + " руб.";
 
 			mainTable.ResumeLayout(false);
 			mainTable.PerformLayout();

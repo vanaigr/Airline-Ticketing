@@ -13,9 +13,14 @@ namespace Client {
 	public partial class PassangerList : UserControl {
 		private Communication.MessageService service;
 		private CustomerData customer;
-		private Dictionary<int, PassangerDisplay> passangersDisplays; 
+		private Dictionary<int, PassangerDisplay> passangersDisplays;
 
-		private int? selectedPassangerId;
+		private BookingPassanger passanger;
+
+		private int? selectedPassangerId {
+			get { return passanger.passangerIndex; }
+			set { passanger.passangerIndex = value; }
+		}
 
 		private enum State {
 			none, select, add, edit
@@ -80,34 +85,8 @@ namespace Client {
 			saveButton.Visible = false;
 		}
 
-        public Communication.Passanger SelectedPassanger{
-            get{
-				Communication.Passanger p;
-				if(customer.LoggedIn && selectedPassangerId != null
-					&& customer.passangers.TryGetValue((int) selectedPassangerId, out p)
-				) return p;
-				else return null;
-			}
-        }
-
-        public int? SelectedPassangerIndex {
-            get{
-				return selectedPassangerId;
-			}
-        }
-
 		public PassangerList() {
 			InitializeComponent();
-			//Misc.unfocusOnEscape(this, (a, e) => {
-			//	if(this.ActiveControl == null) {
-			//		if(!promptSaveCustomer()) return;
-			//		setStateNone();
-			//		e.Handled = true;
-			//	}
-			//});
-			//Misc.addDummyButton(this);
-
-			
 		}
 
 		public void selectNone() {
@@ -115,12 +94,13 @@ namespace Client {
 			setStateNone();
 		}
 
-		public void init(Communication.MessageService sq, CustomerData customer, int? defaultPassangerId) {
+		public void init(Communication.MessageService sq, CustomerData customer, BookingPassanger passanger) {
 			this.service = sq;
 			this.customer = customer;
+			this.passanger = passanger;
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
 
-			setupPassangersDisplay(defaultPassangerId);
+			setupPassangersDisplay(passanger.passangerIndex);
 		}
 
 		public bool onClose() {

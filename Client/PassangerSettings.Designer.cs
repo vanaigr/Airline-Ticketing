@@ -220,6 +220,7 @@ namespace Client {
 			this.seatPositionTextbox.Name = "seatPositionTextbox";
 			this.seatPositionTextbox.Size = new System.Drawing.Size(100, 21);
 			this.seatPositionTextbox.TabIndex = 4;
+			this.seatPositionTextbox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.seatPositionTextbox_KeyPress);
 			this.seatPositionTextbox.Leave += new System.EventHandler(this.seatPositionTextbox_Leave);
 			// 
 			// seatClassCombobox
@@ -234,6 +235,7 @@ namespace Client {
 			this.seatClassCombobox.Name = "seatClassCombobox";
 			this.seatClassCombobox.Size = new System.Drawing.Size(100, 21);
 			this.seatClassCombobox.TabIndex = 6;
+			this.seatClassCombobox.SelectedIndexChanged += new System.EventHandler(this.seatClassCombobox_SelectedIndexChanged);
 			// 
 			// PassangerSettings
 			// 

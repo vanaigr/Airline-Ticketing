@@ -30,13 +30,10 @@ namespace Client {
 			this.label1 = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.baggageOptions = new System.Windows.Forms.FlowLayoutPanel();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.classSelector = new System.Windows.Forms.ComboBox();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.panel1.SuspendLayout();
-			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel3
@@ -44,7 +41,6 @@ namespace Client {
 			this.tableLayoutPanel3.ColumnCount = 1;
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel1, 0, 0);
-			this.tableLayoutPanel3.Controls.Add(this.panel2, 0, 1);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -71,7 +67,7 @@ namespace Client {
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(759, 382);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(759, 414);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// tableLayoutPanel2
@@ -127,31 +123,6 @@ namespace Client {
 			this.baggageOptions.Size = new System.Drawing.Size(735, 0);
 			this.baggageOptions.TabIndex = 0;
 			// 
-			// panel2
-			// 
-			this.panel2.AutoSize = true;
-			this.panel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.panel2.BackColor = System.Drawing.Color.White;
-			this.panel2.Controls.Add(this.classSelector);
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel2.Location = new System.Drawing.Point(0, 382);
-			this.panel2.Margin = new System.Windows.Forms.Padding(0);
-			this.panel2.Name = "panel2";
-			this.panel2.Padding = new System.Windows.Forms.Padding(6);
-			this.panel2.Size = new System.Drawing.Size(759, 32);
-			this.panel2.TabIndex = 1;
-			// 
-			// classSelector
-			// 
-			this.classSelector.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this.classSelector.FormattingEnabled = true;
-			this.classSelector.Location = new System.Drawing.Point(632, 4);
-			this.classSelector.Margin = new System.Windows.Forms.Padding(0);
-			this.classSelector.Name = "classSelector";
-			this.classSelector.Size = new System.Drawing.Size(121, 21);
-			this.classSelector.TabIndex = 0;
-			this.classSelector.SelectedIndexChanged += new System.EventHandler(this.classSelector_SelectedIndexChanged);
-			// 
 			// PassangerOptions
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,7 +139,6 @@ namespace Client {
 			this.tableLayoutPanel2.PerformLayout();
 			this.panel1.ResumeLayout(false);
 			this.panel1.PerformLayout();
-			this.panel2.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -181,7 +151,5 @@ namespace Client {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.FlowLayoutPanel baggageOptions;
-		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.ComboBox classSelector;
 	}
 }

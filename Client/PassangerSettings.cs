@@ -14,30 +14,42 @@ namespace Client {
 		private CustomerData customer;
 		private Dictionary<int, string> classesNames;
 		
-		private SeatString seatString;
+		private SeatHandling seatHandling;
+
+		private BookingPassanger passanger;
 
 		public bool useSeatIndex{ get{ return seatSelect.Checked; } }
 
-		public int seatClassId{ get{ 
-			var index = this.seatClassCombobox.SelectedIndex;
-			if(index == -1) {
-				throw new Exception();
+		private int seatClassId {
+			get {
+				if(seatSelect.Checked) return seatHandling.classAt((int)passanger.seatIndex);
+				else return passanger.seatClassId;
 			}
-			else {
-				return ((KeyValuePair<int, string>) seatClassCombobox.SelectedItem).Key;
-			}
-		} }
+		}
+
+		public interface SeatHandling {
+			string getSeatString(int seatIndex);
+			int? indexFromSeatString(string seatString);
+			int classAt(int seatIndex);
+			bool canPlaceAt(int index);
+		}
+
+		bool ignore__ = false;
 
 		public PassangerSettings(
-			Communication.MessageService service, CustomerData customer, 
-			int? defaultPassangerId, int fallbackClassId,
-			SeatString seatString,
-			Dictionary<int , FlightsOptions.Options> optionsForClasses, Dictionary<int, string> allClassesNames
+			Communication.MessageService service, CustomerData customer,
+			SeatHandling seatHandling,
+			BookingPassanger passanger,
+			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
+			Dictionary<int, string> allClassesNames
 		) {
+			this.ignore__ = true;
+
 			this.service = service;
 			this.customer = customer;
-			this.seatString = seatString;
-			classesNames = new Dictionary<int, string>();
+			this.seatHandling = seatHandling;
+			this.passanger = passanger;
+			this.classesNames = new Dictionary<int, string>();
 
 			foreach(var classId in optionsForClasses.Keys) {
 				classesNames.Add(classId, allClassesNames[classId]);
@@ -54,30 +66,34 @@ namespace Client {
 			Misc.addDummyButton(this);
 			Misc.addTopDivider(tableLayoutPanel2);
 
-			this.passangerUpdate.init(service, customer, defaultPassangerId);
-			this.passangerOptions.init(optionsForClasses, allClassesNames);
-
-			var ss = seatString.get();
-			this.seatPositionTextbox.Text = ss;
+			this.passangerUpdate.init(service, customer, passanger);
+			this.passangerOptions.init(optionsForClasses, passanger);
 			
-			seatSelect.Checked = true; /*
-				winforms seem to not send the cheched event when Changed 
-				it set to the same one a second time
-			*/
-			if(ss == null) seatSelect.Checked = false;
-			else seatSelect.Checked = true;
+			this.seatPositionTextbox.Text = seatHandling.getSeatString(passanger.seatIndex);
+			
+			seatSelect.Checked = passanger.useIndex;
 
 			this.seatClassCombobox.DataSource = new BindingSource{ DataSource = classesNames };
 			seatClassCombobox.DisplayMember = "Value";
-			seatClassCombobox.SelectedItem = new KeyValuePair<int, string>(fallbackClassId, classesNames[fallbackClassId]);
-		}
+			seatClassCombobox.SelectedItem = new KeyValuePair<int, string>(
+				passanger.seatClassId, classesNames[passanger.seatClassId]
+			);
 
-		public int? PassangerIndex {
-			get{ return this.passangerUpdate.SelectedPassangerIndex; }
+			updateClass();
+			updateSeatSelectDisplay();
+
+			this.ignore__ = false;
 		}
 
 		private void seatSelect_CheckedChanged(object sender, EventArgs e) {
-			if(seatSelect.Checked) {
+			if(ignore__) return;
+			passanger.useIndex = seatSelect.Checked;
+			updateClass();
+			updateSeatSelectDisplay();
+		}
+
+		private void updateSeatSelectDisplay() {
+			if(passanger.useIndex) {
 				seatPositionTextbox.Visible = true;
 				seatClassCombobox.Visible = false;
 			}
@@ -100,18 +116,29 @@ namespace Client {
 		}
 
 		private void messageSeatError() {
-			MessageBox.Show("Заданное место занято или не существует. Вы можете оставить строку места " +
-			"пустой для автоматического определения места для пассажира или удалить пассажира", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show("Заданное место занято или не существует.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 
 		private void seatPositionTextbox_Leave(object sender, EventArgs e) {
-			if(!seatString.set(seatPositionTextbox.Text)) messageSeatError();
+			var newIndex = seatHandling.indexFromSeatString(seatPositionTextbox.Text);
+			if(newIndex != null && seatHandling.canPlaceAt((int) newIndex)) {
+				passanger.seatIndex = (int) newIndex;
+				updateClass();
+			}
+			else messageSeatError();
 		}
 
 		private void PassangerSettings_FormClosing(object sender, FormClosingEventArgs e) {
-			if(useSeatIndex && !seatString.set(seatPositionTextbox.Text)) {
-				messageSeatError();
-				e.Cancel = true;
+			if(useSeatIndex) {
+				var newIndex = seatHandling.indexFromSeatString(seatPositionTextbox.Text);
+				if(newIndex != null && seatHandling.canPlaceAt((int)newIndex)) {
+					passanger.seatIndex = (int)newIndex;
+					updateClass();
+				}
+				else {
+					messageSeatError();
+					e.Cancel = true;
+				}
 			}
 
 			if(!passangerUpdate.onClose()) {
@@ -119,10 +146,25 @@ namespace Client {
 			}
 		}
 
-		public interface SeatString {
-			string get();
+		private void seatPositionTextbox_KeyPress(object sender, KeyPressEventArgs e) {
+			if(e.KeyChar == (char) Keys.Return) {
+				var newIndex = seatHandling.indexFromSeatString(seatPositionTextbox.Text);
+				if(newIndex != null && seatHandling.canPlaceAt((int)newIndex)) {
+					passanger.seatIndex = (int)newIndex;
+					updateClass();
+				}
+				else messageSeatError();
+			}
+		}
 
-			bool set(string it);
+		private void updateClass() {
+			passangerOptions.setForClass(seatClassId);
+		}
+
+		private void seatClassCombobox_SelectedIndexChanged(object sender, EventArgs e) {
+			if(ignore__) return;
+			passanger.seatClassId = ((KeyValuePair<int, string>) seatClassCombobox.SelectedItem).Key;
+			updateClass();
 		}
 	}
 }
