@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -32,10 +31,11 @@ namespace Client {
 			Misc.unfocusOnEscape(this);
 			passangersPanel.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
-			this.seatSelectTable.BackColor2 = Color.LightGray;//Color.FromArgb(unchecked((int) 0xffbcc5d6));
+			this.seatSelectTable.BackColor2 = Color.LightGray;
 
 			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			Misc.addBottomDivider(headerContainer);
 
 			Misc.fixFlowLayoutPanelHeight(passangersPanel);
 
@@ -76,30 +76,49 @@ namespace Client {
 		}
 
         private void selectCurrentPassanger(int index) {
-			var oldPassanger = currentPassangers[index];
+			var passanger = currentPassangers[index];
+			var newSeatIndex = new SeatStringFromScheme(
+				currentPassangers, index,
+				flightAndCities.flight.seats.Scheme, passanger.seatIndex
+			);
             var selectionForm = new PassangerSettings(
-				service, customer, oldPassanger.passangerIndex, 
+				service, customer, passanger.passangerIndex, 
+				newSeatIndex,
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
 			
-			if(result != DialogResult.Cancel && selectionForm.PassangerIndex != null) {
-				var passangerIndex = result == DialogResult.Abort ? null : selectionForm.PassangerIndex;
-				var newPassanger = currentPassangers[index];
-				newPassanger.passangerIndex = passangerIndex;
-				newPassanger.display.Passanger = passangerIndex != null ?
-					customer.passangers[(int) passangerIndex] : null;
+			if(result == DialogResult.OK) {
+				var customerPassangerIndex = selectionForm.PassangerIndex;
 
-				if(passangerIndex == null) deletePassanger(index);
+				if(passanger.seatIndex != null) {
+					var seatLoc = seatSelectTable.getSeatLocation((int) passanger.seatIndex);
+					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
+					seat.Value = null;
+				}
+
+				passanger.passangerIndex = customerPassangerIndex;
+				passanger.display.Passanger = customerPassangerIndex != null ?
+					customer.passangers[(int) customerPassangerIndex] : null;
+				passanger.seatIndex = newSeatIndex.Index;
+				
+				if(passanger.seatIndex != null) {
+					var seatLoc = seatSelectTable.getSeatLocation((int) passanger.seatIndex);
+					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
+					seat.Value = index;
+				}
+			}
+			else if(result == DialogResult.Abort) {
+				deletePassanger(index);
 			}
 
 			for(int i = 0; i < currentPassangers.Count; i++) {
 				var passangerData = currentPassangers[i];
 				if(passangerData.passangerIndex != null) {
-					Communication.Passanger passanger;
-					var exists = customer.passangers.TryGetValue((int) passangerData.passangerIndex, out passanger);
+					Communication.Passanger p;
+					var exists = customer.passangers.TryGetValue((int) passangerData.passangerIndex, out p);
 					if(exists) {
-						passangerData.display.Passanger = passanger;
+						passangerData.display.Passanger = p;
 					}
 					else {
 						passangerData.passangerIndex = null;
@@ -108,6 +127,8 @@ namespace Client {
 					}		
 				}
 			}
+
+			updateSeatsStatusText();
         }
 
 		private void addOrUpdatePassanger(SeatButton button, SeatsScheme.Point location) {
@@ -118,108 +139,45 @@ namespace Client {
 				button.Value = index;
 			}
 			else index = (int) button.Value;
-			
 
+			updateSeatsStatusText();
+			
 			selectCurrentPassanger(index);
 		}
 
 		private void updateSeatsStatusText() {
-			//TODO
-		}
-		/*private void recalculateSeats() {
-			if(flightAndCities == null) return;
-			seatSelectTable.SuspendLayout();
-
-			seatHint.RemoveAll();
-
-			var seatsScheme = flightAndCities.flight.seats.Scheme;
-			
-			var seatsCorrect = true;
-			int autofilledCount = 0;
-
-			var passangesrsSeatLocation = new int[passangers.Count];
-			var passangerSeatsDisplays = new List<SeatNumericUpDown>[passangers.Count];
-			for(int i = 0; i < passangers.Count; i++) passangerSeatsDisplays[i] = new List<SeatNumericUpDown>();
-
-			for(int z = 0; z < seatsScheme.TotalLength; z++) {
-				var width = seatsScheme.WidthForRow(z);
-				for(int x = 0; x < width ; x++) {
-					var pos = seatSelectTable.getSeatLocation(new SeatsScheme.Point(z, x));
-					var c = (SeatNumericUpDown) seatSelectTable.GetControlFromPosition(pos.X, pos.Y);
-					var v = (int) c.Value;
-					if(v >= 0 && v-1 < passangers.Count) {
-						if(v != 0) {
-							passangerSeatsDisplays[v-1].Add(c);
-							passangesrsSeatLocation[v-1] = seatsScheme.coordToIndex(x, z);
-						}
-
-						c.markFine();
-						seatHint.SetToolTip(c, null);
-					}
-					else {
-						c.markError();
-						seatHint.SetToolTip(c, "Пассажира " + v + " не существует");
-						seatsCorrect = false;
-					}
-				}
-			}
-
-			for(int p = 0; p < passangers.Count; p++) {
-				var displays = passangerSeatsDisplays[p];
-				if(displays.Count == 1) {
-					var passanger = passangers[p];
-					passanger.seatIndex = passangesrsSeatLocation[p];
-					passangers[p] = passanger;
-				}
-				else if(displays.Count > 1) {
-					seatsCorrect = false;
-					foreach(var c in displays) {
-						Debug.Assert(c.Value == passangers[p].passangerIndex);
-						c.markError();
-						seatHint.SetToolTip(c, "Для пассажира " + ((int) c.Value) + " задано " + displays.Count + " мест");
-					}
-				}
-				else autofilledCount++;
+			var autofilledCount = 0;
+			foreach(var passanger in currentPassangers) {
+				if(passanger.seatIndex == null) autofilledCount++;
 			}
 
 			var sb = new StringBuilder();
-			if(autofilledCount != passangers.Count) {
+			if(autofilledCount != currentPassangers.Count) {
 				if(sb.Length != 0) sb.Append(", в");
 				else sb.Append("В");
-				sb.Append("ыбрано вручную: ").Append(passangers.Count - autofilledCount);
+				sb.Append("ыбрано вручную: ").Append(currentPassangers.Count - autofilledCount);
 			}
 			if(autofilledCount != 0) {
 				if(sb.Length != 0) sb.Append(", в");
 				else sb.Append("В");
 				sb.Append("ыбрано автоматически: ").Append(autofilledCount);
 			}
-			if(!seatsCorrect) {
-				if(sb.Length != 0) sb.Append(", о");
-				else sb.Append("О");
-				sb.Append("бнаружена ошибка в заполнении");
-			}
 
 			selectedStatusLabel.Text = sb.ToString();
-
-			seatSelectTable.ResumeLayout(false);
-			seatSelectTable.PerformLayout();
-		}*/
+		}
 
 		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
-			passangersPanel.SuspendLayout();
-			seatSelectTable.SuspendLayout(); //is this really needed here?
-
-			if(currentPassangers.Count == 1) return;
-
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
 			var number = pass.Number;
 			deletePassanger(number);
+
+			updateSeatsStatusText();
 		}
 
 		private void continueButton_Click(object sender, EventArgs e) {
 			foreach(var passanger in currentPassangers) if(passanger.passangerIndex == null) {
 				MessageBox.Show(
-					"Данные для всех пассажиров должны бвть заданы", "", MessageBoxButtons.OK,
+					"Данные для всех пассажиров должны быть заданы", "", MessageBoxButtons.OK,
 					MessageBoxIcon.Error
 				);
 				return;
@@ -228,12 +186,13 @@ namespace Client {
 
 		private void addAutoseat_Click(object sender, EventArgs e) {
 			addPassanger();
+			updateSeatsStatusText();
 		}
 
 		private int addPassanger() {
 			var index = currentPassangers.Count;
 
-			var display = new PassangerDisplay() { Number = index, Anchor = AnchorStyles.Top | AnchorStyles.Bottom };
+			var display = new PassangerDisplay() { Number = index };
 			currentPassangers.Add(new PassangerData{ passangerIndex = null, seatIndex = null, display = display });
 			
 			display.ContextMenuStrip = passangerMenu;
@@ -248,12 +207,13 @@ namespace Client {
 			passangersDisplayList.ResumeLayout(false);
 			passangersDisplayList.PerformLayout();
 
-			updateSeatsStatusText();
-
 			return index;
 		}
 
 		private void deletePassanger(int index) {
+			passangersPanel.SuspendLayout();
+			seatSelectTable.SuspendLayout(); //is this really needed here?
+
 			for(int i = index+1; i < currentPassangers.Count; i++) {
 				var curPassanger = currentPassangers[i];
 				curPassanger.display.Number = i-1;
@@ -270,7 +230,69 @@ namespace Client {
 			passangersPanel.PerformLayout();
 			seatSelectTable.PerformLayout();
 		}
+
+		class SeatStringFromScheme : PassangerSettings.SeatString {
+			private List<PassangerData> passangers;
+			private int passangerIndex;
+			private SeatsScheme.SeatsScheme scheme;
+			private int? index;
+
+			public int? Index{ get{ return index; } }
+
+			public SeatStringFromScheme(
+				List<PassangerData> passangers, int passangerIndex,
+				SeatsScheme.SeatsScheme scheme, int? index
+			) {
+				this.passangers = passangers;
+				this.passangerIndex = passangerIndex;
+				this.scheme = scheme;
+				this.index = index;
+			}
+
+			public string get() {
+				if(index == null) {
+					return "";
+				}
+				else {
+					var coord = scheme.indexToCoord((int) index);
+					var width = scheme.WidthForRow(coord.z);
+					return SeatsScheme.WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z+1);
+				}
+			}
+
+			public bool set(string t) {
+				try {
+					if(t == "") {
+						index = null;
+						return true;
+					}
+
+					var z = int.Parse(t.Substring(1)) - 1;
+					var width = scheme.WidthForRow(z);
+					var naming = SeatsScheme.WidthsNaming.widthsNaming[width];
+					var x = 0;
+					for(; x < naming.Length; x++) if(char.ToLowerInvariant(naming[x]) == char.ToLowerInvariant(t[0])) break;
+
+					var newIndex = scheme.coordToIndex(x, z);
+
+					for(int i = 0; i < passangers.Count; i++) {
+						if(i != passangerIndex && passangers[i].seatIndex == newIndex) {
+							return false;
+						}
+					}
+
+					index = newIndex;
+
+					return true;
+				}
+				catch(Exception ex) {
+					index = null;
+					return false;
+				}
+			}
+		}
 	}
+	
 
 	class SeatButton : Label {
 		private int? value;
@@ -290,6 +312,7 @@ namespace Client {
 			Dock = DockStyle.Fill;
 			Margin = new Padding(3);
 			Value = null;
+			AutoSize = true;
 		}
 
 		private void setColors() {
@@ -311,22 +334,20 @@ namespace Client {
 	class SeatsTable : TableLayoutPanel {
 		public Color BackColor2;
 
-		private Dictionary<SeatsScheme.Point, Point> seatsLocationToTableLocation;
-
-		private static Dictionary<int, char[]> widthsNaming = new Dictionary<int, char[]>();
-
-		static SeatsTable() {
-			widthsNaming.Add(4, new char[]{ 'A', 'C', 'D', 'F' });
-			widthsNaming.Add(6, new char[]{ 'A', 'B', 'C', 'D', 'E', 'F' });
-		}
+		private SeatsScheme.SeatsScheme seatsScheme;
+		private Dictionary<int, Point> seatsIndexToTableLocation;
 
 		public SeatsTable() : base() { 
 			DoubleBuffered = true; 
-			seatsLocationToTableLocation = new Dictionary<SeatsScheme.Point, Point>();
+			seatsIndexToTableLocation = new Dictionary<int, Point>();
 		}
 
 		public Point getSeatLocation(SeatsScheme.Point seatPos) {
-			return seatsLocationToTableLocation[seatPos];
+			return seatsIndexToTableLocation[seatsScheme.coordToIndex(seatPos)];
+		}
+
+		public Point getSeatLocation(int seatIndex) {
+			return seatsIndexToTableLocation[seatIndex];
 		}
 
 		public IEnumerator<SeatButton> GetEnumerator() {
@@ -334,12 +355,12 @@ namespace Client {
 		}
 
 		private class SeatsEnumerator : IEnumerator<SeatButton> {
-			private Dictionary<SeatsScheme.Point, Point>.Enumerator enumerator;
+			private Dictionary<int, Point>.Enumerator enumerator;
 			private SeatsTable table;
 
 			public SeatsEnumerator(SeatsTable table) {
 				this.table = table;
-				enumerator = this.table.seatsLocationToTableLocation.GetEnumerator();
+				enumerator = this.table.seatsIndexToTableLocation.GetEnumerator();
 			}
 
 			public SeatButton Current { get{
@@ -373,7 +394,7 @@ namespace Client {
 
 			using(var b = new SolidBrush(BackColor2)) {
 			var start = new PointF((pad.Left + this.GetColumnWidths()[0]) * 1.5f, pad.Top * 0.7f  + this.GetRowHeights()[0]);
-			var end = new PointF(size.Width - pad.Right * 1.5f, size.Height - pad.Bottom * 0.7f);
+			var end = new PointF(size.Width - pad.Right * 2f, size.Height - pad.Bottom * 0.7f);
 			
 			//draw main body
 			g.FillRectangle(b, point4(start.X, start.Y, end.X, end.Y));
@@ -422,15 +443,15 @@ namespace Client {
 		public delegate void ButtonClicked(SeatButton button, SeatsScheme.Point seatLoc);
 
 		public void update(SeatsScheme.Seats seats, ButtonClicked clicked) {
-			seatsLocationToTableLocation.Clear();
+			seatsScheme = seats.Scheme;
+
+			seatsIndexToTableLocation.Clear();
 
 			this.SuspendLayout();
 
 			this.Controls.Clear();
 			this.RowStyles.Clear();
 			this.ColumnStyles.Clear();
-
-			var seatsScheme = seats.Scheme;
 
 			var seatsWidthLCM = 1;
 			for(int i = 0; i < seatsScheme.SizesCount; i++) {
@@ -443,16 +464,18 @@ namespace Client {
 
 			//columns
 			for(int z = 0; z < ColumnCount; z++) {
-				this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+				this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
 			}
 			//https://stackoverflow.com/q/36169745/18704284
 			//hack around the fact that last column tekes more space than others
 			this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0));
 			this.ColumnCount++;
 
+
 			//rows
-			for(int x = 0; x < RowCount; x++) {
-				this.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			this.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			for(int x = 1; x < RowCount; x++) {
+				this.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
 			}
 
 			/*add seats*/ { 
@@ -464,7 +487,7 @@ namespace Client {
 					var xSpan = seatsWidthLCM / size.x;
 
 					//add row names
-					var widthNaming = widthsNaming[size.x];
+					var widthNaming = SeatsScheme.WidthsNaming.widthsNaming[size.x];
 					for(int x = 0; x < size.x; x++) {
 						var label = new Label{ 
 							Text = widthNaming[x].ToString(), 
@@ -495,7 +518,7 @@ namespace Client {
 							var tablePos = new Point(tableZ, 1 + x*xSpan);
 							this.Controls.Add(it, tablePos.X, tablePos.Y);
 							this.SetRowSpan(it, xSpan);
-							seatsLocationToTableLocation.Add(seatLoc, tablePos);
+							seatsIndexToTableLocation.Add(this.seatsScheme.coordToIndex(seatLoc), tablePos);
 						}
 						tableZ++;
 					}

@@ -26,7 +26,7 @@ namespace Client {
 		private void InitializeComponent() {
 			this.mainTabs = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.passangerUpdate = new Client.PassangerUpdate();
+			this.passangerUpdate = new Client.PassangerList();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.passangerOptions = new Client.PassangerOptions();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -34,6 +34,8 @@ namespace Client {
 			this.applyButton = new System.Windows.Forms.Button();
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.deleteButton = new System.Windows.Forms.Button();
+			this.label1 = new System.Windows.Forms.Label();
+			this.seatPositionTextbox = new System.Windows.Forms.TextBox();
 			this.mainTabs.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -117,14 +119,19 @@ namespace Client {
 			this.tableLayoutPanel2.AutoSize = true;
 			this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.BackColor = System.Drawing.Color.RoyalBlue;
-			this.tableLayoutPanel2.ColumnCount = 4;
+			this.tableLayoutPanel2.ColumnCount = 7;
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.Controls.Add(this.applyButton, 3, 0);
-			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 2, 0);
+			this.tableLayoutPanel2.Controls.Add(this.applyButton, 6, 0);
+			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 5, 0);
 			this.tableLayoutPanel2.Controls.Add(this.deleteButton, 0, 0);
+			this.tableLayoutPanel2.Controls.Add(this.label1, 2, 0);
+			this.tableLayoutPanel2.Controls.Add(this.seatPositionTextbox, 3, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 413);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -139,8 +146,8 @@ namespace Client {
 			this.applyButton.AutoSize = true;
 			this.applyButton.BackColor = System.Drawing.Color.White;
 			this.applyButton.FlatAppearance.BorderColor = System.Drawing.Color.White;
-			this.applyButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.WhiteSmoke;
-			this.applyButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
+			this.applyButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
+			this.applyButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
 			this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.applyButton.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.applyButton.Location = new System.Drawing.Point(718, 6);
@@ -186,6 +193,28 @@ namespace Client {
 			this.deleteButton.UseVisualStyleBackColor = true;
 			this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.label1.Location = new System.Drawing.Point(97, 0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(78, 37);
+			this.label1.TabIndex = 3;
+			this.label1.Text = "Номер места:";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// seatPositionTextbox
+			// 
+			this.seatPositionTextbox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.seatPositionTextbox.BackColor = System.Drawing.Color.White;
+			this.seatPositionTextbox.Location = new System.Drawing.Point(181, 8);
+			this.seatPositionTextbox.Name = "seatPositionTextbox";
+			this.seatPositionTextbox.Size = new System.Drawing.Size(100, 20);
+			this.seatPositionTextbox.TabIndex = 4;
+			this.seatPositionTextbox.Leave += new System.EventHandler(this.seatPositionTextbox_Leave);
+			// 
 			// PassangerSettings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -194,6 +223,7 @@ namespace Client {
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "PassangerSettings";
 			this.Text = "SappangerSettings";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PassangerSettings_FormClosing);
 			this.mainTabs.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
@@ -211,12 +241,14 @@ namespace Client {
 		private System.Windows.Forms.TabControl mainTabs;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
-		private PassangerUpdate passangerUpdate;
+		private PassangerList passangerUpdate;
 		private PassangerOptions passangerOptions;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.Button applyButton;
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.Button deleteButton;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.TextBox seatPositionTextbox;
 	}
 }

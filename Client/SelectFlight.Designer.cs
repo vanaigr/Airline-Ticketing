@@ -27,8 +27,8 @@ namespace Client {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectFlight));
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.loginLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -40,8 +40,7 @@ namespace Client {
 			this.fromLoc = new Client.SelectFlight.CityComboBox();
 			this.flightsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
-			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			tableLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.tableLayoutPanel4.SuspendLayout();
@@ -49,25 +48,26 @@ namespace Client {
 			// 
 			// tableLayoutPanel1
 			// 
-			tableLayoutPanel1.AutoSize = true;
-			tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			tableLayoutPanel1.BackColor = System.Drawing.Color.White;
-			tableLayoutPanel1.ColumnCount = 5;
-			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
-			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-			tableLayoutPanel1.Controls.Add(this.loginLayoutPanel, 4, 0);
-			tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
-			tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 2, 0);
-			tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-			tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-			tableLayoutPanel1.Name = "tableLayoutPanel1";
-			tableLayoutPanel1.RowCount = 1;
-			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			tableLayoutPanel1.Size = new System.Drawing.Size(1075, 57);
-			tableLayoutPanel1.TabIndex = 2;
+			this.tableLayoutPanel1.AutoSize = true;
+			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel1.BackColor = System.Drawing.Color.White;
+			this.tableLayoutPanel1.ColumnCount = 5;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+			this.tableLayoutPanel1.Controls.Add(this.loginLayoutPanel, 4, 0);
+			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 2, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1075, 58);
+			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// loginLayoutPanel
 			// 
@@ -200,12 +200,12 @@ namespace Client {
 			this.flightsTable.ColumnCount = 1;
 			this.flightsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.flightsTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flightsTable.Location = new System.Drawing.Point(0, 57);
+			this.flightsTable.Location = new System.Drawing.Point(0, 58);
 			this.flightsTable.Name = "flightsTable";
 			this.flightsTable.Padding = new System.Windows.Forms.Padding(10);
 			this.flightsTable.RowCount = 1;
 			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.flightsTable.Size = new System.Drawing.Size(1075, 393);
+			this.flightsTable.Size = new System.Drawing.Size(1075, 392);
 			this.flightsTable.TabIndex = 4;
 			this.flightsTable.Paint += new System.Windows.Forms.PaintEventHandler(this.flightsTable_Paint);
 			// 
@@ -216,12 +216,12 @@ namespace Client {
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.ClientSize = new System.Drawing.Size(1075, 450);
 			this.Controls.Add(this.flightsTable);
-			this.Controls.Add(tableLayoutPanel1);
+			this.Controls.Add(this.tableLayoutPanel1);
 			this.MinimumSize = new System.Drawing.Size(400, 39);
 			this.Name = "SelectFlight";
 			this.Text = "SelectFlight";
-			tableLayoutPanel1.ResumeLayout(false);
-			tableLayoutPanel1.PerformLayout();
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -245,5 +245,6 @@ namespace Client {
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
 		private System.Windows.Forms.Button findFlightsButton;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 	}
 }

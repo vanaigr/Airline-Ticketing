@@ -108,11 +108,11 @@
     <Compile Include="PassangerOptions.Designer.cs">
       <DependentUpon>PassangerOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="PassangerUpdate.cs">
+    <Compile Include="PassangerList.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PassangerUpdate.Designer.cs">
-      <DependentUpon>PassangerUpdate.cs</DependentUpon>
+    <Compile Include="PassangerList.Designer.cs">
+      <DependentUpon>PassangerList.cs</DependentUpon>
     </Compile>
     <Compile Include="PassangerData.cs" />
     <Compile Include="PassangerDisplay.cs">
@@ -160,8 +160,8 @@
     <EmbeddedResource Include="PassangerOptions.resx">
       <DependentUpon>PassangerOptions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PassangerUpdate.resx">
-      <DependentUpon>PassangerUpdate.cs</DependentUpon>
+    <EmbeddedResource Include="PassangerList.resx">
+      <DependentUpon>PassangerList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PassangerDisplay.resx">
       <DependentUpon>PassangerDisplay.cs</DependentUpon>

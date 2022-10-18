@@ -31,6 +31,25 @@ namespace SeatsScheme {
 			return SeatsBeforeZ(z) + x;
 		}
 
+		public int coordToIndex(Point coord) {
+			return coordToIndex(coord.x, coord.z);
+		}
+
+		public Point indexToCoord(int index) {
+			if(index < 0 || index >= seatsCount) {
+				throw new IndexOutOfRangeException();
+			}
+			var prevBefore = 0;
+			for(int z = 1; z < totalLength; z++) {
+				var beforeZ = seatsBeforeZ[z];
+				if(beforeZ > index) {
+					return new Point{ x = index - prevBefore, z = z-1 };
+				}
+				prevBefore = beforeZ;
+			}
+			throw new IndexOutOfRangeException();
+		}
+
 		public Point sizeAtIndex(int i) { return sizes[i]; }
 
 		public IEnumerator<Point> GetSizesEnumerator() {
@@ -208,5 +227,12 @@ namespace SeatsScheme {
 		}
 	}
 
+	public static class WidthsNaming {
+		public static Dictionary<int, char[]> widthsNaming = new Dictionary<int, char[]>();
 
+		static WidthsNaming() {
+			widthsNaming.Add(4, new char[]{ 'A', 'C', 'D', 'F' });
+			widthsNaming.Add(6, new char[]{ 'A', 'B', 'C', 'D', 'E', 'F' });
+		}
+	}
 }

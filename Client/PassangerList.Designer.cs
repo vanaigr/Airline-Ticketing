@@ -1,6 +1,6 @@
 ﻿
 namespace Client {
-	partial class PassangerUpdate {
+	partial class PassangerList {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -443,7 +443,7 @@ namespace Client {
 			this.изменитьToolStripMenuItem.Text = "Изменить";
 			this.изменитьToolStripMenuItem.Click += new System.EventHandler(this.изменитьToolStripMenuItem_Click);
 			// 
-			// PassangerUpdate
+			// PassangerList
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -451,7 +451,7 @@ namespace Client {
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(tableLayoutPanel8);
 			this.Margin = new System.Windows.Forms.Padding(0);
-			this.Name = "PassangerUpdate";
+			this.Name = "PassangerList";
 			this.Size = new System.Drawing.Size(792, 505);
 			tableLayoutPanel4.ResumeLayout(false);
 			tableLayoutPanel4.PerformLayout();

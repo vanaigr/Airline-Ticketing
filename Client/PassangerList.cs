@@ -10,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class PassangerUpdate : UserControl {
+	public partial class PassangerList : UserControl {
 		private Communication.MessageService service;
 		private CustomerData customer;
 		private Dictionary<int, PassangerDisplay> passangersDisplays; 
@@ -96,7 +96,7 @@ namespace Client {
 			}
         }
 
-		public PassangerUpdate() {
+		public PassangerList() {
 			InitializeComponent();
 			//Misc.unfocusOnEscape(this, (a, e) => {
 			//	if(this.ActiveControl == null) {
@@ -121,6 +121,10 @@ namespace Client {
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
 
 			setupPassangersDisplay(defaultPassangerId);
+		}
+
+		public bool onClose() {
+			return promptSaveCustomer();
 		}
 
 		private void setupPassangersDisplay(int? defaultPassangerId) {
@@ -178,6 +182,7 @@ namespace Client {
 				var prevPassanger = customer.passangers[(int) selectedPassangerId];
 				var curPassanger = formPassangerFromData();
 				if(!prevPassanger.Equals(curPassanger)) {
+					this.Focus();
 					var mb = MessageBox.Show(
 						"Данные пассажира были изменены. Хотите сохранить изменения?",
 						"",
@@ -188,18 +193,18 @@ namespace Client {
 
 					if(mb == DialogResult.Yes) {
 						var result = saveEditedPassanger(curPassanger, (int) selectedPassangerId);
-						if(!result.Item1) return false;
+						return result.Item1;
 					}
-					else if(mb == DialogResult.No) {
-						//nothing
-					}
+					else if(mb == DialogResult.No) return true;
 					else {
 						Debug.Assert(mb == DialogResult.Cancel);
 						return false;
 					}
-				}
+				} 
+				else return true;
 			}
 			else if(curState == State.add) {
+				this.Focus();
 				var curPassanger = formPassangerFromData();
 				var mb = MessageBox.Show(
 					"Сохранить данные нового пассажира?",
@@ -211,18 +216,15 @@ namespace Client {
 
 				if(mb == DialogResult.Yes) {
 					var result = saveNewPassanger(curPassanger);
-					if(!result.Item1) return false;
+					return result.Item1;
 				}
-				else if(mb == DialogResult.No) {
-					//nothing
-				}
+				else if(mb == DialogResult.No) return true;
 				else {
 					Debug.Assert(mb == DialogResult.Cancel);
 					return false;
 				}
 			}
-
-			return true;
+			else return true;
 		}
 
 		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, int index) {

@@ -64,6 +64,44 @@ namespace Client {
 				ignoreResize__ = false;
 			}
 		}
+
+		public static void addBottomDivider(TableLayoutPanel p) {
+			var it = new Panel();
+			it.Dock = DockStyle.Fill;
+			it.BorderStyle = BorderStyle.FixedSingle;
+			it.Margin = new Padding(0);
+
+			p.RowCount++;
+			p.Controls.Add(it, 0, p.RowCount-1);
+			p.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
+			p.SetColumnSpan(it, p.ColumnCount);
+		}
+
+		public static void addTopDivider(TableLayoutPanel p) {
+			var it = new Panel();
+			it.Dock = DockStyle.Fill;
+			it.BorderStyle = BorderStyle.FixedSingle;
+			it.Margin = new Padding(0);
+
+			p.SuspendLayout();
+
+			for(int i = p.Controls.Count-1; i >= 0; i--) {
+				var control = p.Controls[i];
+				var pos = p.GetPositionFromControl(control);
+
+				p.Controls.RemoveAt(i);
+				p.Controls.Add(control, pos.Column, pos.Row+1);
+			}
+
+			p.Controls.Add(it, 0, 0);
+			p.RowCount++;
+			p.RowStyles.Insert(0, new RowStyle(SizeType.Absolute, 1));
+			p.SetColumnSpan(it, p.ColumnCount);
+
+			p.ResumeLayout(false);
+			p.PerformLayout();
+		}
+
 	}
 
 	static class Math2 {

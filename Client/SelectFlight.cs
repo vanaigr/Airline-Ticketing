@@ -23,6 +23,7 @@ namespace Client {
             InitializeComponent();
 
 			Misc.unfocusOnEscape(this);
+			Misc.addBottomDivider(tableLayoutPanel1);
 
 			pictureBox1.Image = TintImage.applyTint(pictureBox1.Image, Color.RoyalBlue);
 
