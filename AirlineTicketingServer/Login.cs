@@ -108,7 +108,7 @@ namespace AirlineTicketingServer {
 		static readonly string forbiddenSymbols = "[^A-Za-z0-9!@#$%%^&*();:?\\-=_+\\.]";
 		static readonly string forbiddenSymbolsMessage = "содержать тлолько заглавные и строчные символы латиницы, цифры, или символы !@#$%%^&*();:?-=_+.";
 
-		public static CheckResult checkLogin(string login) {
+		public static Validation.CheckResult checkLogin(string login) {
 			var result = new StringBuilder();
 			result.Append("Логин должен ");
 			bool error = false;
@@ -124,17 +124,17 @@ namespace AirlineTicketingServer {
 				result.Append(forbiddenSymbolsMessage);
 			}
 
-			if(error) return new CheckResult{
+			if(error) return new Validation.CheckResult{
 				ok = false,
 				errorMsg = result.ToString()
 			};
-			else return new CheckResult{
+			else return new Validation.CheckResult{
 				ok = true,
 				errorMsg = ""
 			};
 		}
 
-		public static CheckResult checkPassword(string password) {
+		public static Validation.CheckResult checkPassword(string password) {
 			var result = new StringBuilder();
 			result.Append("Пароль должен ");
 			bool error = false;
@@ -153,11 +153,11 @@ namespace AirlineTicketingServer {
 				result.Append(forbiddenSymbolsMessage);
 			}
 
-			if(error) return new CheckResult {
+			if(error) return new Validation.CheckResult {
 				ok = false,
 				errorMsg = result.ToString()
 			};
-			else return new CheckResult {
+			else return new Validation.CheckResult {
 				ok = true,
 				errorMsg = ""
 			};

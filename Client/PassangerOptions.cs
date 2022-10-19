@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace Client {
 	public partial class PassangerOptions : UserControl {
+		private Communication.MessageService service;
+		private int flightId;
+
 		private Dictionary<int, FlightsOptions.Options> optionsForClasses;
 
 		private Dictionary<int, BaggageOption> baggageDisplays;
@@ -27,9 +30,13 @@ namespace Client {
 		}
 
 		public void init(
+			Communication.MessageService service,
+			int flightId,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
 			BookingPassanger passanger
 		) {
+			this.service = service;
+			this.flightId = flightId;
 			this.optionsForClasses = optionsForClasses;
 			this.passanger = passanger;
 		}
@@ -161,6 +168,9 @@ namespace Client {
 
 		public void recalculatePrice() {
 			var options = optionsForClasses[curClassId];
+			
+			totalCostLabel.Text = "";
+			totalCostLabel.ForeColor = SystemColors.ControlText;
 
 			basePriceLabel.Text = options.basePriceRub + " руб.";
 
@@ -172,6 +182,7 @@ namespace Client {
 			if(seatCost == 0) seatPriceLabel.Text = "бесплатно";
 			else seatPriceLabel.Text = seatCost + " руб.";
 
+
 			int baggageIndex;
 			bool isBaggageSelected = passanger.baggageOptionIndexForClass.TryGetValue(curClassId, out baggageIndex);
 
@@ -182,10 +193,32 @@ namespace Client {
 				totalCostLabel.Text = "недоступно, так как не выбраны опции багажа или ручной клади";
 			}
 			else { 
-				var bo = options.baggageOptions;
-				totalCostLabel.Text = (options.basePriceRub + seatCost
-					+ bo.baggage[baggageIndex].costRub + bo.handLuggage[handLuggageIndex].costRub) + " руб.";
-			}
+				try {
+					var result = service.seatsData(flightId, new Communication.SeatAndOptions[]{ new Communication.SeatAndOptions{
+						useSeatIndex = passanger.manualSeatSelected,
+						seatIndex = passanger.seatIndex,
+						seatClassId = passanger.seatClassId,
+						selectedOptions = new FlightsOptions.SelectedOptions(new FlightsOptions.SelectedBaggageOptions(
+							baggageIndex, handLuggageIndex
+						))
+					} });
+
+					if(result) {
+						var seatData = result.s[0];
+
+						totalCostLabel.Text = seatData.totalCost + " руб.";
+					}
+					else {
+						totalCostLabel.ForeColor = Color.Firebrick;
+						totalCostLabel.Text = result.f.message;
+						statusTooltip.SetToolTip(totalCostLabel, result.f.message);
+					}
+				} catch(Exception e) {
+					totalCostLabel.ForeColor = Color.Firebrick;
+					totalCostLabel.Text = "Неизвестная ошибка";
+					statusTooltip.SetToolTip(totalCostLabel, e.ToString());
+				}
+			}			
 		}
 	}
 }

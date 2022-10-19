@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Communication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,5 +29,10 @@ namespace Client {
 			baggageOptionIndexForClass = new Dictionary<int, int>(baggageOptionIndexForClass),
 			handLuggageOptionIndexForClass = new Dictionary<int, int>(handLuggageOptionIndexForClass)
 		}; }
+
+		public int ClassId(SeatsScheme.Seats seats) {
+			if(manualSeatSelected) return seats.Class(seatIndex);
+			else return seatClassId;
+		}
 	}
 }

@@ -38,7 +38,7 @@ namespace Client {
 
 		public PassangerSettings(
 			Communication.MessageService service, CustomerData customer,
-			SeatHandling seatHandling,
+			int flightId, SeatHandling seatHandling,
 			BookingPassanger passanger,
 			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
 			Dictionary<int, string> allClassesNames
@@ -67,7 +67,7 @@ namespace Client {
 			Misc.addTopDivider(tableLayoutPanel2);
 
 			this.passangerUpdate.init(service, customer, passanger);
-			this.passangerOptions.init(optionsForClasses, passanger);
+			this.passangerOptions.init(service, flightId, optionsForClasses, passanger);
 			
 			this.seatPositionTextbox.Text = seatHandling.getSeatString(passanger.seatIndex);
 			

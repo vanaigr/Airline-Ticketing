@@ -174,7 +174,7 @@ namespace AirlineTicketingServer {
 			}
 
 			public Either<List<AvailableFlight>, InputError> matchingFlights(MatchingFlightsParams p) {
-				var err = ErrorString.Create();
+				var err = Validation.ErrorString.Create();
 				if(p.fromCode == null) err.ac("город вылета должен быть заполнен");
 				if(p.toCode == null) err.ac("город прилёта должен быть заполнен");
 				if(p.when == null) err.ac("дата вылета должа быть заполнена");
@@ -306,12 +306,166 @@ namespace AirlineTicketingServer {
 				}
 			}
 
-			public Either<object, LoginError> removePassanger(Customer customer, int index) {
+			Either<object, LoginError> MessageService.removePassanger(Customer customer, int index) {
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
 				if(!userIdRes.IsSuccess) return Either<object, LoginError>.Failure(userIdRes.Failure());
 				DatabasePassanger.remove(new SqlConnectionView(connection, true), userIdRes.s, index);
 				return Either<object, LoginError>.Success(null);
+				}
+			}
+
+			Either<SeatData[], InputError> MessageService.seatsData(int flightId, SeatAndOptions[] seatsAndOptions) {
+				using(
+				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				using(
+				var command = new SqlCommand(
+					@"select top 1
+						[fo].[Data], 
+						[ap].[SeatsScheme]
+					from (
+						select * from [Flights].[AvailableFlights] as [af]
+						where [af].[Id] = @FlightId
+					) as [af]
+					inner join [Flights].[FlightsInfo] as [fi]
+					on [af].[FlightInfo] = [fi].[Id]
+
+					inner join [Flights].[FlightOptions] as [fo]
+					on [fi].[Id] = [fo].[FlightId]
+
+					inner join [Flights].[Airplanes] as [ap]
+					on [fi].[AirplaneId] = [ap].[Id];
+
+					select top 1 [afso].[SeatsOccupation]
+					from [Flights].[AvailableFlightSeatsOccupation] as [afso]
+					where [afso].[AvailableFlight] = @FlightId",
+					connection
+				)) {
+				command.CommandType = CommandType.Text;
+				command.Parameters.AddWithValue("@FlightId", flightId);
+
+				connection.Open();
+				using(
+				var result = command.ExecuteReader()) {
+
+				if(!result.Read()) return Either<SeatData[], InputError>.Failure(new InputError(
+					"Выбранного рейса не существует"
+				));
+
+				var optionsBin = (byte[]) result[0];
+				var seatsSchemeBin = (byte[]) result[1];
+
+				if(!result.NextResult()) return Either<SeatData[], InputError>.Failure(new InputError(
+					"Выбранного рейса не существует" //not quite correct
+				));
+
+				if(!result.Read()) return Either<SeatData[], InputError>.Failure(new InputError(
+					"Выбранного рейса не существует"
+				));
+
+				var occupation = (byte[]) result[0];
+
+				result.Close();
+				command.Dispose();
+				connection.Dispose();
+
+				var options = BinaryOptions.fromBytes(optionsBin);
+				var ssAndClases = BinarySeats.fromBytes(seatsSchemeBin);
+				var seats = new Seats(ssAndClases.scheme, ssAndClases.classes, occupation);
+
+				var occupationWithPassangers = (byte[]) occupation.Clone();
+				var anyOccupied = false;
+				var seatOccupied = new bool[seatsAndOptions.Length];
+
+				var remainingSeatsIndices = new List<int>();
+
+				for(int i = 0; i < seatsAndOptions.Length; i++) {
+					var so = seatsAndOptions[i];
+					if(so.useSeatIndex) {
+						var occupied = Occupation.Occupied(occupationWithPassangers, seats.Size, so.seatIndex);
+						seatOccupied[i] = occupied;
+						anyOccupied |= occupied;
+						
+						Occupation.Occupy(occupationWithPassangers, seats.Size, so.seatIndex);
+					}
+					else remainingSeatsIndices.Add(i);
+				}
+
+				{
+					for(int i = 0; i < seats.Size; i++) {
+						var seatClass = seats.Class(i);
+
+						if(!Occupation.Occupied(
+							occupationWithPassangers, seats.Size, i
+						)) {
+							for(int j = 0; j < remainingSeatsIndices.Count; j++) {
+								var sIndex = remainingSeatsIndices[j];
+								var s = seatsAndOptions[sIndex];
+								if(s.seatClassId == seatClass) {
+									Occupation.Occupy(
+										occupationWithPassangers, seats.Size, i
+									);
+									remainingSeatsIndices.RemoveAt(j);
+									break;
+								}
+							}
+						}
+					}
+
+					for(int i = 0; i < remainingSeatsIndices.Count; i++) {
+						anyOccupied = true;
+						seatOccupied[remainingSeatsIndices[i]] = true;
+					}
+				}
+
+				var seatsData = new SeatData[seatsAndOptions.Length];
+
+				for(int i = 0; i < seatsAndOptions.Length; i++) {
+					var so = seatsAndOptions[i];
+					int classId; 
+					if(so.useSeatIndex) classId = seats.Class(so.seatIndex);
+					else classId = so.seatClassId;
+
+					var opt = options[classId];
+
+					var hi = so.selectedOptions.baggageOptions.handLuggageIndex;
+					var bi = so.selectedOptions.baggageOptions.baggageIndex;
+					if(
+						bi < 0 || bi >= opt.baggageOptions.baggage.Count ||
+						hi < 0 || hi >= opt.baggageOptions.handLuggage.Count
+					) return Either<SeatData[], InputError>.Failure(new InputError{
+						message = "не заданы опции для багажа"
+					});
+
+					var baggageOption = opt.baggageOptions.baggage[bi];
+					var handLuggageOption = opt.baggageOptions.handLuggage[hi];
+
+					var sd = new SeatData(){
+						baggageCost = baggageOption.costRub + handLuggageOption.costRub,
+						unoccuppied = seatOccupied[i],
+					};
+
+					sd.totalCost = opt.basePriceRub + sd.baggageCost + 
+							opt.servicesOptions.seatChoiceCostRub * (so.useSeatIndex ? 1 : 0);
+
+					seatsData[i] = sd;
+				}
+
+				return Either<SeatData[], InputError>.Success(seatsData);
+				}}}
+			}
+
+			public Either<object, LoginOrInputError> bookFlight(Customer customer, SelectedSeat[] selectedSeats, int flightId) {
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
+				if(!userIdRes.IsSuccess) return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+				using(
+				var command = new SqlCommand("[Flights].[BookFlight]", connection)) {
+				command.CommandType = CommandType.StoredProcedure;
+
+
+				}
+				return Either<object, LoginOrInputError>.Success(null);
 				}
 			}
 

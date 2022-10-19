@@ -5,10 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using Validation;
 
 namespace AirlineTicketingServer {
 	static class ValidatePassanger {
-		public static CheckResult validate(Communication.Passanger it) {
+		public static Validation.CheckResult validate(Communication.Passanger it) {
 			var sb = new StringBuilder();
 			var err = false;
 
@@ -21,8 +22,8 @@ namespace AirlineTicketingServer {
 				sb.AC("фамилия должна быть заполнена");
 			}
 			
-			if(err) return CheckResult.Err(sb.ToString());
-			else return CheckResult.Ok();
+			if(err) return  Validation.CheckResult.Err(sb.ToString());
+			else return Validation.CheckResult.Ok();
 		}
 	}
 	

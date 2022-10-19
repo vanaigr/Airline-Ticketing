@@ -42,11 +42,11 @@ namespace Client {
 			this.flightNameLabel = new System.Windows.Forms.Label();
 			this.departureLocationLabel = new System.Windows.Forms.Label();
 			this.departureDatetimeLabel = new System.Windows.Forms.Label();
+			this.statusLabel = new System.Windows.Forms.Label();
 			this.seatHint = new System.Windows.Forms.ToolTip(this.components);
 			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.passangerTooltip = new System.Windows.Forms.ToolTip(this.components);
-			this.statusLabel = new System.Windows.Forms.Label();
 			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			label2 = new System.Windows.Forms.Label();
@@ -166,6 +166,7 @@ namespace Client {
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.Size = new System.Drawing.Size(860, 85);
 			this.tableLayoutPanel3.TabIndex = 6;
+			this.tableLayoutPanel3.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel3_Paint);
 			// 
 			// label1
 			// 
@@ -318,6 +319,18 @@ namespace Client {
 			this.departureDatetimeLabel.TabIndex = 2;
 			this.departureDatetimeLabel.Text = "departureDatetime";
 			// 
+			// statusLabel
+			// 
+			this.statusLabel.AutoSize = true;
+			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
+			this.statusLabel.Location = new System.Drawing.Point(224, 10);
+			this.statusLabel.Name = "statusLabel";
+			this.headerContainer.SetRowSpan(this.statusLabel, 3);
+			this.statusLabel.Size = new System.Drawing.Size(544, 33);
+			this.statusLabel.TabIndex = 7;
+			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// passangerMenu
 			// 
 			this.passangerMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -331,18 +344,6 @@ namespace Client {
 			this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
 			this.удалитьToolStripMenuItem.Text = "Удалить";
 			this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
-			// 
-			// statusLabel
-			// 
-			this.statusLabel.AutoSize = true;
-			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
-			this.statusLabel.Location = new System.Drawing.Point(224, 10);
-			this.statusLabel.Name = "statusLabel";
-			this.headerContainer.SetRowSpan(this.statusLabel, 3);
-			this.statusLabel.Size = new System.Drawing.Size(544, 33);
-			this.statusLabel.TabIndex = 7;
-			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FlightDetailsFill
 			// 

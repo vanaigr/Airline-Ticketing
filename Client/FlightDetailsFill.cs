@@ -83,7 +83,8 @@ namespace Client {
 
             var selectionForm = new PassangerSettings(
 				service, customer,
-				seatHandling, newBookingPassanger,
+				flightAndCities.flight.id, seatHandling, 
+				newBookingPassanger,
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
@@ -224,11 +225,18 @@ namespace Client {
 
 			statusLabel.Text = null;
 			statusTooltip.SetToolTip(statusLabel, null);
+
+			new FlightBook(
+				service, 
+				customer, bookingPassangers, flightAndCities.flight, 
+				classesNames
+			).ShowDialog();
 		}
 
 		private void addAutoseat_Click(object sender, EventArgs e) {
-			addPassanger();
+			var index = addPassanger();
 			updateSeatsStatusText();
+			selectCurrentPassanger(index);
 		}
 
 		private int addPassanger() {
@@ -299,24 +307,11 @@ namespace Client {
 			}
 
 			public string getSeatString(int index) {
-				var coord = seats.Scheme.indexToCoord(index);
-				var width = seats.Scheme.WidthForRow(coord.z);
-				return SeatsScheme.WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z + 1);
+				return seats.Scheme.ToName(index);
 			}
 
 			int? PassangerSettings.SeatHandling.indexFromSeatString(string t) {
-				try {
-					var z = int.Parse(t.Substring(1)) - 1;
-					var width = seats.Scheme.WidthForRow(z);
-					var naming = SeatsScheme.WidthsNaming.widthsNaming[width];
-					var x = 0;
-					for(; x < naming.Length; x++) if(char.ToLowerInvariant(naming[x]) == char.ToLowerInvariant(t[0])) break;
-
-					return seats.Scheme.coordToIndex(x, z);
-				}
-				catch(Exception ex) {
-					return null;
-				}
+				return seats.Scheme.FromName(t);
 			}
 
 			bool PassangerSettings.SeatHandling.canPlaceAt(int index) {
@@ -328,8 +323,12 @@ namespace Client {
 				return true;
 			}
 		}
+
+		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
+
+		}
 	}
-	
+
 
 	class SeatButton : Label {
 		private int? value;

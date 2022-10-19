@@ -90,12 +90,46 @@ namespace SeatsScheme {
 
 			this.seatsCount = seatsSum;
 		}
+
+		public string ToName(int index) {
+			var coord = indexToCoord(index);
+			var width = WidthForRow(coord.z);
+			return WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z + 1);
+		}
+
+		internal int? FromName(string t) {
+			try {
+				var z = int.Parse(t.Substring(1)) - 1;
+				var width = WidthForRow(z);
+				var naming = WidthsNaming.widthsNaming[width];
+				var x = 0;
+				for(; x < naming.Length; x++) if(char.ToLowerInvariant(naming[x]) == char.ToLowerInvariant(t[0])) break;
+
+				return coordToIndex(x, z); 
+			}
+			catch(Exception ex) {
+				return null;
+			}
+		}
 	}
 
 	public struct Seat {
 		public byte Class;
 		public bool Occupied;
 	}
+
+	public static class Occupation {
+		public static bool Occupied(byte[] occupation, int size, int i) {
+			if(i >= 0 && i < size) return ((occupation[i/8] >> (i%8)) & 1) != 0; 
+			else throw new IndexOutOfRangeException();
+		}
+
+		public static void Occupy(byte[] occupation, int size, int i) {
+			if(i >= 0 && i < size) occupation[i/8] |= (byte) (1u << (i%8)); 
+			else throw new IndexOutOfRangeException();
+		}
+	}
+
 	[Serializable] public struct Seats {
 		public SeatsScheme Scheme{ get; private set; }
 		private byte[] seatsClasses;
@@ -109,9 +143,10 @@ namespace SeatsScheme {
 			Debug.Assert(this.seatsClasses.Length == this.Scheme.SeatsCount);
 		}
 
+		public int Size{ get{ return Scheme.SeatsCount; } }
+
 		public bool Occupied(int i) {
-			if(i >= 0 && i < Scheme.SeatsCount) return ((seatsOccupied[i/8] >> (i%8)) & 1) != 0; 
-			else throw new IndexOutOfRangeException();
+			return Occupation.Occupied(seatsOccupied, Scheme.SeatsCount, i);
 		}
 
 		public bool Occupied(int x, int z) { 

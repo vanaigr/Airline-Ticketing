@@ -68,12 +68,21 @@ namespace FlightsOptions {
 }
 
 [Serializable] public class SelectedBaggageOptions {
-	int baggageIndex;
-	int handLuggageIndex;
+	public int baggageIndex;
+	public int handLuggageIndex;
+
+	public SelectedBaggageOptions(int baggageIndex, int handLuggageIndex) {
+		this.baggageIndex = baggageIndex;
+		this.handLuggageIndex = handLuggageIndex;
+	}
 }
 
 [Serializable] public class SelectedOptions {
 	public SelectedBaggageOptions baggageOptions;
+
+	public SelectedOptions(SelectedBaggageOptions baggageOptions) {
+		this.baggageOptions = baggageOptions;
+	}
 }
 
 }

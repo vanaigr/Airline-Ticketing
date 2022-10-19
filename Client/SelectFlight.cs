@@ -29,15 +29,15 @@ namespace Client {
 
 			reconnect();
 
-			try {
-			fromLoc.SelectedIndex = 2;
-			toLoc.SelectedIndex = 1;
-
-			findFlightsButton_Click(findFlightsButton, new EventArgs());
-
-			customer = new CustomerData("User123", "789456123");
-			customer.passangers = service.getPassangers((Customer) customer.customer).s;
-			} catch(Exception){ }
+			//try {
+			//fromLoc.SelectedIndex = 2;
+			//toLoc.SelectedIndex = 1;
+			//
+			//findFlightsButton_Click(findFlightsButton, new EventArgs());
+			//
+			//customer = new CustomerData("User123", "789456123");
+			//customer.passangers = service.getPassangers((Customer) customer.customer).s;
+			//} catch(Exception){ }
 		}
 
 		void setupAvailableOptions() {
@@ -55,7 +55,7 @@ namespace Client {
 		void updateErrorDisplay(bool isError, string message, Exception e) {
 			if(isError) { 
 				statusLabel.Text = message ?? "Неизвестная ошибка";
-				this.elementHint.SetToolTip(this.statusLabel, "" + e);
+				this.elementHint.SetToolTip(this.statusLabel, e?.ToString() ?? message);
 			}
 			else {
 				statusLabel.Text = "";

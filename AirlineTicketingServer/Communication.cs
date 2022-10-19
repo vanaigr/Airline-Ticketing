@@ -63,9 +63,23 @@ namespace Communication {
 		}
 	}
 
-	[Serializable] public struct PassangerAndSeat {
-		public int passangerIndex;
-		public int? seatIndex;
+	[Serializable] public struct SelectedSeat {
+		public SeatAndOptions seatAndOptions;
+		public int passangerId;
+	}
+
+	[Serializable] public struct SeatAndOptions {
+		public FlightsOptions.SelectedOptions selectedOptions;
+		 
+		public int seatIndex;
+		public int seatClassId;
+		public bool useSeatIndex;
+	}
+
+	[Serializable] public struct SeatData {
+		public int baggageCost;
+		public int totalCost;
+		public bool unoccuppied;
 	}
 	
 	[Serializable] public sealed class Either<TS, TF> {
@@ -142,6 +156,8 @@ namespace Communication {
 
 		[OperationContract] Either<object, LoginError> removePassanger(Customer customer, int index);
 
-		//[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer customer, List<PassangerAndSeat> passangerAndSeats, int flightId);
+		[OperationContract] Either<SeatData[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
+
+		[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer customer, SelectedSeat[] selectedSeats, int flightId);
 	}
 }

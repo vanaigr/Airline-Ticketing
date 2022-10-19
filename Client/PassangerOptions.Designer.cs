@@ -24,6 +24,7 @@ namespace Client {
 		/// содержимое этого метода с помощью редактора кода.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
@@ -34,15 +35,15 @@ namespace Client {
 			this.label1 = new System.Windows.Forms.Label();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.baggageOptionsPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.seatPriceLabel = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.basePriceLabel = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.basePriceLabel = new System.Windows.Forms.Label();
+			this.label6 = new System.Windows.Forms.Label();
+			this.seatPriceLabel = new System.Windows.Forms.Label();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this.label8 = new System.Windows.Forms.Label();
 			this.totalCostLabel = new System.Windows.Forms.Label();
+			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel3.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel4.SuspendLayout();
@@ -201,61 +202,6 @@ namespace Client {
 			this.baggageOptionsPanel.Size = new System.Drawing.Size(735, 0);
 			this.baggageOptionsPanel.TabIndex = 0;
 			// 
-			// seatPriceLabel
-			// 
-			this.seatPriceLabel.AutoSize = true;
-			this.seatPriceLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.seatPriceLabel.Location = new System.Drawing.Point(182, 43);
-			this.seatPriceLabel.Margin = new System.Windows.Forms.Padding(3);
-			this.seatPriceLabel.Name = "seatPriceLabel";
-			this.seatPriceLabel.Size = new System.Drawing.Size(52, 13);
-			this.seatPriceLabel.TabIndex = 8;
-			this.seatPriceLabel.Text = "seatPrice";
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label6.Location = new System.Drawing.Point(6, 43);
-			this.label6.Margin = new System.Windows.Forms.Padding(3);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(170, 13);
-			this.label6.TabIndex = 6;
-			this.label6.Text = "Стоимость выбранного места:";
-			// 
-			// basePriceLabel
-			// 
-			this.basePriceLabel.AutoSize = true;
-			this.basePriceLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.basePriceLabel.Location = new System.Drawing.Point(182, 24);
-			this.basePriceLabel.Margin = new System.Windows.Forms.Padding(3);
-			this.basePriceLabel.Name = "basePriceLabel";
-			this.basePriceLabel.Size = new System.Drawing.Size(55, 13);
-			this.basePriceLabel.TabIndex = 5;
-			this.basePriceLabel.Text = "basePrice";
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label4.Location = new System.Drawing.Point(6, 24);
-			this.label4.Margin = new System.Windows.Forms.Padding(3);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(110, 13);
-			this.label4.TabIndex = 4;
-			this.label4.Text = "Базовая стоимость:";
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.tableLayoutPanel5.SetColumnSpan(this.label3, 2);
-			this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label3.Location = new System.Drawing.Point(6, 3);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(103, 15);
-			this.label3.TabIndex = 0;
-			this.label3.Text = "Условия и услуги";
-			// 
 			// tableLayoutPanel5
 			// 
 			this.tableLayoutPanel5.AutoSize = true;
@@ -285,34 +231,77 @@ namespace Client {
 			this.tableLayoutPanel5.Size = new System.Drawing.Size(747, 62);
 			this.tableLayoutPanel5.TabIndex = 3;
 			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.tableLayoutPanel5.SetColumnSpan(this.label3, 2);
+			this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.label3.Location = new System.Drawing.Point(6, 3);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(103, 15);
+			this.label3.TabIndex = 0;
+			this.label3.Text = "Условия и услуги";
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.label4.Location = new System.Drawing.Point(6, 24);
+			this.label4.Margin = new System.Windows.Forms.Padding(3);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(110, 13);
+			this.label4.TabIndex = 4;
+			this.label4.Text = "Базовая стоимость:";
+			// 
+			// basePriceLabel
+			// 
+			this.basePriceLabel.AutoSize = true;
+			this.basePriceLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.basePriceLabel.Location = new System.Drawing.Point(182, 24);
+			this.basePriceLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.basePriceLabel.Name = "basePriceLabel";
+			this.basePriceLabel.Size = new System.Drawing.Size(55, 13);
+			this.basePriceLabel.TabIndex = 5;
+			this.basePriceLabel.Text = "basePrice";
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.label6.Location = new System.Drawing.Point(6, 43);
+			this.label6.Margin = new System.Windows.Forms.Padding(3);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(170, 13);
+			this.label6.TabIndex = 6;
+			this.label6.Text = "Стоимость выбранного места:";
+			// 
+			// seatPriceLabel
+			// 
+			this.seatPriceLabel.AutoSize = true;
+			this.seatPriceLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.seatPriceLabel.Location = new System.Drawing.Point(182, 43);
+			this.seatPriceLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.seatPriceLabel.Name = "seatPriceLabel";
+			this.seatPriceLabel.Size = new System.Drawing.Size(52, 13);
+			this.seatPriceLabel.TabIndex = 8;
+			this.seatPriceLabel.Text = "seatPrice";
+			// 
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.flowLayoutPanel1.Controls.Add(this.label8);
 			this.flowLayoutPanel1.Controls.Add(this.totalCostLabel);
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(9, 199);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(96, 13);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(54, 13);
 			this.flowLayoutPanel1.TabIndex = 5;
 			this.flowLayoutPanel1.WrapContents = false;
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label8.Location = new System.Drawing.Point(0, 0);
-			this.label8.Margin = new System.Windows.Forms.Padding(0);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(42, 13);
-			this.label8.TabIndex = 5;
-			this.label8.Text = "Итого:";
 			// 
 			// totalCostLabel
 			// 
 			this.totalCostLabel.AutoSize = true;
 			this.totalCostLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.totalCostLabel.Location = new System.Drawing.Point(42, 0);
+			this.totalCostLabel.Location = new System.Drawing.Point(0, 0);
 			this.totalCostLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.totalCostLabel.Name = "totalCostLabel";
 			this.totalCostLabel.Size = new System.Drawing.Size(54, 13);
@@ -366,7 +355,7 @@ namespace Client {
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label seatPriceLabel;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label totalCostLabel;
+		private System.Windows.Forms.ToolTip statusTooltip;
 	}
 }
