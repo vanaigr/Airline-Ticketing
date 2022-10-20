@@ -106,9 +106,9 @@ namespace Client {
 		}
 
 		private void statusError(string msg, string msg2 = null) {
-			totalPriceLabel.ForeColor = Color.Firebrick;
-			totalPriceLabel.Text = msg;
-			statusTooltip.SetToolTip(totalPriceLabel, msg2 ?? msg);
+			statusLabel.ForeColor = Color.Firebrick;
+			statusLabel.Text = msg;
+			statusTooltip.SetToolTip(statusLabel, msg2 ?? msg);
 		}
 
 		private void bookFlight_Click(object sender, EventArgs e) {

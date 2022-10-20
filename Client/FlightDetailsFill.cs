@@ -349,11 +349,14 @@ namespace Client {
 			Margin = new Padding(3);
 			Value = null;
 			AutoSize = true;
+			setColors();
+
+			EnabledChanged += (a, b) => setColors();
 		}
 
 		private void setColors() {
 			 if(!Enabled) {
-				BackColor = Color.FromArgb(unchecked((int) 0xff98a3b8u));
+				BackColor = Color.FromArgb(unchecked((int) 0xff727883u));
 				ForeColor = SystemColors.ControlText;
 			}
 			else if(Value != null) {

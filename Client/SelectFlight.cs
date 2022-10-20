@@ -29,15 +29,15 @@ namespace Client {
 
 			reconnect();
 
-			//try {
-			//fromLoc.SelectedIndex = 2;
-			//toLoc.SelectedIndex = 1;
-			//
-			//findFlightsButton_Click(findFlightsButton, new EventArgs());
-			//
-			//customer = new CustomerData("User123", "789456123");
-			//customer.passangers = service.getPassangers((Customer) customer.customer).s;
-			//} catch(Exception){ }
+			try {
+			fromLoc.SelectedIndex = 2;
+			toLoc.SelectedIndex = 1;
+			
+			findFlightsButton_Click(findFlightsButton, new EventArgs());
+			
+			customer = new CustomerData("User123", "789456123");
+			customer.passangers = service.getPassangers((Customer) customer.customer).s;
+			} catch(Exception){ }
 		}
 
 		void setupAvailableOptions() {
