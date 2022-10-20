@@ -143,6 +143,20 @@ namespace FlightsOptions {
 			return result;
 			}}
 		}
+
+        public static byte[] toBytes(SelectedOptions it) {
+			using(
+			var ms = new MemoryStream(9)) {
+			using(
+			var st = new BinaryWriter(ms)) {
+
+			st.Write((byte)0);
+			st.Write(it.baggageOptions.baggageIndex);
+			st.Write(it.baggageOptions.handLuggageIndex);
+			
+			return ms.ToArray();
+			}}
+        }
 	}
 }
 

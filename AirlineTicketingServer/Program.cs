@@ -186,7 +186,8 @@ namespace AirlineTicketingServer {
 				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				using(
 				var selectClasses = new SqlCommand(
-					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], [ArivalOffsetMinutes], [OptionsBin], [SeatsAndClasses], [SeatsOccupation]
+					@"select [AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], 
+						[ArivalOffsetMinutes], [OptionsBin], [SeatsAndClasses], [SeatsOccupation]
 					from [Flights].[FindFlights](@fromCity, @toCity, @time) 
 					order by [DepartureDatetime] desc",
 					connection
@@ -315,9 +316,63 @@ namespace AirlineTicketingServer {
 				}
 			}
 
-			Either<SeatData[], InputError> MessageService.seatsData(int flightId, SeatAndOptions[] seatsAndOptions) {
-				using(
-				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+			private int[] calcPassangersSeatsIndices(
+				SqlConnectionView cv, 
+				Seats seats, byte[] originalOccupation,
+				SeatAndOptions[] seatsAndOptions
+			) {
+				var seatsIndicesPlus1 = new int[seatsAndOptions.Length];
+
+				var remainingSeatsIndices = new List<int>();
+
+				for(int i = 0; i < seatsAndOptions.Length; i++) {
+					var so = seatsAndOptions[i];
+					if(so.useSeatIndex) {
+						var occupied = Occupation.Occupied(originalOccupation, seats.Size, so.seatIndex);
+						if(occupied) seatsIndicesPlus1[i] = 1+so.seatIndex;
+						
+						//Occupation.Occupy(occupationWithPassangers, seats.Size, so.seatIndex);
+					}
+					else remainingSeatsIndices.Add(i);
+				}
+
+				{
+					for(int i = 0; i < seats.Size; i++) {
+						var seatClass = seats.Class(i);
+
+						if(!Occupation.Occupied(
+							originalOccupation, seats.Size, i
+						)) {
+							for(int j = 0; j < remainingSeatsIndices.Count; j++) {
+								var sIndex = remainingSeatsIndices[j];
+								var s = seatsAndOptions[sIndex];
+								if(s.seatClassId == seatClass) {
+									//Occupation.Occupy(
+									//	occupationWithPassangers, seats.Size, i
+									//);
+									seatsIndicesPlus1[remainingSeatsIndices[j]] = 1+i;
+									remainingSeatsIndices.RemoveAt(j);
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				return seatsIndicesPlus1;
+			}
+
+			struct A {
+				public SeatsScheme.Seats seats;
+				public Dictionary<int, FlightsOptions.Options> options;
+				public int[] seatsIndicesPlus1;
+			};
+
+			private Either<A, InputError> calc(
+				SqlConnectionView cv,
+				int flightId, SeatAndOptions[] seatsAndOptions
+			) {
+				using(cv) {
 				using(
 				var command = new SqlCommand(
 					@"select top 1
@@ -339,27 +394,27 @@ namespace AirlineTicketingServer {
 					select top 1 [afso].[SeatsOccupation]
 					from [Flights].[AvailableFlightSeatsOccupation] as [afso]
 					where [afso].[AvailableFlight] = @FlightId",
-					connection
+					cv.connection
 				)) {
 				command.CommandType = CommandType.Text;
 				command.Parameters.AddWithValue("@FlightId", flightId);
 
-				connection.Open();
+				cv.Open();
 				using(
 				var result = command.ExecuteReader()) {
 
-				if(!result.Read()) return Either<SeatData[], InputError>.Failure(new InputError(
+				if(!result.Read()) return Either<A, InputError>.Failure(new InputError(
 					"Выбранного рейса не существует"
 				));
 
 				var optionsBin = (byte[]) result[0];
 				var seatsSchemeBin = (byte[]) result[1];
 
-				if(!result.NextResult()) return Either<SeatData[], InputError>.Failure(new InputError(
+				if(!result.NextResult()) return Either<A, InputError>.Failure(new InputError(
 					"Выбранного рейса не существует" //not quite correct
 				));
 
-				if(!result.Read()) return Either<SeatData[], InputError>.Failure(new InputError(
+				if(!result.Read()) return Either<A, InputError>.Failure(new InputError(
 					"Выбранного рейса не существует"
 				));
 
@@ -367,56 +422,37 @@ namespace AirlineTicketingServer {
 
 				result.Close();
 				command.Dispose();
-				connection.Dispose();
 
-				var options = BinaryOptions.fromBytes(optionsBin);
 				var ssAndClases = BinarySeats.fromBytes(seatsSchemeBin);
 				var seats = new Seats(ssAndClases.scheme, ssAndClases.classes, occupation);
+				var seatsIndicesPlus1 = calcPassangersSeatsIndices(
+					new SqlConnectionView(cv.connection, true),
+					seats, occupation,
+					seatsAndOptions
+				);
+											
+				cv.Dispose();
+				var options = BinaryOptions.fromBytes(optionsBin);
 
-				var occupationWithPassangers = (byte[]) occupation.Clone();
-				var anyOccupied = false;
-				var seatOccupied = new bool[seatsAndOptions.Length];
+				return Either<A, InputError>.Success(new A {
+					seats = seats, options = options, seatsIndicesPlus1 = seatsIndicesPlus1
+				});
+				}}}
+			}
 
-				var remainingSeatsIndices = new List<int>();
+			Either<SeatData[], InputError> MessageService.seatsData(int flightId, SeatAndOptions[] seatsAndOptions) {
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				var result = calc(new SqlConnectionView(
+					connection,
+					true
+				), flightId, seatsAndOptions);
+				connection.Dispose();
+				
+				if(!result.IsSuccess) return Either<SeatData[], InputError>.Failure(result.f);
 
-				for(int i = 0; i < seatsAndOptions.Length; i++) {
-					var so = seatsAndOptions[i];
-					if(so.useSeatIndex) {
-						var occupied = Occupation.Occupied(occupationWithPassangers, seats.Size, so.seatIndex);
-						seatOccupied[i] = occupied;
-						anyOccupied |= occupied;
-						
-						Occupation.Occupy(occupationWithPassangers, seats.Size, so.seatIndex);
-					}
-					else remainingSeatsIndices.Add(i);
-				}
-
-				{
-					for(int i = 0; i < seats.Size; i++) {
-						var seatClass = seats.Class(i);
-
-						if(!Occupation.Occupied(
-							occupationWithPassangers, seats.Size, i
-						)) {
-							for(int j = 0; j < remainingSeatsIndices.Count; j++) {
-								var sIndex = remainingSeatsIndices[j];
-								var s = seatsAndOptions[sIndex];
-								if(s.seatClassId == seatClass) {
-									Occupation.Occupy(
-										occupationWithPassangers, seats.Size, i
-									);
-									remainingSeatsIndices.RemoveAt(j);
-									break;
-								}
-							}
-						}
-					}
-
-					for(int i = 0; i < remainingSeatsIndices.Count; i++) {
-						anyOccupied = true;
-						seatOccupied[remainingSeatsIndices[i]] = true;
-					}
-				}
+				var seats = result.s.seats;
+				var options = result.s.options;
+				var seatsIndicesPlus1 = result.s.seatsIndicesPlus1;
 
 				var seatsData = new SeatData[seatsAndOptions.Length];
 
@@ -442,7 +478,7 @@ namespace AirlineTicketingServer {
 
 					var sd = new SeatData(){
 						baggageCost = baggageOption.costRub + handLuggageOption.costRub,
-						unoccuppied = seatOccupied[i],
+						unoccuppied = seatsIndicesPlus1[i] != 0,
 					};
 
 					sd.totalCost = opt.basePriceRub + sd.baggageCost + 
@@ -452,20 +488,57 @@ namespace AirlineTicketingServer {
 				}
 
 				return Either<SeatData[], InputError>.Success(seatsData);
-				}}}
+				}
 			}
 
 			public Either<object, LoginOrInputError> bookFlight(Customer customer, SelectedSeat[] selectedSeats, int flightId) {
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
 				if(!userIdRes.IsSuccess) return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+
+				var seatsAndOptions = new Communication.SeatAndOptions[selectedSeats.Length];
+				for(int i = 0; i < seatsAndOptions.Length; i++) {
+					seatsAndOptions[i] = selectedSeats[i].seatAndOptions;
+				}
+
+				var result = calc(
+					new SqlConnectionView(connection, false), 
+					flightId, seatsAndOptions
+				);
+				connection.Dispose();
+				
+				if(!result.IsSuccess) return Either<object, LoginOrInputError>.Failure(
+					new LoginOrInputError{ InputError = result.f }
+				);
+
 				using(
 				var command = new SqlCommand("[Flights].[BookFlight]", connection)) {
 				command.CommandType = CommandType.StoredProcedure;
+				
+                DataTable seats = new DataTable();
+                seats.Columns.Add("Passanger", typeof(int));
+                seats.Columns.Add("SelectedSeat", typeof(int));
+                seats.Columns.Add("SelectedOptions", typeof(byte[]));
 
+                for(int i = 0; i < selectedSeats.Length; i++) {
+					var selectedSeat = selectedSeats[i];
+					var index = result.s.seatsIndicesPlus1[i];
+					if(index == 0) return Either<object, LoginOrInputError>.Failure(
+						new LoginOrInputError{ InputError = new InputError { message = 
+							"Место пассажира " + i + " уже занято или не найдено"
+						} }
+					);
+                    var dr = seats.NewRow();
+                    dr[0] = selectedSeat.passangerId;
+					dr[1] = index;
+                    dr[2] = BinaryOptions.toBytes(selectedSeat.seatAndOptions.selectedOptions);
+                    seats.Rows.Add(dr);
+                }
 
-				}
-				return Either<object, LoginOrInputError>.Success(null);
+				command.ExecuteNonQuery();
+                
+                return Either<object, LoginOrInputError>.Success(null);
+                }
 				}
 			}
 
