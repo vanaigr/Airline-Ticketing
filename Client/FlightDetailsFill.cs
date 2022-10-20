@@ -344,6 +344,8 @@ namespace Client {
 		}
 
 		public SeatButton() : base() {
+			Misc.setBetterFont(this);
+
 			TextAlign = ContentAlignment.MiddleCenter;
 			Dock = DockStyle.Fill;
 			Margin = new Padding(3);

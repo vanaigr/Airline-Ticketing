@@ -41,10 +41,10 @@ namespace Client {
 			this.servicesOptionsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.baggageOptionsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.label4 = new System.Windows.Forms.Label();
-			this.classType = new System.Windows.Forms.ComboBox();
-			this.availableSeatsCount = new System.Windows.Forms.Label();
-			this.button1 = new System.Windows.Forms.Button();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this.button1 = new System.Windows.Forms.Button();
+			this.availableSeatsCount = new System.Windows.Forms.Label();
+			this.classType = new System.Windows.Forms.ComboBox();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.flightNameLabel = new System.Windows.Forms.Label();
 			this.airplaneNameLabel = new System.Windows.Forms.Label();
@@ -80,7 +80,7 @@ namespace Client {
 			tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 2F));
 			tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			tableLayoutPanel3.Size = new System.Drawing.Size(852, 134);
+			tableLayoutPanel3.Size = new System.Drawing.Size(852, 136);
 			tableLayoutPanel3.TabIndex = 1;
 			// 
 			// tableLayoutPanel4
@@ -98,7 +98,7 @@ namespace Client {
 			tableLayoutPanel4.Controls.Add(this.toDate, 1, 2);
 			tableLayoutPanel4.Controls.Add(this.flightTime, 0, 1);
 			tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-			tableLayoutPanel4.Location = new System.Drawing.Point(13, 43);
+			tableLayoutPanel4.Location = new System.Drawing.Point(13, 45);
 			tableLayoutPanel4.Name = "tableLayoutPanel4";
 			tableLayoutPanel4.RowCount = 3;
 			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
@@ -111,11 +111,11 @@ namespace Client {
 			// 
 			this.fromCityCode.AutoSize = true;
 			this.fromCityCode.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.fromCityCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.fromCityCode.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.fromCityCode.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.fromCityCode.Location = new System.Drawing.Point(125, 0);
+			this.fromCityCode.Location = new System.Drawing.Point(117, 0);
 			this.fromCityCode.Name = "fromCityCode";
-			this.fromCityCode.Size = new System.Drawing.Size(69, 26);
+			this.fromCityCode.Size = new System.Drawing.Size(77, 26);
 			this.fromCityCode.TabIndex = 10;
 			this.fromCityCode.Text = "fromCityCode";
 			this.fromCityCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -124,10 +124,10 @@ namespace Client {
 			// 
 			this.fromTime.AutoSize = true;
 			this.fromTime.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.fromTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.fromTime.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.fromTime.Location = new System.Drawing.Point(3, 0);
 			this.fromTime.Name = "fromTime";
-			this.fromTime.Size = new System.Drawing.Size(60, 26);
+			this.fromTime.Size = new System.Drawing.Size(59, 26);
 			this.fromTime.TabIndex = 8;
 			this.fromTime.Text = "fromTime";
 			this.fromTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -136,11 +136,11 @@ namespace Client {
 			// 
 			this.fromDate.AutoSize = true;
 			this.fromDate.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.fromDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.fromDate.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.fromDate.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.fromDate.Location = new System.Drawing.Point(69, 0);
+			this.fromDate.Location = new System.Drawing.Point(68, 0);
 			this.fromDate.Name = "fromDate";
-			this.fromDate.Size = new System.Drawing.Size(50, 26);
+			this.fromDate.Size = new System.Drawing.Size(43, 26);
 			this.fromDate.TabIndex = 14;
 			this.fromDate.Text = "fromDate";
 			this.fromDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -149,11 +149,11 @@ namespace Client {
 			// 
 			this.toCityCode.AutoSize = true;
 			this.toCityCode.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.toCityCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.toCityCode.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.toCityCode.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.toCityCode.Location = new System.Drawing.Point(125, 52);
+			this.toCityCode.Location = new System.Drawing.Point(117, 52);
 			this.toCityCode.Name = "toCityCode";
-			this.toCityCode.Size = new System.Drawing.Size(69, 26);
+			this.toCityCode.Size = new System.Drawing.Size(77, 26);
 			this.toCityCode.TabIndex = 11;
 			this.toCityCode.Text = "toCicyCode";
 			this.toCityCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -162,10 +162,10 @@ namespace Client {
 			// 
 			this.toTime.AutoSize = true;
 			this.toTime.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.toTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.toTime.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.toTime.Location = new System.Drawing.Point(3, 52);
 			this.toTime.Name = "toTime";
-			this.toTime.Size = new System.Drawing.Size(60, 26);
+			this.toTime.Size = new System.Drawing.Size(59, 26);
 			this.toTime.TabIndex = 9;
 			this.toTime.Text = "toTime";
 			this.toTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -174,11 +174,11 @@ namespace Client {
 			// 
 			this.toDate.AutoSize = true;
 			this.toDate.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.toDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.toDate.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.toDate.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.toDate.Location = new System.Drawing.Point(69, 52);
+			this.toDate.Location = new System.Drawing.Point(68, 52);
 			this.toDate.Name = "toDate";
-			this.toDate.Size = new System.Drawing.Size(50, 26);
+			this.toDate.Size = new System.Drawing.Size(43, 26);
 			this.toDate.TabIndex = 12;
 			this.toDate.Text = "toDate";
 			this.toDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -187,6 +187,7 @@ namespace Client {
 			// 
 			tableLayoutPanel4.SetColumnSpan(this.flightTime, 3);
 			this.flightTime.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flightTime.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.flightTime.Location = new System.Drawing.Point(3, 26);
 			this.flightTime.Name = "flightTime";
 			this.flightTime.Size = new System.Drawing.Size(191, 26);
@@ -208,7 +209,7 @@ namespace Client {
 			tableLayoutPanel1.Controls.Add(this.servicesOptionsTable, 2, 1);
 			tableLayoutPanel1.Controls.Add(this.baggageOptionsTable, 0, 1);
 			tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			tableLayoutPanel1.Location = new System.Drawing.Point(236, 43);
+			tableLayoutPanel1.Location = new System.Drawing.Point(236, 45);
 			tableLayoutPanel1.Name = "tableLayoutPanel1";
 			tableLayoutPanel1.RowCount = 2;
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -220,6 +221,7 @@ namespace Client {
 			// 
 			this.label1.AutoSize = true;
 			this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label1.Location = new System.Drawing.Point(3, 0);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(195, 13);
@@ -231,6 +233,7 @@ namespace Client {
 			// 
 			this.label2.AutoSize = true;
 			this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label2.Location = new System.Drawing.Point(204, 0);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(195, 13);
@@ -242,6 +245,7 @@ namespace Client {
 			// 
 			this.label3.AutoSize = true;
 			this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.label3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label3.Location = new System.Drawing.Point(405, 0);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(195, 13);
@@ -259,7 +263,7 @@ namespace Client {
 			this.termsOptionsTable.Name = "termsOptionsTable";
 			this.termsOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this.termsOptionsTable.RowCount = 1;
-			this.termsOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+			this.termsOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
 			this.termsOptionsTable.Size = new System.Drawing.Size(195, 59);
 			this.termsOptionsTable.TabIndex = 4;
 			// 
@@ -273,7 +277,7 @@ namespace Client {
 			this.servicesOptionsTable.Name = "servicesOptionsTable";
 			this.servicesOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this.servicesOptionsTable.RowCount = 1;
-			this.servicesOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+			this.servicesOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
 			this.servicesOptionsTable.Size = new System.Drawing.Size(195, 59);
 			this.servicesOptionsTable.TabIndex = 5;
 			// 
@@ -287,7 +291,7 @@ namespace Client {
 			this.baggageOptionsTable.Name = "baggageOptionsTable";
 			this.baggageOptionsTable.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
 			this.baggageOptionsTable.RowCount = 1;
-			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+			this.baggageOptionsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
 			this.baggageOptionsTable.Size = new System.Drawing.Size(195, 59);
 			this.baggageOptionsTable.TabIndex = 3;
 			// 
@@ -296,53 +300,10 @@ namespace Client {
 			this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			tableLayoutPanel3.SetColumnSpan(this.label4, 3);
 			this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.label4.Location = new System.Drawing.Point(13, 38);
+			this.label4.Location = new System.Drawing.Point(13, 40);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(826, 2);
 			this.label4.TabIndex = 2;
-			// 
-			// classType
-			// 
-			this.classType.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.classType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.classType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.classType.Location = new System.Drawing.Point(0, 2);
-			this.classType.Margin = new System.Windows.Forms.Padding(0);
-			this.classType.Name = "classType";
-			this.classType.Size = new System.Drawing.Size(100, 21);
-			this.classType.TabIndex = 1;
-			this.classType.SelectedIndexChanged += new System.EventHandler(this.classType_SelectedIndexChanged);
-			// 
-			// availableSeatsCount
-			// 
-			this.availableSeatsCount.AutoSize = true;
-			this.availableSeatsCount.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.availableSeatsCount.Location = new System.Drawing.Point(113, 2);
-			this.availableSeatsCount.Name = "availableSeatsCount";
-			this.availableSeatsCount.Size = new System.Drawing.Size(104, 21);
-			this.availableSeatsCount.TabIndex = 2;
-			this.availableSeatsCount.Text = "availableSeatsCount";
-			this.availableSeatsCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// button1
-			// 
-			this.button1.AutoSize = true;
-			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button1.BackColor = System.Drawing.Color.RoyalBlue;
-			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
-			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button1.Location = new System.Drawing.Point(524, 0);
-			this.button1.Margin = new System.Windows.Forms.Padding(0);
-			this.button1.Name = "button1";
-			this.tableLayoutPanel2.SetRowSpan(this.button1, 3);
-			this.button1.Size = new System.Drawing.Size(82, 25);
-			this.button1.TabIndex = 3;
-			this.button1.Text = "Продолжить";
-			this.button1.UseVisualStyleBackColor = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// tableLayoutPanel2
 			// 
@@ -365,8 +326,54 @@ namespace Client {
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(606, 25);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(606, 27);
 			this.tableLayoutPanel2.TabIndex = 4;
+			// 
+			// button1
+			// 
+			this.button1.AutoSize = true;
+			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.button1.BackColor = System.Drawing.Color.RoyalBlue;
+			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.button1.Location = new System.Drawing.Point(517, 0);
+			this.button1.Margin = new System.Windows.Forms.Padding(0);
+			this.button1.Name = "button1";
+			this.tableLayoutPanel2.SetRowSpan(this.button1, 3);
+			this.button1.Size = new System.Drawing.Size(89, 27);
+			this.button1.TabIndex = 3;
+			this.button1.Text = "Продолжить";
+			this.button1.UseVisualStyleBackColor = false;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// availableSeatsCount
+			// 
+			this.availableSeatsCount.AutoSize = true;
+			this.availableSeatsCount.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.availableSeatsCount.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.availableSeatsCount.Location = new System.Drawing.Point(113, 3);
+			this.availableSeatsCount.Name = "availableSeatsCount";
+			this.availableSeatsCount.Size = new System.Drawing.Size(111, 21);
+			this.availableSeatsCount.TabIndex = 2;
+			this.availableSeatsCount.Text = "availableSeatsCount";
+			this.availableSeatsCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// classType
+			// 
+			this.classType.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.classType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.classType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.classType.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.classType.Location = new System.Drawing.Point(0, 3);
+			this.classType.Margin = new System.Windows.Forms.Padding(0);
+			this.classType.Name = "classType";
+			this.classType.Size = new System.Drawing.Size(100, 21);
+			this.classType.TabIndex = 1;
+			this.classType.SelectedIndexChanged += new System.EventHandler(this.classType_SelectedIndexChanged);
 			// 
 			// flowLayoutPanel1
 			// 
@@ -378,14 +385,14 @@ namespace Client {
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 13);
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(200, 22);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(200, 24);
 			this.flowLayoutPanel1.TabIndex = 5;
 			// 
 			// flightNameLabel
 			// 
 			this.flightNameLabel.AutoSize = true;
 			this.flightNameLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flightNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.flightNameLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.flightNameLabel.Location = new System.Drawing.Point(0, 0);
 			this.flightNameLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.flightNameLabel.Name = "flightNameLabel";
@@ -398,11 +405,11 @@ namespace Client {
 			// 
 			this.airplaneNameLabel.AutoSize = true;
 			this.airplaneNameLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.airplaneNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.airplaneNameLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.airplaneNameLabel.Location = new System.Drawing.Point(70, 0);
 			this.airplaneNameLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
 			this.airplaneNameLabel.Name = "airplaneNameLabel";
-			this.airplaneNameLabel.Size = new System.Drawing.Size(86, 15);
+			this.airplaneNameLabel.Size = new System.Drawing.Size(81, 15);
 			this.airplaneNameLabel.TabIndex = 2;
 			this.airplaneNameLabel.Text = "airplaneName";
 			this.airplaneNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -416,7 +423,7 @@ namespace Client {
 			this.Controls.Add(tableLayoutPanel3);
 			this.MinimumSize = new System.Drawing.Size(750, 100);
 			this.Name = "FlightDisplay";
-			this.Size = new System.Drawing.Size(852, 134);
+			this.Size = new System.Drawing.Size(852, 136);
 			this.MouseLeave += new System.EventHandler(this.FlightDisplay_MouseLeave);
 			this.MouseHover += new System.EventHandler(this.FlightDisplay_MouseHover);
 			tableLayoutPanel3.ResumeLayout(false);

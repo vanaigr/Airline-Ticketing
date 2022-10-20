@@ -274,17 +274,28 @@ namespace Client {
             //TODO: clear document
 		}
 
+		private void setErr(Exception e) { 
+			statusLabel.Text = "Неизвестная ошибка";
+			statusTooltip.SetToolTip(statusLabel, e.ToString());
+		}
+
+		private void setFine() {
+			statusLabel.Text = "";
+			statusTooltip.SetToolTip(statusLabel, null);
+		}
+
 		private Tuple<bool, int> saveNewPassanger(Communication.Passanger passanger) {
+			try {
+
 			var response = service.addPassanger((Communication.Customer) customer.customer, passanger);
 			if(response) { 
 				var index = response.s;
 				var display = addPassangerDisplay(passanger, index);
 				customer.passangers.Add(index, passanger);
 				passangersDisplays.Add(index, display);
-
-				statusLabel.Text = "";
-				statusTooltip.SetToolTip(statusLabel, null);
-
+			
+				setFine();
+			
 				return new Tuple<bool, int>(true, index);
 			}
 			else if(response.f.isLoginError) {
@@ -296,18 +307,21 @@ namespace Client {
 				statusTooltip.SetToolTip(statusLabel, msg);
 			}
 
+			}catch(Exception e) { setErr(e); }
+
 			return new Tuple<bool, int>(false, 0);
 		}
 
 		private Tuple<bool, int> saveEditedPassanger(Communication.Passanger passanger, int passangerId) {
+			try {
+
 			var response = service.replacePassanger((Communication.Customer) customer.customer, passangerId, passanger);
 			if(response) { 
 				var id = response.s;
 				customer.passangers[id] = passanger;
 				passangersDisplays[id].Passanger = passanger;
 				
-				statusLabel.Text = "";
-				statusTooltip.SetToolTip(statusLabel, null);
+				setFine();
 
 				return new Tuple<bool, int>(true, id);
 			}
@@ -319,10 +333,14 @@ namespace Client {
 				statusLabel.Text = msg;
 				statusTooltip.SetToolTip(statusLabel, msg);
 			}
+
+			} catch(Exception e) { setErr(e); }
 			return new Tuple<bool, int>(false, 0);
 		}
 
 		private bool removePassanger(int index) {
+			try{
+
 			var response = service.removePassanger((Communication.Customer) customer.customer, index);
 			if(response) { 
 				if(index == selectedPassangerId) setStateNone();
@@ -330,13 +348,22 @@ namespace Client {
 				passangersDisplays.Remove(index);
 				customer.passangers.Remove(index);
 
+				setFine();
+
 				return true;
 			}
 			else {
-				promptFillCustomer(response.f.message);
+				if(response.f.isLoginError) promptFillCustomer(response.f.LoginError.message);
+				else {
+					var msg = response.f.InputError.message;
+					statusLabel.Text = msg;
+					statusTooltip.SetToolTip(statusLabel, msg);
+				}
 			}
+
+			} catch(Exception e) { setErr(e); }
+
 			return false;
-			
 		}
 
 		private void editButton_Click(object sender, EventArgs e) {

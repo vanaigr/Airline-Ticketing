@@ -313,11 +313,12 @@ namespace Client {
 			this.saveButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.saveButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.saveButton.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.saveButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.saveButton.Location = new System.Drawing.Point(487, 6);
+			this.saveButton.Location = new System.Drawing.Point(483, 6);
 			this.saveButton.Margin = new System.Windows.Forms.Padding(0);
 			this.saveButton.Name = "saveButton";
-			this.saveButton.Size = new System.Drawing.Size(72, 25);
+			this.saveButton.Size = new System.Drawing.Size(76, 25);
 			this.saveButton.TabIndex = 6;
 			this.saveButton.Text = "Сохранить";
 			this.saveButton.UseVisualStyleBackColor = false;
@@ -325,15 +326,15 @@ namespace Client {
 			// 
 			// statusLabel
 			// 
-			this.statusLabel.AutoSize = true;
+			this.statusLabel.AutoEllipsis = true;
 			this.statusLabel.BackColor = System.Drawing.Color.Transparent;
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.statusLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
 			this.statusLabel.Location = new System.Drawing.Point(9, 9);
 			this.statusLabel.Margin = new System.Windows.Forms.Padding(3);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(472, 19);
+			this.statusLabel.Size = new System.Drawing.Size(468, 19);
 			this.statusLabel.TabIndex = 7;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 

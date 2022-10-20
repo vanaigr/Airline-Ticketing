@@ -50,12 +50,12 @@ namespace Client {
 			this.mainTabs.Controls.Add(this.tabPage1);
 			this.mainTabs.Controls.Add(this.tabPage2);
 			this.mainTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.mainTabs.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.mainTabs.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.mainTabs.Location = new System.Drawing.Point(0, 0);
 			this.mainTabs.Margin = new System.Windows.Forms.Padding(0);
 			this.mainTabs.Name = "mainTabs";
 			this.mainTabs.SelectedIndex = 0;
-			this.mainTabs.Size = new System.Drawing.Size(803, 436);
+			this.mainTabs.Size = new System.Drawing.Size(803, 434);
 			this.mainTabs.TabIndex = 0;
 			// 
 			// tabPage1
@@ -64,7 +64,7 @@ namespace Client {
 			this.tabPage1.Location = new System.Drawing.Point(4, 24);
 			this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(795, 408);
+			this.tabPage1.Size = new System.Drawing.Size(795, 406);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Данные пассажира";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -77,7 +77,7 @@ namespace Client {
 			this.passangerUpdate.Location = new System.Drawing.Point(0, 0);
 			this.passangerUpdate.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerUpdate.Name = "passangerUpdate";
-			this.passangerUpdate.Size = new System.Drawing.Size(795, 408);
+			this.passangerUpdate.Size = new System.Drawing.Size(795, 406);
 			this.passangerUpdate.TabIndex = 0;
 			// 
 			// tabPage2
@@ -86,7 +86,7 @@ namespace Client {
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(792, 385);
+			this.tabPage2.Size = new System.Drawing.Size(795, 408);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Опции";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -98,7 +98,7 @@ namespace Client {
 			this.passangerOptions.Location = new System.Drawing.Point(0, 0);
 			this.passangerOptions.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerOptions.Name = "passangerOptions";
-			this.passangerOptions.Size = new System.Drawing.Size(792, 385);
+			this.passangerOptions.Size = new System.Drawing.Size(795, 408);
 			this.passangerOptions.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -140,12 +140,12 @@ namespace Client {
 			this.tableLayoutPanel2.Controls.Add(this.seatClassCombobox, 5, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatClassLabel, 4, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 436);
+			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 434);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 1;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(803, 37);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(803, 39);
 			this.tableLayoutPanel2.TabIndex = 2;
 			// 
 			// applyButton
@@ -156,11 +156,12 @@ namespace Client {
 			this.applyButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
 			this.applyButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
 			this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.applyButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.applyButton.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.applyButton.Location = new System.Drawing.Point(721, 6);
+			this.applyButton.Location = new System.Drawing.Point(715, 6);
 			this.applyButton.Margin = new System.Windows.Forms.Padding(6);
 			this.applyButton.Name = "applyButton";
-			this.applyButton.Size = new System.Drawing.Size(76, 25);
+			this.applyButton.Size = new System.Drawing.Size(82, 27);
 			this.applyButton.TabIndex = 0;
 			this.applyButton.Text = "Применить";
 			this.applyButton.UseVisualStyleBackColor = false;
@@ -173,11 +174,12 @@ namespace Client {
 			this.cancelButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
 			this.cancelButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.cancelButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.cancelButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.cancelButton.Location = new System.Drawing.Point(651, 6);
+			this.cancelButton.Location = new System.Drawing.Point(642, 6);
 			this.cancelButton.Margin = new System.Windows.Forms.Padding(6);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.Size = new System.Drawing.Size(58, 25);
+			this.cancelButton.Size = new System.Drawing.Size(61, 27);
 			this.cancelButton.TabIndex = 1;
 			this.cancelButton.Text = "Отмена";
 			this.cancelButton.UseVisualStyleBackColor = true;
@@ -190,11 +192,12 @@ namespace Client {
 			this.deleteButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LightGray;
 			this.deleteButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Silver;
 			this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.deleteButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.deleteButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
 			this.deleteButton.Location = new System.Drawing.Point(6, 6);
 			this.deleteButton.Margin = new System.Windows.Forms.Padding(6);
 			this.deleteButton.Name = "deleteButton";
-			this.deleteButton.Size = new System.Drawing.Size(62, 25);
+			this.deleteButton.Size = new System.Drawing.Size(63, 27);
 			this.deleteButton.TabIndex = 2;
 			this.deleteButton.Text = "Удалить";
 			this.deleteButton.UseVisualStyleBackColor = true;
@@ -204,10 +207,11 @@ namespace Client {
 			// 
 			this.seatSelect.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.seatSelect.AutoSize = true;
+			this.seatSelect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.seatSelect.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.seatSelect.Location = new System.Drawing.Point(97, 10);
+			this.seatSelect.Location = new System.Drawing.Point(98, 10);
 			this.seatSelect.Name = "seatSelect";
-			this.seatSelect.Size = new System.Drawing.Size(97, 17);
+			this.seatSelect.Size = new System.Drawing.Size(102, 19);
 			this.seatSelect.TabIndex = 5;
 			this.seatSelect.Text = "Номер места:";
 			this.seatSelect.UseVisualStyleBackColor = true;
@@ -218,11 +222,11 @@ namespace Client {
 			this.seatPositionTextbox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.seatPositionTextbox.BackColor = System.Drawing.Color.White;
 			this.seatPositionTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.seatPositionTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.seatPositionTextbox.Location = new System.Drawing.Point(197, 8);
+			this.seatPositionTextbox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.seatPositionTextbox.Location = new System.Drawing.Point(203, 8);
 			this.seatPositionTextbox.Margin = new System.Windows.Forms.Padding(0);
 			this.seatPositionTextbox.Name = "seatPositionTextbox";
-			this.seatPositionTextbox.Size = new System.Drawing.Size(100, 21);
+			this.seatPositionTextbox.Size = new System.Drawing.Size(100, 23);
 			this.seatPositionTextbox.TabIndex = 4;
 			this.seatPositionTextbox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.seatPositionTextbox_KeyPress);
 			this.seatPositionTextbox.Leave += new System.EventHandler(this.seatPositionTextbox_Leave);
@@ -233,11 +237,12 @@ namespace Client {
 			this.seatClassCombobox.BackColor = System.Drawing.Color.White;
 			this.seatClassCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.seatClassCombobox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.seatClassCombobox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.seatClassCombobox.FormattingEnabled = true;
-			this.seatClassCombobox.Location = new System.Drawing.Point(355, 8);
+			this.seatClassCombobox.Location = new System.Drawing.Point(364, 9);
 			this.seatClassCombobox.Margin = new System.Windows.Forms.Padding(0);
 			this.seatClassCombobox.Name = "seatClassCombobox";
-			this.seatClassCombobox.Size = new System.Drawing.Size(100, 21);
+			this.seatClassCombobox.Size = new System.Drawing.Size(100, 23);
 			this.seatClassCombobox.TabIndex = 6;
 			this.seatClassCombobox.SelectedIndexChanged += new System.EventHandler(this.seatClassCombobox_SelectedIndexChanged);
 			// 
@@ -245,10 +250,11 @@ namespace Client {
 			// 
 			this.seatClassLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.seatClassLabel.AutoSize = true;
+			this.seatClassLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.seatClassLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.seatClassLabel.Location = new System.Drawing.Point(300, 12);
+			this.seatClassLabel.Location = new System.Drawing.Point(306, 12);
 			this.seatClassLabel.Name = "seatClassLabel";
-			this.seatClassLabel.Size = new System.Drawing.Size(52, 13);
+			this.seatClassLabel.Size = new System.Drawing.Size(55, 15);
 			this.seatClassLabel.TabIndex = 7;
 			this.seatClassLabel.Text = "seatClass";
 			this.seatClassLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

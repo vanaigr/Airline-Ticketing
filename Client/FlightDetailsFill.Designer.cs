@@ -110,10 +110,10 @@ namespace Client {
 			// label2
 			// 
 			label2.AutoSize = true;
-			label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			label2.Location = new System.Drawing.Point(13, 10);
 			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(48, 15);
+			label2.Size = new System.Drawing.Size(44, 15);
 			label2.TabIndex = 2;
 			label2.Text = "Места:";
 			// 
@@ -121,10 +121,11 @@ namespace Client {
 			// 
 			this.selectedStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.selectedStatusLabel.AutoSize = true;
-			this.selectedStatusLabel.Location = new System.Drawing.Point(746, 77);
+			this.selectedStatusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.selectedStatusLabel.Location = new System.Drawing.Point(742, 77);
 			this.selectedStatusLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.selectedStatusLabel.Name = "selectedStatusLabel";
-			this.selectedStatusLabel.Size = new System.Drawing.Size(104, 13);
+			this.selectedStatusLabel.Size = new System.Drawing.Size(108, 13);
 			this.selectedStatusLabel.TabIndex = 4;
 			this.selectedStatusLabel.Text = "selectedSeatsStatus";
 			// 
@@ -172,11 +173,11 @@ namespace Client {
 			// 
 			this.label1.AutoSize = true;
 			this.tableLayoutPanel3.SetColumnSpan(this.label1, 2);
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label1.Location = new System.Drawing.Point(10, 10);
 			this.label1.Margin = new System.Windows.Forms.Padding(0);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(77, 15);
+			this.label1.Size = new System.Drawing.Size(75, 15);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Пассажиры:";
 			// 
@@ -184,10 +185,10 @@ namespace Client {
 			// 
 			this.flowLayoutPanelHeightBug.Controls.Add(this.passangersPanel);
 			this.flowLayoutPanelHeightBug.Dock = System.Windows.Forms.DockStyle.Top;
-			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(107, 31);
+			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(109, 31);
 			this.flowLayoutPanelHeightBug.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanelHeightBug.Name = "flowLayoutPanelHeightBug";
-			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(743, 33);
+			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(741, 33);
 			this.flowLayoutPanelHeightBug.TabIndex = 2;
 			// 
 			// passangersPanel
@@ -198,19 +199,21 @@ namespace Client {
 			this.passangersPanel.Location = new System.Drawing.Point(0, 0);
 			this.passangersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.passangersPanel.Name = "passangersPanel";
-			this.passangersPanel.Size = new System.Drawing.Size(743, 0);
+			this.passangersPanel.Size = new System.Drawing.Size(741, 0);
 			this.passangersPanel.TabIndex = 0;
 			// 
 			// addAutoseat
 			// 
 			this.addAutoseat.AutoSize = true;
 			this.addAutoseat.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.addAutoseat.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.addAutoseat.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.addAutoseat.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.addAutoseat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.addAutoseat.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.addAutoseat.Location = new System.Drawing.Point(13, 34);
 			this.addAutoseat.Name = "addAutoseat";
-			this.addAutoseat.Size = new System.Drawing.Size(91, 38);
+			this.addAutoseat.Size = new System.Drawing.Size(93, 38);
 			this.addAutoseat.TabIndex = 3;
 			this.addAutoseat.Text = "Добавить без\r\nвыбора места";
 			this.addAutoseat.UseVisualStyleBackColor = true;
@@ -266,12 +269,12 @@ namespace Client {
 			this.continueButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.continueButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.continueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.continueButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.continueButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.continueButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.continueButton.Location = new System.Drawing.Point(774, 13);
+			this.continueButton.Location = new System.Drawing.Point(778, 13);
 			this.continueButton.Name = "continueButton";
 			this.headerContainer.SetRowSpan(this.continueButton, 3);
-			this.continueButton.Size = new System.Drawing.Size(93, 27);
+			this.continueButton.Size = new System.Drawing.Size(89, 27);
 			this.continueButton.TabIndex = 6;
 			this.continueButton.Text = "Продолжить";
 			this.continueButton.UseVisualStyleBackColor = false;
@@ -280,10 +283,10 @@ namespace Client {
 			// aitrplaneNameLavel
 			// 
 			this.aitrplaneNameLavel.AutoSize = true;
-			this.aitrplaneNameLavel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.aitrplaneNameLavel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.aitrplaneNameLavel.Location = new System.Drawing.Point(13, 28);
 			this.aitrplaneNameLavel.Name = "aitrplaneNameLavel";
-			this.aitrplaneNameLavel.Size = new System.Drawing.Size(89, 15);
+			this.aitrplaneNameLavel.Size = new System.Drawing.Size(85, 15);
 			this.aitrplaneNameLavel.TabIndex = 4;
 			this.aitrplaneNameLavel.Text = "aitrplaneName";
 			// 
@@ -291,7 +294,7 @@ namespace Client {
 			// 
 			this.flightNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.flightNameLabel.AutoSize = true;
-			this.flightNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.flightNameLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.flightNameLabel.Location = new System.Drawing.Point(13, 10);
 			this.flightNameLabel.Name = "flightNameLabel";
 			this.flightNameLabel.Size = new System.Drawing.Size(67, 15);
@@ -302,20 +305,20 @@ namespace Client {
 			// 
 			this.departureLocationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.departureLocationLabel.AutoSize = true;
-			this.departureLocationLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.departureLocationLabel.Location = new System.Drawing.Point(108, 10);
+			this.departureLocationLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.departureLocationLabel.Location = new System.Drawing.Point(104, 10);
 			this.departureLocationLabel.Name = "departureLocationLabel";
-			this.departureLocationLabel.Size = new System.Drawing.Size(107, 15);
+			this.departureLocationLabel.Size = new System.Drawing.Size(104, 15);
 			this.departureLocationLabel.TabIndex = 1;
 			this.departureLocationLabel.Text = "departureLocation";
 			// 
 			// departureDatetimeLabel
 			// 
 			this.departureDatetimeLabel.AutoSize = true;
-			this.departureDatetimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.departureDatetimeLabel.Location = new System.Drawing.Point(108, 28);
+			this.departureDatetimeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.departureDatetimeLabel.Location = new System.Drawing.Point(104, 28);
 			this.departureDatetimeLabel.Name = "departureDatetimeLabel";
-			this.departureDatetimeLabel.Size = new System.Drawing.Size(110, 15);
+			this.departureDatetimeLabel.Size = new System.Drawing.Size(106, 15);
 			this.departureDatetimeLabel.TabIndex = 2;
 			this.departureDatetimeLabel.Text = "departureDatetime";
 			// 
@@ -324,10 +327,10 @@ namespace Client {
 			this.statusLabel.AutoSize = true;
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
-			this.statusLabel.Location = new System.Drawing.Point(224, 10);
+			this.statusLabel.Location = new System.Drawing.Point(216, 10);
 			this.statusLabel.Name = "statusLabel";
 			this.headerContainer.SetRowSpan(this.statusLabel, 3);
-			this.statusLabel.Size = new System.Drawing.Size(544, 33);
+			this.statusLabel.Size = new System.Drawing.Size(556, 33);
 			this.statusLabel.TabIndex = 7;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 

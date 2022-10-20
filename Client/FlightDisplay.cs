@@ -53,6 +53,7 @@ namespace Client {
 			table.Controls.Add(li);
 
 			var textLabel = new Label();
+			Misc.setBetterFont(textLabel);
 			textLabel.TextAlign = ContentAlignment.MiddleLeft;
 			textLabel.AutoSize = true;
 			textLabel.Margin = new Padding(0, 0, 0, 5);

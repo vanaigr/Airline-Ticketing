@@ -49,17 +49,17 @@ namespace Client {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(118, 39);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(120, 39);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// FullNameLabel
 			// 
 			this.FullNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.FullNameLabel.AutoSize = true;
-			this.FullNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.FullNameLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.FullNameLabel.Location = new System.Drawing.Point(6, 3);
 			this.FullNameLabel.Name = "FullNameLabel";
-			this.FullNameLabel.Size = new System.Drawing.Size(61, 15);
+			this.FullNameLabel.Size = new System.Drawing.Size(58, 15);
 			this.FullNameLabel.TabIndex = 0;
 			this.FullNameLabel.Text = "FullName";
 			// 
@@ -67,17 +67,18 @@ namespace Client {
 			// 
 			this.numberLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.numberLabel.AutoSize = true;
-			this.numberLabel.Location = new System.Drawing.Point(73, 3);
+			this.numberLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.numberLabel.Location = new System.Drawing.Point(70, 3);
 			this.numberLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
 			this.numberLabel.Name = "numberLabel";
-			this.numberLabel.Size = new System.Drawing.Size(42, 13);
+			this.numberLabel.Size = new System.Drawing.Size(47, 13);
 			this.numberLabel.TabIndex = 2;
 			this.numberLabel.Text = "number";
 			// 
 			// BirthdayLabel
 			// 
 			this.BirthdayLabel.AutoSize = true;
-			this.BirthdayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.BirthdayLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.BirthdayLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
 			this.BirthdayLabel.Location = new System.Drawing.Point(6, 21);
 			this.BirthdayLabel.Name = "BirthdayLabel";
@@ -95,7 +96,7 @@ namespace Client {
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "PassangerDisplay";
-			this.Size = new System.Drawing.Size(118, 39);
+			this.Size = new System.Drawing.Size(120, 39);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);

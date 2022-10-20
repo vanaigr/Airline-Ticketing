@@ -106,6 +106,11 @@ namespace Client {
 			p.PerformLayout();
 		}
 
+		public static void setBetterFont(Control c, float ?size = null, GraphicsUnit? gu = null) {
+			var cf = c.Font;
+			c.Font = new Font("Segoe UI", size ?? cf.Size, cf.Style, gu ?? cf.Unit, cf.GdiCharSet);
+		}
+
 		//https://stackoverflow.com/a/66310028/18704284
 		public class ComboboxThatCanAtLeastHaveCustomizableBackgroundColor : ComboBox
 		{

@@ -154,7 +154,7 @@ namespace Communication {
 
 		[OperationContract] Either<int, LoginOrInputError> replacePassanger(Customer customer, int index, Passanger passanger);
 
-		[OperationContract] Either<object, LoginError> removePassanger(Customer customer, int index);
+		[OperationContract] Either<object, LoginOrInputError> removePassanger(Customer customer, int index);
 
 		[OperationContract] Either<SeatData[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
 

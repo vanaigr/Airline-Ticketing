@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using Validation;
 
 namespace AirlineTicketingServer {
@@ -169,20 +170,37 @@ namespace AirlineTicketingServer {
 			}}}
 		}
 
-		public static void remove(SqlConnectionView cv, int customerId, int index) {
+		private static readonly Regex foreignKeyRegex = new Regex(
+			"The (.+) statement conflicted with the (.+) constraint \"(.+)\"\\. The conflict occurred in database \"(.+)\", table \"(.+)\"\\."
+		);
+
+		public static CheckResult remove(SqlConnectionView cv, int customerId, int index) {
 			using(cv) {
 			using(
-			var command = new SqlCommand(@"
-				delete from [Customers].[PassangerInfo] 
-				where [Customer] = @Customer and [Index] = @Index",
-				cv.connection
-			)) {
-			command.CommandType = System.Data.CommandType.Text;
+			var command = new SqlCommand("[Flights].[RemovePassanger]", cv.connection)) {
+			command.CommandType = System.Data.CommandType.StoredProcedure;
 			command.Parameters.AddWithValue("@Customer", customerId);
-			command.Parameters.AddWithValue("@Index", System.Data.SqlDbType.Int);
+			command.Parameters.AddWithValue("@Index", index);
+			var resultParam = command.Parameters.Add("@Result", System.Data.SqlDbType.Int);
+			resultParam.Direction = System.Data.ParameterDirection.ReturnValue;
 
 			cv.Open();
-			command.ExecuteNonQuery();
+			try {
+				command.ExecuteNonQuery();
+				return new CheckResult{ ok = false, errorMsg = "Ошибка удаления" };
+			} 
+			catch(SqlException e) {
+				command.Dispose();
+				cv.Dispose();
+
+				var match = foreignKeyRegex.Match(e.Message);
+				if(match.Success && match.Groups[2].Value == "REFERENCE" && match.Groups[3].Value == "AvailableFlights_ForeignCustomer"
+					&& match.Groups[5].Value == "Flights.AvailableFlightsSeats") {
+					return new CheckResult{ ok = false, errorMsg = "Удаление невозможно, так как данный пассажир зарегестрирован на один или более рейсов" };
+				}
+				else throw e;
+			}
+
 			}}
 		}
 	}

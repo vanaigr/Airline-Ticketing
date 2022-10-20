@@ -305,14 +305,20 @@ namespace AirlineTicketingServer {
 				}
 			}
 
-			Either<object, LoginError> MessageService.removePassanger(Customer customer, int index) {
-				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+			Either<object, LoginOrInputError> MessageService.removePassanger(Customer customer, int index) {
+			using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
-				if(!userIdRes.IsSuccess) return Either<object, LoginError>.Failure(userIdRes.Failure());
-				DatabasePassanger.remove(new SqlConnectionView(connection, true), userIdRes.s, index);
-				return Either<object, LoginError>.Success(null);
-				}
-			}
+				if(!userIdRes.IsSuccess) return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+
+				var result = DatabasePassanger.remove(new SqlConnectionView(connection, true), userIdRes.s, index);
+
+				if(result.ok) return Either<object, LoginOrInputError>.Success(null);
+				else return Either<object, LoginOrInputError>.Failure(
+					new LoginOrInputError{ InputError = new InputError(
+						result.errorMsg
+					)}
+				);
+			}}
 
 			private int[] calcPassangersSeatsIndices(
 				SqlConnectionView cv, 

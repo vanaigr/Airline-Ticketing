@@ -67,48 +67,60 @@ namespace Client {
 			loginLayoutPanel.SuspendLayout();
 			loginLayoutPanel.Controls.Clear();
 
-			Misc.addDummyButton(loginLayoutPanel);
-
 			if(customer.LoggedIn) {
+				var table = new TableLayoutPanel();
+				
+				table.Margin = new Padding(0);
+				table.AutoSize = true;
+				table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+				table.Dock = DockStyle.Fill;
+				table.ColumnCount = 2;
+				table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+				table.ColumnStyles.Add(new ColumnStyle());
+
+				table.RowCount = 1;
+				table.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+
 				var unloginButton = new Button();
 
+				Misc.setBetterFont(unloginButton, 9, GraphicsUnit.Point);
+				unloginButton.Dock = DockStyle.Fill;
+				unloginButton.Anchor = AnchorStyles.Right;
 				unloginButton.AutoSize = true;
 				unloginButton.BackColor = Color.Transparent;
 				unloginButton.FlatAppearance.BorderColor = Color.Gray;
-				unloginButton.FlatAppearance.BorderSize = 1;
 				unloginButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
 				unloginButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
 				unloginButton.FlatStyle = FlatStyle.Flat;
-				unloginButton.Location = new Point(11, 68);
-				unloginButton.Name = "UnloginButton";
-				unloginButton.TabIndex = 6;
 				unloginButton.Text = "Выйти";
-				unloginButton.UseVisualStyleBackColor = false;
 				unloginButton.Click += new System.EventHandler(this.UnloginButton_Click);
 
-				loginLayoutPanel.Controls.Add(unloginButton);
+				table.Controls.Add(unloginButton, 1, 0);
 
 				var accountName = new Label();
 
+				Misc.setBetterFont(accountName, 9, GraphicsUnit.Point);
+				accountName.Anchor = AnchorStyles.Right;
 				accountName.AutoSize = true;
-				accountName.Location = new Point(736, 10);
-				accountName.Name = "AccountName";
 				accountName.Padding = new Padding(8);
 				accountName.TabIndex = 0;
 				accountName.Text = customer.customer?.login;
 
-				loginLayoutPanel.Controls.Add(accountName);
+				table.Controls.Add(accountName, 0, 0);
+
+				loginLayoutPanel.Controls.Add(table);
 			}
 			else {
 				var loginButton = new Button();
 
-				loginButton.AutoSize = true;
+				Misc.setBetterFont(loginButton, 9, GraphicsUnit.Point);
+				loginButton.Dock = DockStyle.Fill;
+				loginButton.AutoEllipsis = true;
 				loginButton.BackColor = Color.Transparent;
 				loginButton.FlatAppearance.BorderColor = Color.Gray;
 				loginButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
 				loginButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
 				loginButton.FlatStyle = FlatStyle.Flat;
-				//loginButton.Name = "LoginButton";
 				loginButton.Text = "Войти или зарегестрироваться";
 				loginButton.Click += new EventHandler(this.LoginButton_Click);
 				
