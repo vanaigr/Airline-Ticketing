@@ -372,7 +372,7 @@ namespace Client {
 		}
 
 		private void addButton_Click(object sender, EventArgs e) {
-			Debug.Assert(curState == State.select || curState == State.none);
+			Debug.Assert(curState == State.select || curState == State.none); //TODO: fix when already adding
 			setStateAdd();
 		}
 

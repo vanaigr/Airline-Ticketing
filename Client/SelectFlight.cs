@@ -14,7 +14,7 @@ namespace Client {
 		private MessageService service;
 		private CustomerData customer;
 
-		Dictionary<int, string> avaliableFlightClasses;
+		string[] avaliableFlightClasses;
 		List<City> cities;
 		
 		public SelectFlight() {
@@ -266,12 +266,26 @@ namespace Client {
 				booking.Focus();
 			}
 			else {
-				booking = new FlightDetailsFill(service, customer);
-				booking.setFromFlight(avaliableFlightClasses, fic);
-				booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
+				try {
+					var result = service.seatsForFlight(fic.flight.id);
 
-				openedBookings.Add(fic.flight.id, booking);
-				booking.Show();
+					if(result) {
+						booking = new FlightDetailsFill(
+							service, customer,
+							avaliableFlightClasses, fic, result.s
+						);
+						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
+
+						openedBookings.Add(fic.flight.id, booking);
+						booking.Show();
+
+						updateErrorDisplay(false, null, null);
+					}
+					else updateErrorDisplay(true, result.f.message, null);
+				}
+				catch(Exception ex) {
+					updateErrorDisplay(true, null, ex);
+				}
 			}
 		}
 

@@ -12,18 +12,17 @@ namespace Client {
 		private Communication.MessageService service;
 		private int flightId;
 
+		private FlightsSeats.Seats seats;
+
 		private Dictionary<int, FlightsOptions.Options> optionsForClasses;
 
 		private Dictionary<int, BaggageOption> baggageDisplays;
 		private Dictionary<int, BaggageOption> handLuggageDisplays;
 
 		private BookingPassanger passanger;
-		private int curClassId;
 
 		public PassangerOptions() {
 			InitializeComponent();
-			Misc.fixFlowLayoutPanelHeight(this.baggageOptionsPanel);
-			Misc.fixFlowLayoutPanelHeight(this.handLuggageOptionsPanel);
 
 			this.baggageDisplays = new Dictionary<int, BaggageOption>();
 			this.handLuggageDisplays = new Dictionary<int, BaggageOption>();
@@ -31,14 +30,18 @@ namespace Client {
 
 		public void init(
 			Communication.MessageService service,
-			int flightId,
+			int flightId, FlightsSeats.Seats seats,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
 			BookingPassanger passanger
 		) {
 			this.service = service;
 			this.flightId = flightId;
+			this.seats = seats;
 			this.optionsForClasses = optionsForClasses;
 			this.passanger = passanger;
+
+			Misc.fixFlowLayoutPanelHeight(this.baggageOptionsPanel);
+			Misc.fixFlowLayoutPanelHeight(this.handLuggageOptionsPanel);
 		}
 
 		private BaggageOption addBaggageOption(FlightsOptions.Baggage b, int optionIndex) {
@@ -67,13 +70,12 @@ namespace Client {
 			return it;
 		}
 
-		public void updateForClassAndSeat(int classId) {
+		public void updateForClassAndSeat() {
 			baggageDisplays.Clear();
 			handLuggageDisplays.Clear();
-			curClassId = classId;
 
-			var options = optionsForClasses[classId];
-			
+			var curClassId = passanger.ClassId(seats);
+			var options = optionsForClasses[curClassId];
 
 			{
 				baggageOptionsPanel.SuspendLayout();
@@ -124,6 +126,7 @@ namespace Client {
 
 		private void baggageOptionClicked(BaggageOption option) {
 			var newIndex = option.Index;
+			var curClassId = passanger.ClassId(seats);
 
 			int prevIndex;
 			var hasPrevIndex = passanger.baggageOptionIndexForClass.TryGetValue(curClassId, out prevIndex);
@@ -138,7 +141,7 @@ namespace Client {
 
 		private void updateCurBaggageOptionDisplay() {
 			int index;
-			var anySelected = passanger.baggageOptionIndexForClass.TryGetValue(curClassId, out index);
+			var anySelected = passanger.baggageOptionIndexForClass.TryGetValue(passanger.ClassId(seats), out index);
 			if(!anySelected) return;
 			var option = baggageDisplays[index];
 			option.BackColor =  Misc.selectionColor3;
@@ -146,6 +149,7 @@ namespace Client {
 
 		private void handLuggageOptionClicked(BaggageOption option) {
 			var newIndex = option.Index;
+			var curClassId = passanger.ClassId(seats);
 
 			int prevIndex;
 			var hasPrevIndex = passanger.handLuggageOptionIndexForClass.TryGetValue(curClassId, out prevIndex);
@@ -160,27 +164,19 @@ namespace Client {
 
 		private void updateCurhandLuggageOptionDisplay() {
 			int index;
-			var anySelected = passanger.handLuggageOptionIndexForClass.TryGetValue(curClassId, out index);
+			var anySelected = passanger.handLuggageOptionIndexForClass.TryGetValue(passanger.ClassId(seats), out index);
 			if(!anySelected) return;
 			var option = handLuggageDisplays[index];
 			option.BackColor =  Misc.selectionColor3;
 		}
 
 		public void recalculatePrice() {
-			var options = optionsForClasses[curClassId];
+			var curClassId = passanger.ClassId(seats);
 			
+			seatPriceLabel.Text = "";
+			basePriceLabel.Text = "";
 			totalCostLabel.Text = "";
 			totalCostLabel.ForeColor = SystemColors.ControlText;
-
-			basePriceLabel.Text = options.basePriceRub + " руб.";
-
-			int seatCost;
-			if(passanger.manualSeatSelected) 
-				seatCost = options.servicesOptions.seatChoiceCostRub; // can be == 0
-			else seatCost = 0;
-			
-			if(seatCost == 0) seatPriceLabel.Text = "бесплатно";
-			else seatPriceLabel.Text = seatCost + " руб.";
 
 
 			int baggageIndex;
@@ -195,9 +191,8 @@ namespace Client {
 			else { 
 				try {
 					var result = service.seatsData(flightId, new Communication.SeatAndOptions[]{ new Communication.SeatAndOptions{
-						useSeatIndex = passanger.manualSeatSelected,
-						seatIndex = passanger.seatIndex,
-						seatClassId = passanger.seatClassId,
+						selectedSeatClass = curClassId,
+						seatIndex = passanger.manualSeatSelected ? passanger.seatIndex : (int?) null,
 						selectedOptions = new FlightsOptions.SelectedOptions(new FlightsOptions.SelectedBaggageOptions(
 							baggageIndex, handLuggageIndex
 						))
@@ -205,6 +200,11 @@ namespace Client {
 
 					if(result) {
 						var seatData = result.s[0];
+
+						basePriceLabel.Text = seatData.basePrice + " руб.";
+
+						if(seatData.seatCost == 0) seatPriceLabel.Text = "бесплатно";
+						else seatPriceLabel.Text = seatData.seatCost + " руб.";
 
 						totalCostLabel.Text = seatData.totalCost + " руб.";
 					}

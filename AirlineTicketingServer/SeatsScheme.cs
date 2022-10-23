@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace SeatsScheme {
+namespace FlightsSeats {
 	[Serializable] public struct Point { public int x, z; public Point(int z, int x) { this.x = x; this.z = z; } }
 
 	[Serializable] public class SeatsScheme {
@@ -135,12 +135,21 @@ namespace SeatsScheme {
 		private byte[] seatsClasses;
 		private byte[] seatsOccupied; 
 
-		public Seats(SeatsScheme scheme, IEnumerable<byte> seatsClasses, IEnumerable<byte> seatsOccupied) {
+		public Seats(SeatsScheme scheme, IEnumerator<byte> seatsClasses, IEnumerator<bool> seatsOccupied) {
 			this.Scheme = scheme;
-			this.seatsOccupied = seatsOccupied.ToArray();
-			Debug.Assert(this.seatsOccupied.Length == this.Scheme.SeatsCount / 8 + (this.Scheme.SeatsCount % 8 != 0 ? 1 : 0));
-			this.seatsClasses = seatsClasses.ToArray();
-			Debug.Assert(this.seatsClasses.Length == this.Scheme.SeatsCount);
+			this.seatsClasses = new byte[scheme.SeatsCount];
+			this.seatsOccupied = new byte[this.Scheme.SeatsCount / 8 + (this.Scheme.SeatsCount % 8 != 0 ? 1 : 0)];
+
+			var seatClassI = 0;
+			while(seatsClasses.MoveNext()) this.seatsClasses[seatClassI++] = seatsClasses.Current;
+			Debug.Assert(seatClassI == scheme.SeatsCount);
+
+			var seatOccupiedI = 0;
+			while(seatsOccupied.MoveNext()) {
+				this.seatsOccupied[seatOccupiedI >> 3] |= (byte) (seatsOccupied.Current ? 1 << (seatOccupiedI & 7) : 0);
+				seatOccupiedI++;
+			}
+			Debug.Assert(seatOccupiedI == scheme.SeatsCount);
 		}
 
 		public int Size{ get{ return Scheme.SeatsCount; } }

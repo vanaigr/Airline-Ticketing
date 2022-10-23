@@ -14,6 +14,7 @@ namespace Client {
 		private CustomerData customer;
 		private Dictionary<int, string> classesNames;
 		
+		private FlightsSeats.Seats seats;
 		private SeatHandling seatHandling;
 
 		private BookingPassanger passanger;
@@ -22,15 +23,11 @@ namespace Client {
 
 		private int seatClassId {
 			get {
-				if(passanger.manualSeatSelected) return seatHandling.classAt(passanger.seatIndex);
-				else return passanger.seatClassId;
+				return passanger.ClassId(seats);
 			}
 		}
 
 		public interface SeatHandling {
-			string getSeatString(int seatIndex);
-			int? indexFromSeatString(string seatString);
-			int classAt(int seatIndex);
 			bool canPlaceAt(int index);
 		}
 
@@ -38,7 +35,7 @@ namespace Client {
 
 		public PassangerSettings(
 			Communication.MessageService service, CustomerData customer,
-			int flightId, SeatHandling seatHandling,
+			int flightId, FlightsSeats.Seats seats, SeatHandling seatHandling,
 			BookingPassanger passanger,
 			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
 			Dictionary<int, string> allClassesNames
@@ -47,6 +44,7 @@ namespace Client {
 
 			this.service = service;
 			this.customer = customer;
+			this.seats = seats;
 			this.seatHandling = seatHandling;
 			this.passanger = passanger;
 			this.classesNames = new Dictionary<int, string>();
@@ -67,9 +65,9 @@ namespace Client {
 			Misc.addTopDivider(tableLayoutPanel2);
 
 			this.passangerUpdate.init(service, customer, passanger);
-			this.passangerOptions.init(service, flightId, optionsForClasses, passanger);
+			this.passangerOptions.init(service, flightId, seats, optionsForClasses, passanger);
 			
-			this.seatPositionTextbox.Text = seatHandling.getSeatString(passanger.seatIndex);
+			this.seatPositionTextbox.Text = seats.Scheme.ToName(passanger.seatIndex);
 			
 			seatSelect.Checked = passanger.manualSeatSelected;
 
@@ -122,7 +120,7 @@ namespace Client {
 		}
 
 		private void seatPositionTextbox_Leave(object sender, EventArgs e) {
-			var newIndex = seatHandling.indexFromSeatString(seatPositionTextbox.Text);
+			var newIndex = seats.Scheme.FromName(seatPositionTextbox.Text);
 			if(newIndex != null && seatHandling.canPlaceAt((int) newIndex)) {
 				passanger.seatIndex = (int) newIndex;
 				updateClass();
@@ -132,7 +130,7 @@ namespace Client {
 
 		private void PassangerSettings_FormClosing(object sender, FormClosingEventArgs e) {
 			if(useSeatIndex) {
-				var newIndex = seatHandling.indexFromSeatString(seatPositionTextbox.Text);
+				var newIndex = seats.Scheme.FromName(seatPositionTextbox.Text);
 				if(newIndex != null && seatHandling.canPlaceAt((int)newIndex)) {
 					passanger.seatIndex = (int)newIndex;
 					updateClass();
@@ -150,7 +148,7 @@ namespace Client {
 
 		private void seatPositionTextbox_KeyPress(object sender, KeyPressEventArgs e) {
 			if(e.KeyChar == (char) Keys.Return) {
-				var newIndex = seatHandling.indexFromSeatString(seatPositionTextbox.Text);
+				var newIndex = seats.Scheme.FromName(seatPositionTextbox.Text);
 				if(newIndex != null && seatHandling.canPlaceAt((int)newIndex)) {
 					passanger.seatIndex = (int)newIndex;
 					updateClass();
@@ -161,7 +159,7 @@ namespace Client {
 
 		private void updateClass() {
 			seatClassLabel.Text = "(" + classesNames[seatClassId] + ")";
-			passangerOptions.updateForClassAndSeat(seatClassId);
+			passangerOptions.updateForClassAndSeat();
 		}
 
 		private void seatClassCombobox_SelectedIndexChanged(object sender, EventArgs e) {

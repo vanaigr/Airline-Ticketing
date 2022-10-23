@@ -62,7 +62,7 @@ namespace Client {
 			table.Controls.Add(textLabel);
 		}
 
-		Dictionary<int, string> classesNames;
+		string[] classesNames;
 		FlightAndCities flightAndCities;
 
 		public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
@@ -73,7 +73,7 @@ namespace Client {
 		}
 
 		public void updateFromFlight(
-			Dictionary<int, string> classesNames,
+			string[] classesNames,
 			FlightAndCities flightAndCities
 		) {
 			this.classesNames = classesNames;
@@ -180,10 +180,7 @@ namespace Client {
 			var selectedClassIndex = ((KeyValuePair<int, string>)classType.SelectedItem).Key;
 			var thisOptions = flight.optionsForClasses[selectedClassIndex];
 
-			var availableForCurrentClass = 0;
-			foreach(var seat in flight.seats) {
-				if(seat.Class == selectedClassIndex && !seat.Occupied) availableForCurrentClass ++;
-			}
+			var availableForCurrentClass = flight.availableSeatsForClasses[selectedClassIndex];
 
 			availableSeatsCount.Text = "Свободных мест: " + availableForCurrentClass;
 			availableSeatsCount.Parent.PerformLayout();

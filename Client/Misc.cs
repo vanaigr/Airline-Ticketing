@@ -53,18 +53,48 @@ namespace Client {
 			public FlowLayoutPanelHeightBugfix(FlowLayoutPanel it) {
 				this.panel = it;
 				this.parent = it.Parent;
-				parent.Resize += new EventHandler(resizeFix);
-				it.Resize += new EventHandler(resizeFix);
+				
+				parent.Resize += (a,b) => resizeFix();
+				it.Resize += (a,b) => resizeFix();
 			}
 
-			private void resizeFix(object sender, EventArgs e) {
+			private void resizeFix() {
 				if(ignoreResize__) return;
 				ignoreResize__ = true;
 				var tableSize = panel.Size;
-				parent.SuspendLayout();
-				parent.Size = tableSize;
-				parent.ResumeLayout(false);
-				parent.PerformLayout();
+
+				//haha, very funny, Winforms, you broke my fix of your bug.
+				//The new bug is: when the form is deactivated (hidden),
+				//size caclulations for flow layout panel are still
+				//performed incorrectly and even though they are performed
+				//again correctly when the window is activated (opened)
+				//the size update is not applied for whatever reason.
+				//The solution is to reject the bad calculations in the first place.
+				//example:
+				/*
+					{Width=741, Height=47}	- correct size
+					form deactivated		- control added and new window is opened on top
+					form activated			- new window closed
+					form deactivated		- control added and new window is opened on top
+					form activated			- new window closed
+					{Width=1, Height=94}	- incorrect size
+					{Width=1, Height=94}	- calculated twice -_-
+					form deactivated		- this window hidden
+					form activated			- this window opened
+					{Width=741, Height=47}	- correct calculations
+					{Width=741, Height=47}	- twice again
+											- and here the height is still incorrect (94)
+											- but the width is!
+											- probably because panel is correct size
+											- and its parent isn't
+				*/
+				if(tableSize.Width != 1 && tableSize.Height != 1) {
+					parent.SuspendLayout();
+					parent.Size = tableSize;
+					parent.ResumeLayout(false);
+					parent.PerformLayout();
+				}
+
 				ignoreResize__ = false;
 			}
 		}

@@ -42,9 +42,9 @@ namespace AirlineTicketingServer {
 			var daysPresent = calculateComputedDays(thisDay, new SqlConnectionView(connection, false));
 
 			var addFlights = new DataTable();
-			addFlights.Columns.Add("DepartureDate", typeof(DateTime));
-			addFlights.Columns.Add("DepartureTimeMinutes", typeof(int));
 			addFlights.Columns.Add("PeriodicFlightId", typeof(int));
+			addFlights.Columns.Add("DepartureDate", typeof(DateTime));
+			addFlights.Columns.Add("DepartureTimeMinutes", typeof(short));
 
 			//fetch flights schedule
 			using(var command = new SqlCommand(
@@ -73,38 +73,14 @@ namespace AirlineTicketingServer {
 				repeatedFlight, thisDay, daysPresent, 
 				(int periodicFlightId, int dayOffset, int minutesOffsetInDay) => {
 					var flightRow = addFlights.NewRow();
-					flightRow[0] = thisDay.AddDays(dayOffset);
-					flightRow[1] = minutesOffsetInDay;
-					flightRow[2] = periodicFlightId;
+					flightRow[0] = periodicFlightId;
+					flightRow[1] = thisDay.AddDays(dayOffset);
+					flightRow[2] = (short) minutesOffsetInDay;
 					addFlights.Rows.Add(flightRow);
 				}
 			);
 			}
 			}
-
-			uploadAvailableFlights(connectionView, addFlights);
-		}
-	
-		public static void periodicFlightsAdded(SqlConnectionView connectionView, List<PeriodicFlight> periodicFlightIds) {
-			var thisDay = DateTime.Today;
-			var connection = connectionView.connection;
-
-			var addFlights = new DataTable();
-			addFlights.Columns.Add("DepartureDate", typeof(DateTime));
-			addFlights.Columns.Add("DepartureTimeMinutes", typeof(int));
-			addFlights.Columns.Add("PeriodicFlightId", typeof(int));
-
-			//calculate flights for available period
-			foreach(var repeatedFlight in periodicFlightIds) addAvailableFlightsFromPeriodicFlight(
-				repeatedFlight, thisDay, new bool[maxDaysFuture], 
-				(int periodicFlightId, int dayOffset, int minutesOffsetInDay) => {
-					var flightRow = addFlights.NewRow();
-					flightRow[0] = thisDay.AddDays(dayOffset);
-					flightRow[1] = minutesOffsetInDay;
-					flightRow[2] = periodicFlightId;
-					addFlights.Rows.Add(flightRow);
-				}
-			);
 
 			uploadAvailableFlights(connectionView, addFlights);
 		}

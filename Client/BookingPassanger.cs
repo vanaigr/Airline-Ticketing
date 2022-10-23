@@ -30,7 +30,7 @@ namespace Client {
 			handLuggageOptionIndexForClass = new Dictionary<int, int>(handLuggageOptionIndexForClass)
 		}; }
 
-		public int ClassId(SeatsScheme.Seats seats) {
+		public int ClassId(FlightsSeats.Seats seats) {
 			if(manualSeatSelected) return seats.Class(seatIndex);
 			else return seatClassId;
 		}

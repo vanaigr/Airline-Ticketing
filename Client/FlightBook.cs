@@ -13,16 +13,18 @@ namespace Client {
 		private CustomerData customer;
 		private Communication.SelectedSeat[] selectedSeats;
 		private Communication.AvailableFlight flight;
+		private FlightsSeats.Seats seats;
 		
 		public FlightBook(
 			Communication.MessageService service,
-			CustomerData customer,
-			List<BookingPassanger> passangers, Communication.AvailableFlight flight,
-			Dictionary<int, String> classesNames
+			CustomerData customer, List<BookingPassanger> passangers,
+			Communication.AvailableFlight flight, FlightsSeats.Seats seats,
+			Dictionary<int, string> classesNames
 		) {
 			this.service = service;
 			this.customer = customer;
 			this.flight = flight;
+			this.seats = seats;
 
 			InitializeComponent();
 
@@ -34,12 +36,11 @@ namespace Client {
 			var seatsAndOptions = new Communication.SeatAndOptions[passangers.Count];
 			for(int i = 0; i < seatsAndOptions.Length; i++) {
 				var p = passangers[i];
-				var seatClassId = p.ClassId(flight.seats);
+				var seatClassId = p.ClassId(seats);
 
 				seatsAndOptions[i] = new Communication.SeatAndOptions{
-					useSeatIndex = p.manualSeatSelected,
-					seatClassId = p.seatClassId,
-					seatIndex = p.seatIndex,
+					selectedSeatClass = seatClassId,
+					seatIndex = p.manualSeatSelected ? p.seatIndex : (int?) null,
 					selectedOptions = new FlightsOptions.SelectedOptions(
 						new FlightsOptions.SelectedBaggageOptions(
 							p.baggageOptionIndexForClass[seatClassId],
@@ -70,7 +71,7 @@ namespace Client {
 						var it = new BookingPassangerSummaryControl();
 						it.set(
 							customer, passanger,
-							flight.seats, flight.optionsForClasses, 
+							seats, flight.optionsForClasses, 
 							list[i], classesNames
 						);
 						passangersSummaryPanel.Controls.Add(it);

@@ -14,12 +14,27 @@ namespace Client {
 
 		private Dictionary<int, string> classesNames;
 		private FlightAndCities flightAndCities;
+		private FlightsSeats.Seats seats;
 
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
-		public FlightDetailsFill(Communication.MessageService service, CustomerData customer) {
+		public FlightDetailsFill(
+			Communication.MessageService service, CustomerData customer,
+			string[] classesNames,
+			FlightAndCities flightAndCities, FlightsSeats.Seats seats
+		) {
 			this.service = service;
 			this.customer = customer;
+
+			this.classesNames = new Dictionary<int, string>();
+			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
+				this.classesNames.Add(classId, classesNames[classId]);
+			}
+
+			this.seats = seats;
+			this.flightAndCities = flightAndCities;
+			var flight = flightAndCities.flight;
+
 
 			InitializeComponent();
 
@@ -36,21 +51,6 @@ namespace Client {
 
 			bookingPassangers = new List<BookingPassanger>();
 			curPassangersDisplays = new List<PassangerDisplay>();
-		}
-
-		public bool setFromFlight(
-			Dictionary<int, string> classesNames,
-			FlightAndCities flightAndCities
-		) {
-			this.classesNames = new Dictionary<int, string>();
-			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
-				this.classesNames.Add(classId, classesNames[classId]);
-			}
-
-			//this.classesNames = classesNames;
-			this.flightAndCities = flightAndCities;
-
-			var flight = flightAndCities.flight;
 
 			headerContainer.SuspendLayout();
 			flightNameLabel.Text = flight.flightName;
@@ -60,11 +60,9 @@ namespace Client {
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
 
-			seatSelectTable.update(flightAndCities.flight.seats, addOrUpdatePassanger);
+			seatSelectTable.update(seats, addOrUpdatePassanger);
 
 			updateSeatsStatusText();
-
-			return true;
 		}
 
 		private void FlightBooking_Load(object sender, EventArgs e) {
@@ -75,7 +73,7 @@ namespace Client {
 			var passanger = bookingPassangers[index];
 
 			var seatHandling = new SeatHandlingFromScheme(
-				bookingPassangers, flightAndCities.flight.seats,
+				bookingPassangers, seats,
 				index
 			);
 
@@ -83,7 +81,8 @@ namespace Client {
 
             var selectionForm = new PassangerSettings(
 				service, customer,
-				flightAndCities.flight.id, seatHandling, 
+				flightAndCities.flight.id, 
+				seats, seatHandling, 
 				newBookingPassanger,
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
@@ -128,7 +127,7 @@ namespace Client {
 			updateSeatsStatusText();
         }
 
-		private void addOrUpdatePassanger(SeatButton button, SeatsScheme.Point location) {
+		private void addOrUpdatePassanger(SeatButton button, FlightsSeats.Point location) {
 			int index;
 
 			if(button.Value == null) index = addPassanger();
@@ -136,7 +135,7 @@ namespace Client {
 
 			var passanger = bookingPassangers[index];
 			passanger.manualSeatSelected = true;
-			passanger.seatIndex = flightAndCities.flight.seats.Scheme.coordToIndex(location.x, location.z);
+			passanger.seatIndex = seats.Scheme.coordToIndex(location.x, location.z);
 			button.Value = index;
 
 			updateSeatsStatusText();
@@ -187,7 +186,7 @@ namespace Client {
 
 				int passangerSeatClassId;
 				if(passanger.manualSeatSelected) {
-					passangerSeatClassId = flightAndCities.flight.seats.Class(passanger.seatIndex);
+					passangerSeatClassId = seats.Class(passanger.seatIndex);
 				}
 				else passangerSeatClassId = passanger.seatClassId;
 
@@ -228,7 +227,8 @@ namespace Client {
 
 			new FlightBook(
 				service, 
-				customer, bookingPassangers, flightAndCities.flight, 
+				customer, bookingPassangers, 
+				flightAndCities.flight, seats, 
 				classesNames
 			).ShowDialog();
 		}
@@ -289,29 +289,17 @@ namespace Client {
 
 		class SeatHandlingFromScheme : PassangerSettings.SeatHandling {
 			private List<BookingPassanger> passangers;
-			private SeatsScheme.Seats seats;
+			private FlightsSeats.Seats seats;
 			private int baggagePassangerIndex;
 
 			public SeatHandlingFromScheme(
 				List<BookingPassanger> passangers,
-				SeatsScheme.Seats seats,
+				FlightsSeats.Seats seats,
 				int baggagePassangerIndex
 			) {
 				this.passangers = passangers;
 				this.seats = seats;
 				this.baggagePassangerIndex = baggagePassangerIndex;
-			}
-
-			int PassangerSettings.SeatHandling.classAt(int index) {
-				return seats.Class(index);
-			}
-
-			public string getSeatString(int index) {
-				return seats.Scheme.ToName(index);
-			}
-
-			int? PassangerSettings.SeatHandling.indexFromSeatString(string t) {
-				return seats.Scheme.FromName(t);
 			}
 
 			bool PassangerSettings.SeatHandling.canPlaceAt(int index) {
@@ -375,7 +363,7 @@ namespace Client {
 	class SeatsTable : TableLayoutPanel {
 		public Color BackColor2;
 
-		private SeatsScheme.SeatsScheme seatsScheme;
+		private FlightsSeats.SeatsScheme seatsScheme;
 		private Dictionary<int, Point> seatsIndexToTableLocation;
 
 		public SeatsTable() : base() { 
@@ -383,7 +371,7 @@ namespace Client {
 			seatsIndexToTableLocation = new Dictionary<int, Point>();
 		}
 
-		public Point getSeatLocation(SeatsScheme.Point seatPos) {
+		public Point getSeatLocation(FlightsSeats.Point seatPos) {
 			return seatsIndexToTableLocation[seatsScheme.coordToIndex(seatPos)];
 		}
 
@@ -481,9 +469,9 @@ namespace Client {
 			}
 		}
 
-		public delegate void ButtonClicked(SeatButton button, SeatsScheme.Point seatLoc);
+		public delegate void ButtonClicked(SeatButton button, FlightsSeats.Point seatLoc);
 
-		public void update(SeatsScheme.Seats seats, ButtonClicked clicked) {
+		public void update(FlightsSeats.Seats seats, ButtonClicked clicked) {
 			seatsScheme = seats.Scheme;
 
 			seatsIndexToTableLocation.Clear();
@@ -528,7 +516,7 @@ namespace Client {
 					var xSpan = seatsWidthLCM / size.x;
 
 					//add row names
-					var widthNaming = SeatsScheme.WidthsNaming.widthsNaming[size.x];
+					var widthNaming = FlightsSeats.WidthsNaming.widthsNaming[size.x];
 					for(int x = 0; x < size.x; x++) {
 						var label = new Label{ 
 							Text = widthNaming[x].ToString(), 
@@ -549,7 +537,7 @@ namespace Client {
 						}, tableZ, 0);
 
 						for(int x = 0; x < size.x; x++) {
-							var seatLoc = new SeatsScheme.Point{x=x,z=z};
+							var seatLoc = new FlightsSeats.Point{x=x,z=z};
 							var seat = seats[x, z];
 
 							var it = new SeatButton();

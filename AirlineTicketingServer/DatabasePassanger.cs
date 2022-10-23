@@ -39,10 +39,9 @@ namespace AirlineTicketingServer {
 			using(cv) {
 			using(
 			var command = new SqlCommand(@"
-				select [pi].[Index], [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
-				from [Customers].[PassangerInfo] as [pi] 
+				select [pi].[Id], [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
+				from [Customers].[Passanger] as [pi] 
 				where [pi].[Customer] = @Customer
-				order by [pi].[Index] asc
 			", cv.connection)) {
 			command.CommandType = System.Data.CommandType.Text;
 			command.Parameters.AddWithValue("@Customer", customerId);
@@ -77,44 +76,6 @@ namespace AirlineTicketingServer {
 			}
 			return passangers;
 			}}}
-		}
-
-		public static Communication.Passanger get(SqlConnectionView cv, int customerId, int index) {
-			using(cv) {
-			using(
-			var command = new SqlCommand(@"
-				select [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
-				from [Customers].[PassangerInfo] as [pi] 
-				where [pi].[Customer] = @Id and [pi].[Index] = @Index", 
-				cv.connection
-			)) {
-			command.CommandType = System.Data.CommandType.Text;
-			command.Parameters.AddWithValue("Id", customerId);
-			command.Parameters.AddWithValue("Index", index);
-
-			cv.Open();
-			using(
-			var reader = command.ExecuteReader()){
-			if(!reader.Read()) return null;
-
-			var name = (string) reader[0];
-			var surname = (string) reader[1];
-			var middleName = (string) reader[2];
-			var birthday = (DateTime) reader[3];
-			var documentBin = (byte[]) reader[4];
-
-			reader.Close();
-			command.Dispose();
-			cv.Dispose();
-
-			using(
-			var ms = new MemoryStream(documentBin, false)) {
-			var document = (Documents.Document) new BinaryFormatter().Deserialize(ms);
-			return new Communication.Passanger{
-				name = name, surname = surname, middleName = middleName,
-				birthday = birthday, document = document
-			};
-			}}}}
 		}
 
 		public static int replace(SqlConnectionView cv, int customerId, int index, Communication.Passanger passanger) {
@@ -161,12 +122,12 @@ namespace AirlineTicketingServer {
 			command.Parameters.AddWithValue("@Surname", passanger.surname);
 			command.Parameters.AddWithValue("@MiddleName", passanger.middleName);
 			command.Parameters.AddWithValue("@CustomerId", customerId);
-			command.Parameters.Add("@NewIndex", System.Data.SqlDbType.Int);
-			command.Parameters["@NewIndex"].Direction = System.Data.ParameterDirection.Output;
+			var result = command.Parameters.Add("@NewId", System.Data.SqlDbType.Int);
+			result.Direction = System.Data.ParameterDirection.Output;
 
 			cv.Open();
 			command.ExecuteNonQuery();
-			return (int) command.Parameters["@NewIndex"].Value;
+			return (int) result.Value;
 			}}}
 		}
 

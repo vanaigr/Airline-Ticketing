@@ -19,7 +19,7 @@ namespace Communication {
 	}
 
 	[Serializable] public struct AvailableOptionsResponse {
-		public Dictionary<int, string> flightClasses;
+		public string[] flightClasses;
 		public List<City> cities;
 	}
 
@@ -38,7 +38,7 @@ namespace Communication {
 		public string airplaneName;
 
 		public Dictionary<int, FlightsOptions.Options> optionsForClasses;
-		public SeatsScheme.Seats seats;
+		public int[] availableSeatsForClasses;
 	}
 
 	[Serializable] public struct City {
@@ -70,16 +70,15 @@ namespace Communication {
 
 	[Serializable] public struct SeatAndOptions {
 		public FlightsOptions.SelectedOptions selectedOptions;
-		 
-		public int seatIndex;
-		public int seatClassId;
-		public bool useSeatIndex;
+		public int? seatIndex;
+		public int selectedSeatClass;
 	}
 
-	[Serializable] public struct SeatData {
+	[Serializable] public struct SeatCost {
+		public int basePrice;
+		public int seatCost;
 		public int baggageCost;
 		public int totalCost;
-		public bool unoccuppied;
 	}
 	
 	[Serializable] public sealed class Either<TS, TF> {
@@ -156,8 +155,10 @@ namespace Communication {
 
 		[OperationContract] Either<object, LoginOrInputError> removePassanger(Customer customer, int index);
 
-		[OperationContract] Either<SeatData[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
+		[OperationContract] Either<SeatCost[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
 
 		[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer customer, SelectedSeat[] selectedSeats, int flightId);
+
+		[OperationContract] Either<FlightsSeats.Seats, InputError> seatsForFlight(int flightId);
 	}
 }
