@@ -19,7 +19,7 @@ namespace Client {
 			Communication.SeatCost seatData,
 			Dictionary<int, string> classesNames
 		) {
-			var passanger = customer.passangerAt(bookingP.passangerId);
+			var passanger = customer.passangers[(int) bookingP.passangerIndex];
 
 			var sb = new StringBuilder();
 			

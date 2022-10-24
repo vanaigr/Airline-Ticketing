@@ -11,7 +11,10 @@ namespace Client {
 	public partial class FlightBook : Form {
 		private Communication.MessageService service;
 		private CustomerData customer;
+
+		private Dictionary<int, Communication.Passanger> localPassangers;
 		private Communication.SelectedSeat[] selectedSeats;
+
 		private Communication.AvailableFlight flight;
 		private FlightsSeats.Seats seats;
 		
@@ -50,13 +53,23 @@ namespace Client {
 				};
 			}
 
+			localPassangers = new Dictionary<int, Communication.Passanger>();
+
 			selectedSeats = new Communication.SelectedSeat[seatsAndOptions.Length];
 			for(int i = 0; i < selectedSeats.Length; i++) {
+				var passanger = passangers[i];
+				var index = (int) passangers[i].passangerIndex;
+				var idInfo = customer.passangerIds[index];
+
 				selectedSeats[i] = new Communication.SelectedSeat{
-					fromTempPassangers = passangers[i].passangerId.IsLocal,
-					passangerId = passangers[i].passangerId.Index,
+					fromTempPassangers = idInfo.IsLocal,
+					passangerId = idInfo.IsLocal ? index : idInfo.DatabaseId,
 					seatAndOptions = seatsAndOptions[i]
 				};
+
+				if(idInfo.IsLocal) {
+					localPassangers[index] = customer.passangers[index];
+				}
 			}
 
 			try {
@@ -115,7 +128,7 @@ namespace Client {
 
 		private void bookFlight_Click(object sender, EventArgs e) {
 			try {
-				var result = service.bookFlight(customer.customer_, customer.localPassangers, selectedSeats, flight.id);
+				var result = service.bookFlight(customer.customer, localPassangers, selectedSeats, flight.id);
 
 				if(result) {
 					statusOk("Бронирование выполенно успешно");

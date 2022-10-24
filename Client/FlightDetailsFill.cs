@@ -108,18 +108,18 @@ namespace Client {
 			}
 
 			for(int i = 0; i < bookingPassangers.Count; i++) {
-				var passangerData = bookingPassangers[i];
+				var bookingPassanger = bookingPassangers[i];
 				var display = curPassangersDisplays[i];
-				if(passangerData.passangerId.isValid) {
+
+				if(bookingPassanger.passangerIndex != null) {
 					Communication.Passanger p;
-					var exists = customer.tryGetPassangerAt(passangerData.passangerId, out p);
+					var exists = customer.passangers.TryGetValue((int) bookingPassanger.passangerIndex, out p);
 					if(exists) {
 						display.Passanger = p;
 					}
 					else {
-						passangerData.passangerId = new PassangerId();
+						bookingPassanger.passangerIndex = null;
 						display.Passanger = null;
-						bookingPassangers[i] = passangerData;
 					}		
 				}
 			}
@@ -180,7 +180,7 @@ namespace Client {
 
 				var sb = new StringBuilder().Append("Для пассажира ").Append("" + i).Append(" должны быть заданы: ");
 
-				if(!passanger.passangerId.isValid) {
+				if(passanger.passangerIndex == null) {
 					es.ac("данные пассажира");
 				}
 

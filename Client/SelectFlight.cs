@@ -106,7 +106,7 @@ namespace Client {
 				accountName.AutoSize = true;
 				accountName.Padding = new Padding(8);
 				accountName.TabIndex = 0;
-				accountName.Text = customer.customer_?.login;
+				accountName.Text = customer.customer?.login;
 
 				table.Controls.Add(accountName, 0, 0);
 

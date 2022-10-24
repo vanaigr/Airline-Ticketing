@@ -13,13 +13,13 @@ namespace Client {
 	public partial class PassangerList : UserControl {
 		private Communication.MessageService service;
 		private CustomerData customer;
-		private Dictionary<PassangerId, PassangerDisplay> passangersDisplays;
+		private Dictionary<int, PassangerDisplay> passangersDisplays;
 
 		private BookingPassanger passanger;
 
-		private PassangerId currentPassangerId {
-			get { return passanger.passangerId; }
-			set { passanger.passangerId = value; }
+		private int? currentPassangerIndex {
+			get { return passanger.passangerIndex; }
+			set { passanger.passangerIndex = value; }
 		}
 
 		private enum State {
@@ -35,8 +35,8 @@ namespace Client {
 			addButton.Enabled = false;
 			passangerDataTable.Enabled = true;
 
-			if(currentPassangerId.isValid) passangersDisplays[currentPassangerId].BackColor = Color.White;
-			currentPassangerId = new PassangerId();
+			if(currentPassangerIndex != null) passangersDisplays[(int) currentPassangerIndex].BackColor = Color.White;
+			currentPassangerIndex = null;
 
 			clearPassangerData();
 
@@ -44,7 +44,7 @@ namespace Client {
 			saveButton.Text = "Добавить";
 		}
 				
-		private void setStateSelect(PassangerId newSelectedPassangerId) {
+		private void setStateSelect(int newSelectedPassangerId) {
 			curState = State.select;
 
 			deleteButton.Enabled = true;
@@ -52,11 +52,11 @@ namespace Client {
 			addButton.Enabled = true;
 			passangerDataTable.Enabled = false;
 
-			if(currentPassangerId.isValid) passangersDisplays[currentPassangerId].BackColor = Color.White;
-			currentPassangerId = newSelectedPassangerId;
-			passangersDisplays[currentPassangerId].BackColor = Misc.selectionColor3;
+			if(currentPassangerIndex != null) passangersDisplays[(int) currentPassangerIndex].BackColor = Color.White;
+			currentPassangerIndex = newSelectedPassangerId;
+			passangersDisplays[newSelectedPassangerId].BackColor = Misc.selectionColor3;
 			
-			setDataFromPassanger(customer.passangerAt(currentPassangerId));
+			setDataFromPassanger(customer.passangers[newSelectedPassangerId]);
 
 			saveButton.Visible = false;
 		}
@@ -71,7 +71,7 @@ namespace Client {
 
 			saveButton.Visible = true;
 
-			var passanger = customer.passangerAt(currentPassangerId);
+			var passanger = customer.passangers[(int) currentPassangerIndex];
 			if(passanger.archived) saveButton.Text = "Сохранить копию";
 			else saveButton.Text = "Сохранить";
 		}
@@ -83,8 +83,8 @@ namespace Client {
 			editButton.Enabled = false;
 			passangerDataTable.Enabled = false;
 
-			if(currentPassangerId.isValid) passangersDisplays[currentPassangerId].BackColor = Color.White;
-			currentPassangerId = new PassangerId();
+			if(currentPassangerIndex != null) passangersDisplays[(int) currentPassangerIndex].BackColor = Color.White;
+			currentPassangerIndex = null;
 
 			clearPassangerData();
 
@@ -104,38 +104,31 @@ namespace Client {
 			this.service = sq;
 			this.customer = customer;
 			this.passanger = passanger;
-			this.passangersDisplays = new Dictionary<PassangerId, PassangerDisplay>();
+			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
 
-			setupPassangersDisplay(passanger.passangerId);
+			setupPassangersDisplay(passanger.passangerIndex);
 		}
 
 		public bool onClose() {
 			return promptSaveCustomer();
 		}
 
-		private void setupPassangersDisplay(PassangerId defaultPassangerId) {
+		private void setupPassangersDisplay(int? defaultPassangerIndex) {
 			passangersDisplay.SuspendLayout();
 			passangersDisplay.Controls.Clear();
 			passangersDisplay.RowStyles.Clear();
 
-			passangersDisplay.RowCount = customer.localPassangers.Count + customer.databasePassangers.Count;
+			passangersDisplay.RowCount = customer.passangers.Count;
 
-			foreach(var passanger in customer.localPassangers) {
-				var id = PassangerId.fromLocalIndex(passanger.Key);
-				var display = addPassangerDisplay(passanger.Value, id);
-				passangersDisplays.Add(id, display);
-			}
-
-			foreach(var passanger in customer.databasePassangers) {
-				var id = PassangerId.fromDatabaseIndex(passanger.Key);
-				var display = addPassangerDisplay(passanger.Value, id);
-				passangersDisplays.Add(id, display);
+			foreach(var passanger in customer.passangers) {
+				var display = addPassangerDisplay(passanger.Value, passanger.Key);
+				passangersDisplays.Add(passanger.Key, display);
 			}
 
 			passangersDisplay.ResumeLayout(false);
 			passangersDisplay.PerformLayout();
 
-			if(defaultPassangerId.isValid) setStateSelect(defaultPassangerId);
+			if(defaultPassangerIndex != null) setStateSelect((int) defaultPassangerIndex);
 			else setStateNone();
 		}
 
@@ -158,7 +151,7 @@ namespace Client {
 		//returns false if save aborted
 		private bool promptSaveCustomer() {
 			if(curState == State.edit) {
-				var prevPassanger = customer.passangerAt(currentPassangerId);
+				var prevPassanger = customer.passangers[(int) currentPassangerIndex];
 				var curPassanger = formPassangerFromData();
 				if(!prevPassanger.Equals(curPassanger)) {
 					this.Focus();
@@ -171,8 +164,8 @@ namespace Client {
 					);
 
 					if(mb == DialogResult.Yes) {
-						var result = saveEditedPassanger(curPassanger, currentPassangerId);
-						return result.isValid;
+						var result = saveEditedPassanger(curPassanger, (int) currentPassangerIndex);
+						return result != null;
 					}
 					else if(mb == DialogResult.No) return true;
 					else {
@@ -195,7 +188,7 @@ namespace Client {
 
 				if(mb == DialogResult.Yes) {
 					var result = saveNewPassanger(curPassanger);
-					return result.isValid;
+					return result != null;
 				}
 				else if(mb == DialogResult.No) return true;
 				else {
@@ -206,16 +199,16 @@ namespace Client {
 			else return true;
 		}
 
-		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, PassangerId id) {
+		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, int index) {
 			var it = new PassangerDisplay{ 
-				Passanger = passanger, Data = id,
+				Passanger = passanger, Data = index,
 				Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
 				ToolTip = passangerTooltip,
 			};
 			it.Click += (a, b) => {
 				if(!promptSaveCustomer()) return;
-				setStateSelect((PassangerId) ((PassangerDisplay) a).Data);
+				setStateSelect((int) ((PassangerDisplay) a).Data);
 			};
 			it.ContextMenuStrip = passangerMenu;
 
@@ -234,13 +227,13 @@ namespace Client {
 			var passanger = formPassangerFromData();
 			if(curState == State.add) {
 				var result = saveNewPassanger(passanger);
-				if(result.isValid) setStateSelect(result); 
+				if(result != null) setStateSelect((int) result); 
 			}
 			else if(curState == State.edit) {
-				var oldPassanger = customer.passangerAt(currentPassangerId);
+				var oldPassanger = customer.passangers[(int) currentPassangerIndex];
 				if(!oldPassanger.Equals(passanger)) {
-					var result = saveEditedPassanger(passanger, currentPassangerId);
-					if(result.isValid) setStateSelect(result);
+					var result = saveEditedPassanger(passanger, (int) currentPassangerIndex);
+					if(result != null) setStateSelect((int) result);
 				}
 			}
 			else Debug.Assert(curState == State.select || curState == State.none);
@@ -282,20 +275,24 @@ namespace Client {
 			statusTooltip.SetToolTip(statusLabel, null);
 		}
 
-		private PassangerId saveNewPassanger(Communication.Passanger passanger) {
+		private int? saveNewPassanger(Communication.Passanger passanger) {
 			try {
 
 			if(customer.LoggedIn) {
 				var response = service.addPassanger(customer.Get(), passanger);
 				if(response) { 
-					var id = PassangerId.fromDatabaseIndex(response.s);
-					var display = addPassangerDisplay(passanger, id);
-					customer.databasePassangers.Add(id.Index, passanger);
-					passangersDisplays.Add(id, display);
+					var id = response.s;
+					var index = customer.newPassangerIndex++;
+
+					customer.passangers.Add(index, passanger);
+					customer.passangerIds.Add(index, new PassangerIdData(id));
+
+					var display = addPassangerDisplay(passanger, index);
+					passangersDisplays.Add(index, display);
 				
 					setFine();
 				
-					return id;
+					return index;
 				}
 				else if(response.f.isLoginError) {
 					promptFillCustomer(response.f.LoginError.message);
@@ -307,31 +304,36 @@ namespace Client {
 				}
 			}
 			else {
-				var id = PassangerId.fromLocalIndex(customer.newLocalPassangerId++);
-				var display = addPassangerDisplay(passanger, id);
-				customer.localPassangers.Add(id.Index, passanger);
-				passangersDisplays.Add(id, display);
+				var index = customer.newPassangerIndex++;
+
+				customer.passangers.Add(index, passanger);
+				customer.passangerIds.Add(index, new PassangerIdData(null));
+
+				var display = addPassangerDisplay(passanger, index);
+				passangersDisplays.Add(index, display);
 				
 				setFine();
 				
-				return id;
+				return index;
 			}
 
 			}catch(Exception e) { setErr(e); }
 
-			return new PassangerId();
+			return null;
 		}
 
-		private PassangerId saveEditedPassanger(Communication.Passanger passanger, PassangerId passangerId) {
+		private int? saveEditedPassanger(Communication.Passanger passanger, int index) {
 			try {
-			if(!passangerId.isValid) return new PassangerId();
-			else if(passangerId.IsLocal) {
-				customer.localPassangers[passangerId.Index] = passanger;
-				var passangerDisplay = passangersDisplays[passangerId];
-				passangerDisplay.Passanger = passanger;
-				passangerDisplay.Data = passangerId;
+			var passangerIdData = customer.passangerIds[index];
 
-				return passangerId;
+			if(passangerIdData.IsLocal) {
+				customer.passangers[index] = passanger;
+
+				var passangerDisplay = passangersDisplays[index];
+				passangerDisplay.Passanger = passanger;
+				passangerDisplay.Data = index;
+
+				return index;
 			}
 			else {
 				if(!customer.LoggedIn) throw new InvalidOperationException(
@@ -343,19 +345,22 @@ namespace Client {
 				//but actually the passanger itself is saved
 				//and not ist copy if there is some error
 				//in updating button text
-				if(customer.passangerAt(passangerId).archived) return saveNewPassanger(passanger);
+				if(customer.passangers[index].archived) return saveNewPassanger(passanger);
 
-				var response = service.replacePassanger(customer.Get(), passangerId.Index, passanger);
+				var response = service.replacePassanger(customer.Get(), passangerIdData.DatabaseId, passanger);
 				if(response) { 
-					var id = PassangerId.fromDatabaseIndex(response.s);
-					customer.databasePassangers[id.Index] = passanger;
-					var passangerDisplay = passangersDisplays[id];
+					var id = response.s;
+
+					customer.passangers[index] = passanger;
+					customer.passangerIds[index] = new PassangerIdData(id);
+
+					var passangerDisplay = passangersDisplays[index];
 					passangerDisplay.Passanger = passanger;
-					passangerDisplay.Data = id;
+					passangerDisplay.Data = index;
 					
 					setFine();
 
-					return id;
+					return index;
 				}
 				else if(response.f.isLoginError) {
 					promptFillCustomer(response.f.LoginError.message);
@@ -368,16 +373,19 @@ namespace Client {
 			}
 
 			} catch(Exception e) { setErr(e); }
-			return new PassangerId();
+			return null;
 		}
 
-		private bool removePassanger(PassangerId index) {
+		private bool removePassanger(int index) {
 			try{
-			if(!index.isValid) return true;
-			else if(index.IsLocal) {
+			var passangerIdData = customer.passangerIds[index];
+			
+			if(passangerIdData.IsLocal) {
 				passangersDisplays[index].Dispose();
 				passangersDisplays.Remove(index);
-				customer.localPassangers.Remove(index.Index);
+
+				customer.passangers.Remove(index);
+				customer.passangerIds.Remove(index);
 				return true;
 			}
 			else {
@@ -385,12 +393,15 @@ namespace Client {
 					"Незарегестрированный пользователь не может удалять пассажиров, зарегестрированных в базе"
 				);
 
-				var response = service.removePassanger(customer.Get(), index.Index);
+				var response = service.removePassanger(customer.Get(), passangerIdData.DatabaseId);
 				if(response) { 
-					if(Equals(index, currentPassangerId)) setStateNone();
+					if(index == currentPassangerIndex) setStateNone();
+
+					customer.passangers.Remove(index);
+					customer.passangerIds.Remove(index);
+
 					passangersDisplays[index].Dispose();
 					passangersDisplays.Remove(index);
-					customer.databasePassangers.Remove(index.Index);
 
 					setFine();
 
@@ -426,12 +437,12 @@ namespace Client {
 				"Вы точно хотите удалить данного пассажира?", "",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
 			);
-			if(result == DialogResult.Yes) removePassanger(currentPassangerId);
+			if(result == DialogResult.Yes) removePassanger((int) currentPassangerIndex);
 		}
 
 		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
-			var number = (PassangerId) pass.Data;
+			var number = (int) pass.Data;
 			var result = MessageBox.Show(
 				"Вы точно хотите удалить данного пассажира?", "",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
@@ -441,7 +452,7 @@ namespace Client {
 
 		private void изменитьToolStripMenuItem_Click(object sender, EventArgs e) {
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
-			var number = (PassangerId) pass.Data;
+			var number = (int) pass.Data;
 			if(!promptSaveCustomer()) return;
 			setStateSelect(number);
 			setStateEdit();

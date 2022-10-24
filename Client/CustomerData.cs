@@ -7,53 +7,67 @@ using Communication;
 
 namespace Client {
 	public class CustomerData {
-		public Customer? customer_;
-		public int newLocalPassangerId;
-		public Dictionary<int, Passanger> localPassangers;
-		public Dictionary<int, Passanger> databasePassangers;
+		public Customer? customer;
+
+		public int newPassangerIndex = 0;
+		public Dictionary<int, PassangerIdData> passangerIds;
+		public Dictionary<int, Passanger> passangers;
+
+		//public int newLocalPassangerId;
+		//public Dictionary<int, Passanger> localPassangers;
+		//public Dictionary<int, Passanger> databasePassangers;
 
 		public CustomerData() { 
-			customer_ = null;
-			newLocalPassangerId = 0;
-			localPassangers = new Dictionary<int, Passanger>();
-			databasePassangers = new Dictionary<int, Passanger>();
+			customer = null;
+			newPassangerIndex = 0;
+			passangerIds = new Dictionary<int, PassangerIdData>();
+			passangers = new Dictionary<int, Passanger>();
 		}
 
 		public CustomerData(string login, string password) : this() {
-			this.customer_ = new Customer{
+			this.customer = new Customer{
 				login = login,
 				password = password
 			};
 		}
 
-		public Customer Get() { return (Customer) customer_; }
-
-		public bool tryGetPassangerAt(PassangerId i, out Passanger it) {
-			if(!i.isValid) throw new InvalidOperationException();
-			else if(i.IsLocal) return localPassangers.TryGetValue(i.Index, out it);
-			else return databasePassangers.TryGetValue(i.Index, out it);
-		}
-
-		public Passanger passangerAt(PassangerId i) {
-			if(!i.isValid) throw new InvalidOperationException();
-			else if(i.IsLocal) return localPassangers[i.Index];
-			else return databasePassangers[i.Index];
-		}
-
+		public Customer Get() { return (Customer) customer; }
+		
 		public void unlogin() {
-			customer_ = null;
+			customer = null;
+			newPassangerIndex = 0;
+			passangerIds.Clear();
+			passangers.Clear();
 		}
 
 		public void setFrom(Customer o) {
-			this.customer_ = o;
+			this.customer = o;
+			newPassangerIndex = 0;
+			passangerIds.Clear();
+			passangers.Clear();
 		}
 
 		public bool LoggedIn{
-			get{ return customer_ != null; }
+			get{ return customer != null; }
 		}
 	}
 
-	public struct PassangerId {
+	public struct PassangerIdData {
+		private int? databaseId;
+
+		public PassangerIdData(int? databaseId) {
+			this.databaseId = databaseId;
+		}
+
+		public bool IsLocal{ get{ return databaseId == null; } }
+
+		public int DatabaseId{ get{
+			if(IsLocal) throw new InvalidOperationException();
+			else return (int) databaseId;
+		}}
+	}
+
+	/*public struct PassangerId {
 		private bool? isLocal;
 		private int index;
 
@@ -79,5 +93,5 @@ namespace Client {
 		public override int GetHashCode() {
 			return index * (isLocal == null ? 0 : (isLocal == true ? 1 : -1));
 		}
-	}
+	}*/
 }

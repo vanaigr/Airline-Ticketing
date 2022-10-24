@@ -23,8 +23,8 @@ namespace Client {
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
 			
-			LoginText.Text = customer.customer_?.login;
-			PasswordText.Text = customer.customer_?.password;
+			LoginText.Text = customer.customer?.login;
+			PasswordText.Text = customer.customer?.password;
 		}
 
 		public void setError(string message) {
@@ -68,8 +68,20 @@ namespace Client {
 				if(response) {
 					var response2 = service.getPassangers(newCust);
 					if(response2) {
+						customer.unlogin() /*
+							all the passangers used previously are lost
+							if the user was unlogged
+						*/;
+						//TODO: fix looging in if any flight is being booked
+
 						customer.setFrom(newCust);
-						customer.databasePassangers = response2.s;
+
+						foreach(var newPassanger in response2.s) {
+							var index = customer.newPassangerIndex++;
+							customer.passangers.Add(index, newPassanger.Value);
+							customer.passangerIds.Add(index, new PassangerIdData(newPassanger.Key));
+						}
+
 						statusLabel.ForeColor = SystemColors.ControlText;
 						statusLabel.Text = "";
 						
