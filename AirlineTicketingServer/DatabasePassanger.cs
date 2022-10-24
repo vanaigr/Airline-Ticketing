@@ -31,6 +31,7 @@ namespace AirlineTicketingServer {
 	static class DatabasePassanger {
 		struct RawPassanger {
 			public int index;
+			public bool archived;
 			public string name, surname, middleName;
 			public DateTime birthday;
 			public byte[] documentBin;
@@ -39,7 +40,7 @@ namespace AirlineTicketingServer {
 			using(cv) {
 			using(
 			var command = new SqlCommand(@"
-				select [pi].[Id], [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
+				select [pi].[Id], [pi].[Archived], [pi].[Name], [pi].[Surname], [pi].[MiddleName], [pi].[Birthday], [pi].[Document] 
 				from [Customers].[Passanger] as [pi] 
 				where [pi].[Customer] = @Customer
 			", cv.connection)) {
@@ -53,11 +54,12 @@ namespace AirlineTicketingServer {
 			var reader = command.ExecuteReader()){
 			while(reader.Read()) rawPassangers.Add(new RawPassanger{
 				index = (int) reader[0],
-				name = (string) reader[1],
-				surname = (string) reader[2],
-				middleName = (string) reader[3],
-				birthday = (DateTime) reader[4],
-				documentBin = (byte[]) reader[5]
+				archived = (bool) reader[1],
+				name = (string) reader[2],
+				surname = (string) reader[3],
+				middleName = (string) reader[4],
+				birthday = (DateTime) reader[5],
+				documentBin = (byte[]) reader[6]
 			});
 			reader.Close();
 			command.Dispose();
@@ -65,26 +67,19 @@ namespace AirlineTicketingServer {
 
 			var passangers = new Dictionary<int, Communication.Passanger>(rawPassangers.Count);
 			foreach(var rp in rawPassangers) {
-				using(
-				var ms = new MemoryStream(rp.documentBin, false)) {
-				var document = (Documents.Document) new BinaryFormatter().Deserialize(ms);
 				passangers.Add(rp.index, new Communication.Passanger{
+					archived = rp.archived,
 					name = rp.name, surname = rp.surname, middleName = rp.middleName,
-					birthday = rp.birthday, document = document
+					birthday = rp.birthday, document = BinaryDocument.fromBytes(rp.documentBin)
 				});
-				}
 			}
 			return passangers;
 			}}}
 		}
 
-		public static int replace(SqlConnectionView cv, int customerId, int index, Communication.Passanger passanger) {
+		public static int? replace(SqlConnectionView cv, int customerId, int index, Communication.Passanger passanger) {
 			using(cv) {
-			using(
-			var ms = new MemoryStream()) {
-			new BinaryFormatter().Serialize(ms, passanger.document);
-			var documentBin = ms.ToArray();
-			ms.Dispose();
+			var documentBin = BinaryDocument.toBytes(passanger.document);
 
 			using(
 			var command = new SqlCommand("[Customers].[ReplacePassanger]", cv.connection)) {
@@ -94,24 +89,20 @@ namespace AirlineTicketingServer {
 			command.Parameters.AddWithValue("@Name", passanger.name);
 			command.Parameters.AddWithValue("@Surname", passanger.surname);
 			command.Parameters.AddWithValue("@MiddleName", passanger.middleName);
-			command.Parameters.AddWithValue("@CustomerId", customerId);
-			command.Parameters.AddWithValue("@Index", index);
-			command.Parameters.Add("@NewIndex", System.Data.SqlDbType.Int);
-			command.Parameters["@NewIndex"].Direction = System.Data.ParameterDirection.Output;
+			command.Parameters.AddWithValue("@Customer", customerId);
+			command.Parameters.AddWithValue("@Id", index);
+			var newIdParam = command.Parameters.Add("@NewId", System.Data.SqlDbType.Int);
+			newIdParam.Direction = System.Data.ParameterDirection.Output;
 
 			cv.Open();
 			command.ExecuteNonQuery();
-			return (int) command.Parameters["@NewIndex"].Value;
-			}}}
+			if(newIdParam.Value.GetType() == typeof(DBNull)) return null;
+			else return (int) newIdParam.Value;
+			}}
 		}
 
 		public static int add(SqlConnectionView cv, int customerId, Communication.Passanger passanger) {
-			using(cv) {
-			using(
-			var ms = new MemoryStream()) {
-			new BinaryFormatter().Serialize(ms, passanger.document);
-			var documentBin = ms.ToArray();
-			ms.Dispose();
+			var documentBin = BinaryDocument.toBytes(passanger.document);
 
 			using(
 			var command = new SqlCommand("[Customers].[AddPassanger]",cv.connection)) {
@@ -128,11 +119,11 @@ namespace AirlineTicketingServer {
 			cv.Open();
 			command.ExecuteNonQuery();
 			return (int) result.Value;
-			}}}
+			}
 		}
 
 		private static readonly Regex foreignKeyRegex = new Regex(
-			"The (.+) statement conflicted with the (.+) constraint \"(.+)\"\\. The conflict occurred in database \"(.+)\", table \"(.+)\"\\."
+			"The (.+) statement conflicted with the (.+) constraint \"(.+)\"\\. The conflict occurred in database \"(.+)\", table \"(.+)\", column \'(.+)\'."
 		);
 
 		public static CheckResult remove(SqlConnectionView cv, int customerId, int index) {
@@ -141,23 +132,24 @@ namespace AirlineTicketingServer {
 			var command = new SqlCommand("[Flights].[RemovePassanger]", cv.connection)) {
 			command.CommandType = System.Data.CommandType.StoredProcedure;
 			command.Parameters.AddWithValue("@Customer", customerId);
-			command.Parameters.AddWithValue("@Index", index);
-			var resultParam = command.Parameters.Add("@Result", System.Data.SqlDbType.Int);
-			resultParam.Direction = System.Data.ParameterDirection.ReturnValue;
+			command.Parameters.AddWithValue("@Id", index);
+			var resultParam = command.Parameters.Add("@Deleted", System.Data.SqlDbType.Bit);
+			resultParam.Direction = System.Data.ParameterDirection.Output;
 
-			cv.Open();
 			try {
+				cv.Open();
 				command.ExecuteNonQuery();
-				return new CheckResult{ ok = false, errorMsg = "Ошибка удаления" };
+				if((bool) resultParam.Value == true) return new CheckResult{ ok = true };
+				else return new CheckResult{ ok = false, errorMsg = "Ошибка удаления" };
 			} 
 			catch(SqlException e) {
 				command.Dispose();
 				cv.Dispose();
 
 				var match = foreignKeyRegex.Match(e.Message);
-				if(match.Success && match.Groups[2].Value == "REFERENCE" && match.Groups[3].Value == "AvailableFlights_ForeignCustomer"
-					&& match.Groups[5].Value == "Flights.AvailableFlightsSeats") {
-					return new CheckResult{ ok = false, errorMsg = "Удаление невозможно, так как данный пассажир зарегестрирован на один или более рейсов" };
+				if(match.Success && match.Groups[2].Value == "REFERENCE" && match.Groups[3].Value == "AvailableFlightsSeats_ForeignPassanger"
+					&& match.Groups[5].Value == "Flights.AvailableFlightsSeats" && match.Groups[6].Value == "Passanger") {
+					return new CheckResult{ ok = false, errorMsg = "Данный пассажир не может быть удалён, так как он уже был выбран при покупке билета" };
 				}
 				else throw e;
 			}

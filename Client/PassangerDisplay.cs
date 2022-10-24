@@ -39,6 +39,9 @@ namespace Client {
 		}
 
 		public int Number{ get{ return number; } set{ number = value; setNumberLabel(); } }
+
+		public object Data;
+
 		public PassangerDisplay() : base() {
 			InitializeComponent();
 

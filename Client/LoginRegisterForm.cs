@@ -23,8 +23,8 @@ namespace Client {
 			InitializeComponent();
 			Misc.unfocusOnEscape(this);
 			
-			LoginText.Text = customer.customer?.login;
-			PasswordText.Text = customer.customer?.password;
+			LoginText.Text = customer.customer_?.login;
+			PasswordText.Text = customer.customer_?.password;
 		}
 
 		public void setError(string message) {
@@ -69,7 +69,7 @@ namespace Client {
 					var response2 = service.getPassangers(newCust);
 					if(response2) {
 						customer.setFrom(newCust);
-						customer.passangers = response2.s;
+						customer.databasePassangers = response2.s;
 						statusLabel.ForeColor = SystemColors.ControlText;
 						statusLabel.Text = "";
 						

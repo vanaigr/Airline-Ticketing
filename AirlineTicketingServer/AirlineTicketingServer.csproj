@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvailableFlightsUpdate.cs" />
+    <Compile Include="BinaryDocument.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="DatabaseOptions.cs" />
     <Compile Include="DatabasePassanger.cs" />

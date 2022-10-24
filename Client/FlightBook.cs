@@ -53,7 +53,8 @@ namespace Client {
 			selectedSeats = new Communication.SelectedSeat[seatsAndOptions.Length];
 			for(int i = 0; i < selectedSeats.Length; i++) {
 				selectedSeats[i] = new Communication.SelectedSeat{
-					passangerId = (int) passangers[i].passangerIndex,
+					fromTempPassangers = passangers[i].passangerId.IsLocal,
+					passangerId = passangers[i].passangerId.Index,
 					seatAndOptions = seatsAndOptions[i]
 				};
 			}
@@ -114,10 +115,11 @@ namespace Client {
 
 		private void bookFlight_Click(object sender, EventArgs e) {
 			try {
-				var result = service.bookFlight((Communication.Customer) customer.customer, selectedSeats, flight.id);
+				var result = service.bookFlight(customer.customer_, customer.localPassangers, selectedSeats, flight.id);
 
 				if(result) {
 					statusOk("Бронирование выполенно успешно");
+					//TODO: fix passangers
 					bookFlight.Enabled = false;
 				}
 				else {

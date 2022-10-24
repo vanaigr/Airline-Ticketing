@@ -127,7 +127,7 @@
     <Compile Include="PassangerList.Designer.cs">
       <DependentUpon>PassangerList.cs</DependentUpon>
     </Compile>
-    <Compile Include="PassangerData.cs" />
+    <Compile Include="CustomerData.cs" />
     <Compile Include="PassangerDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>

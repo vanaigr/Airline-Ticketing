@@ -35,9 +35,11 @@ namespace Client {
 			
 			findFlightsButton_Click(findFlightsButton, new EventArgs());
 			
-			customer = new CustomerData("User123", "789456123");
-			customer.passangers = service.getPassangers((Customer) customer.customer).s;
+			//customer = new CustomerData("User123", "789456123");
+			//customer.databasePassangers = service.getPassangers(customer.Get()).s;
 			} catch(Exception){ }
+
+			setupAvailableOptions();
 		}
 
 		void setupAvailableOptions() {
@@ -104,7 +106,7 @@ namespace Client {
 				accountName.AutoSize = true;
 				accountName.Padding = new Padding(8);
 				accountName.TabIndex = 0;
-				accountName.Text = customer.customer?.login;
+				accountName.Text = customer.customer_?.login;
 
 				table.Controls.Add(accountName, 0, 0);
 

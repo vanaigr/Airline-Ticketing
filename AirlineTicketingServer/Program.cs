@@ -297,9 +297,12 @@ namespace AirlineTicketingServer {
 				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 				var userIdRes = getUserId(new SqlConnectionView(connection, false), c);
 				if(!userIdRes.IsSuccess) return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
-				return Either<int, LoginOrInputError>.Success(
-					DatabasePassanger.replace(new SqlConnectionView(connection, true), userIdRes.Success(), index, passanger)
-				);
+
+				var replacedId = DatabasePassanger.replace(new SqlConnectionView(connection, true), userIdRes.Success(), index, passanger);
+				if(replacedId != null) return Either<int, LoginOrInputError>.Success((int) replacedId);
+				else return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{ InputError = new InputError(
+					"Данный пассажир не может быть изменён, так как он уже был выбран при покупке билета"
+				) });
 				}
 			}
 
@@ -409,14 +412,63 @@ namespace AirlineTicketingServer {
 				}
 			}
 
-			public Either<object, LoginOrInputError> bookFlight(Customer customer, SelectedSeat[] selectedSeats, int flightId) {
-				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-				//try logging user in
-				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
-				if(!userIdRes.IsSuccess) return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+			public Either<object, LoginOrInputError> bookFlight(Customer? customer, Dictionary<int, Passanger> tempPassangers, SelectedSeat[] selectedSeats, int flightId) {
+				if(selectedSeats.Length == 0) return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{
+					InputError = new InputError("Должен быть добавлен хотя бы один пассажир")
+				});
 
 				var seatsAndOptions = new SeatAndOptions[selectedSeats.Length];
 				for(int i = 0; i < seatsAndOptions.Length; i++) seatsAndOptions[i] = selectedSeats[i].seatAndOptions;
+
+				//fill seats tables				
+                DataTable bookingTable = new DataTable();
+                bookingTable.Columns.Add("Id", typeof(int));
+                bookingTable.Columns.Add("TempPassanger", typeof(bool));
+                bookingTable.Columns.Add("Passanger", typeof(int));
+                bookingTable.Columns.Add("SelectedSeat", typeof(short));
+                bookingTable.Columns.Add("Class", typeof(byte));
+                bookingTable.Columns.Add("SelectedOptions", typeof(byte[]));
+
+				ISet<int> addedTempPassangers = new HashSet<int>();
+
+				DataTable tempPassangersTable = new DataTable();
+                tempPassangersTable.Columns.Add("Id", typeof(int));
+                tempPassangersTable.Columns.Add("Birthday", typeof(DateTime));
+                tempPassangersTable.Columns.Add("Document", typeof(byte[]));
+                tempPassangersTable.Columns.Add("Name", typeof(string));
+                tempPassangersTable.Columns.Add("Surname", typeof(string));
+                tempPassangersTable.Columns.Add("MiddleName", typeof(string));
+
+                for(int i = 0; i < selectedSeats.Length; i++) {
+					var seat = selectedSeats[i];
+
+                    var dr = bookingTable.NewRow();
+					dr[0] = i;
+					dr[1] = seat.fromTempPassangers;
+                    dr[2] = seat.passangerId;
+					dr[3] = seat.seatAndOptions.seatIndex != null ? seat.seatAndOptions.seatIndex : (object) DBNull.Value;
+					dr[4] = seat.seatAndOptions.selectedSeatClass;
+                    dr[5] = BinaryOptions.toBytes(seat.seatAndOptions.selectedOptions);
+                    bookingTable.Rows.Add(dr);
+
+					if(seat.fromTempPassangers && !addedTempPassangers.Contains(seat.passangerId)) {
+						addedTempPassangers.Add(seat.passangerId);
+
+						var tp = tempPassangers[seat.passangerId];
+						var tr = tempPassangersTable.NewRow();
+						tr[0] = seat.passangerId;
+						tr[1] = tp.birthday;
+						tr[2] = BinaryDocument.toBytes(tp.document);
+						tr[3] = tp.name;
+						tr[4] = tp.surname;
+						tr[5] = tp.middleName != null ? tp.middleName : (object) DBNull.Value;
+
+						tempPassangersTable.Rows.Add(tr);
+					}
+                }
+
+				using(
+				var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 
 				//calculate price
 				var costsResult = calculateSeatsCosts(
@@ -426,50 +478,54 @@ namespace AirlineTicketingServer {
 					new LoginOrInputError{ InputError = costsResult.f }
 				);
 
-				//book seats
+				//try logging user in
+				int? userId;
+				if(customer != null) {
+					var userIdRes = getUserId(new SqlConnectionView(connection, false), (Customer) customer);
+					if(!userIdRes.IsSuccess) return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+					userId = userIdRes.s;
+				}
+				else userId = null;
+
 				using(
 				var bookFlight = new SqlCommand("[Flights].[BookFlight]", connection)) {
 				bookFlight.CommandType = CommandType.StoredProcedure;
 
+				var customerParam = bookFlight.Parameters.Add("@Customer", SqlDbType.Int);
+				if(userId != null) customerParam.Value = userId;
+				else customerParam.Value = DBNull.Value;
 				bookFlight.Parameters.AddWithValue("@AvailableFlight", flightId);
-				var errorParam = bookFlight.Parameters.Add("@ErrorPassangerId", SqlDbType.Int);
-				errorParam.Direction = ParameterDirection.Output;
+				var errorSeatParam = bookFlight.Parameters.Add("@ErrorSeatId", SqlDbType.Int);
+				var errorPassangerParam = bookFlight.Parameters.Add("@ErrorTempPassangerId ", SqlDbType.Int);
+				errorSeatParam.Direction = ParameterDirection.Output;
+				errorPassangerParam.Direction = ParameterDirection.Output;
+
+				var bookSeatsParam = bookFlight.Parameters.AddWithValue("@BookSeats", bookingTable);
+				bookSeatsParam.SqlDbType = SqlDbType.Structured;
+				bookSeatsParam.TypeName = "[Flights].[BookSeat]";
 				
-                DataTable bookingTable = new DataTable();
-                bookingTable.Columns.Add("Id", typeof(int));
-                bookingTable.Columns.Add("Passanger", typeof(int));
-                bookingTable.Columns.Add("SelectedSeat", typeof(short));
-                bookingTable.Columns.Add("Class", typeof(byte));
-                bookingTable.Columns.Add("SelectedOptions", typeof(byte[]));
-
-                for(int i = 0; i < selectedSeats.Length; i++) {
-					var seat = selectedSeats[i];
-
-                    var dr = bookingTable.NewRow();
-					dr[0] = i;
-                    dr[1] = seat.passangerId;
-					if(seat.seatAndOptions.seatIndex != null) {
-						dr[2] = seat.seatAndOptions.seatIndex /*
-							bookingTable.Columns.Add("SelectedSeat", typeof(short?));
-							System.NotSupportedException: DataSet<> doesn't support System.Nullable<>
-						*/;
-					}
-					dr[3] = seat.seatAndOptions.selectedSeatClass;
-                    dr[4] = BinaryOptions.toBytes(seat.seatAndOptions.selectedOptions);
-                    bookingTable.Rows.Add(dr);
-                }
-
-				var tableParam = bookFlight.Parameters.AddWithValue("@BookSeats", bookingTable);
-				tableParam.SqlDbType = SqlDbType.Structured;
-				tableParam.TypeName = "[Flights].[BookSeat]";
+				var tempPassangersParam = bookFlight.Parameters.AddWithValue("@TempPassangers", tempPassangersTable);
+				tempPassangersParam.SqlDbType = SqlDbType.Structured;
+				tempPassangersParam.TypeName = "[Flights].[TempPassangers]";
 				
+				//book flights
 				bookFlight.ExecuteNonQuery();
+				
+				var es = Validation.ErrorString.Create();
 
-				if(errorParam.Value is DBNull) return Either<object, LoginOrInputError>.Success(null);
+				if(!(errorSeatParam.Value is DBNull)) { 
+					var errorSeat = (int) errorSeatParam.Value;
+					es.ac("место пассажира " + errorSeat + " уже занято или не существует");
+				}
+				if(!(errorPassangerParam.Value is DBNull)) { 
+					var errorPassanger = (int) errorPassangerParam.Value;
+					es.ac("Пассажир " + errorPassanger + " не может быть добавлен");
+				}
+				
+				if(!es.Error) return Either<object, LoginOrInputError>.Success(null);
 				else return Either<object, LoginOrInputError>.Failure(new LoginOrInputError{
-					InputError = new InputError("Место пассажира " + errorParam.Value + " уже занято или не существует")
+					InputError = new InputError(es.Message)
 				});
-
 				}}
 			}
 

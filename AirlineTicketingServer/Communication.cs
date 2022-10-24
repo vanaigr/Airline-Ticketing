@@ -49,6 +49,7 @@ namespace Communication {
     [KnownType(typeof(Documents.Passport))]
     [KnownType(typeof(Documents.InternationalPassport))]
 	[Serializable] public sealed class Passanger {
+		public bool archived;
 		public string name;
 		public string surname;
 		public string middleName;
@@ -65,6 +66,7 @@ namespace Communication {
 
 	[Serializable] public struct SelectedSeat {
 		public SeatAndOptions seatAndOptions;
+		public bool fromTempPassangers;
 		public int passangerId;
 	}
 
@@ -157,7 +159,7 @@ namespace Communication {
 
 		[OperationContract] Either<SeatCost[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
 
-		[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer customer, SelectedSeat[] selectedSeats, int flightId);
+		[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer? customer, Dictionary<int, Passanger> tempPassangers, SelectedSeat[] selectedSeats, int flightId);
 
 		[OperationContract] Either<FlightsSeats.Seats, InputError> seatsForFlight(int flightId);
 	}

@@ -76,9 +76,9 @@ namespace Client {
 			label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			label1.Location = new System.Drawing.Point(8, 15);
 			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(37, 13);
+			label1.Size = new System.Drawing.Size(62, 13);
 			label1.TabIndex = 0;
-			label1.Text = "Имя:*";
+			label1.Text = "Фамилия:*";
 			// 
 			// label2
 			// 
@@ -87,9 +87,9 @@ namespace Client {
 			label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			label2.Location = new System.Drawing.Point(189, 15);
 			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(62, 13);
+			label2.Size = new System.Drawing.Size(37, 13);
 			label2.TabIndex = 1;
-			label2.Text = "Фамилия:*";
+			label2.Text = "Имя:*";
 			// 
 			// label3
 			// 
@@ -114,8 +114,8 @@ namespace Client {
 			tableLayoutPanel4.Controls.Add(label1, 0, 0);
 			tableLayoutPanel4.Controls.Add(label2, 1, 0);
 			tableLayoutPanel4.Controls.Add(label3, 2, 0);
-			tableLayoutPanel4.Controls.Add(this.nameText, 0, 1);
-			tableLayoutPanel4.Controls.Add(this.surnameText, 1, 1);
+			tableLayoutPanel4.Controls.Add(this.nameText, 1, 1);
+			tableLayoutPanel4.Controls.Add(this.surnameText, 0, 1);
 			tableLayoutPanel4.Controls.Add(this.middleNameText, 2, 1);
 			tableLayoutPanel4.Controls.Add(label4, 0, 3);
 			tableLayoutPanel4.Controls.Add(this.birthdayDatetime, 0, 4);
@@ -137,19 +137,19 @@ namespace Client {
 			// 
 			this.nameText.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.nameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.nameText.Location = new System.Drawing.Point(8, 31);
+			this.nameText.Location = new System.Drawing.Point(189, 31);
 			this.nameText.Name = "nameText";
 			this.nameText.Size = new System.Drawing.Size(175, 25);
-			this.nameText.TabIndex = 3;
+			this.nameText.TabIndex = 4;
 			// 
 			// surnameText
 			// 
 			this.surnameText.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.surnameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.surnameText.Location = new System.Drawing.Point(189, 31);
+			this.surnameText.Location = new System.Drawing.Point(8, 31);
 			this.surnameText.Name = "surnameText";
 			this.surnameText.Size = new System.Drawing.Size(175, 25);
-			this.surnameText.TabIndex = 4;
+			this.surnameText.TabIndex = 3;
 			// 
 			// middleNameText
 			// 

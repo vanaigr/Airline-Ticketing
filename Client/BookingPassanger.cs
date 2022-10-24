@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Client {
 	public class BookingPassanger {
-		public int? passangerIndex;
+		public PassangerId passangerId;
 		public bool manualSeatSelected;
 		public int seatIndex;
 		public int seatClassId;
@@ -22,7 +22,7 @@ namespace Client {
 		}
 
 		public BookingPassanger Copy() { return new BookingPassanger {
-			passangerIndex = this.passangerIndex,
+			passangerId = this.passangerId,
 			manualSeatSelected = this.manualSeatSelected,
 			seatIndex = this.seatIndex,
 			seatClassId = this.seatClassId,
