@@ -139,6 +139,12 @@ namespace Communication {
 		public bool isInputError{ get{ return error == 1; } }
 	}
 
+	[Serializable] public struct BookedSeatInfo {
+		public int passangerId;
+		public int selectedSeat;
+		public SeatCost cost;
+	}
+
 	[ServiceContract]
 	public interface MessageService {
 		[OperationContract] Either<object, LoginError> register(Customer customer);
@@ -159,7 +165,7 @@ namespace Communication {
 
 		[OperationContract] Either<SeatCost[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
 
-		[OperationContract] Either<object, LoginOrInputError> bookFlight(Customer? customer, Dictionary<int, Passanger> tempPassangers, SelectedSeat[] selectedSeats, int flightId);
+		[OperationContract] Either<BookedSeatInfo[], LoginOrInputError> bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId);
 
 		[OperationContract] Either<FlightsSeats.Seats, InputError> seatsForFlight(int flightId);
 	}

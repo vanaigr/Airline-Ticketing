@@ -12,12 +12,15 @@ namespace Client {
 	public partial class PassangerSettings : Form {
 		private Communication.MessageService service;
 		private CustomerData customer;
+		private BookingStatus status;
+
 		private Dictionary<int, string> classesNames;
 		
 		private FlightsSeats.Seats seats;
 		private SeatHandling seatHandling;
 
 		private BookingPassanger passanger;
+		private int bookingPassangerIndex;
 
 		public bool useSeatIndex{ get{ return seatSelect.Checked; } }
 
@@ -34,9 +37,9 @@ namespace Client {
 		bool ignore__ = false;
 
 		public PassangerSettings(
-			Communication.MessageService service, CustomerData customer,
+			Communication.MessageService service, CustomerData customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats, SeatHandling seatHandling,
-			BookingPassanger passanger,
+			BookingPassanger passanger, int bookingPassangerIndex,
 			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
 			Dictionary<int, string> allClassesNames
 		) {
@@ -44,6 +47,8 @@ namespace Client {
 
 			this.service = service;
 			this.customer = customer;
+			this.status = status;
+
 			this.seats = seats;
 			this.seatHandling = seatHandling;
 			this.passanger = passanger;
@@ -64,8 +69,11 @@ namespace Client {
 			Misc.addDummyButton(this);
 			Misc.addTopDivider(tableLayoutPanel2);
 
-			this.passangerUpdate.init(service, customer, passanger);
-			this.passangerOptions.init(service, flightId, seats, optionsForClasses, passanger);
+			this.passangerUpdate.init(service, customer, status, passanger);
+			this.passangerOptions.init(
+				service, status, flightId, seats, 
+				optionsForClasses, passanger, bookingPassangerIndex
+			);
 			
 			this.seatPositionTextbox.Text = seats.Scheme.ToName(passanger.seatIndex);
 			
@@ -81,6 +89,23 @@ namespace Client {
 			updateSeatSelectDisplay();
 
 			this.ignore__ = false;
+
+			if(status.booked) updateStatusBooked();
+		}
+
+		private void updateStatusBooked() {
+			deleteButton.Visible = false;
+			deleteButton.Enabled = false;
+
+			cancelButton.Visible = false;
+			cancelButton.Enabled = false;
+
+			seatSelect.Enabled = false;
+			seatPositionTextbox.Enabled = false;
+			seatClassCombobox.Enabled = false;
+
+			applyButton.Text = "Выйти";
+			updateAutoseatClass();
 		}
 
 		private void seatSelect_CheckedChanged(object sender, EventArgs e) {
@@ -159,7 +184,17 @@ namespace Client {
 
 		private void updateClass() {
 			seatClassLabel.Text = "(" + classesNames[seatClassId] + ")";
-			passangerOptions.updateForClassAndSeat();
+
+			if(!status.booked) passangerOptions.updateForClassAndSeat();
+		}
+
+		private void updateAutoseatClass() {
+			if(!status.booked) throw new InvalidOperationException();
+
+			var si = status.seatsInfo[bookingPassangerIndex];
+			seatClassLabel.Text = "[" + seats.Scheme.ToName(si.selectedSeat) + "]";
+
+			if(!status.booked) passangerOptions.updateForClassAndSeat();
 		}
 
 		private void seatClassCombobox_SelectedIndexChanged(object sender, EventArgs e) {

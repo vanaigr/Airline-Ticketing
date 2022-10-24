@@ -167,7 +167,6 @@ namespace Client {
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.Size = new System.Drawing.Size(860, 85);
 			this.tableLayoutPanel3.TabIndex = 6;
-			this.tableLayoutPanel3.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel3_Paint);
 			// 
 			// label1
 			// 

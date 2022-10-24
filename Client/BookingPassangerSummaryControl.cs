@@ -16,7 +16,7 @@ namespace Client {
 		public void set(
 			CustomerData customer, BookingPassanger bookingP,
 			FlightsSeats.Seats seats, Dictionary<int, FlightsOptions.Options> optionsForClasses, 
-			Communication.SeatCost seatData,
+			Communication.BookedSeatInfo? bookedSeatInfo, Communication.SeatCost seatCost,
 			Dictionary<int, string> classesNames
 		) {
 			var passanger = customer.passangers[(int) bookingP.passangerIndex];
@@ -37,7 +37,7 @@ namespace Client {
 			var options = optionsForClasses[seatClass];
 
 			//base brice
-			basePriceLabel.Text = sb.Clear().Append("Базовая цена: ").Append(seatData.basePrice).Append(" руб.").ToString();
+			basePriceLabel.Text = sb.Clear().Append("Базовая цена: ").Append(seatCost.basePrice).Append(" руб.").ToString();
 
 			//seat
 			sb.Clear().Append("Место: ");
@@ -49,10 +49,14 @@ namespace Client {
 			}
 			else { 
 				sb.Append("автовыбор (")
-					.Append(classesNames[seatClass] + ")");
+					.Append(classesNames[seatClass]).Append(")");
+			}
+
+			if(bookedSeatInfo != null) {
+				sb.Append("[").Append(seats.Scheme.ToName(bookedSeatInfo.Value.selectedSeat)).Append("]");
 			}
 			sb.Append(", ");
-			sb.Append(seatData.seatCost).Append(" руб.");
+			sb.Append(seatCost.seatCost).Append(" руб.");
 
 			this.seatLabel.Text = sb.ToString();
 
@@ -80,7 +84,7 @@ namespace Client {
 			sb.Append(", ").Append(h.costRub).Append(" руб.").ToString();
 			handLuggageLabel.Text = sb.ToString();
 
-			this.totalPriceLabel.Text = sb.Clear().Append("Итого: ").Append(seatData.totalCost).Append(" руб.").ToString();
+			this.totalPriceLabel.Text = sb.Clear().Append("Итого: ").Append(seatCost.totalCost).Append(" руб.").ToString();
 		}
 	}
 }

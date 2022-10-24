@@ -13,6 +13,8 @@ namespace Client {
 	public partial class PassangerList : UserControl {
 		private Communication.MessageService service;
 		private CustomerData customer;
+		private BookingStatus status;
+
 		private Dictionary<int, PassangerDisplay> passangersDisplays;
 
 		private BookingPassanger passanger;
@@ -28,6 +30,8 @@ namespace Client {
 
 		private State curState;
 		private void setStateAdd() {
+			if(status.booked) throw new InvalidOperationException();
+
 			curState = State.add;
 			
 			deleteButton.Enabled = false;
@@ -62,6 +66,8 @@ namespace Client {
 		}
 
 		private void setStateEdit() {
+			if(status.booked) throw new InvalidOperationException();
+
 			curState = State.edit;
 
 			deleteButton.Enabled = true;
@@ -100,13 +106,35 @@ namespace Client {
 			setStateNone();
 		}
 
-		public void init(Communication.MessageService sq, CustomerData customer, BookingPassanger passanger) {
+		public void init(Communication.MessageService sq, CustomerData customer, BookingStatus status, BookingPassanger passanger) {
 			this.service = sq;
+			this.status = status;
 			this.customer = customer;
 			this.passanger = passanger;
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
-
+			
 			setupPassangersDisplay(passanger.passangerIndex);
+
+			if(status.booked) updateStatusBooked();
+		}
+
+		public void updateStatusBooked() {
+			deleteButton.Visible = false;
+			deleteButton.Enabled = false;
+
+			editButton.Visible = false;
+			editButton.Enabled = false;
+
+			addButton.Visible = false;
+			addButton.Enabled = false;
+
+			saveButton.Enabled = false;
+			saveButton.Visible = false;
+
+			passangerMenu.Enabled = false;
+
+			passangersDisplay.Enabled = false;
+			passangerDataTable.Enabled = false;
 		}
 
 		public bool onClose() {
@@ -224,6 +252,8 @@ namespace Client {
 		}
 
 		private void save() {
+			if(status.booked) throw new InvalidOperationException();
+
 			var passanger = formPassangerFromData();
 			if(curState == State.add) {
 				var result = saveNewPassanger(passanger);
@@ -276,6 +306,8 @@ namespace Client {
 		}
 
 		private int? saveNewPassanger(Communication.Passanger passanger) {
+			if(status.booked) throw new InvalidOperationException();
+
 			try {
 
 			if(customer.LoggedIn) {
@@ -323,6 +355,8 @@ namespace Client {
 		}
 
 		private int? saveEditedPassanger(Communication.Passanger passanger, int index) {
+			if(status.booked) throw new InvalidOperationException();
+
 			try {
 			var passangerIdData = customer.passangerIds[index];
 
@@ -377,6 +411,8 @@ namespace Client {
 		}
 
 		private bool removePassanger(int index) {
+			if(status.booked) throw new InvalidOperationException();
+
 			try{
 			var passangerIdData = customer.passangerIds[index];
 			

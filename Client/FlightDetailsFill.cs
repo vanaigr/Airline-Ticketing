@@ -16,6 +16,8 @@ namespace Client {
 		private FlightAndCities flightAndCities;
 		private FlightsSeats.Seats seats;
 
+		private BookingStatus status;
+
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
 		public FlightDetailsFill(
@@ -25,6 +27,7 @@ namespace Client {
 		) {
 			this.service = service;
 			this.customer = customer;
+			this.status = new BookingStatus();
 
 			this.classesNames = new Dictionary<int, string>();
 			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
@@ -65,6 +68,30 @@ namespace Client {
 			updateSeatsStatusText();
 		}
 
+		private void updateStatusBooked() {
+			addAutoseat.Visible = false;
+			passangerMenu.Enabled = false;
+
+			seatSelectTable.SuspendLayout();
+
+			foreach(var it in seatSelectTable) {
+				it.Enabled = false;
+			}
+
+			for(int i = 0; i < bookingPassangers.Count; i++) {
+				var ss = status.seatsInfo[i];
+
+				var seatTableLoc = seatSelectTable.getSeatLocation(ss.selectedSeat);
+				var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatTableLoc.X, seatTableLoc.Y);
+
+				seat.Enabled = true;
+				seat.Value = i;
+			}
+
+			seatSelectTable.ResumeLayout(false);
+			seatSelectTable.PerformLayout();
+		}
+
 		private void FlightBooking_Load(object sender, EventArgs e) {
 			ActiveControl = Misc.addDummyButton(this);
 		}
@@ -80,13 +107,15 @@ namespace Client {
 			var newBookingPassanger = passanger.Copy();
 
             var selectionForm = new PassangerSettings(
-				service, customer,
+				service, customer, status,
 				flightAndCities.flight.id, 
 				seats, seatHandling, 
-				newBookingPassanger,
+				newBookingPassanger, index,
 				flightAndCities.flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
+
+			if(status.booked) return;
 			
 			if(result == DialogResult.OK) {
 				if(passanger.manualSeatSelected) {
@@ -129,7 +158,6 @@ namespace Client {
 
 		private void addOrUpdatePassanger(SeatButton button, FlightsSeats.Point location) {
 			int index;
-
 			if(button.Value == null) index = addPassanger();
 			else index = (int) button.Value;
 
@@ -165,6 +193,8 @@ namespace Client {
 		}
 
 		private void удалитьToolStripMenuItem_Click(object sender, EventArgs e) {
+			if(status.booked) throw new InvalidOperationException();
+
 			var pass = (PassangerDisplay) passangerMenu.SourceControl;
 			var number = pass.Number;
 			deletePassanger(number);
@@ -173,6 +203,16 @@ namespace Client {
 		}
 
 		private void continueButton_Click(object sender, EventArgs e) {
+			if(status.booked) {
+				new FlightBook(
+					service, 
+					customer, bookingPassangers, 
+					flightAndCities.flight, seats, 
+					classesNames, status
+				).ShowDialog();
+				return;
+			}
+
 			for(int i = 0; i < bookingPassangers.Count; i++) {
 				var passanger = bookingPassangers[i];
 
@@ -229,17 +269,25 @@ namespace Client {
 				service, 
 				customer, bookingPassangers, 
 				flightAndCities.flight, seats, 
-				classesNames
+				classesNames, status
 			).ShowDialog();
+
+			if(status.booked) {
+				updateStatusBooked();
+			}
 		}
 
 		private void addAutoseat_Click(object sender, EventArgs e) {
+			if(status.booked) throw new InvalidOperationException();
+
 			var index = addPassanger();
 			updateSeatsStatusText();
 			selectCurrentPassanger(index);
 		}
 
 		private int addPassanger() {
+			if(status.booked) throw new InvalidOperationException();
+
 			var index = bookingPassangers.Count;
 
 			var enumerator = classesNames.Keys.GetEnumerator();
@@ -267,6 +315,8 @@ namespace Client {
 		}
 
 		private void deletePassanger(int index) {
+			if(status.booked) throw new InvalidOperationException();
+
 			passangersPanel.SuspendLayout();
 			seatSelectTable.SuspendLayout(); //is this really needed here?
 
@@ -312,13 +362,7 @@ namespace Client {
 				return true;
 			}
 		}
-
-		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
-
-		}
 	}
-
-
 	class SeatButton : Label {
 		private int? value;
 
@@ -562,5 +606,10 @@ namespace Client {
 		static RectangleF point4(float x1, float y1, float x2, float y2) {
 			return new RectangleF(x1, y1, x2 - x1, y2 - y1);
 		}
+	}
+
+	public class BookingStatus {
+		public bool booked;
+		public Communication.BookedSeatInfo[] seatsInfo;
 	}
 }

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class PassangerOptions : UserControl {
 		private Communication.MessageService service;
+		private BookingStatus status;
 		private int flightId;
 
 		private FlightsSeats.Seats seats;
@@ -20,9 +21,13 @@ namespace Client {
 		private Dictionary<int, BaggageOption> handLuggageDisplays;
 
 		private BookingPassanger passanger;
+		private int pookingPassangerIndex;
 
 		public PassangerOptions() {
 			InitializeComponent();
+
+			Misc.fixFlowLayoutPanelHeight(this.baggageOptionsPanel);
+			Misc.fixFlowLayoutPanelHeight(this.handLuggageOptionsPanel);
 
 			this.baggageDisplays = new Dictionary<int, BaggageOption>();
 			this.handLuggageDisplays = new Dictionary<int, BaggageOption>();
@@ -30,18 +35,31 @@ namespace Client {
 
 		public void init(
 			Communication.MessageService service,
+			BookingStatus status,
 			int flightId, FlightsSeats.Seats seats,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
-			BookingPassanger passanger
+			BookingPassanger passanger, int bookingPassangerIndex
 		) {
 			this.service = service;
+			this.status = status;
 			this.flightId = flightId;
 			this.seats = seats;
 			this.optionsForClasses = optionsForClasses;
 			this.passanger = passanger;
+			this.pookingPassangerIndex = pookingPassangerIndex;
 
-			Misc.fixFlowLayoutPanelHeight(this.baggageOptionsPanel);
-			Misc.fixFlowLayoutPanelHeight(this.handLuggageOptionsPanel);
+			updateForClassAndSeat();
+
+			if(status.booked) updateStatusBooked();
+		}
+
+		private void updateStatusBooked() {
+			foreach(var it in baggageOptionsPanel.Controls) {
+				((Control) it).Enabled = false;
+			}
+			foreach(var it in handLuggageOptionsPanel.Controls) {
+				((Control) it).Enabled = false;
+			}
 		}
 
 		private BaggageOption addBaggageOption(FlightsOptions.Baggage b, int optionIndex) {
@@ -125,6 +143,8 @@ namespace Client {
 		}
 
 		private void baggageOptionClicked(BaggageOption option) {
+			if(status.booked) throw new InvalidOperationException();
+
 			var newIndex = option.Index;
 			var curClassId = passanger.ClassId(seats);
 
@@ -190,29 +210,38 @@ namespace Client {
 			}
 			else { 
 				try {
-					var result = service.seatsData(flightId, new Communication.SeatAndOptions[]{ new Communication.SeatAndOptions{
-						selectedSeatClass = curClassId,
-						seatIndex = passanger.manualSeatSelected ? passanger.seatIndex : (int?) null,
-						selectedOptions = new FlightsOptions.SelectedOptions(new FlightsOptions.SelectedBaggageOptions(
-							baggageIndex, handLuggageIndex
-						))
-					} });
+					Communication.SeatCost seatData;
 
-					if(result) {
-						var seatData = result.s[0];
-
-						basePriceLabel.Text = seatData.basePrice + " руб.";
-
-						if(seatData.seatCost == 0) seatPriceLabel.Text = "бесплатно";
-						else seatPriceLabel.Text = seatData.seatCost + " руб.";
-
-						totalCostLabel.Text = seatData.totalCost + " руб.";
+					if(status.booked) {
+						seatData = status.seatsInfo[pookingPassangerIndex].cost;
 					}
-					else {
-						totalCostLabel.ForeColor = Color.Firebrick;
-						totalCostLabel.Text = result.f.message;
-						statusTooltip.SetToolTip(totalCostLabel, result.f.message);
+					else { 
+						var result = service.seatsData(flightId, new Communication.SeatAndOptions[]{ new Communication.SeatAndOptions{
+							selectedSeatClass = curClassId,
+							seatIndex = passanger.manualSeatSelected ? passanger.seatIndex : (int?) null,
+							selectedOptions = new FlightsOptions.SelectedOptions(new FlightsOptions.SelectedBaggageOptions(
+								baggageIndex, handLuggageIndex
+							))
+						} });
+
+						if(result) {
+							seatData = result.s[0];
+						}
+						else {
+							totalCostLabel.ForeColor = Color.Firebrick;
+							totalCostLabel.Text = result.f.message;
+							statusTooltip.SetToolTip(totalCostLabel, result.f.message);
+							return;
+						 }
 					}
+
+					basePriceLabel.Text = seatData.basePrice + " руб.";
+
+					if(seatData.seatCost == 0) seatPriceLabel.Text = "бесплатно";
+					else seatPriceLabel.Text = seatData.seatCost + " руб.";
+
+					totalCostLabel.Text = seatData.totalCost + " руб.";
+					
 				} catch(Exception e) {
 					totalCostLabel.ForeColor = Color.Firebrick;
 					totalCostLabel.Text = "Неизвестная ошибка";
