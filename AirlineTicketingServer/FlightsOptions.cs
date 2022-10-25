@@ -77,11 +77,24 @@ namespace FlightsOptions {
 	}
 }
 
+[Serializable] public class SelectedServicesOptions {
+	public bool seatSelected;
+
+	public SelectedServicesOptions(bool seatSelected) {
+		this.seatSelected = seatSelected;
+	}
+}
+
 [Serializable] public class SelectedOptions {
 	public SelectedBaggageOptions baggageOptions;
+	public SelectedServicesOptions servicesOptions;
 
-	public SelectedOptions(SelectedBaggageOptions baggageOptions) {
+	public SelectedOptions(
+		SelectedBaggageOptions baggageOptions,
+		SelectedServicesOptions servicesOptions
+	) {
 		this.baggageOptions = baggageOptions;
+		this.servicesOptions = servicesOptions;
 	}
 }
 

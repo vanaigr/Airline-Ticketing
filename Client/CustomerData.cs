@@ -13,15 +13,18 @@ namespace Client {
 		public Dictionary<int, PassangerIdData> passangerIds;
 		public Dictionary<int, Passanger> passangers;
 
-		//public int newLocalPassangerId;
-		//public Dictionary<int, Passanger> localPassangers;
-		//public Dictionary<int, Passanger> databasePassangers;
+		public List<BookedFlight> localBookedFlights;
+		public List<BookedFlightDetails> localBookedFlightsDetails;
+
+		public List<BookedFlight> bookedFlights;
 
 		public CustomerData() { 
 			customer = null;
 			newPassangerIndex = 0;
 			passangerIds = new Dictionary<int, PassangerIdData>();
 			passangers = new Dictionary<int, Passanger>();
+			localBookedFlights = new List<BookedFlight>();
+			localBookedFlightsDetails = new List<BookedFlightDetails>();
 		}
 
 		public CustomerData(string login, string password) : this() {
@@ -38,6 +41,9 @@ namespace Client {
 			newPassangerIndex = 0;
 			passangerIds.Clear();
 			passangers.Clear();
+			localBookedFlights.Clear();
+			localBookedFlightsDetails.Clear();
+			bookedFlights = null;
 		}
 
 		public void setFrom(Customer o) {
@@ -45,6 +51,9 @@ namespace Client {
 			newPassangerIndex = 0;
 			passangerIds.Clear();
 			passangers.Clear();
+			localBookedFlights.Clear();
+			localBookedFlightsDetails.Clear();
+			bookedFlights = null;
 		}
 
 		public bool LoggedIn{

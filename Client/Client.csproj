@@ -79,6 +79,12 @@
     <Compile Include="BaggageOption.Designer.cs">
       <DependentUpon>BaggageOption.cs</DependentUpon>
     </Compile>
+    <Compile Include="BookedFlightInfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BookedFlightInfoControl.Designer.cs">
+      <DependentUpon>BookedFlightInfoControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="BookingPassanger.cs" />
     <Compile Include="BookingPassangerSummaryControl.cs">
       <SubType>UserControl</SubType>
@@ -104,6 +110,12 @@
     </Compile>
     <Compile Include="FlightDisplay.Designer.cs">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FlightsHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FlightsHistory.Designer.cs">
+      <DependentUpon>FlightsHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="ListItemLabel.cs">
       <SubType>Component</SubType>
@@ -161,6 +173,9 @@
     <EmbeddedResource Include="BaggageOption.resx">
       <DependentUpon>BaggageOption.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BookedFlightInfoControl.resx">
+      <DependentUpon>BookedFlightInfoControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BookingPassangerSummaryControl.resx">
       <DependentUpon>BookingPassangerSummaryControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -172,6 +187,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FlightDisplay.resx">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FlightsHistory.resx">
+      <DependentUpon>FlightsHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginRegisterForm.resx">
       <DependentUpon>LoginRegisterForm.cs</DependentUpon>

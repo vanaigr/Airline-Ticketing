@@ -15,6 +15,22 @@ namespace Client {
 
 		private BookingPassanger() { }
 
+		public BookingPassanger(
+			int? passangerIndex,
+			bool manualSeatSelected,
+			int seatIndex,
+			int seatClassId,
+			Dictionary<int, int> baggageOptionIndexForClass,
+			Dictionary<int, int> handLuggageOptionIndexForClass
+		) {
+			this.passangerIndex = passangerIndex;
+			this.manualSeatSelected = manualSeatSelected;
+			this.seatIndex = seatIndex;
+			this.seatClassId = seatClassId;
+			this.baggageOptionIndexForClass = baggageOptionIndexForClass;
+			this.handLuggageOptionIndexForClass = handLuggageOptionIndexForClass;
+		}
+
 		public BookingPassanger(int defaultClass) {
 			seatClassId = defaultClass;
 			baggageOptionIndexForClass = new Dictionary<int, int>();

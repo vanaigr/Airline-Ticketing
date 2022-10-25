@@ -74,6 +74,7 @@ namespace Client {
 			this.loginLayoutPanel.AutoSize = true;
 			this.loginLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.loginLayoutPanel.BackColor = System.Drawing.Color.Transparent;
+			this.loginLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.loginLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.loginLayoutPanel.Location = new System.Drawing.Point(884, 0);
 			this.loginLayoutPanel.Margin = new System.Windows.Forms.Padding(0);

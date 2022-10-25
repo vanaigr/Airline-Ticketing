@@ -83,6 +83,26 @@ namespace Communication {
 		public int totalCost;
 	}
 	
+	[Serializable] public sealed class BookedFlight {
+		public int bookedFlightId;
+		public AvailableFlight availableFlight;
+		public string fromCode, toCode;
+		public int bookedPassangerCount;
+		public DateTime bookingFinishedTime;
+	}
+
+	[Serializable] public sealed class BookedFlightDetails {
+		public BookedSeatInfo[] bookedSeats;
+		public SeatAndOptions[] seatsAndOptions;
+		public FlightsSeats.Seats seats;
+	}
+
+	[Serializable] public struct BookedSeatInfo {
+		public int passangerId;
+		public int selectedSeat;
+		public SeatCost cost;
+	}
+
 	[Serializable] public sealed class Either<TS, TF> {
 		private bool isFirst;
 		private TS first;
@@ -115,6 +135,8 @@ namespace Communication {
 		public static bool operator false(Either<TS, TF> it) { return !it.IsSuccess; }
 	}
 
+	[Serializable] public struct Success{ };
+
 	[Serializable] public struct LoginError { 
 		public string message; 
 
@@ -139,21 +161,20 @@ namespace Communication {
 		public bool isInputError{ get{ return error == 1; } }
 	}
 
-	[Serializable] public struct BookedSeatInfo {
-		public int passangerId;
-		public int selectedSeat;
-		public SeatCost cost;
-	}
-
 	[ServiceContract]
 	public interface MessageService {
+		[OperationContract] AvailableOptionsResponse availableOptions();
+
+
 		[OperationContract] Either<object, LoginError> register(Customer customer);
 
 		[OperationContract] Either<object, LoginError> logIn(Customer customer);	
-		
-		[OperationContract] AvailableOptionsResponse availableOptions();	
+			
 
 		[OperationContract] Either<List<AvailableFlight>, InputError> matchingFlights(MatchingFlightsParams p);	
+
+		[OperationContract] Either<FlightsSeats.Seats, InputError> seatsForFlight(int flightId);
+
 
 		[OperationContract] Either<Dictionary<int, Passanger>, LoginError> getPassangers(Customer customer);
 
@@ -163,10 +184,13 @@ namespace Communication {
 
 		[OperationContract] Either<object, LoginOrInputError> removePassanger(Customer customer, int index);
 
+
 		[OperationContract] Either<SeatCost[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
 
 		[OperationContract] Either<BookedSeatInfo[], LoginOrInputError> bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId);
 
-		[OperationContract] Either<FlightsSeats.Seats, InputError> seatsForFlight(int flightId);
+		[OperationContract] Either<BookedFlight[], LoginError> getBookedFlights(Customer customer);
+
+		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Customer customer, int bookedFlightId);
 	}
 }

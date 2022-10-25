@@ -21,7 +21,7 @@ namespace Client {
 		private Dictionary<int, BaggageOption> handLuggageDisplays;
 
 		private BookingPassanger passanger;
-		private int pookingPassangerIndex;
+		private int bookingPassangerIndex;
 
 		public PassangerOptions() {
 			InitializeComponent();
@@ -46,7 +46,7 @@ namespace Client {
 			this.seats = seats;
 			this.optionsForClasses = optionsForClasses;
 			this.passanger = passanger;
-			this.pookingPassangerIndex = pookingPassangerIndex;
+			this.bookingPassangerIndex = bookingPassangerIndex;
 
 			updateForClassAndSeat();
 
@@ -213,15 +213,20 @@ namespace Client {
 					Communication.SeatCost seatData;
 
 					if(status.booked) {
-						seatData = status.seatsInfo[pookingPassangerIndex].cost;
+						seatData = status.seatsInfo[bookingPassangerIndex].cost;
 					}
 					else { 
 						var result = service.seatsData(flightId, new Communication.SeatAndOptions[]{ new Communication.SeatAndOptions{
 							selectedSeatClass = curClassId,
 							seatIndex = passanger.manualSeatSelected ? passanger.seatIndex : (int?) null,
-							selectedOptions = new FlightsOptions.SelectedOptions(new FlightsOptions.SelectedBaggageOptions(
-								baggageIndex, handLuggageIndex
-							))
+							selectedOptions = new FlightsOptions.SelectedOptions(
+								new FlightsOptions.SelectedBaggageOptions(
+									baggageIndex, handLuggageIndex
+								),
+								new FlightsOptions.SelectedServicesOptions(
+									passanger.manualSeatSelected
+								)
+							)
 						} });
 
 						if(result) {

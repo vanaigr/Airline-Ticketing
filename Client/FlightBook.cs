@@ -16,9 +16,10 @@ namespace Client {
 		private List<BookingPassanger> bookingPassangers;
 
 		private Dictionary<int, Communication.Passanger> localPassangers;
+		private Communication.SeatAndOptions[] seatsAndOptions;
 		private Communication.SelectedSeat[] selectedSeats;
 
-		private Communication.AvailableFlight flight;
+		private FlightAndCities flightAndCities;
 		private FlightsSeats.Seats seats;
 
 		private BookingStatus status;
@@ -26,7 +27,7 @@ namespace Client {
 		public FlightBook(
 			Communication.MessageService service,
 			CustomerData customer, List<BookingPassanger> bookingPassangers,
-			Communication.AvailableFlight flight, FlightsSeats.Seats seats,
+			FlightAndCities flightAndCities, FlightsSeats.Seats seats,
 			Dictionary<int, string> classesNames,
 			BookingStatus status
 		) {
@@ -36,7 +37,7 @@ namespace Client {
 			this.customer = customer;
 			this.bookingPassangers = bookingPassangers;
 
-			this.flight = flight;
+			this.flightAndCities = flightAndCities;
 			this.seats = seats;
 
 			this.status = status;
@@ -54,7 +55,7 @@ namespace Client {
 				bookFlightButton.Enabled = false;
 			}
 			else {
-				var seatsAndOptions = new Communication.SeatAndOptions[bookingPassangers.Count];
+				seatsAndOptions = new Communication.SeatAndOptions[bookingPassangers.Count];
 				for(int i = 0; i < seatsAndOptions.Length; i++) {
 					var p = bookingPassangers[i];
 					var seatClassId = p.ClassId(seats);
@@ -66,6 +67,9 @@ namespace Client {
 							new FlightsOptions.SelectedBaggageOptions(
 								p.baggageOptionIndexForClass[seatClassId],
 								p.handLuggageOptionIndexForClass[seatClassId]
+							), 
+							new FlightsOptions.SelectedServicesOptions(
+								p.manualSeatSelected
 							)
 						)
 					};
@@ -93,7 +97,7 @@ namespace Client {
 					Communication.SeatCost[] seatsCost;
 
 					if(!status.booked) {
-						var result = service.seatsData(flight.id, seatsAndOptions);
+						var result = service.seatsData(flightAndCities.flight.id, seatsAndOptions);
 
 						if(result) {
 							seatsCost = result.s;
@@ -145,7 +149,7 @@ namespace Client {
 
 				it.set(
 					customer, passanger,
-					seats, flight.optionsForClasses, 
+					seats, flightAndCities.flight.optionsForClasses, 
 					bookedSeatInfo, seatCost, 
 					classesNames
 				);
@@ -173,10 +177,11 @@ namespace Client {
 		}
 
 		private void bookFlight() {
+			if(status.booked) throw new InvalidOperationException();
+
 			var booked = false;
-			if(status.booked) return;
 			try {
-				var result = service.bookFlight(customer.customer, selectedSeats, localPassangers, flight.id);
+				var result = service.bookFlight(customer.customer, selectedSeats, localPassangers, flightAndCities.flight.id);
 
 				if(result) {
 					booked = true;
@@ -190,6 +195,14 @@ namespace Client {
 						customer.passangerIds[(int) bp.passangerIndex] = new PassangerIdData(ss.passangerId);
 						customer.passangers[(int) bp.passangerIndex].archived = true;
 					}
+
+					customer.localBookedFlights.Add(new Communication.BookedFlight{
+						availableFlight = flightAndCities.flight, bookedPassangerCount = bookingPassangers.Count,
+						fromCode = flightAndCities.fromCityCode, toCode = flightAndCities.toCityCode
+					});
+					customer.localBookedFlightsDetails.Add(new Communication.BookedFlightDetails{
+						bookedSeats = sss, seats = seats, seatsAndOptions = seatsAndOptions
+					});
 
 					statusOk("Бронирование выполено успешно");
 					bookFlightButton.Enabled = false;

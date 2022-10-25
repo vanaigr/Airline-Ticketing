@@ -19,6 +19,6 @@ namespace AirlineTicketingServer {
 				connection.Open();
 		}
 
-		public void Dispose() { if(allowClose) connection.Close(); }
+		public void Dispose() { if(allowClose && connection != null) connection.Dispose(); }
 	}
 }

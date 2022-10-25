@@ -16,6 +16,8 @@ namespace Client {
 
 		string[] avaliableFlightClasses;
 		List<City> cities;
+
+		private Dictionary<int/*flightId*/, FlightDetailsFill> openedBookings = new Dictionary<int, FlightDetailsFill>();
 		
 		public SelectFlight() {
 			customer = new CustomerData();
@@ -35,8 +37,7 @@ namespace Client {
 			
 			findFlightsButton_Click(findFlightsButton, new EventArgs());
 			
-			//customer = new CustomerData("User123", "789456123");
-			//customer.databasePassangers = service.getPassangers(customer.Get()).s;
+			customer = new CustomerData("User123", "789456123");
 			} catch(Exception){ }
 
 			setupAvailableOptions();
@@ -69,65 +70,50 @@ namespace Client {
 			loginLayoutPanel.SuspendLayout();
 			loginLayoutPanel.Controls.Clear();
 
-			if(customer.LoggedIn) {
-				var table = new TableLayoutPanel();
-				
-				table.Margin = new Padding(0);
-				table.AutoSize = true;
-				table.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-				table.Dock = DockStyle.Fill;
-				table.ColumnCount = 2;
-				table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-				table.ColumnStyles.Add(new ColumnStyle());
+			loginLayoutPanel.ColumnStyles.Clear();
 
-				table.RowCount = 1;
-				table.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			loginLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+			loginLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+			loginLayoutPanel.ColumnCount = 2;
+			
 
-				var unloginButton = new Button();
+			var loginActionButton = new Button();
 
-				Misc.setBetterFont(unloginButton, 9, GraphicsUnit.Point);
-				unloginButton.Dock = DockStyle.Fill;
-				unloginButton.Anchor = AnchorStyles.Right;
-				unloginButton.AutoSize = true;
-				unloginButton.BackColor = Color.Transparent;
-				unloginButton.FlatAppearance.BorderColor = Color.Gray;
-				unloginButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
-				unloginButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
-				unloginButton.FlatStyle = FlatStyle.Flat;
-				unloginButton.Text = "Выйти";
-				unloginButton.Click += new System.EventHandler(this.UnloginButton_Click);
+			Misc.setBetterFont(loginActionButton, 9, GraphicsUnit.Point);
+			loginActionButton.Dock = DockStyle.Fill;
+			loginActionButton.AutoSize = true;
+			loginActionButton.BackColor = Color.Transparent;
+			loginActionButton.FlatAppearance.BorderColor = Color.Gray;
+			loginActionButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
+			loginActionButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
+			loginActionButton.FlatStyle = FlatStyle.Flat;
 
-				table.Controls.Add(unloginButton, 1, 0);
-
-				var accountName = new Label();
-
-				Misc.setBetterFont(accountName, 9, GraphicsUnit.Point);
-				accountName.Anchor = AnchorStyles.Right;
-				accountName.AutoSize = true;
-				accountName.Padding = new Padding(8);
-				accountName.TabIndex = 0;
-				accountName.Text = customer.customer?.login;
-
-				table.Controls.Add(accountName, 0, 0);
-
-				loginLayoutPanel.Controls.Add(table);
+			if(customer.LoggedIn) { 
+				loginActionButton.Text = "Выйти";
+				loginActionButton.Click += new EventHandler(this.UnloginButton_Click);
 			}
 			else {
-				var loginButton = new Button();
-
-				Misc.setBetterFont(loginButton, 9, GraphicsUnit.Point);
-				loginButton.Dock = DockStyle.Fill;
-				loginButton.AutoEllipsis = true;
-				loginButton.BackColor = Color.Transparent;
-				loginButton.FlatAppearance.BorderColor = Color.Gray;
-				loginButton.FlatAppearance.MouseDownBackColor = Color.RoyalBlue;
-				loginButton.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
-				loginButton.FlatStyle = FlatStyle.Flat;
-				loginButton.Text = "Войти или зарегестрироваться";
-				loginButton.Click += new EventHandler(this.LoginButton_Click);
-				
-				loginLayoutPanel.Controls.Add(loginButton);	
+				loginActionButton.Text = "Вход/регестрация";
+				loginActionButton.Click += new EventHandler(this.LoginButton_Click);
 			}
+
+			loginLayoutPanel.Controls.Add(loginActionButton, 1, 0);
+
+			var accountName = new Label();
+
+			Misc.setBetterFont(accountName, 9, GraphicsUnit.Point);
+			accountName.Font = new Font(accountName.Font.Name, accountName.Font.SizeInPoints, FontStyle.Underline); 
+			accountName.Cursor = Cursors.Hand;
+			accountName.ForeColor = SystemColors.ControlText;
+			accountName.Dock = DockStyle.Fill;
+			accountName.AutoSize = true;
+			accountName.Padding = new Padding(8);
+			accountName.TabIndex = 0;
+			accountName.MinimumSize = new Size(20, 20);
+			accountName.Text = customer.LoggedIn ? customer.customer.Value.login : "Аккаунт";
+			accountName.Click += (a, b) => openBookedFlightsHistory();
+
+			loginLayoutPanel.Controls.Add(accountName, 0, 0);
 
 			loginLayoutPanel.ResumeLayout(false);
 			loginLayoutPanel.PerformLayout();
@@ -135,15 +121,32 @@ namespace Client {
 
 		void LoginButton_Click(object sender, EventArgs e) {
 			var form = new LoginRegisterForm(service, customer);
+			form.beforeChangeAccount = (a) => { 
+				return warnEverythingWillBeClosed();  
+			};
+
 			var result = form.ShowDialog();
 			if(result == DialogResult.OK) {
+				clearOpenedBookings();
 				updateLoginInfo();
 			}
 		}
 
 		void UnloginButton_Click(object sender, EventArgs e) {
+			bool abort = warnEverythingWillBeClosed();
+			if(abort) return;
+
+			clearOpenedBookings();
 			customer.unlogin();
+
 			updateLoginInfo();
+		}
+
+		private void clearOpenedBookings() {
+			foreach(var it in openedBookings) {
+				it.Value.Dispose();
+			}
+			openedBookings.Clear();
 		}
 
 		private void findFlightsButton_Click(object sender, EventArgs e) {
@@ -257,8 +260,6 @@ namespace Client {
 			reconnect();
 		}
 
-		private Dictionary<int/*flightId*/, FlightDetailsFill> openedBookings = new Dictionary<int, FlightDetailsFill>();
-
 		private void openFlightBooking(object sender, EventArgs e) {
 			var flightDisplay = (FlightDisplay) sender;
 			var fic = flightDisplay.CurrentFlight;
@@ -273,7 +274,8 @@ namespace Client {
 
 					if(result) {
 						booking = new FlightDetailsFill(
-							service, customer,
+							service, customer, 
+							new BookingStatus(), new List<BookingPassanger>(),
 							avaliableFlightClasses, fic, result.s
 						);
 						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
@@ -327,6 +329,22 @@ namespace Client {
 
 		private void flightsTable_Paint(object sender, PaintEventArgs e) {
 			ActiveControl = Misc.addDummyButton(this);
+		}
+
+		private void openBookedFlightsHistory() {
+			var it = new FlightsHistory(service, avaliableFlightClasses, customer);
+			it.ShowDialog();
+		}
+
+		private bool warnEverythingWillBeClosed() {
+			if(openedBookings.Count == 0) return false;
+
+			var result = MessageBox.Show(
+				"При входе/выходе из аккаунта все данные в выбранных рейсах будут потеряны. Продолжить?",
+				"", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2
+			);
+
+			return result != DialogResult.Yes;
 		}
 	}
 }

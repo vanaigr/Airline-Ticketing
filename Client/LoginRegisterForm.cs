@@ -16,6 +16,10 @@ namespace Client {
 		CustomerData customer;
 		MessageService service;
 
+		public BeforeChangeAccountAbort beforeChangeAccount;
+
+		public delegate bool BeforeChangeAccountAbort(Customer newCustomer);
+
 		public LoginRegisterForm(MessageService service, CustomerData customer) {
 			this.service = service;
 			this.customer = customer;
@@ -29,6 +33,12 @@ namespace Client {
 
 		public void setError(string message) {
 			statusLabel.ForeColor = Color.Firebrick;
+			statusLabel.Text = message;
+			statusTooltip.SetToolTip(statusLabel, message);
+		}
+
+		public void setFine(string message) {
+			statusLabel.ForeColor = SystemColors.ControlText;
 			statusLabel.Text = message;
 			statusTooltip.SetToolTip(statusLabel, message);
 		}
@@ -68,6 +78,12 @@ namespace Client {
 				if(response) {
 					var response2 = service.getPassangers(newCust);
 					if(response2) {
+						var abort = beforeChangeAccount?.Invoke(newCust);
+						if(abort == true) {
+							setFine("Вход отменён");
+							return;
+						}
+
 						customer.unlogin() /*
 							all the passangers used previously are lost
 							if the user was unlogged
@@ -82,8 +98,7 @@ namespace Client {
 							customer.passangerIds.Add(index, new PassangerIdData(newPassanger.Key));
 						}
 
-						statusLabel.ForeColor = SystemColors.ControlText;
-						statusLabel.Text = "";
+						setFine(null);
 						
 						DialogResult = DialogResult.OK;
 						Close();

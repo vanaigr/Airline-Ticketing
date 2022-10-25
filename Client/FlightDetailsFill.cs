@@ -22,12 +22,13 @@ namespace Client {
 
 		public FlightDetailsFill(
 			Communication.MessageService service, CustomerData customer,
+			BookingStatus status, List<BookingPassanger> bookingPassangers,
 			string[] classesNames,
 			FlightAndCities flightAndCities, FlightsSeats.Seats seats
 		) {
+			this.status = status;
 			this.service = service;
 			this.customer = customer;
-			this.status = new BookingStatus();
 
 			this.classesNames = new Dictionary<int, string>();
 			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
@@ -42,7 +43,7 @@ namespace Client {
 			InitializeComponent();
 
 			Misc.unfocusOnEscape(this);
-			passangersPanel.AutoScrollMargin = new System.Drawing.Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
+			passangersPanel.AutoScrollMargin = new Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
 
 			this.seatSelectTable.BackColor2 = Color.LightGray;
 
@@ -52,13 +53,22 @@ namespace Client {
 
 			Misc.fixFlowLayoutPanelHeight(passangersPanel);
 
-			bookingPassangers = new List<BookingPassanger>();
+			this.bookingPassangers = new List<BookingPassanger>(bookingPassangers);
 			curPassangersDisplays = new List<PassangerDisplay>();
+
+			for(int i = 0; i < this.bookingPassangers.Count; i++) {
+				addPassangerDisplay(i);
+				var pIndex = this.bookingPassangers[i].passangerIndex;
+				if(pIndex != null) {
+					curPassangersDisplays[i].Passanger = customer.passangers[(int) pIndex];
+				}
+				else curPassangersDisplays[i].Passanger = null;
+			}
 
 			headerContainer.SuspendLayout();
 			flightNameLabel.Text = flight.flightName;
 			aitrplaneNameLavel.Text = flight.airplaneName;
-			departureDatetimeLabel.Text = flight.departureTime.ToString("d MMMM, dddd, h:mm");
+			departureDatetimeLabel.Text = flight.departureTime.ToString("d MMMM, dddd, HH:mm");
 			departureLocationLabel.Text = flightAndCities.fromCityCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
@@ -66,6 +76,8 @@ namespace Client {
 			seatSelectTable.update(seats, addOrUpdatePassanger);
 
 			updateSeatsStatusText();
+
+			if(status.booked) updateStatusBooked();
 		}
 
 		private void updateStatusBooked() {
@@ -84,6 +96,7 @@ namespace Client {
 				var seatTableLoc = seatSelectTable.getSeatLocation(ss.selectedSeat);
 				var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatTableLoc.X, seatTableLoc.Y);
 
+				seat.Occupied = false;
 				seat.Enabled = true;
 				seat.Value = i;
 			}
@@ -207,7 +220,7 @@ namespace Client {
 				new FlightBook(
 					service, 
 					customer, bookingPassangers, 
-					flightAndCities.flight, seats, 
+					flightAndCities, seats, 
 					classesNames, status
 				).ShowDialog();
 				return;
@@ -268,7 +281,7 @@ namespace Client {
 			new FlightBook(
 				service, 
 				customer, bookingPassangers, 
-				flightAndCities.flight, seats, 
+				flightAndCities, seats, 
 				classesNames, status
 			).ShowDialog();
 
@@ -288,16 +301,20 @@ namespace Client {
 		private int addPassanger() {
 			if(status.booked) throw new InvalidOperationException();
 
-			var index = bookingPassangers.Count;
-
 			var enumerator = classesNames.Keys.GetEnumerator();
 			enumerator.MoveNext();
-
-			var display = new PassangerDisplay() { Number = index };
+			var index = bookingPassangers.Count;
 			bookingPassangers.Add(new BookingPassanger(enumerator.Current));
-			curPassangersDisplays.Add(display);
-
 			enumerator.Dispose();
+
+			addPassangerDisplay(index);
+
+			return index;
+		}
+
+		private void addPassangerDisplay(int index) {
+			var display = new PassangerDisplay() { Number = index };
+			curPassangersDisplays.Add(display);
 			
 			display.ContextMenuStrip = passangerMenu;
 			display.Click += (a, b) => selectCurrentPassanger(((PassangerDisplay) a).Number);
@@ -310,8 +327,6 @@ namespace Client {
 			passangersDisplayList.Controls.Add(display);
 			passangersDisplayList.ResumeLayout(false);
 			passangersDisplayList.PerformLayout();
-
-			return index;
 		}
 
 		private void deletePassanger(int index) {
@@ -376,6 +391,16 @@ namespace Client {
 			}
 		}
 
+		private bool occupied;
+
+		public bool Occupied{
+			get{ return occupied; }
+			set{
+				occupied = value;
+				setColors();
+			}
+		}
+
 		public SeatButton() : base() {
 			Misc.setBetterFont(this);
 
@@ -390,7 +415,7 @@ namespace Client {
 		}
 
 		private void setColors() {
-			 if(!Enabled) {
+			 if(occupied) {
 				BackColor = Color.FromArgb(unchecked((int) 0xff727883u));
 				ForeColor = SystemColors.ControlText;
 			}
@@ -586,7 +611,11 @@ namespace Client {
 							var seat = seats[x, z];
 
 							var it = new SeatButton();
-							if(seat.Occupied) it.Enabled = false;
+							if(seat.Occupied) {
+								it.Enabled = false;
+								it.Occupied = true;
+							}
+							else it.Occupied = false;
 							it.Click += (a, b) => clicked(it, seatLoc);
 
 							var tablePos = new Point(tableZ, 1 + x*xSpan);

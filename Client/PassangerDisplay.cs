@@ -14,14 +14,16 @@ namespace Client {
 
 		Communication.Passanger passanger;
 
+		private string tooltipMessage;
+
 		private ToolTip toolTip;
 		public ToolTip ToolTip{
 			get{ return toolTip; }
 			set{
-				var tt = toolTip?.GetToolTip(this);
-				toolTip?.SetToolTip(this, null);
+				toolTip?.SetToolTip(clickArea, null);
 				toolTip = value;
-				toolTip?.SetToolTip(this, tt);
+				toolTip?.SetToolTip(clickArea, tooltipMessage);
+				Console.WriteLine(tooltipMessage);
 			}
 		}
 
@@ -41,12 +43,13 @@ namespace Client {
 		public int Number{ get{ return number; } set{ number = value; setNumberLabel(); } }
 
 		public object Data;
+		private TransparentPanel clickArea;
 
 		public PassangerDisplay() : base() {
 			InitializeComponent();
 
 			this.SuspendLayout();
-			var clickArea = new TransparentPanel();
+			clickArea = new TransparentPanel();
 			clickArea.Dock = DockStyle.Fill;
 			clickArea.Click += (a, e) => { this.OnClick(e); };
 			this.Controls.Add(clickArea);
@@ -74,8 +77,9 @@ namespace Client {
 				FullNameLabel.Text = sb.ToString();
 
 				sb.Clear().Append(passanger.surname).Append(" ").Append(passanger.name).Append(" ").Append(passanger.middleName);
-				ToolTip?.SetToolTip(FullNameLabel,sb.ToString()); /*
-					TODO: should the tooTip message be manually remove it when this component gets gisposed?
+				tooltipMessage = sb.ToString();
+				ToolTip?.SetToolTip(clickArea, tooltipMessage); /*
+					is the tooTip message be manually removed when this component gets disposed?
 				*/
 				BirthdayLabel.Text = passanger.birthday.ToString("dd.MM.yyyy");
 			}

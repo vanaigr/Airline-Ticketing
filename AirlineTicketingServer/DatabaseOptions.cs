@@ -144,17 +144,45 @@ namespace FlightsOptions {
 			}}
 		}
 
+
         public static byte[] toBytes(SelectedOptions it) {
 			using(
 			var ms = new MemoryStream(9)) {
 			using(
 			var st = new BinaryWriter(ms)) {
 
-			st.Write((byte)0);
+			st.Write((byte)1);
 			st.Write(it.baggageOptions.baggageIndex);
 			st.Write(it.baggageOptions.handLuggageIndex);
+			st.Write(it.servicesOptions.seatSelected);
 			
 			return ms.ToArray();
+			}}
+        }
+
+		public static SelectedOptions selectedOptionsFromBytes(byte[] bytes) {
+			using(
+			var stream = new MemoryStream(bytes, false)) { 
+			using(
+			var reader = new BinaryReader(stream)) {
+
+			Debug.Assert(reader.ReadByte() == 1);
+			var baggageIndex = reader.ReadInt32();
+			var handLuggageIndex = reader.ReadInt32();
+			var seatSelected = reader.ReadBoolean();
+
+			Debug.Assert(stream.Position == stream.Length);
+			stream.Dispose();
+			reader.Dispose();
+
+			return new SelectedOptions(
+				new SelectedBaggageOptions(
+					baggageIndex, handLuggageIndex
+				),
+				new SelectedServicesOptions(
+					seatSelected
+				)
+			);
 			}}
         }
 	}
