@@ -22,6 +22,8 @@ namespace Client {
 
 			InitializeComponent();
 
+			Misc.addBottomDivider(tableLayoutPanel2);
+
 			try{
 				if(customer.LoggedIn && customer.bookedFlights == null) {
 					var result = service.getBookedFlights(customer.customer.Value);
@@ -67,6 +69,9 @@ namespace Client {
 					);
 					it.Dock = DockStyle.Top;
 					it.Margin = new Padding(0, 5, 0, 5);
+					it.OnDelete += (a, b) => {
+						it.Dispose();
+					};
 
 					flightsTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 					flightsTable.Controls.Add(it, 0, flightsTable.RowCount++);
@@ -82,6 +87,9 @@ namespace Client {
 						);
 						it.Dock = DockStyle.Top;
 						it.Margin = new Padding(0, 5, 0, 5);
+						it.OnDelete += (a, b) => {
+							it.Dispose();
+						};
 
 						flightsTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 						flightsTable.Controls.Add(it, 0, flightsTable.RowCount++);

@@ -97,6 +97,12 @@ namespace Communication {
 		public FlightsSeats.Seats seats;
 	}
 
+	[Serializable] public struct BookingFlightResult {
+		public int? customerBookedFlightId;
+		public DateTime bookingFinishedTime;
+		public BookedSeatInfo[] seatsInfo;
+	}
+
 	[Serializable] public struct BookedSeatInfo {
 		public int passangerId;
 		public int selectedSeat;
@@ -187,10 +193,12 @@ namespace Communication {
 
 		[OperationContract] Either<SeatCost[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
 
-		[OperationContract] Either<BookedSeatInfo[], LoginOrInputError> bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId);
+		[OperationContract] Either<BookingFlightResult, LoginOrInputError> bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId);
 
 		[OperationContract] Either<BookedFlight[], LoginError> getBookedFlights(Customer customer);
 
 		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Customer customer, int bookedFlightId);
+
+		[OperationContract] Either<int/*remainingPassangersCount*/, LoginOrInputError> deleteBookedFlightSeat(Customer customer, int bookedFlightId, int seatIndex);
 	}
 }

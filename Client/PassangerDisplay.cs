@@ -23,7 +23,6 @@ namespace Client {
 				toolTip?.SetToolTip(clickArea, null);
 				toolTip = value;
 				toolTip?.SetToolTip(clickArea, tooltipMessage);
-				Console.WriteLine(tooltipMessage);
 			}
 		}
 

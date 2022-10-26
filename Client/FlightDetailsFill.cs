@@ -20,9 +20,12 @@ namespace Client {
 
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
 
+		public event EventHandler OnBookedPassangersChanged;
+
 		public FlightDetailsFill(
 			Communication.MessageService service, CustomerData customer,
-			BookingStatus status, List<BookingPassanger> bookingPassangers,
+			BookingStatus status,
+			List<BookingPassanger> bookingPassangers,
 			string[] classesNames,
 			FlightAndCities flightAndCities, FlightsSeats.Seats seats
 		) {
@@ -81,6 +84,7 @@ namespace Client {
 		}
 
 		private void updateStatusBooked() {
+			continueButton.Text = "Просмотреть";
 			addAutoseat.Visible = false;
 			passangerMenu.Enabled = false;
 
@@ -128,41 +132,79 @@ namespace Client {
 			);
 			var result = selectionForm.ShowDialog();
 
-			if(status.booked) return;
-			
-			if(result == DialogResult.OK) {
-				if(passanger.manualSeatSelected) {
-					var seatLoc = seatSelectTable.getSeatLocation(passanger.seatIndex);
-					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
-					seat.Value = null;
-				}
-				
-				if(newBookingPassanger.manualSeatSelected) {
-					var seatLoc = seatSelectTable.getSeatLocation(newBookingPassanger.seatIndex);
-					var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
-					seat.Value = index;
-				}
+			if(status.booked) {
+				if(result  == DialogResult.Abort) {
+					var newArr = removedAt(status.seatsInfo, index);
 
-				bookingPassangers[index] = newBookingPassanger;
-			}
-			else if(result == DialogResult.Abort) {
-				deletePassanger(index);
-			}
+					status.seatsInfo = newArr;
 
-			for(int i = 0; i < bookingPassangers.Count; i++) {
-				var bookingPassanger = bookingPassangers[i];
-				var display = curPassangersDisplays[i];
+					deletePassanger(index);
+					OnBookedPassangersChanged?.Invoke(this, new EventArgs());
 
-				if(bookingPassanger.passangerIndex != null) {
-					Communication.Passanger p;
-					var exists = customer.passangers.TryGetValue((int) bookingPassanger.passangerIndex, out p);
-					if(exists) {
-						display.Passanger = p;
+					//TODO: fix local flight even when bookedFlightId is null
+					if(status.bookedFlightId != null) {
+						var delete = newArr.Length == 0;
+
+						for(var i = 0; i < customer.localBookedFlights.Count; i++) {
+							if(customer.localBookedFlights[i].bookedFlightId == status.bookedFlightId) {
+								if(delete) {
+									customer.localBookedFlights.RemoveAt(i);
+									customer.localBookedFlightsDetails.RemoveAt(i);
+								}
+								else {
+									removedAt(customer.localBookedFlightsDetails[i].bookedSeats, index);
+									removedAt(customer.localBookedFlightsDetails[i].seatsAndOptions, index);
+								}
+								break;
+							}
+						}
+
+						if(customer.bookedFlights != null) {
+							for(var i = 0; i < customer.bookedFlights.Count; i++) {
+								if(customer.bookedFlights[i].bookedFlightId == status.bookedFlightId) {
+									if(delete) customer.bookedFlights.RemoveAt(i);
+									break;
+								}
+							}
+						}
 					}
-					else {
-						bookingPassanger.passangerIndex = null;
-						display.Passanger = null;
-					}		
+				}
+			}
+			else { 
+				if(result == DialogResult.OK) {
+					if(passanger.manualSeatSelected) {
+						var seatLoc = seatSelectTable.getSeatLocation(passanger.seatIndex);
+						var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
+						seat.Value = null;
+					}
+					
+					if(newBookingPassanger.manualSeatSelected) {
+						var seatLoc = seatSelectTable.getSeatLocation(newBookingPassanger.seatIndex);
+						var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatLoc.X, seatLoc.Y);
+						seat.Value = index;
+					}
+
+					bookingPassangers[index] = newBookingPassanger;
+				}
+				else if(result == DialogResult.Abort) {
+					deletePassanger(index);
+				}
+
+				for(int i = 0; i < bookingPassangers.Count; i++) {
+					var bookingPassanger = bookingPassangers[i];
+					var display = curPassangersDisplays[i];
+
+					if(bookingPassanger.passangerIndex != null) {
+						Communication.Passanger p;
+						var exists = customer.passangers.TryGetValue((int) bookingPassanger.passangerIndex, out p);
+						if(exists) {
+							display.Passanger = p;
+						}
+						else {
+							bookingPassanger.passangerIndex = null;
+							display.Passanger = null;
+						}		
+					}
 				}
 			}
 
@@ -330,8 +372,6 @@ namespace Client {
 		}
 
 		private void deletePassanger(int index) {
-			if(status.booked) throw new InvalidOperationException();
-
 			passangersPanel.SuspendLayout();
 			seatSelectTable.SuspendLayout(); //is this really needed here?
 
@@ -351,6 +391,15 @@ namespace Client {
 			seatSelectTable.ResumeLayout(false);
 			passangersPanel.PerformLayout();
 			seatSelectTable.PerformLayout();
+		}
+
+		static T[] removedAt<T>(T[] arr, int index) {
+			var newArr = new T[arr.Length-1];
+	
+			if(index > 1) Array.Copy(arr, newArr, index);
+			if(index <= arr.Length-2) Array.Copy(arr, index+1, newArr, index, arr.Length-1 - index);
+	
+			return newArr;
 		}
 
 		class SeatHandlingFromScheme : PassangerSettings.SeatHandling {
@@ -638,6 +687,7 @@ namespace Client {
 	}
 
 	public class BookingStatus {
+		public int? bookedFlightId;
 		public bool booked;
 		public Communication.BookedSeatInfo[] seatsInfo;
 	}

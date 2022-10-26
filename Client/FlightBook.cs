@@ -185,11 +185,13 @@ namespace Client {
 
 				if(result) {
 					booked = true;
-					var sss = result.s;
-					status.seatsInfo = sss;
+					var booking = result.s;
+
+					status.bookedFlightId = booking.customerBookedFlightId;
+					status.seatsInfo = booking.seatsInfo;
 					
 					for(int i = 0; i < bookingPassangers.Count; i++) {
-						var ss = sss[i];
+						var ss = status.seatsInfo[i];
 						var bp = bookingPassangers[i];
 
 						customer.passangerIds[(int) bp.passangerIndex] = new PassangerIdData(ss.passangerId);
@@ -201,7 +203,7 @@ namespace Client {
 						fromCode = flightAndCities.fromCityCode, toCode = flightAndCities.toCityCode
 					});
 					customer.localBookedFlightsDetails.Add(new Communication.BookedFlightDetails{
-						bookedSeats = sss, seats = seats, seatsAndOptions = seatsAndOptions
+						bookedSeats = status.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
 					});
 
 					statusOk("Бронирование выполено успешно");

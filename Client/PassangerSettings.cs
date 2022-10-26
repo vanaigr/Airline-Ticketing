@@ -94,8 +94,9 @@ namespace Client {
 		}
 
 		private void updateStatusBooked() {
-			deleteButton.Visible = false;
-			deleteButton.Enabled = false;
+			deleteButton.Text = "Удалить бронь";
+			if(status.bookedFlightId == null) deleteButton.Enabled = false;
+			else deleteButton.Enabled = true;
 
 			cancelButton.Visible = false;
 			cancelButton.Enabled = false;
@@ -137,7 +138,44 @@ namespace Client {
 		}
 
 		private void deleteButton_Click(object sender, EventArgs e) {
-			DialogResult = DialogResult.Abort;
+			if(status.booked) {
+				if(status.bookedFlightId == null) throw new InvalidOperationException();
+
+				var dResult = MessageBox.Show(
+					"Вы точно хотите отменить бронь данного места?", "",
+					MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
+				);
+
+				if(dResult == DialogResult.Yes) try {
+					var result = service.deleteBookedFlightSeat(
+						customer.customer.Value, (int) status.bookedFlightId, 
+						status.seatsInfo[bookingPassangerIndex].selectedSeat
+					);
+
+					if(result) {
+						Debug.Assert(result.s == status.seatsInfo.Length-1);
+
+						DialogResult = DialogResult.Abort;
+					}
+					else {
+						var msg = result.f.isInputError ? result.f.InputError.message : result.f.LoginError.message;
+						statusLabel.Text = msg;
+						statusToolitp.SetToolTip(statusLabel, msg);
+					}
+				}
+				catch(Exception ex) {
+					statusLabel.Text = "Неизвестная ошибка";
+					statusToolitp.SetToolTip(statusLabel, ex.ToString());
+				}
+			}
+			else { 
+				var dResult = MessageBox.Show(
+					"Вы точно хотите отменить выбор данного места?", "",
+					MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
+				);
+
+				if(dResult == DialogResult.Yes) DialogResult = DialogResult.Abort;
+			}
 		}
 
 		private void messageSeatError() {

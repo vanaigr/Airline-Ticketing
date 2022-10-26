@@ -216,6 +216,7 @@ namespace Client {
 
 				if(mb == DialogResult.Yes) {
 					var result = saveNewPassanger(curPassanger);
+					if(result != null) setStateSelect((int) result);
 					return result != null;
 				}
 				else if(mb == DialogResult.No) return true;

@@ -20,6 +20,10 @@ namespace Client {
 
 		private SetStatus setStatus;
 
+		public int BookedFlightId{ get{ return bookedFlight.bookedFlightId; } }
+
+		public event EventHandler OnDelete;
+
 		public BookedFlightInfoControl(
 			Communication.MessageService service,
 			SetStatus setStatus,
@@ -50,8 +54,8 @@ namespace Client {
 			departireDatetimeLabel.Text = af.departureTime.ToString("d MMMM, ddd, HH:mm");
 			arrivalLocationLabel.Text = bookedFlight.toCode;
 			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsteMinutes).ToString("d MMMM, ddd, HH:mm");
-			bookedSeatsCountLabel.Text = "Забронированно мест: " + bookedFlight.bookedPassangerCount;
 			bookingFinishedTimeLabel.Text = "Дата бронирования: " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
+			updateBookedSeatsCount();
 		}
 
 		private Form openedFlightDetails = null;
@@ -86,6 +90,7 @@ namespace Client {
 
 				var status = new BookingStatus{ 
 					booked = true, 
+					bookedFlightId = bookedFlight.bookedFlightId,
 					seatsInfo = new Communication.BookedSeatInfo[
 						bfDetails.bookedSeats.Length
 					] 
@@ -115,12 +120,19 @@ namespace Client {
 				}
 
 				var form = new FlightDetailsFill(
-					null, customer, status,
+					service, customer, status,
 					bookingPassangers, classesNames,
 					fis, bfDetails.seats
 				);
 
-				form.FormClosed += (a, b) => openedFlightDetails = null;
+				form.FormClosed += (a, b) => {
+					openedFlightDetails = null;
+				};
+
+				form.OnBookedPassangersChanged += (a, b) => {
+					if(bookedFlight.bookedPassangerCount == 0) OnDelete?.Invoke(this, new EventArgs());
+					else updateBookedSeatsCount();
+				};
 
 				openedFlightDetails = form;
 				form.Show();
@@ -128,6 +140,10 @@ namespace Client {
 			catch(Exception ex) {
 				setStatus(null, ex);
 			}
+		}
+
+		private void updateBookedSeatsCount() {
+			bookedSeatsCountLabel.Text = "Забронированно мест: " + bookedFlight.bookedPassangerCount;
 		}
 
 		private static int? findPasangerIndexByDatabaseId(CustomerData customer, int databaseId) {

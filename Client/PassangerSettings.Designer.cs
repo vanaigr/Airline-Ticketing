@@ -24,6 +24,7 @@ namespace Client {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			this.mainTabs = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.passangerUpdate = new Client.PassangerList();
@@ -38,6 +39,8 @@ namespace Client {
 			this.seatPositionTextbox = new System.Windows.Forms.TextBox();
 			this.seatClassCombobox = new Client.Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor();
 			this.seatClassLabel = new System.Windows.Forms.Label();
+			this.statusLabel = new System.Windows.Forms.Label();
+			this.statusToolitp = new System.Windows.Forms.ToolTip(this.components);
 			this.mainTabs.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -86,7 +89,7 @@ namespace Client {
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(795, 408);
+			this.tabPage2.Size = new System.Drawing.Size(795, 406);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Опции";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -98,7 +101,7 @@ namespace Client {
 			this.passangerOptions.Location = new System.Drawing.Point(0, 0);
 			this.passangerOptions.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerOptions.Name = "passangerOptions";
-			this.passangerOptions.Size = new System.Drawing.Size(795, 408);
+			this.passangerOptions.Size = new System.Drawing.Size(795, 406);
 			this.passangerOptions.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -139,6 +142,7 @@ namespace Client {
 			this.tableLayoutPanel2.Controls.Add(this.seatPositionTextbox, 3, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatClassCombobox, 5, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatClassLabel, 4, 0);
+			this.tableLayoutPanel2.Controls.Add(this.statusLabel, 6, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 434);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -239,7 +243,7 @@ namespace Client {
 			this.seatClassCombobox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.seatClassCombobox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.seatClassCombobox.FormattingEnabled = true;
-			this.seatClassCombobox.Location = new System.Drawing.Point(364, 9);
+			this.seatClassCombobox.Location = new System.Drawing.Point(364, 8);
 			this.seatClassCombobox.Margin = new System.Windows.Forms.Padding(0);
 			this.seatClassCombobox.Name = "seatClassCombobox";
 			this.seatClassCombobox.Size = new System.Drawing.Size(100, 23);
@@ -258,6 +262,18 @@ namespace Client {
 			this.seatClassLabel.TabIndex = 7;
 			this.seatClassLabel.Text = "seatClass";
 			this.seatClassLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// statusLabel
+			// 
+			this.statusLabel.AutoEllipsis = true;
+			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.statusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.statusLabel.ForeColor = System.Drawing.Color.Salmon;
+			this.statusLabel.Location = new System.Drawing.Point(467, 0);
+			this.statusLabel.Name = "statusLabel";
+			this.statusLabel.Size = new System.Drawing.Size(166, 39);
+			this.statusLabel.TabIndex = 8;
+			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// PassangerSettings
 			// 
@@ -296,5 +312,7 @@ namespace Client {
 		private System.Windows.Forms.CheckBox seatSelect;
 		private Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor seatClassCombobox;
 		private System.Windows.Forms.Label seatClassLabel;
+		private System.Windows.Forms.Label statusLabel;
+		private System.Windows.Forms.ToolTip statusToolitp;
 	}
 }

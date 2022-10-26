@@ -426,8 +426,8 @@ namespace AirlineTicketingServer {
 				}
 			}
 
-			Either<BookedSeatInfo[], LoginOrInputError> MessageService.bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId) {
-				if(selectedSeats.Length == 0) return Either<BookedSeatInfo[], LoginOrInputError>.Failure(new LoginOrInputError{
+			Either<BookingFlightResult, LoginOrInputError> MessageService.bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId) {
+				if(selectedSeats.Length == 0) return Either<BookingFlightResult, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError("Должен быть добавлен хотя бы один пассажир")
 				});
 
@@ -486,36 +486,27 @@ namespace AirlineTicketingServer {
 
 				//calculate price
 				var optionsResult = extractOptions(new SqlConnectionView(connection, false), flightId);
-				if(!optionsResult.IsSuccess) return Either<BookedSeatInfo[], LoginOrInputError>.Failure(
+				if(!optionsResult.IsSuccess) return Either<BookingFlightResult, LoginOrInputError>.Failure(
 					new LoginOrInputError{ InputError = optionsResult.f }
 				);
 				var costsResult = calculateSeatsCosts(optionsResult.s, seatsAndOptions);
-				if(!costsResult.IsSuccess) return Either<BookedSeatInfo[], LoginOrInputError>.Failure(
+				if(!costsResult.IsSuccess) return Either<BookingFlightResult, LoginOrInputError>.Failure(
 					new LoginOrInputError{ InputError = costsResult.f }
 				);
 				var costs = costsResult.s;
 
-				//try logging user in
-				int? userId;
-				if(customer != null) {
-					var userIdRes = getUserId(new SqlConnectionView(connection, false), (Customer) customer);
-					if(!userIdRes.IsSuccess) return Either<BookedSeatInfo[], LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
-					userId = userIdRes.s;
-				}
-				else userId = null;
 
 				using(
 				var bookFlight = new SqlCommand("[Flights].[BookFlight]", connection)) {
 				bookFlight.CommandType = CommandType.StoredProcedure;
 
 				var customerParam = bookFlight.Parameters.Add("@Customer", SqlDbType.Int);
-				if(userId != null) customerParam.Value = userId;
-				else customerParam.Value = DBNull.Value;
 				bookFlight.Parameters.AddWithValue("@AvailableFlight", flightId);
-
+				var customerBookedFlightIdParam = bookFlight.Parameters.Add("@CustomerBookedFlightId", SqlDbType.Int);
 				var errorAlreadyArchivedParam = bookFlight.Parameters.Add("@AlreadyArchived", SqlDbType.Bit);
 				var errorSeatParam = bookFlight.Parameters.Add("@ErrorSeatId", SqlDbType.Int);
 				var errorPassangerParam = bookFlight.Parameters.Add("@ErrorTempPassangerId ", SqlDbType.Int);
+				customerBookedFlightIdParam.Direction = ParameterDirection.Output;
 				errorAlreadyArchivedParam.Direction = ParameterDirection.Output;
 				errorSeatParam.Direction = ParameterDirection.Output;
 				errorPassangerParam.Direction = ParameterDirection.Output;
@@ -528,6 +519,13 @@ namespace AirlineTicketingServer {
 				var tempPassangersParam = bookFlight.Parameters.AddWithValue("@TempPassangers", tempPassangersTable);
 				tempPassangersParam.SqlDbType = SqlDbType.Structured;
 				tempPassangersParam.TypeName = "[Flights].[TempPassangers]";
+
+				if(customer != null) {
+					var userIdRes = getUserId(new SqlConnectionView(connection, false), (Customer) customer);
+					if(!userIdRes.IsSuccess) return Either<BookingFlightResult, LoginOrInputError>.Failure(new LoginOrInputError{ LoginError = userIdRes.Failure() });
+					customerParam.Value = userIdRes.s;
+				}
+				else customerParam.Value = DBNull.Value;
 				
 				//book flight
 				var flightBookingResult = new DataSet();
@@ -538,7 +536,7 @@ namespace AirlineTicketingServer {
 
 				//return expected error
 				var es = Validation.ErrorString.Create();
-
+				
 				if((bool) errorAlreadyArchivedParam.Value) {
 					es.ac("на данный рейс уже невозможно оформить билеты");
 				}
@@ -551,7 +549,7 @@ namespace AirlineTicketingServer {
 					es.ac("Пассажир " + errorPassanger + " не может быть добавлен");
 				}
 				
-				if(es.Error) return Either<BookedSeatInfo[], LoginOrInputError>.Failure(new LoginOrInputError{
+				if(es.Error) return Either<BookingFlightResult, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError(es.Message)
 				});
 
@@ -614,7 +612,11 @@ namespace AirlineTicketingServer {
 					result[i] = bookingSeatInfo;
 				}
 				
-				return Either<BookedSeatInfo[], LoginOrInputError>.Success(result);
+				return Either<BookingFlightResult, LoginOrInputError>.Success(new BookingFlightResult{
+					customerBookedFlightId = customerBookedFlightIdParam.Value is DBNull ? 
+						null : (int?) customerBookedFlightIdParam.Value,
+					seatsInfo = result
+				});
 				}}
 			}
 
@@ -643,6 +645,7 @@ namespace AirlineTicketingServer {
 					inner join [Flights].[Airplanes] as [ap]
 					on [fi].[Airplane] = [ap].[Id];
 
+
 					--get seats occupation
 					select 
 						[afs].[SeatIndex],
@@ -652,6 +655,7 @@ namespace AirlineTicketingServer {
 						select *
 						from [Flights].[AvailableFlightsSeats] as [afs]
 						where @AvailableFlight = [afs].[AvailableFlight]
+							and [afs].[CanceledIndex] = 0
 					) as [afs]
 
 					inner join [Flights].[AirplanesSeats] as [aps]
@@ -764,6 +768,7 @@ namespace AirlineTicketingServer {
 						select *
 						from [Customers].[CustomersBookedFlights] as [cbf]
 						where [cbf].[Customer] = @Customer
+							and [cbf].[PassangersCount] > 0
 					) as [cbf]
 
 					inner join [Flights].[AvailableFlights] as [af]
@@ -856,7 +861,7 @@ namespace AirlineTicketingServer {
 					where [cbf].[Customer] = @Customer and [cbf].[Id] = @BookedFlightId;
 
 					if(@AvailableFlight is null) begin
-						raiserror('AvailableFlight is null', 11, 1);
+						raiserror('AvailableFlight is null', 11, 2);
 						goto skipEverything;
 					end;
 
@@ -865,6 +870,7 @@ namespace AirlineTicketingServer {
 					from [Flights].[AvailableFlightsSeats] as [afs]
 					where [afs].[AvailableFlight] = @AvailableFlight
 						and [afs].[CustomerBookedFlightId] = @BookedFlightId
+						and [afs].[CanceledIndex] = 0
 					order by [afs].[SeatIndex] asc;
 
 
@@ -899,6 +905,10 @@ namespace AirlineTicketingServer {
 
 				customerParam.Value = userId;
 
+				byte[] optionsBin;
+				Either<Success, InputError> executionResult;
+				try{
+				
 				using(
 				var result = command.ExecuteReader()) {
 				while(result.Read()) {
@@ -914,14 +924,23 @@ namespace AirlineTicketingServer {
 				if(!result.Read()) return Either<BookedFlightDetails, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError("Данный рейс не найден")
 				});
-				var optionsBin = (byte[]) result[0];
+				optionsBin = (byte[]) result[0];
 
 				Debug.Assert(result.NextResult());
-				var executionResult = extractor.execute(result);
+				executionResult = extractor.execute(result);
 
 				result.Close();
 				command.Dispose();
 				connection.Dispose();
+				}
+
+				} 
+				catch(SqlException e) {
+					if(e.State == 2) return Either<BookedFlightDetails, LoginOrInputError>.Failure(new LoginOrInputError{
+						InputError = new InputError("Данный рейс не найден")
+					});
+					else throw e;
+				}
 
 				if(!executionResult.IsSuccess) return Either<BookedFlightDetails, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = executionResult.f
@@ -966,7 +985,60 @@ namespace AirlineTicketingServer {
 					seatsAndOptions = selectedSeatsOptions,
 					seats = seats
 				});
-				}}}
+				}}
+			}
+
+			Either<int, LoginOrInputError> MessageService.deleteBookedFlightSeat(Customer customer, int bookedFlightId, int seatIndex) {
+				using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+				using(
+				var command = new SqlCommand(
+					"[Flights].[UnbookSeat]", connection
+				)) {
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValue("@BookedFlightId", bookedFlightId);
+				command.Parameters.AddWithValue("@SeatIndex", seatIndex);
+				var customerParam = command.Parameters.Add("@Customer", SqlDbType.Int);
+				var remainingPassangersParam = command.Parameters.Add("@RemainingPassangersCount", SqlDbType.Int);
+				remainingPassangersParam.Direction = ParameterDirection.Output;
+
+				connection.Open();
+				var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
+				if(!userIdRes.IsSuccess) return Either<int, LoginOrInputError>.Failure(
+					new LoginOrInputError{ LoginError = userIdRes.Failure() }
+				);
+				customerParam.Value = userIdRes.s;
+
+				int remainingPassangersCount;
+				try{
+				command.ExecuteNonQuery();
+				remainingPassangersCount = (int) remainingPassangersParam.Value;
+				}
+				catch(SqlException e) {
+					if(e.State == 2) {
+						return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+							InputError = new InputError("Данный рейс не найден")
+						});
+					}
+					else if(e.State == 5) {
+						return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+							InputError = new InputError("Данная бронь не найдена или не может быть отменена")
+						});
+					}
+					else if(e.State == 10) {
+						return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+							InputError = new InputError("Бронь на данный полёт уже нельзя отменить")
+						});
+					}
+					else if(e.State == 20) {
+						return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+							InputError = new InputError("Внутренняя ошибка")
+						});
+					}
+					else throw e;
+				}
+
+				return Either<int, LoginOrInputError>.Success(remainingPassangersCount);
+				}}
 			}
 		}
 

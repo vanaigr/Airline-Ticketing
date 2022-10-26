@@ -26,15 +26,15 @@ namespace AirlineTicketingServer {
 			var connection = connectionView.connection;
 			//delete old flights
 			using(var command = new SqlCommand(
-				@"[Flights].[RemoveOldFlights]",
+				@"	
+					update [Flights].[AvailableFlights] 
+					set [Archived] = 1
+					where [DepartureDate] < @Today;
+				",
 				connection
 			)) {
-				command.CommandType = System.Data.CommandType.StoredProcedure;
-				command.Parameters.Add(new SqlParameter("@Today", SqlDbType.Date));
-				command.Parameters["@Today"].Value = thisDay; /*
-					date is passed by parameter because
-					database date can be different from server date
-				*/
+				command.CommandType = System.Data.CommandType.Text;
+				command.Parameters.AddWithValue("@Today", thisDay);
 				connectionView.Open();
 				var result = command.ExecuteNonQuery();
 			}
