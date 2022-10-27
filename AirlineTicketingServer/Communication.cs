@@ -84,7 +84,7 @@ namespace Communication {
 	}
 	
 	[Serializable] public sealed class BookedFlight {
-		public int bookedFlightId;
+		public int? bookedFlightId;
 		public AvailableFlight availableFlight;
 		public string fromCode, toCode;
 		public int bookedPassangerCount;

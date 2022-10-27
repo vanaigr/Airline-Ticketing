@@ -25,12 +25,16 @@ namespace Client {
 			Misc.addBottomDivider(tableLayoutPanel2);
 
 			try{
-				if(customer.LoggedIn && customer.bookedFlights == null) {
+				if(customer.LoggedIn) {
 					var result = service.getBookedFlights(customer.customer.Value);
 					if(result) {
-						customer.bookedFlights = result.s.ToList();
-						customer.localBookedFlights.Clear();
-						customer.localBookedFlightsDetails.Clear();
+						customer.flightsBooked.Clear();
+						customer.bookedFlightsDetails.Clear();
+						customer.newBookedFlightIndex = 0;
+
+						foreach(var it in result.s) {
+							customer.flightsBooked.Add(customer.newBookedFlightIndex++, it);
+						}
 					}
 					else {
 						setStatus(result.f.message, null);
@@ -45,7 +49,7 @@ namespace Client {
 			flightsTable.RowStyles.Clear();
 			flightsTable.RowCount = 0;
 
-			if((customer.bookedFlights?.Count ?? 0) + customer.localBookedFlights.Count == 0) {
+			if(customer.flightsBooked.Count == 0) {
 				var label = new Label();
 				label.AutoSize = true;
 				label.Dock = DockStyle.Fill;
@@ -57,43 +61,26 @@ namespace Client {
 				flightsTable.Controls.Add(label);
 			}
 			else {
-				flightsTable.RowCount = (customer.bookedFlights?.Count ?? 0) + customer.localBookedFlights.Count;
+				flightsTable.RowCount = customer.flightsBooked.Count;
 
-				for(int i = 0; i < customer.localBookedFlights.Count; i++) {
+				foreach(var pair in customer.flightsBooked) {
+					Communication.BookedFlightDetails details;
+					customer.bookedFlightsDetails.TryGetValue(pair.Key, out details);
 
 					var it = new BookedFlightInfoControl(
-						service, setStatus,
-						customer, classesNames, 
-						customer.localBookedFlights[i], 
-						customer.localBookedFlightsDetails[i]
+						service, customer, pair.Key, 
+						classesNames, setStatus
 					);
+
 					it.Dock = DockStyle.Top;
 					it.Margin = new Padding(0, 5, 0, 5);
 					it.OnDelete += (a, b) => {
+						Console.WriteLine("!@");
 						it.Dispose();
 					};
 
 					flightsTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 					flightsTable.Controls.Add(it, 0, flightsTable.RowCount++);
-				}
-
-				if(customer.bookedFlights != null) {
-					for(int i = 0; i < customer.bookedFlights.Count; i++) {
-
-						var it = new BookedFlightInfoControl(
-							service, setStatus,
-							customer, classesNames, 
-							customer.bookedFlights[i], null
-						);
-						it.Dock = DockStyle.Top;
-						it.Margin = new Padding(0, 5, 0, 5);
-						it.OnDelete += (a, b) => {
-							it.Dispose();
-						};
-
-						flightsTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-						flightsTable.Controls.Add(it, 0, flightsTable.RowCount++);
-					}
 				}
 			}
 

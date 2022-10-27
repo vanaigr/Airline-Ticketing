@@ -11,41 +11,29 @@ namespace Client {
 	public partial class BookedFlightInfoControl : UserControl {
 		private Communication.MessageService service;
 
+		private int bookedFlightIndex;
 		private Communication.BookedFlight bookedFlight;
-		private Communication.BookedFlightDetails details;
 		private CustomerData customer;
 		private string[] classesNames;
-		
-		private FlightAndCities fis;
 
 		private SetStatus setStatus;
-
-		public int BookedFlightId{ get{ return bookedFlight.bookedFlightId; } }
 
 		public event EventHandler OnDelete;
 
 		public BookedFlightInfoControl(
 			Communication.MessageService service,
-			SetStatus setStatus,
-			CustomerData customer,
-			string[] classesNames,
-			Communication.BookedFlight bookedFlight,
-			Communication.BookedFlightDetails details
+			CustomerData customer, int bookedFlightIndex,
+			string[] classesNames,  SetStatus setStatus
 		) {
 			this.service = service;
-			this.setStatus = setStatus;
 			this.customer = customer;
 			this.classesNames = classesNames;
-			this.bookedFlight = bookedFlight;
-			this.details = details;
-			
-			fis = new FlightAndCities();
-			fis.flight = bookedFlight.availableFlight;
-			fis.fromCityCode = bookedFlight.fromCode;
-			fis.toCityCode = bookedFlight.toCode;
+			this.bookedFlightIndex = bookedFlightIndex;
+			this.setStatus = setStatus;
 
 			InitializeComponent();
 
+			this.bookedFlight = customer.flightsBooked[bookedFlightIndex];
 			var af = bookedFlight.availableFlight;
 
 			flightNameLabel.Text = af.flightName;
@@ -67,14 +55,15 @@ namespace Client {
 			}
 
 			try {
-				Communication.BookedFlightDetails bfDetails;
+				if(!customer.bookedFlightsDetails.ContainsKey(bookedFlightIndex)) {
+					if(bookedFlight.bookedFlightId == null) {
+						setStatus("Невозможно получить информацию о данном рейсе так как его идентификатор неизвестен", null);
+						return;
+					}
+					else if(customer.LoggedIn) {
+						var result = service.getBookedFlightDetails(customer.customer.Value, (int) bookedFlight.bookedFlightId);
 
-				if(details != null) bfDetails = details;
-				else {
-					if(customer.LoggedIn) {
-						var result = service.getBookedFlightDetails(customer.customer.Value, bookedFlight.bookedFlightId);
-
-						if(result) bfDetails = result.s;
+						if(result) customer.bookedFlightsDetails.Add(bookedFlightIndex, result.s);
 						else {
 							if(result.f.isLoginError) setStatus(result.f.LoginError.message, null);
 							else setStatus(result.f.InputError.message, null);
@@ -90,39 +79,12 @@ namespace Client {
 
 				var status = new BookingStatus{ 
 					booked = true, 
-					bookedFlightId = bookedFlight.bookedFlightId,
-					seatsInfo = new Communication.BookedSeatInfo[
-						bfDetails.bookedSeats.Length
-					] 
+					bookedFlightIndex = bookedFlightIndex,
 				};
-				List<BookingPassanger> bookingPassangers;
-
-				bookingPassangers = new List<BookingPassanger>(bfDetails.bookedSeats.Length);
-
-				for(int i = 0; i <bfDetails.bookedSeats.Length; i++) {
-					var bs = bfDetails.bookedSeats[i];
-					var so = bfDetails.seatsAndOptions[i];
-
-					var baggageOption = new Dictionary<int, int>(1);
-					baggageOption.Add(so.selectedSeatClass, so.selectedOptions.baggageOptions.baggageIndex);
-					var handLuggageOption = new Dictionary<int, int>(1);
-					handLuggageOption.Add(so.selectedSeatClass, so.selectedOptions.baggageOptions.handLuggageIndex);
-
-					var index = findPasangerIndexByDatabaseId(customer, bs.passangerId);
-
-					var it = new BookingPassanger(
-						(int) index, so.selectedOptions.servicesOptions.seatSelected,
-						bs.selectedSeat, so.selectedSeatClass, baggageOption, handLuggageOption
-					);
-					
-					bookingPassangers.Add(it);
-					status.seatsInfo[i] = bs;
-				}
-
+				
 				var form = new FlightDetailsFill(
 					service, customer, status,
-					bookingPassangers, classesNames,
-					fis, bfDetails.seats
+					classesNames, null, null
 				);
 
 				form.FormClosed += (a, b) => {
@@ -130,6 +92,7 @@ namespace Client {
 				};
 
 				form.OnBookedPassangersChanged += (a, b) => {
+					Console.WriteLine("HJKHK" + bookedFlight.bookedPassangerCount);
 					if(bookedFlight.bookedPassangerCount == 0) OnDelete?.Invoke(this, new EventArgs());
 					else updateBookedSeatsCount();
 				};
@@ -144,13 +107,6 @@ namespace Client {
 
 		private void updateBookedSeatsCount() {
 			bookedSeatsCountLabel.Text = "Забронированно мест: " + bookedFlight.bookedPassangerCount;
-		}
-
-		private static int? findPasangerIndexByDatabaseId(CustomerData customer, int databaseId) {
-			foreach(var pair in customer.passangerIds) {
-				if(!pair.Value.IsLocal && pair.Value.DatabaseId == databaseId) return pair.Key;
-			}
-			return null;
 		}
 	}
 

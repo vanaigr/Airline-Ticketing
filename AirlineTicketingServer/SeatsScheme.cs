@@ -128,9 +128,14 @@ namespace FlightsSeats {
 			if(i >= 0 && i < size) occupation[i/8] |= (byte) (1u << (i%8)); 
 			else throw new IndexOutOfRangeException();
 		}
+
+		public static void Unoccupy(byte[] occupation, int size, int i) {
+			if(i >= 0 && i < size) occupation[i/8] &= (byte) ~(1u << (i%8)); 
+			else throw new IndexOutOfRangeException();
+		}
 	}
 
-	[Serializable] public struct Seats {
+	[Serializable] public class Seats {
 		public SeatsScheme Scheme{ get; private set; }
 		private byte[] seatsClasses;
 		private byte[] seatsOccupied; 
@@ -160,6 +165,15 @@ namespace FlightsSeats {
 
 		public bool Occupied(int x, int z) { 
 			return this.Occupied(Scheme.SeatsBeforeZ(z) + x);
+		}
+
+		public void SetOccupied(int i, bool occupied) {
+			if(occupied) Occupation.Occupy(seatsOccupied, Scheme.SeatsCount, i);
+			else Occupation.Unoccupy(seatsOccupied, Scheme.SeatsCount, i);
+		}
+
+		public void SetOccupied(int x, int z, bool occupied) { 
+			this.SetOccupied(Scheme.SeatsBeforeZ(z) + x, occupied);
 		}
 
 		public byte Class(int i) {

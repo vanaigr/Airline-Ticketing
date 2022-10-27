@@ -275,7 +275,7 @@ namespace Client {
 					if(result) {
 						booking = new FlightDetailsFill(
 							service, customer, 
-							new BookingStatus(), new List<BookingPassanger>(),
+							new BookingStatus(), 
 							avaliableFlightClasses, fic, result.s
 						);
 						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };

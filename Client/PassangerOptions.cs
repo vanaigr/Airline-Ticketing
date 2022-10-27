@@ -10,6 +10,7 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class PassangerOptions : UserControl {
 		private Communication.MessageService service;
+		private CustomerData customer;
 		private BookingStatus status;
 		private int flightId;
 
@@ -35,12 +36,13 @@ namespace Client {
 
 		public void init(
 			Communication.MessageService service,
-			BookingStatus status,
+			CustomerData customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
 			BookingPassanger passanger, int bookingPassangerIndex
 		) {
 			this.service = service;
+			this.customer = customer;
 			this.status = status;
 			this.flightId = flightId;
 			this.seats = seats;
@@ -213,7 +215,7 @@ namespace Client {
 					Communication.SeatCost seatData;
 
 					if(status.booked) {
-						seatData = status.seatsInfo[bookingPassangerIndex].cost;
+						seatData = status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex].cost;
 					}
 					else { 
 						var result = service.seatsData(flightId, new Communication.SeatAndOptions[]{ new Communication.SeatAndOptions{

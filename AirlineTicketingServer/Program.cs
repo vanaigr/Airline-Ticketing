@@ -778,7 +778,9 @@ namespace AirlineTicketingServer {
 					on [af].[FlightInfo]  = [fi].[Id]
 					
 					inner join [Flights].[Airplanes] as [ap]
-					on [fi].[Airplane] = [ap].[Id];
+					on [fi].[Airplane] = [ap].[Id]
+					
+					order by [cbf].[BookedDatetime] asc;
 					", 
 					connection
 				)) {
@@ -818,23 +820,22 @@ namespace AirlineTicketingServer {
 				var flights = new BookedFlight[rawFlights.Count];
 				for(int i = 0; i < flights.Length; i++) {
 					var rawFlight = rawFlights[flights.Length-1 - i];
-					var it = new BookedFlight();
-					it.bookedFlightId = rawFlight.id;
-
-					var af = new AvailableFlight();
-					af.id = rawFlight.availableFlightId;
-					af.departureTime = rawFlight.departureDatetime;
-					af.arrivalOffsteMinutes = rawFlight.arrivalOffsetMinutes;
-					af.flightName = rawFlight.flightName;
-					af.airplaneName = rawFlight.airplaneName;
-					af.optionsForClasses = BinaryOptions.fromBytes(rawFlight.optionsBin);
-					af.availableSeatsForClasses = null;
-
-					it.availableFlight = af;
-					it.fromCode = rawFlight.fromCode;
-					it.toCode = rawFlight.toCode;
-					it.bookedPassangerCount = rawFlight.bookedPassangersCount;
-					it.bookingFinishedTime = rawFlight.bookedDatetime;
+					var it = new BookedFlight{
+						bookedFlightId = rawFlight.id,
+						availableFlight = new AvailableFlight{
+							id = rawFlight.availableFlightId,
+							departureTime = rawFlight.departureDatetime,
+							arrivalOffsteMinutes = rawFlight.arrivalOffsetMinutes,
+							flightName = rawFlight.flightName,
+							airplaneName = rawFlight.airplaneName,
+							optionsForClasses = BinaryOptions.fromBytes(rawFlight.optionsBin),
+							availableSeatsForClasses = null
+						},
+						fromCode = rawFlight.fromCode,
+						toCode = rawFlight.toCode,
+						bookedPassangerCount = rawFlight.bookedPassangersCount,
+						bookingFinishedTime = rawFlight.bookedDatetime
+					};				
 
 					flights[i] = it;
 				}

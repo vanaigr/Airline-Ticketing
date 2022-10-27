@@ -13,18 +13,21 @@ namespace Client {
 		public Dictionary<int, PassangerIdData> passangerIds;
 		public Dictionary<int, Passanger> passangers;
 
-		public List<BookedFlight> localBookedFlights;
-		public List<BookedFlightDetails> localBookedFlightsDetails;
+		//public List<BookedFlight> localBookedFlights;
+		//public List<BookedFlightDetails> localBookedFlightsDetails;
 
-		public List<BookedFlight> bookedFlights;
+		//public List<BookedFlight> bookedFlights;
+		public int newBookedFlightIndex = 0;
+		public Dictionary<int, BookedFlightDetails> bookedFlightsDetails;
+		public Dictionary<int, BookedFlight> flightsBooked;
 
 		public CustomerData() { 
 			customer = null;
 			newPassangerIndex = 0;
 			passangerIds = new Dictionary<int, PassangerIdData>();
 			passangers = new Dictionary<int, Passanger>();
-			localBookedFlights = new List<BookedFlight>();
-			localBookedFlightsDetails = new List<BookedFlightDetails>();
+			bookedFlightsDetails = new Dictionary<int, BookedFlightDetails>();
+			flightsBooked = new Dictionary<int, BookedFlight>();
 		}
 
 		public CustomerData(string login, string password) : this() {
@@ -41,23 +44,24 @@ namespace Client {
 			newPassangerIndex = 0;
 			passangerIds.Clear();
 			passangers.Clear();
-			localBookedFlights.Clear();
-			localBookedFlightsDetails.Clear();
-			bookedFlights = null;
+			bookedFlightsDetails.Clear();
+			flightsBooked.Clear();
 		}
 
 		public void setFrom(Customer o) {
+			unlogin();
 			this.customer = o;
-			newPassangerIndex = 0;
-			passangerIds.Clear();
-			passangers.Clear();
-			localBookedFlights.Clear();
-			localBookedFlightsDetails.Clear();
-			bookedFlights = null;
 		}
 
 		public bool LoggedIn{
 			get{ return customer != null; }
+		}
+
+		public int? findPasangerIndexByDatabaseId(int databaseId) {
+			foreach(var pair in passangerIds) {
+				if(!pair.Value.IsLocal && pair.Value.DatabaseId == databaseId) return pair.Key;
+			}
+			return null;
 		}
 	}
 

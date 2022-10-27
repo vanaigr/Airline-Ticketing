@@ -25,7 +25,6 @@ namespace Client {
 		public FlightDetailsFill(
 			Communication.MessageService service, CustomerData customer,
 			BookingStatus status,
-			List<BookingPassanger> bookingPassangers,
 			string[] classesNames,
 			FlightAndCities flightAndCities, FlightsSeats.Seats seats
 		) {
@@ -33,53 +32,79 @@ namespace Client {
 			this.service = service;
 			this.customer = customer;
 
+			if(status.booked) {
+				var bookedFlight = status.BookedFlight(this.customer);
+				var bookedFlightDetails = status.BookedFlightDetails(this.customer);
+
+				this.flightAndCities = new FlightAndCities();
+				this.flightAndCities.flight = bookedFlight.availableFlight;
+				this.flightAndCities.fromCityCode = bookedFlight.fromCode;
+				this.flightAndCities.toCityCode = bookedFlight.toCode;
+
+				this.seats = bookedFlightDetails.seats;
+				
+				this.bookingPassangers = new List<BookingPassanger>(bookedFlightDetails.bookedSeats.Length);
+				this.curPassangersDisplays = new List<PassangerDisplay>();
+
+				for(int i = 0; i < bookedFlightDetails.bookedSeats.Length; i++) {
+					var bs = bookedFlightDetails.bookedSeats[i];
+					var so = bookedFlightDetails.seatsAndOptions[i];
+
+					var baggageOption = new Dictionary<int, int>(1);
+					baggageOption.Add(so.selectedSeatClass, so.selectedOptions.baggageOptions.baggageIndex);
+					var handLuggageOption = new Dictionary<int, int>(1);
+					handLuggageOption.Add(so.selectedSeatClass, so.selectedOptions.baggageOptions.handLuggageIndex);
+
+					var index = (int) this.customer.findPasangerIndexByDatabaseId(bs.passangerId);
+
+					var it = new BookingPassanger(
+						index, so.selectedOptions.servicesOptions.seatSelected,
+						bs.selectedSeat, so.selectedSeatClass, baggageOption, handLuggageOption
+					);
+					
+					bookingPassangers.Add(it);				
+				}
+			}
+			else {
+				this.seats = seats;
+				this.flightAndCities = flightAndCities;
+
+				this.bookingPassangers = new List<BookingPassanger>();
+				this.curPassangersDisplays = new List<PassangerDisplay>();
+			}
+
 			this.classesNames = new Dictionary<int, string>();
-			foreach(var classId in flightAndCities.flight.optionsForClasses.Keys) {
+			foreach(var classId in this.flightAndCities.flight.optionsForClasses.Keys) {
 				this.classesNames.Add(classId, classesNames[classId]);
 			}
 
-			this.seats = seats;
-			this.flightAndCities = flightAndCities;
-			var flight = flightAndCities.flight;
+			var flight = this.flightAndCities.flight;
 
 
 			InitializeComponent();
 
 			Misc.unfocusOnEscape(this);
-			passangersPanel.AutoScrollMargin = new Size(SystemInformation.HorizontalScrollBarHeight, SystemInformation.VerticalScrollBarWidth);
-
 			this.seatSelectTable.BackColor2 = Color.LightGray;
-
-			//tableLayoutPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			//tableLayoutPanel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			Misc.addBottomDivider(headerContainer);
-
 			Misc.fixFlowLayoutPanelHeight(passangersPanel);
-
-			this.bookingPassangers = new List<BookingPassanger>(bookingPassangers);
-			curPassangersDisplays = new List<PassangerDisplay>();
-
-			for(int i = 0; i < this.bookingPassangers.Count; i++) {
-				addPassangerDisplay(i);
-				var pIndex = this.bookingPassangers[i].passangerIndex;
-				if(pIndex != null) {
-					curPassangersDisplays[i].Passanger = customer.passangers[(int) pIndex];
-				}
-				else curPassangersDisplays[i].Passanger = null;
-			}
 
 			headerContainer.SuspendLayout();
 			flightNameLabel.Text = flight.flightName;
 			aitrplaneNameLavel.Text = flight.airplaneName;
 			departureDatetimeLabel.Text = flight.departureTime.ToString("d MMMM, dddd, HH:mm");
-			departureLocationLabel.Text = flightAndCities.fromCityCode;
+			departureLocationLabel.Text = this.flightAndCities.fromCityCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
+			
+			for(int i = 0; i < bookingPassangers.Count; i++) {
+				addPassangerDisplay(i);
+				var pIndex = bookingPassangers[i].passangerIndex;
+				if(pIndex != null) curPassangersDisplays[i].Passanger = this.customer.passangers[(int) pIndex];	
+				else curPassangersDisplays[i].Passanger = null;
+			}
 
-			seatSelectTable.update(seats, addOrUpdatePassanger);
-
+			seatSelectTable.update(this.seats, addOrUpdatePassanger);
 			updateSeatsStatusText();
-
 			if(status.booked) updateStatusBooked();
 		}
 
@@ -94,10 +119,10 @@ namespace Client {
 				it.Enabled = false;
 			}
 
-			for(int i = 0; i < bookingPassangers.Count; i++) {
-				var ss = status.seatsInfo[i];
+			var bookedFlightDetails = status.BookedFlightDetails(customer);
 
-				var seatTableLoc = seatSelectTable.getSeatLocation(ss.selectedSeat);
+			for(int i = 0; i < bookingPassangers.Count; i++) {
+				var seatTableLoc = seatSelectTable.getSeatLocation(bookedFlightDetails.bookedSeats[i].selectedSeat);
 				var seat = (SeatButton) seatSelectTable.GetControlFromPosition(seatTableLoc.X, seatTableLoc.Y);
 
 				seat.Occupied = false;
@@ -134,40 +159,23 @@ namespace Client {
 
 			if(status.booked) {
 				if(result  == DialogResult.Abort) {
-					var newArr = removedAt(status.seatsInfo, index);
-
-					status.seatsInfo = newArr;
-
 					deletePassanger(index);
-					OnBookedPassangersChanged?.Invoke(this, new EventArgs());
 
-					//TODO: fix local flight even when bookedFlightId is null
-					if(status.bookedFlightId != null) {
-						var delete = newArr.Length == 0;
+					var bookedFlight = status.BookedFlight(customer);
+					var bookedFlightDetails = status.BookedFlightDetails(customer);
 
-						for(var i = 0; i < customer.localBookedFlights.Count; i++) {
-							if(customer.localBookedFlights[i].bookedFlightId == status.bookedFlightId) {
-								if(delete) {
-									customer.localBookedFlights.RemoveAt(i);
-									customer.localBookedFlightsDetails.RemoveAt(i);
-								}
-								else {
-									removedAt(customer.localBookedFlightsDetails[i].bookedSeats, index);
-									removedAt(customer.localBookedFlightsDetails[i].seatsAndOptions, index);
-								}
-								break;
-							}
-						}
-
-						if(customer.bookedFlights != null) {
-							for(var i = 0; i < customer.bookedFlights.Count; i++) {
-								if(customer.bookedFlights[i].bookedFlightId == status.bookedFlightId) {
-									if(delete) customer.bookedFlights.RemoveAt(i);
-									break;
-								}
-							}
-						}
+					if(bookedFlightDetails.bookedSeats.Length < 2) {
+						bookedFlight.bookedPassangerCount = 0;
+						customer.flightsBooked.Remove(status.bookedFlightIndex);
+						customer.bookedFlightsDetails.Remove(status.bookedFlightIndex);
 					}
+					else { 
+						bookedFlight.bookedPassangerCount--;
+						bookedFlightDetails.bookedSeats = removedAt(bookedFlightDetails.bookedSeats, index);
+						bookedFlightDetails.seatsAndOptions = removedAt(bookedFlightDetails.seatsAndOptions, index);
+					}
+
+					seats.SetOccupied(passanger.seatIndex, false);
 				}
 			}
 			else { 
@@ -209,6 +217,8 @@ namespace Client {
 			}
 
 			updateSeatsStatusText();
+
+			OnBookedPassangersChanged?.Invoke(this, new EventArgs());
         }
 
 		private void addOrUpdatePassanger(SeatButton button, FlightsSeats.Point location) {
@@ -396,7 +406,7 @@ namespace Client {
 		static T[] removedAt<T>(T[] arr, int index) {
 			var newArr = new T[arr.Length-1];
 	
-			if(index > 1) Array.Copy(arr, newArr, index);
+			if(index >= 1) Array.Copy(arr, newArr, index);
 			if(index <= arr.Length-2) Array.Copy(arr, index+1, newArr, index, arr.Length-1 - index);
 	
 			return newArr;
@@ -418,8 +428,10 @@ namespace Client {
 			}
 
 			bool PassangerSettings.SeatHandling.canPlaceAt(int index) {
+				if(seats.Occupied(index)) return false;
+
 				for(int i = 0; i < passangers.Count; i++) {
-					if(i != baggagePassangerIndex && (passangers[i].manualSeatSelected && passangers[i].seatIndex == index)) {
+					if(i != baggagePassangerIndex && passangers[i].manualSeatSelected && passangers[i].seatIndex == index) {
 						return false;
 					}
 				}
@@ -687,8 +699,16 @@ namespace Client {
 	}
 
 	public class BookingStatus {
-		public int? bookedFlightId;
 		public bool booked;
-		public Communication.BookedSeatInfo[] seatsInfo;
+		public int bookedFlightIndex;
+		//public Communication.BookedSeatInfo[] seatsInfo;
+
+		public Communication.BookedFlight BookedFlight(CustomerData it) {
+			return it.flightsBooked[bookedFlightIndex];
+		}
+
+		public Communication.BookedFlightDetails BookedFlightDetails(CustomerData it) {
+			return it.bookedFlightsDetails[bookedFlightIndex];
+		}
 	}
 }

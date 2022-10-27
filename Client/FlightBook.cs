@@ -131,6 +131,8 @@ namespace Client {
 		private void updateSum(Communication.SeatCost[] seatsCost) {
 			var totalSum = 0;
 
+			var flightDetails = status.booked ? status.BookedFlightDetails(customer) : null;
+
 			for(int i = 0; i < bookingPassangers.Count; i++) {
 				var passanger = bookingPassangers[i];
 				var it = new BookingPassangerSummaryControl();
@@ -139,7 +141,7 @@ namespace Client {
 				Communication.SeatCost seatCost;
 
 				if(status.booked) {
-					bookedSeatInfo = status.seatsInfo[i];
+					bookedSeatInfo = flightDetails.bookedSeats[i];
 					seatCost = bookedSeatInfo.Value.cost;
 				}
 				else {
@@ -186,28 +188,31 @@ namespace Client {
 				if(result) {
 					booked = true;
 					var booking = result.s;
-
-					status.bookedFlightId = booking.customerBookedFlightId;
-					status.seatsInfo = booking.seatsInfo;
 					
 					for(int i = 0; i < bookingPassangers.Count; i++) {
-						var ss = status.seatsInfo[i];
+						var ss = booking.seatsInfo[i];
 						var bp = bookingPassangers[i];
 
 						customer.passangerIds[(int) bp.passangerIndex] = new PassangerIdData(ss.passangerId);
 						customer.passangers[(int) bp.passangerIndex].archived = true;
 					}
 
-					customer.localBookedFlights.Add(new Communication.BookedFlight{
+					var newIndex = customer.newBookedFlightIndex++;
+
+					customer.flightsBooked.Add(newIndex, new Communication.BookedFlight{
+						bookedFlightId = booking.customerBookedFlightId, bookingFinishedTime = booking.bookingFinishedTime,
 						availableFlight = flightAndCities.flight, bookedPassangerCount = bookingPassangers.Count,
 						fromCode = flightAndCities.fromCityCode, toCode = flightAndCities.toCityCode
 					});
-					customer.localBookedFlightsDetails.Add(new Communication.BookedFlightDetails{
-						bookedSeats = status.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
+
+					customer.bookedFlightsDetails.Add(newIndex, new Communication.BookedFlightDetails{
+						bookedSeats = booking.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
 					});
 
 					statusOk("Бронирование выполено успешно");
 					bookFlightButton.Enabled = false;
+
+					status.bookedFlightIndex = newIndex;
 					status.booked = true;
 				}
 				else {

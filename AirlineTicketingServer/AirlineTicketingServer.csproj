@@ -78,6 +78,7 @@
     <Compile Include="FlightsOptions.cs" />
     <Compile Include="Login.cs" />
     <Compile Include="Documents.cs" />
+    <Compile Include="OperatorViewCommunication.cs" />
     <Compile Include="PasswordHashing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

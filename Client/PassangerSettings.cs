@@ -53,6 +53,7 @@ namespace Client {
 			this.seatHandling = seatHandling;
 			this.passanger = passanger;
 			this.classesNames = new Dictionary<int, string>();
+			this.bookingPassangerIndex = bookingPassangerIndex;
 
 			foreach(var classId in optionsForClasses.Keys) {
 				classesNames.Add(classId, allClassesNames[classId]);
@@ -71,7 +72,7 @@ namespace Client {
 
 			this.passangerUpdate.init(service, customer, status, passanger);
 			this.passangerOptions.init(
-				service, status, flightId, seats, 
+				service, customer, status, flightId, seats, 
 				optionsForClasses, passanger, bookingPassangerIndex
 			);
 			
@@ -95,7 +96,7 @@ namespace Client {
 
 		private void updateStatusBooked() {
 			deleteButton.Text = "Удалить бронь";
-			if(status.bookedFlightId == null) deleteButton.Enabled = false;
+			if(status.BookedFlight(customer).bookedFlightId == null) deleteButton.Enabled = false;
 			else deleteButton.Enabled = true;
 
 			cancelButton.Visible = false;
@@ -139,7 +140,9 @@ namespace Client {
 
 		private void deleteButton_Click(object sender, EventArgs e) {
 			if(status.booked) {
-				if(status.bookedFlightId == null) throw new InvalidOperationException();
+				var bookedFlight = status.BookedFlight(customer);
+				var bookedFlightDetails = status.BookedFlightDetails(customer);
+				if(bookedFlight.bookedFlightId == null) throw new InvalidOperationException();
 
 				var dResult = MessageBox.Show(
 					"Вы точно хотите отменить бронь данного места?", "",
@@ -148,12 +151,12 @@ namespace Client {
 
 				if(dResult == DialogResult.Yes) try {
 					var result = service.deleteBookedFlightSeat(
-						customer.customer.Value, (int) status.bookedFlightId, 
-						status.seatsInfo[bookingPassangerIndex].selectedSeat
+						customer.customer.Value, (int) bookedFlight.bookedFlightId, 
+						bookedFlightDetails.bookedSeats[bookingPassangerIndex].selectedSeat
 					);
 
 					if(result) {
-						Debug.Assert(result.s == status.seatsInfo.Length-1);
+						Debug.Assert(result.s == bookedFlightDetails.bookedSeats.Length-1);
 
 						DialogResult = DialogResult.Abort;
 					}
@@ -183,6 +186,7 @@ namespace Client {
 		}
 
 		private void seatPositionTextbox_Leave(object sender, EventArgs e) {
+			if(status.booked) return;
 			var newIndex = seats.Scheme.FromName(seatPositionTextbox.Text);
 			if(newIndex != null && seatHandling.canPlaceAt((int) newIndex)) {
 				passanger.seatIndex = (int) newIndex;
@@ -192,6 +196,7 @@ namespace Client {
 		}
 
 		private void PassangerSettings_FormClosing(object sender, FormClosingEventArgs e) {
+			if(status.booked) return;
 			if(useSeatIndex) {
 				var newIndex = seats.Scheme.FromName(seatPositionTextbox.Text);
 				if(newIndex != null && seatHandling.canPlaceAt((int)newIndex)) {
@@ -210,6 +215,7 @@ namespace Client {
 		}
 
 		private void seatPositionTextbox_KeyPress(object sender, KeyPressEventArgs e) {
+			if(status.booked) return;
 			if(e.KeyChar == (char) Keys.Return) {
 				var newIndex = seats.Scheme.FromName(seatPositionTextbox.Text);
 				if(newIndex != null && seatHandling.canPlaceAt((int)newIndex)) {
@@ -229,7 +235,7 @@ namespace Client {
 		private void updateAutoseatClass() {
 			if(!status.booked) throw new InvalidOperationException();
 
-			var si = status.seatsInfo[bookingPassangerIndex];
+			var si = status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex];
 			seatClassLabel.Text = "[" + seats.Scheme.ToName(si.selectedSeat) + "]";
 
 			if(!status.booked) passangerOptions.updateForClassAndSeat();
