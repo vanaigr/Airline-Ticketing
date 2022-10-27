@@ -1,5 +1,5 @@
 ﻿
-namespace Client {
+namespace ClientCommunication {
 	partial class PassangerSettings {
 		/// <summary>
 		/// Required designer variable.
@@ -27,9 +27,9 @@ namespace Client {
 			this.components = new System.ComponentModel.Container();
 			this.mainTabs = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.passangerUpdate = new Client.PassangerList();
+			this.passangerUpdate = new ClientCommunication.PassangerList();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.passangerOptions = new Client.PassangerOptions();
+			this.passangerOptions = new ClientCommunication.PassangerOptions();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.applyButton = new System.Windows.Forms.Button();
@@ -37,7 +37,7 @@ namespace Client {
 			this.deleteButton = new System.Windows.Forms.Button();
 			this.seatSelect = new System.Windows.Forms.CheckBox();
 			this.seatPositionTextbox = new System.Windows.Forms.TextBox();
-			this.seatClassCombobox = new Client.Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor();
+			this.seatClassCombobox = new Common.Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor();
 			this.seatClassLabel = new System.Windows.Forms.Label();
 			this.statusLabel = new System.Windows.Forms.Label();
 			this.statusToolitp = new System.Windows.Forms.ToolTip(this.components);
@@ -310,7 +310,7 @@ namespace Client {
 		private System.Windows.Forms.Button deleteButton;
 		private System.Windows.Forms.TextBox seatPositionTextbox;
 		private System.Windows.Forms.CheckBox seatSelect;
-		private Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor seatClassCombobox;
+		private Common.Misc.ComboboxThatCanAtLeastHaveCustomizableBackgroundColor seatClassCombobox;
 		private System.Windows.Forms.Label seatClassLabel;
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.ToolTip statusToolitp;

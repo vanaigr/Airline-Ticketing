@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Common;
+using Communication;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,9 +11,9 @@ using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class PassangerList : UserControl {
-		private Communication.MessageService service;
+		private ClientCommunication.MessageService service;
 		private CustomerData customer;
 		private BookingStatus status;
 
@@ -106,7 +108,7 @@ namespace Client {
 			setStateNone();
 		}
 
-		public void init(Communication.MessageService sq, CustomerData customer, BookingStatus status, BookingPassanger passanger) {
+		public void init(ClientCommunication.MessageService sq, CustomerData customer, BookingStatus status, BookingPassanger passanger) {
 			this.service = sq;
 			this.status = status;
 			this.customer = customer;
@@ -228,7 +230,7 @@ namespace Client {
 			else return true;
 		}
 
-		private PassangerDisplay addPassangerDisplay(Communication.Passanger passanger, int index) {
+		private PassangerDisplay addPassangerDisplay(Passanger passanger, int index) {
 			var it = new PassangerDisplay{ 
 				Passanger = passanger, Data = index,
 				Dock = DockStyle.Top, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
@@ -270,8 +272,8 @@ namespace Client {
 			else Debug.Assert(curState == State.select || curState == State.none);
 		}
 
-		private Communication.Passanger formPassangerFromData() { 
-			return new Communication.Passanger{
+		private Passanger formPassangerFromData() { 
+			return new Passanger{
 				name = nameText.Text,
 				surname = surnameText.Text,
 				middleName = middleNameText.Text,
@@ -280,7 +282,7 @@ namespace Client {
 			};
 		}
 
-		private void setDataFromPassanger(Communication.Passanger p) {
+		private void setDataFromPassanger(Passanger p) {
 			nameText.Text = p.name;
 			surnameText.Text = p.surname;
 			middleNameText.Text = p.middleName;
@@ -306,7 +308,7 @@ namespace Client {
 			statusTooltip.SetToolTip(statusLabel, null);
 		}
 
-		private int? saveNewPassanger(Communication.Passanger passanger) {
+		private int? saveNewPassanger(Passanger passanger) {
 			if(status.booked) throw new InvalidOperationException();
 
 			try {
@@ -355,7 +357,7 @@ namespace Client {
 			return null;
 		}
 
-		private int? saveEditedPassanger(Communication.Passanger passanger, int index) {
+		private int? saveEditedPassanger(Passanger passanger, int index) {
 			if(status.booked) throw new InvalidOperationException();
 
 			try {

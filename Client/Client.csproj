@@ -58,6 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AirlineTicketingServer\ClientCommunication.cs">
+      <Link>ClientCommunication.cs</Link>
+    </Compile>
     <Compile Include="..\AirlineTicketingServer\Communication.cs">
       <Link>Communication.cs</Link>
     </Compile>
@@ -104,7 +107,6 @@
     <Compile Include="FlightDetailsFill.Designer.cs">
       <DependentUpon>FlightDetailsFill.cs</DependentUpon>
     </Compile>
-    <Compile Include="FlightAndCities.cs" />
     <Compile Include="FlightDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -165,7 +167,11 @@
     <Compile Include="SelectFlight.Designer.cs">
       <DependentUpon>SelectFlight.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientServerQuery.cs" />
     <Compile Include="ServerQuery.cs" />
+    <Compile Include="CityComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TintImage.cs" />
     <Compile Include="TransparentPanel.cs">
       <SubType>Component</SubType>

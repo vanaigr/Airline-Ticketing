@@ -1,5 +1,5 @@
 ﻿
-namespace Client {
+namespace ClientCommunication {
 	partial class BaggageOption {
 		/// <summary> 
 		/// Обязательная переменная конструктора.
@@ -28,7 +28,7 @@ namespace Client {
 			this.mainParamLabel = new System.Windows.Forms.Label();
 			this.axilParamLabel = new System.Windows.Forms.Label();
 			this.priceLabel = new System.Windows.Forms.Label();
-			this.touchArea = new Client.TransparentPanel();
+			this.touchArea = new Common.TransparentPanel();
 			this.mainTable.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -133,6 +133,6 @@ namespace Client {
 		private System.Windows.Forms.Label mainParamLabel;
 		private System.Windows.Forms.Label axilParamLabel;
 		private System.Windows.Forms.Label priceLabel;
-		private TransparentPanel touchArea;
+		private Common.TransparentPanel touchArea;
 	}
 }

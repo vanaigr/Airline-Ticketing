@@ -8,9 +8,10 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
-using Communication;
+using ClientCommunication;
+using Common;
 
-namespace Client {
+namespace ClientCommunication {
 
 	public partial class LoginRegisterForm : Form {
 		CustomerData customer;
@@ -50,8 +51,7 @@ namespace Client {
 			try {
 				var newCust = new Customer(login, password);
 				var response = service.register(newCust);
-				if(response) { 
-					Console.WriteLine(response.IsSuccess);
+				if(response) {
 					customer.setFrom(newCust);
 
 					statusLabel.ForeColor = SystemColors.ControlText;

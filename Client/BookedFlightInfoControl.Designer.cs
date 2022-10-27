@@ -1,5 +1,5 @@
 ﻿
-namespace Client {
+namespace ClientCommunication {
 	partial class BookedFlightInfoControl {
 		/// <summary> 
 		/// Обязательная переменная конструктора.

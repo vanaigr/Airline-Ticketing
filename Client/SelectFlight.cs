@@ -7,9 +7,11 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
+using Client;
+using Common;
 using Communication;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class SelectFlight : Form {
 		private MessageService service;
 		private CustomerData customer;
@@ -202,60 +204,6 @@ namespace Client {
 				updateErrorDisplay(true, null, ex);
 			}
 		}
-
-		class CityComboBox : ComboBox {
-			private StringBuilder sb;
-
-			public static readonly Color ForeColor2 = Color.DarkGray;
-
-			public CityComboBox() {
-				sb = new StringBuilder();
-				DrawMode = DrawMode.OwnerDrawFixed;
-			}
-
-			protected override void OnDrawItem(DrawItemEventArgs e) {
-		        e.DrawBackground();
-		        e.DrawFocusRectangle();
-
-				if(!(e.Index >= 0 && e.Index < Items.Count)) return;
-		 
-		        var item = (City) Items[e.Index];
-
-				//draw city name
-				sb.Clear().Append(item.name).Append(", ");
-				var nameString = sb.ToString();
-				var nameSize = e.Graphics.MeasureString(nameString, e.Font);
-		        e.Graphics.DrawString(
-					nameString, e.Font, new SolidBrush(e.ForeColor), 
-					e.Bounds.Left, e.Bounds.Top + 2
-				);
-
-				//draw country name
-				var countryString = sb.Clear().Append(item.country).Append(' ').ToString();
-				var countrySize =  e.Graphics.MeasureString(countryString, e.Font);
-
-				e.Graphics.DrawString(
-					countryString, e.Font, new SolidBrush(ForeColor2), 
-					e.Bounds.Left + nameSize.Width, e.Bounds.Top + 2
-				);
-
-				//draw city code
-				var codeString = item.code;
-				var codeSize =  e.Graphics.MeasureString(codeString, e.Font);
-
-				e.Graphics.DrawString(
-					codeString, e.Font, new SolidBrush(ForeColor), 
-					Math.Max(
-						e.Bounds.Left + nameSize.Width + countrySize.Width, 
-						e.Bounds.Right - codeSize.Width
-					),
-					e.Bounds.Top + 2
-				);
-		 
-		        base.OnDrawItem(e);
-		    }
-		}
-
 		private void pictureBox1_Click(object sender, EventArgs e) {
 			reconnect();
 		}
@@ -296,7 +244,7 @@ namespace Client {
 		void reconnect() {
 			updateErrorDisplay(false, null, null);
 			(service as IDisposable)?.Dispose();
-			service = ServerQuery.Create();
+			service = ClientServerQuery.Create();
 
 			customer.unlogin();
 

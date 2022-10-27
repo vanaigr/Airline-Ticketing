@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 using System.ComponentModel;
 
-namespace Client {
+namespace Common {
 	static class Misc {
 		public static Color selectionColor3 = Color.FromArgb(255, Color.FromArgb(0x00EAEAEA));
 
@@ -19,7 +19,7 @@ namespace Client {
 			*/
 			var name = "HACK_Client_Misc_addDummyButton";
 			foreach(var button in it.Controls.Find(name, false)) button.Dispose();
-			
+
 			var dummy = new Button();
 			dummy.Name = name;
 			dummy.Size = new Size(0, 0);
@@ -51,11 +51,11 @@ namespace Client {
 			private Control parent;
 
 			public FlowLayoutPanelHeightBugfix(FlowLayoutPanel it) {
-				this.panel = it;
-				this.parent = it.Parent;
-				
-				parent.Resize += (a,b) => resizeFix();
-				it.Resize += (a,b) => resizeFix();
+				panel = it;
+				parent = it.Parent;
+
+				parent.Resize += (a, b) => resizeFix();
+				it.Resize += (a, b) => resizeFix();
 			}
 
 			private void resizeFix() {
@@ -136,48 +136,42 @@ namespace Client {
 			p.PerformLayout();
 		}
 
-		public static void setBetterFont(Control c, float ?size = null, GraphicsUnit? gu = null) {
+		public static void setBetterFont(Control c, float? size = null, GraphicsUnit? gu = null) {
 			var cf = c.Font;
 			c.Font = new Font("Segoe UI", size ?? cf.Size, cf.Style, gu ?? cf.Unit, cf.GdiCharSet);
 		}
 
 		//https://stackoverflow.com/a/66310028/18704284
-		public class ComboboxThatCanAtLeastHaveCustomizableBackgroundColor : ComboBox
-		{
-		
-		    public ComboboxThatCanAtLeastHaveCustomizableBackgroundColor()
-		    {
-		        BorderColor = Color.DimGray;
+		public class ComboboxThatCanAtLeastHaveCustomizableBackgroundColor : ComboBox {
+
+			public ComboboxThatCanAtLeastHaveCustomizableBackgroundColor() {
+				BorderColor = Color.DimGray;
 				FlatStyle = FlatStyle.Flat;
-		    }
-		
-		    [Browsable(true)]
-		    [Category("Appearance")]
-		    [DefaultValue(typeof(Color), "DimGray")]
-		    public Color BorderColor { get; set; }
-		
-		    private const int WM_PAINT = 0xF;
-		    private int buttonWidth = SystemInformation.HorizontalScrollBarArrowWidth;
-		    protected override void WndProc(ref Message m)
-		    {
-		        base.WndProc(ref m);
-		        if (m.Msg == WM_PAINT)
-		        {
-		            using (var g = Graphics.FromHwnd(Handle))
-		            {
-		                // Uncomment this if you don't want the "highlight border".
-		                /*
+			}
+
+			[Browsable(true)]
+			[Category("Appearance")]
+			[DefaultValue(typeof(Color), "DimGray")]
+			public Color BorderColor { get; set; }
+
+			private const int WM_PAINT = 0xF;
+			private int buttonWidth = SystemInformation.HorizontalScrollBarArrowWidth;
+			protected override void WndProc(ref Message m) {
+				base.WndProc(ref m);
+				if(m.Msg == WM_PAINT) {
+					using(var g = Graphics.FromHwnd(Handle)) {
+						// Uncomment this if you don't want the "highlight border".
+						/*
 		                using (var p = new Pen(this.BorderColor, 1))
 		                {
 		                    g.DrawRectangle(p, 0, 0, Width - 1, Height - 1);
 		                }*/
-		                using (var p = new Pen(this.BorderColor, 2))
-		                {
-		                    g.DrawRectangle(p, 0, 0, Width , Height );
-		                }
-		            }
-		        }
-		    }
+						using(var p = new Pen(BorderColor, 2)) {
+							g.DrawRectangle(p, 0, 0, Width, Height);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -185,7 +179,7 @@ namespace Client {
 		public static int gcd(int a, int b) {
 			if(b == 0) return a; else return gcd(b, a % b);
 		}
-		
+
 		public static int lcm(int a, int b) { return a / gcd(a, b) * b; }
 	}
 }

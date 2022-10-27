@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace Common {
 	static class TintImage {
 		public static Image applyTint(Image image, Color tint) {
 			var iaPicture = new ImageAttributes();
@@ -22,11 +22,11 @@ namespace Client {
 
 			using(
 			var gfxPicture = Graphics.FromImage(newBitmap)) {
-			var rctPicture = new Rectangle(0, 0, image.Width, image.Height);
-			gfxPicture.DrawImage(image, rctPicture, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, iaPicture);
+				var rctPicture = new Rectangle(0, 0, image.Width, image.Height);
+				gfxPicture.DrawImage(image, rctPicture, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, iaPicture);
 			}
 
 			return newBitmap;
-		}	
+		}
 	}
 }

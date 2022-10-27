@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Common;
+using Communication;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class FlightDisplay : UserControl {
 		private static string rub = '\u20BD'.ToString();
 		private static string check = '\u2713'.ToString();

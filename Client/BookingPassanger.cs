@@ -1,10 +1,10 @@
-﻿using Communication;
+﻿using ClientCommunication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Client {
+namespace ClientCommunication {
 	public class BookingPassanger {
 		public int? passangerIndex;
 		public bool manualSeatSelected;

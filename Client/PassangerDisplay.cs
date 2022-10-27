@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+﻿using Common;
+using Communication;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class PassangerDisplay : UserControl {
 		bool showNumber;
 		int number;
 
-		Communication.Passanger passanger;
+		Passanger passanger;
 
 		private string tooltipMessage;
 
@@ -26,7 +22,7 @@ namespace Client {
 			}
 		}
 
-		public Communication.Passanger Passanger{
+		public Passanger Passanger{
 			get{ return passanger; }
 			set{ passanger = value; set(); }
 		}

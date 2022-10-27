@@ -1,7 +1,7 @@
 ﻿
 using System.Drawing;
 
-namespace Client {
+namespace ClientCommunication {
 	partial class SelectFlight {
 		/// <summary>
 		/// Required designer variable.
@@ -36,8 +36,8 @@ namespace Client {
 			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
 			this.findFlightsButton = new System.Windows.Forms.Button();
 			this.fromDepDate = new System.Windows.Forms.DateTimePicker();
-			this.toLoc = new Client.SelectFlight.CityComboBox();
-			this.fromLoc = new Client.SelectFlight.CityComboBox();
+			this.toLoc = new Common.CityComboBox();
+			this.fromLoc = new Common.CityComboBox();
 			this.flightsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
@@ -247,8 +247,8 @@ namespace Client {
 
 		private System.Windows.Forms.TableLayoutPanel loginLayoutPanel;
 		private System.Windows.Forms.DateTimePicker fromDepDate;
-		private CityComboBox toLoc;
-		private CityComboBox fromLoc;
+		private Common.CityComboBox toLoc;
+		private Common.CityComboBox fromLoc;
 		private System.Windows.Forms.ToolTip elementHint;
 		private System.Windows.Forms.TableLayoutPanel flightsTable;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class BookingPassangerSummaryControl : UserControl {
 		public BookingPassangerSummaryControl() {
 			InitializeComponent();
@@ -16,7 +16,7 @@ namespace Client {
 		public void set(
 			CustomerData customer, BookingPassanger bookingP,
 			FlightsSeats.Seats seats, Dictionary<int, FlightsOptions.Options> optionsForClasses, 
-			Communication.BookedSeatInfo? bookedSeatInfo, Communication.SeatCost seatCost,
+			ClientCommunication.BookedSeatInfo? bookedSeatInfo, ClientCommunication.SeatCost seatCost,
 			Dictionary<int, string> classesNames
 		) {
 			var passanger = customer.passangers[(int) bookingP.passangerIndex];

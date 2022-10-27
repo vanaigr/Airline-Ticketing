@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Communication;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -10,7 +11,7 @@ using Validation;
 
 namespace AirlineTicketingServer {
 	static class ValidatePassanger {
-		public static Validation.CheckResult validate(Communication.Passanger it) {
+		public static Validation.CheckResult validate(Passanger it) {
 			var sb = new StringBuilder();
 			var err = false;
 
@@ -36,7 +37,7 @@ namespace AirlineTicketingServer {
 			public DateTime birthday;
 			public byte[] documentBin;
 		}
-		public static Dictionary<int, Communication.Passanger> getAll(SqlConnectionView cv, int customerId) {
+		public static Dictionary<int, Passanger> getAll(SqlConnectionView cv, int customerId) {
 			using(cv) {
 			using(
 			var command = new SqlCommand(@"
@@ -65,9 +66,9 @@ namespace AirlineTicketingServer {
 			command.Dispose();
 			cv.Dispose();
 
-			var passangers = new Dictionary<int, Communication.Passanger>(rawPassangers.Count);
+			var passangers = new Dictionary<int, Passanger>(rawPassangers.Count);
 			foreach(var rp in rawPassangers) {
-				passangers.Add(rp.index, new Communication.Passanger{
+				passangers.Add(rp.index, new Passanger{
 					archived = rp.archived,
 					name = rp.name, surname = rp.surname, middleName = rp.middleName,
 					birthday = rp.birthday, document = BinaryDocument.fromBytes(rp.documentBin)
@@ -77,7 +78,7 @@ namespace AirlineTicketingServer {
 			}}}
 		}
 
-		public static int? replace(SqlConnectionView cv, int customerId, int index, Communication.Passanger passanger) {
+		public static int? replace(SqlConnectionView cv, int customerId, int index, Passanger passanger) {
 			using(cv) {
 			var documentBin = BinaryDocument.toBytes(passanger.document);
 
@@ -101,7 +102,7 @@ namespace AirlineTicketingServer {
 			}}
 		}
 
-		public static int add(SqlConnectionView cv, int customerId, Communication.Passanger passanger) {
+		public static int add(SqlConnectionView cv, int customerId, Passanger passanger) {
 			var documentBin = BinaryDocument.toBytes(passanger.document);
 
 			using(

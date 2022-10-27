@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Common;
+using Communication;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class FlightDetailsFill : Form {
-		private Communication.MessageService service;
+		private MessageService service;
 		private CustomerData customer;
 
 		private List<PassangerDisplay> curPassangersDisplays;
@@ -23,7 +25,7 @@ namespace Client {
 		public event EventHandler OnBookedPassangersChanged;
 
 		public FlightDetailsFill(
-			Communication.MessageService service, CustomerData customer,
+			MessageService service, CustomerData customer,
 			BookingStatus status,
 			string[] classesNames,
 			FlightAndCities flightAndCities, FlightsSeats.Seats seats
@@ -203,7 +205,7 @@ namespace Client {
 					var display = curPassangersDisplays[i];
 
 					if(bookingPassanger.passangerIndex != null) {
-						Communication.Passanger p;
+						Passanger p;
 						var exists = customer.passangers.TryGetValue((int) bookingPassanger.passangerIndex, out p);
 						if(exists) {
 							display.Passanger = p;
@@ -703,11 +705,11 @@ namespace Client {
 		public int bookedFlightIndex;
 		//public Communication.BookedSeatInfo[] seatsInfo;
 
-		public Communication.BookedFlight BookedFlight(CustomerData it) {
+		public ClientCommunication.BookedFlight BookedFlight(CustomerData it) {
 			return it.flightsBooked[bookedFlightIndex];
 		}
 
-		public Communication.BookedFlightDetails BookedFlightDetails(CustomerData it) {
+		public ClientCommunication.BookedFlightDetails BookedFlightDetails(CustomerData it) {
 			return it.bookedFlightsDetails[bookedFlightIndex];
 		}
 	}

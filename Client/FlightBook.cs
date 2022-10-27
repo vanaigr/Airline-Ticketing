@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Common;
+using Communication;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,17 +9,17 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class FlightBook : Form {
-		private Communication.MessageService service;
+		private MessageService service;
 		private Dictionary<int, string> classesNames;
 
 		private CustomerData customer;
 		private List<BookingPassanger> bookingPassangers;
 
-		private Dictionary<int, Communication.Passanger> localPassangers;
-		private Communication.SeatAndOptions[] seatsAndOptions;
-		private Communication.SelectedSeat[] selectedSeats;
+		private Dictionary<int, Passanger> localPassangers;
+		private SeatAndOptions[] seatsAndOptions;
+		private SelectedSeat[] selectedSeats;
 
 		private FlightAndCities flightAndCities;
 		private FlightsSeats.Seats seats;
@@ -25,7 +27,7 @@ namespace Client {
 		private BookingStatus status;
 		
 		public FlightBook(
-			Communication.MessageService service,
+			MessageService service,
 			CustomerData customer, List<BookingPassanger> bookingPassangers,
 			FlightAndCities flightAndCities, FlightsSeats.Seats seats,
 			Dictionary<int, string> classesNames,
@@ -55,12 +57,12 @@ namespace Client {
 				bookFlightButton.Enabled = false;
 			}
 			else {
-				seatsAndOptions = new Communication.SeatAndOptions[bookingPassangers.Count];
+				seatsAndOptions = new ClientCommunication.SeatAndOptions[bookingPassangers.Count];
 				for(int i = 0; i < seatsAndOptions.Length; i++) {
 					var p = bookingPassangers[i];
 					var seatClassId = p.ClassId(seats);
 
-					seatsAndOptions[i] = new Communication.SeatAndOptions{
+					seatsAndOptions[i] = new ClientCommunication.SeatAndOptions{
 						selectedSeatClass = seatClassId,
 						seatIndex = p.manualSeatSelected ? p.seatIndex : (int?) null,
 						selectedOptions = new FlightsOptions.SelectedOptions(
@@ -75,14 +77,14 @@ namespace Client {
 					};
 				}
 
-				localPassangers = new Dictionary<int, Communication.Passanger>();
-				selectedSeats = new Communication.SelectedSeat[seatsAndOptions.Length];
+				localPassangers = new Dictionary<int, Passanger>();
+				selectedSeats = new ClientCommunication.SelectedSeat[seatsAndOptions.Length];
 
 				for(int i = 0; i < bookingPassangers.Count; i++) {
 					var index = (int) bookingPassangers[i].passangerIndex;
 					var idInfo = customer.passangerIds[index];
 
-					selectedSeats[i] = new Communication.SelectedSeat{
+					selectedSeats[i] = new ClientCommunication.SelectedSeat{
 						fromTempPassangers = idInfo.IsLocal,
 						passangerId = idInfo.IsLocal ? index : idInfo.DatabaseId,
 						seatAndOptions = seatsAndOptions[i]
@@ -94,7 +96,7 @@ namespace Client {
 				}
 				
 				try {
-					Communication.SeatCost[] seatsCost;
+					ClientCommunication.SeatCost[] seatsCost;
 
 					if(!status.booked) {
 						var result = service.seatsData(flightAndCities.flight.id, seatsAndOptions);
@@ -128,7 +130,7 @@ namespace Client {
 			this.passangersSummaryPanel.PerformLayout();
 		}
 
-		private void updateSum(Communication.SeatCost[] seatsCost) {
+		private void updateSum(ClientCommunication.SeatCost[] seatsCost) {
 			var totalSum = 0;
 
 			var flightDetails = status.booked ? status.BookedFlightDetails(customer) : null;
@@ -137,8 +139,8 @@ namespace Client {
 				var passanger = bookingPassangers[i];
 				var it = new BookingPassangerSummaryControl();
 
-				Communication.BookedSeatInfo? bookedSeatInfo;;
-				Communication.SeatCost seatCost;
+				ClientCommunication.BookedSeatInfo? bookedSeatInfo;;
+				ClientCommunication.SeatCost seatCost;
 
 				if(status.booked) {
 					bookedSeatInfo = flightDetails.bookedSeats[i];
@@ -199,13 +201,13 @@ namespace Client {
 
 					var newIndex = customer.newBookedFlightIndex++;
 
-					customer.flightsBooked.Add(newIndex, new Communication.BookedFlight{
+					customer.flightsBooked.Add(newIndex, new ClientCommunication.BookedFlight{
 						bookedFlightId = booking.customerBookedFlightId, bookingFinishedTime = booking.bookingFinishedTime,
 						availableFlight = flightAndCities.flight, bookedPassangerCount = bookingPassangers.Count,
 						fromCode = flightAndCities.fromCityCode, toCode = flightAndCities.toCityCode
 					});
 
-					customer.bookedFlightsDetails.Add(newIndex, new Communication.BookedFlightDetails{
+					customer.bookedFlightsDetails.Add(newIndex, new ClientCommunication.BookedFlightDetails{
 						bookedSeats = booking.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
 					});
 

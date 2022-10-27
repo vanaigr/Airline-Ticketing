@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class FlightsHistory : Form {
-		private Communication.MessageService service;
+		private ClientCommunication.MessageService service;
 		private CustomerData customer;
 
 		public FlightsHistory(
-			Communication.MessageService service,
+			ClientCommunication.MessageService service,
 			string[] classesNames,
 			CustomerData customer
 		) {
@@ -64,7 +65,7 @@ namespace Client {
 				flightsTable.RowCount = customer.flightsBooked.Count;
 
 				foreach(var pair in customer.flightsBooked) {
-					Communication.BookedFlightDetails details;
+					ClientCommunication.BookedFlightDetails details;
 					customer.bookedFlightsDetails.TryGetValue(pair.Key, out details);
 
 					var it = new BookedFlightInfoControl(
@@ -75,7 +76,6 @@ namespace Client {
 					it.Dock = DockStyle.Top;
 					it.Margin = new Padding(0, 5, 0, 5);
 					it.OnDelete += (a, b) => {
-						Console.WriteLine("!@");
 						it.Dispose();
 					};
 

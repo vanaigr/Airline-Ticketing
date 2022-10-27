@@ -1,5 +1,5 @@
 ﻿
-namespace Client {
+namespace ClientCommunication {
 	partial class FlightDetailsFill {
 		/// <summary>
 		/// Required designer variable.
@@ -29,7 +29,7 @@ namespace Client {
 			System.Windows.Forms.Label label2;
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.selectedStatusLabel = new System.Windows.Forms.Label();
-			this.seatSelectTable = new Client.SeatsTable();
+			this.seatSelectTable = new ClientCommunication.SeatsTable();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.flowLayoutPanelHeightBug = new System.Windows.Forms.Panel();

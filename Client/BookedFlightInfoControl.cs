@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class BookedFlightInfoControl : UserControl {
-		private Communication.MessageService service;
+		private ClientCommunication.MessageService service;
 
 		private int bookedFlightIndex;
-		private Communication.BookedFlight bookedFlight;
+		private ClientCommunication.BookedFlight bookedFlight;
 		private CustomerData customer;
 		private string[] classesNames;
 
@@ -21,7 +21,7 @@ namespace Client {
 		public event EventHandler OnDelete;
 
 		public BookedFlightInfoControl(
-			Communication.MessageService service,
+			ClientCommunication.MessageService service,
 			CustomerData customer, int bookedFlightIndex,
 			string[] classesNames,  SetStatus setStatus
 		) {
@@ -92,7 +92,6 @@ namespace Client {
 				};
 
 				form.OnBookedPassangersChanged += (a, b) => {
-					Console.WriteLine("HJKHK" + bookedFlight.bookedPassangerCount);
 					if(bookedFlight.bookedPassangerCount == 0) OnDelete?.Invoke(this, new EventArgs());
 					else updateBookedSeatsCount();
 				};

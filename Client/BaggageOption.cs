@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class BaggageOption : UserControl {
 		private FlightsOptions.Baggage baggage;
 

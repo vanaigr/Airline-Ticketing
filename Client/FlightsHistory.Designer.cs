@@ -1,5 +1,5 @@
 ﻿
-namespace Client {
+namespace ClientCommunication {
 	partial class FlightsHistory {
 		/// <summary>
 		/// Required designer variable.

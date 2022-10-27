@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client {
+namespace ClientCommunication {
 	public partial class PassangerSettings : Form {
-		private Communication.MessageService service;
+		private ClientCommunication.MessageService service;
 		private CustomerData customer;
 		private BookingStatus status;
 
@@ -37,7 +38,7 @@ namespace Client {
 		bool ignore__ = false;
 
 		public PassangerSettings(
-			Communication.MessageService service, CustomerData customer, BookingStatus status,
+			ClientCommunication.MessageService service, CustomerData customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats, SeatHandling seatHandling,
 			BookingPassanger passanger, int bookingPassangerIndex,
 			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
