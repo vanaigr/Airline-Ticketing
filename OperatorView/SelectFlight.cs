@@ -89,7 +89,6 @@ namespace OperatorView {
 						flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
 					}
 					else foreach(var flight in result) {
-						/*TODO
 						var flightDisplay = new FlightDisplay();
 						var flightAndCities = new FlightAndCities{
 							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
@@ -98,7 +97,7 @@ namespace OperatorView {
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openFlightBooking);
 						flightsTable.RowStyles.Add(new RowStyle());
-						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);*/
+						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 					}
 
 					flightsTable.ResumeLayout(false);

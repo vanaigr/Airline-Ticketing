@@ -31,6 +31,7 @@ namespace Communication {
 		public string airplaneName;
 
 		public Dictionary<int, FlightsOptions.Options> optionsForClasses;
+		public int[] seatCountForClasses;
 		public int[] availableSeatsForClasses;
 	}
 

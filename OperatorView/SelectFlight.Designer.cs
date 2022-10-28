@@ -29,7 +29,6 @@ namespace OperatorView {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectFlight));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.loginLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.statusLabel = new System.Windows.Forms.Label();
@@ -52,14 +51,13 @@ namespace OperatorView {
 			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel1.BackColor = System.Drawing.Color.White;
 			this.tableLayoutPanel1.ColumnCount = 5;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-			this.tableLayoutPanel1.Controls.Add(this.loginLayoutPanel, 4, 0);
-			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 2, 0);
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 3, 0);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -68,20 +66,6 @@ namespace OperatorView {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(1096, 51);
 			this.tableLayoutPanel1.TabIndex = 2;
-			// 
-			// loginLayoutPanel
-			// 
-			this.loginLayoutPanel.AutoSize = true;
-			this.loginLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.loginLayoutPanel.BackColor = System.Drawing.Color.Transparent;
-			this.loginLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.loginLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.loginLayoutPanel.Location = new System.Drawing.Point(884, 0);
-			this.loginLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
-			this.loginLayoutPanel.Name = "loginLayoutPanel";
-			this.loginLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 10, 10, 10);
-			this.loginLayoutPanel.Size = new System.Drawing.Size(212, 51);
-			this.loginLayoutPanel.TabIndex = 1;
 			// 
 			// tableLayoutPanel3
 			// 
@@ -94,13 +78,13 @@ namespace OperatorView {
 			this.tableLayoutPanel3.Controls.Add(this.pictureBox1, 0, 0);
 			this.tableLayoutPanel3.Controls.Add(this.statusLabel, 2, 0);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel3.Location = new System.Drawing.Point(20, 0);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
 			this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(10, 10, 0, 10);
 			this.tableLayoutPanel3.RowCount = 1;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(211, 51);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(207, 51);
 			this.tableLayoutPanel3.TabIndex = 2;
 			// 
 			// pictureBox1
@@ -126,7 +110,7 @@ namespace OperatorView {
 			this.statusLabel.Location = new System.Drawing.Point(35, 10);
 			this.statusLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(176, 31);
+			this.statusLabel.Size = new System.Drawing.Size(172, 31);
 			this.statusLabel.TabIndex = 1;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -137,19 +121,19 @@ namespace OperatorView {
 			this.tableLayoutPanel4.ColumnCount = 4;
 			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
 			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+			this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutPanel4.Controls.Add(this.findFlightsButton, 3, 0);
 			this.tableLayoutPanel4.Controls.Add(this.fromDepDate, 2, 0);
 			this.tableLayoutPanel4.Controls.Add(this.toLoc, 1, 0);
 			this.tableLayoutPanel4.Controls.Add(this.fromLoc, 0, 0);
 			this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel4.Location = new System.Drawing.Point(231, 0);
+			this.tableLayoutPanel4.Location = new System.Drawing.Point(247, 0);
 			this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel4.Name = "tableLayoutPanel4";
 			this.tableLayoutPanel4.RowCount = 1;
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel4.Size = new System.Drawing.Size(633, 51);
+			this.tableLayoutPanel4.Size = new System.Drawing.Size(828, 51);
 			this.tableLayoutPanel4.TabIndex = 3;
 			// 
 			// findFlightsButton
@@ -163,9 +147,9 @@ namespace OperatorView {
 			this.findFlightsButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.findFlightsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.findFlightsButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.findFlightsButton.Location = new System.Drawing.Point(539, 12);
+			this.findFlightsButton.Location = new System.Drawing.Point(747, 12);
 			this.findFlightsButton.Name = "findFlightsButton";
-			this.findFlightsButton.Size = new System.Drawing.Size(91, 27);
+			this.findFlightsButton.Size = new System.Drawing.Size(78, 27);
 			this.findFlightsButton.TabIndex = 2;
 			this.findFlightsButton.Text = "Найти";
 			this.findFlightsButton.UseVisualStyleBackColor = false;
@@ -177,9 +161,9 @@ namespace OperatorView {
 			this.fromDepDate.CustomFormat = "d MMM, ddd";
 			this.fromDepDate.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.fromDepDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			this.fromDepDate.Location = new System.Drawing.Point(381, 14);
+			this.fromDepDate.Location = new System.Drawing.Point(499, 14);
 			this.fromDepDate.Name = "fromDepDate";
-			this.fromDepDate.Size = new System.Drawing.Size(152, 23);
+			this.fromDepDate.Size = new System.Drawing.Size(242, 23);
 			this.fromDepDate.TabIndex = 15;
 			// 
 			// toLoc
@@ -189,9 +173,9 @@ namespace OperatorView {
 			this.toLoc.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.toLoc.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.toLoc.FormattingEnabled = true;
-			this.toLoc.Location = new System.Drawing.Point(192, 13);
+			this.toLoc.Location = new System.Drawing.Point(251, 13);
 			this.toLoc.Name = "toLoc";
-			this.toLoc.Size = new System.Drawing.Size(183, 24);
+			this.toLoc.Size = new System.Drawing.Size(242, 24);
 			this.toLoc.TabIndex = 14;
 			// 
 			// fromLoc
@@ -203,7 +187,7 @@ namespace OperatorView {
 			this.fromLoc.FormattingEnabled = true;
 			this.fromLoc.Location = new System.Drawing.Point(3, 13);
 			this.fromLoc.Name = "fromLoc";
-			this.fromLoc.Size = new System.Drawing.Size(183, 24);
+			this.fromLoc.Size = new System.Drawing.Size(242, 24);
 			this.fromLoc.TabIndex = 13;
 			// 
 			// flightsTable
@@ -244,8 +228,6 @@ namespace OperatorView {
 		}
 
 		#endregion
-
-		private System.Windows.Forms.TableLayoutPanel loginLayoutPanel;
 		private System.Windows.Forms.DateTimePicker fromDepDate;
 		private Common.CityComboBox toLoc;
 		private Common.CityComboBox fromLoc;

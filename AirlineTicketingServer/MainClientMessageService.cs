@@ -34,81 +34,14 @@ class MainClientMessageService : MessageService {
 		};
 	}
 
-	struct RawAvailableFlight {
-		public int id;
-		public DateTime departureTime;
-		public int arrivalOffsteMinutes;
-
-		public string flightName;
-		public string airplaneName;
-
-		public byte[] optionsBin;
-		public int[] availableSeatsForClasses;
-	}
-
 	Either<List<AvailableFlight>, InputError> MessageService.matchingFlights(MatchingFlightsParams p) {
 		var err = Validation.ErrorString.Create();
 		if(p.fromCode == null) err.ac("город вылета должен быть заполнен");
 		if(p.toCode == null) err.ac("город прилёта должен быть заполнен");
 		if(p.when == null) err.ac("дата вылета должа быть заполнена");
+
 		if(err) return Either<List<AvailableFlight>, InputError>.Failure(new InputError(err.Message));
-		
-		var rawAvailableFlights = new List<RawAvailableFlight>();
-
-		using(
-		var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-		using(
-		var selectClasses = new SqlCommand(
-			@"select 
-				[AvailableFlight], [FlightName], [AirplaneName], [DepartureDatetime], 
-				[ArivalOffsetMinutes], [OptionsBin],
-				[AvailableEconomyClassSeatsCount], 
-				[AvailableComfortClassSeatsCount],
-				[AvailableBusinessClassSeatsCount],
-				[AvailableFirstClassSeatsCount]
-			from [Flights].[FindFlights](@fromCity, @toCity, @time, @MustBeAbleToBook) 
-			order by [DepartureDatetime] desc",
-			connection
-		)) {
-		selectClasses.CommandType = CommandType.Text;
-		selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
-		selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
-		selectClasses.Parameters.AddWithValue("@time", p.when);
-		selectClasses.Parameters.AddWithValue("@MustBeAbleToBook", true);
-
-		connection.Open();
-		using(
-		var result = selectClasses.ExecuteReader()) {
-		while(result.Read()) rawAvailableFlights.Add(new RawAvailableFlight{
-			id = (int) result[0], flightName = (string) result[1],
-			airplaneName = (string) result[2], departureTime = (DateTime) result[3],
-			arrivalOffsteMinutes = (int) result[4],
-			optionsBin = (byte[]) result[5],
-			availableSeatsForClasses = new int[]{
-				(short) result[6], (short) result[7],
-				(short) result[8], (short) result[9],
-			}
-		});
-		}}}
-
-		var list = new List<AvailableFlight>(rawAvailableFlights.Count);
-		for(int i = rawAvailableFlights.Count-1; i >= 0 ; i--) {
-			var raf = rawAvailableFlights[i];
-			rawAvailableFlights.RemoveAt(i);
-			list.Add(new AvailableFlight{
-				id = raf.id,
-				departureTime = raf.departureTime,
-				arrivalOffsteMinutes = raf.arrivalOffsteMinutes,
-
-				flightName = raf.flightName,
-				airplaneName = raf.airplaneName,
-
-				optionsForClasses = BinaryOptions.fromBytes(raf.optionsBin),
-				availableSeatsForClasses = raf.availableSeatsForClasses
-			});
-		}
-
-		return Either<List<AvailableFlight>, InputError>.Success(list);
+		else return Either<List<AvailableFlight>, InputError>.Success(Flights.matchingFlights(p, mustBeAbeToBook: true));
 	}
 
 	Either<object, LoginError> MessageService.register(Customer c) {

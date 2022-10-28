@@ -17,8 +17,12 @@ class MainOperatorMessageService : MessageService {
 		};
 	}
 
-	Either<List<AvailableFlight>, InputError> MessageService.matchingFlights(MatchingFlightsParams matchingFlightsParams) {
-		throw new NotImplementedException();
+	Either<List<AvailableFlight>, InputError> MessageService.matchingFlights(MatchingFlightsParams p) {
+		var err = Validation.ErrorString.Create();
+		if(p.when == null) err.ac("дата вылета должа быть заполнена");
+
+		if(err) return Either<List<AvailableFlight>, InputError>.Failure(new InputError(err.Message));
+		else return Either<List<AvailableFlight>, InputError>.Success(Flights.matchingFlights(p, mustBeAbeToBook: false));
 	}
 }
 

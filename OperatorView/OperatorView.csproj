@@ -78,6 +78,12 @@
       <Link>TransparentPanel.cs</Link>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="FlightDisplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FlightDisplay.Designer.cs">
+      <DependentUpon>FlightDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="OperatorViewServerQuery.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,6 +100,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+	<EmbeddedResource Include="FlightDisplay.resx">
+      <DependentUpon>FlightDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

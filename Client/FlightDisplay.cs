@@ -118,14 +118,6 @@ namespace ClientCommunication {
 			updateOptions();
 		}
 
-		private void FlightDisplay_MouseHover(object sender, EventArgs e) {
-			this.BackColor = Color.FromArgb(255, 240, 240, 240);
-		}
-
-		private void FlightDisplay_MouseLeave(object sender, EventArgs e) {
-			this.BackColor = Color.White;
-		}
-
 		private void classType_SelectedIndexChanged(object sender, EventArgs e) {
 			updateOptions();
 		}

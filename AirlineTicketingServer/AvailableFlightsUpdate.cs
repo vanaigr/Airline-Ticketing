@@ -24,16 +24,27 @@ namespace AirlineTicketingServer {
 			var thisDay = DateTime.Today;
 
 			var connection = connectionView.connection;
-			//delete old flights
+			//archive old flights
 			using(var command = new SqlCommand(
 				@"	
+					declare @UpdatedFlights table(
+						[AvailableFlight] int not null primary key
+					);
 					update [Flights].[AvailableFlights] 
 					set [Archived] = 1
+					output [inserted].[Id] into @UpdatedFlights
 					where [DepartureDate] < @Today;
+
+					delete [afs]
+					from @UpdatedFlights as [uf]
+
+					inner join [Flights].[AvailableFlightsSeats] as [afs]
+					on [afs].[AvailableFlight] = [uf].[AvailableFlight]
+						and [afs].[Passanger] is null;
 				",
 				connection
 			)) {
-				command.CommandType = System.Data.CommandType.Text;
+				command.CommandType = CommandType.Text;
 				command.Parameters.AddWithValue("@Today", thisDay);
 				connectionView.Open();
 				var result = command.ExecuteNonQuery();

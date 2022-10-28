@@ -42,9 +42,9 @@ namespace ClientCommunication {
 			this.baggageOptionsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.label4 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this.button1 = new System.Windows.Forms.Button();
 			this.availableSeatsCount = new System.Windows.Forms.Label();
 			this.classType = new System.Windows.Forms.ComboBox();
+			this.button1 = new System.Windows.Forms.Button();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.flightNameLabel = new System.Windows.Forms.Label();
 			this.airplaneNameLabel = new System.Windows.Forms.Label();
@@ -329,27 +329,6 @@ namespace ClientCommunication {
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(606, 27);
 			this.tableLayoutPanel2.TabIndex = 4;
 			// 
-			// button1
-			// 
-			this.button1.AutoSize = true;
-			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button1.BackColor = System.Drawing.Color.RoyalBlue;
-			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
-			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
-			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button1.Location = new System.Drawing.Point(517, 0);
-			this.button1.Margin = new System.Windows.Forms.Padding(0);
-			this.button1.Name = "button1";
-			this.tableLayoutPanel2.SetRowSpan(this.button1, 3);
-			this.button1.Size = new System.Drawing.Size(89, 27);
-			this.button1.TabIndex = 3;
-			this.button1.Text = "Продолжить";
-			this.button1.UseVisualStyleBackColor = false;
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
 			// availableSeatsCount
 			// 
 			this.availableSeatsCount.AutoSize = true;
@@ -375,6 +354,27 @@ namespace ClientCommunication {
 			this.classType.TabIndex = 1;
 			this.classType.SelectedIndexChanged += new System.EventHandler(this.classType_SelectedIndexChanged);
 			// 
+			// button1
+			// 
+			this.button1.AutoSize = true;
+			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.button1.BackColor = System.Drawing.Color.RoyalBlue;
+			this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
+			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.button1.Location = new System.Drawing.Point(517, 0);
+			this.button1.Margin = new System.Windows.Forms.Padding(0);
+			this.button1.Name = "button1";
+			this.tableLayoutPanel2.SetRowSpan(this.button1, 3);
+			this.button1.Size = new System.Drawing.Size(89, 27);
+			this.button1.TabIndex = 3;
+			this.button1.Text = "Продолжить";
+			this.button1.UseVisualStyleBackColor = false;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.AutoSize = true;
@@ -383,7 +383,7 @@ namespace ClientCommunication {
 			this.flowLayoutPanel1.Controls.Add(this.airplaneNameLabel);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 13);
-			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(200, 24);
 			this.flowLayoutPanel1.TabIndex = 5;
@@ -424,8 +424,6 @@ namespace ClientCommunication {
 			this.MinimumSize = new System.Drawing.Size(750, 100);
 			this.Name = "FlightDisplay";
 			this.Size = new System.Drawing.Size(852, 136);
-			this.MouseLeave += new System.EventHandler(this.FlightDisplay_MouseLeave);
-			this.MouseHover += new System.EventHandler(this.FlightDisplay_MouseHover);
 			tableLayoutPanel3.ResumeLayout(false);
 			tableLayoutPanel3.PerformLayout();
 			tableLayoutPanel4.ResumeLayout(false);
