@@ -76,6 +76,7 @@
     <Compile Include="DatabaseOptions.cs" />
     <Compile Include="DatabasePassanger.cs" />
     <Compile Include="Communication.cs" />
+    <Compile Include="DatabaseSeatsExtraction.cs" />
     <Compile Include="Flights.cs" />
     <Compile Include="FlightsOptions.cs" />
     <Compile Include="LoggingProxy.cs" />

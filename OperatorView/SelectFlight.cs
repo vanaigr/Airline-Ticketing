@@ -14,7 +14,7 @@ namespace OperatorView {
 	public partial class SelectFlight : Form {
 		private MessageService service;
 
-		string[] avaliableFlightClasses;
+		string[] classesNames;
 		List<City> cities;
 		
 		public SelectFlight() {
@@ -40,7 +40,7 @@ namespace OperatorView {
 		void setupAvailableOptions() {
 			try {
 				var options = service.availableOptions();
-				avaliableFlightClasses = options.flightClasses;
+				classesNames = options.flightClasses;
 				cities = options.cities;
 				updateErrorDisplay(false, null, null);
 			}
@@ -93,9 +93,9 @@ namespace OperatorView {
 						var flightAndCities = new FlightAndCities{
 							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
 						};
-						flightDisplay.updateFromFlight(avaliableFlightClasses, flightAndCities);
+						flightDisplay.updateFromFlight(classesNames, flightAndCities);
 						flightDisplay.Dock = DockStyle.Top;
-						flightDisplay.Click += new EventHandler(openFlightBooking);
+						flightDisplay.Click += new EventHandler(openPassangersView);
 						flightsTable.RowStyles.Add(new RowStyle());
 						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
 					}
@@ -118,38 +118,39 @@ namespace OperatorView {
 			reconnect();
 		}
 
-		private void openFlightBooking(object sender, EventArgs e) {
-			//TODO
-			/*var flightDisplay = (FlightDisplay) sender;
+		private Dictionary<int, PassangersView> openedViews = new Dictionary<int, PassangersView>();
+
+		private void openPassangersView(object sender, EventArgs e) {
+			var flightDisplay = (FlightDisplay) sender;
 			var fic = flightDisplay.CurrentFlight;
 
-			FlightDetailsFill booking;
-			if(openedBookings.TryGetValue(fic.flight.id, out booking)) {
-				booking.Focus();
+			var flightId = fic.flight.id;
+
+			PassangersView view;
+			if(openedViews.TryGetValue(flightId, out view)) {
+				view.Focus();
 			}
 			else {
 				try {
-					var result = service.seatsForFlight(fic.flight.id);
+					var result = service.flightDetails(fic.flight.id);
 
-					if(result) {
-						booking = new FlightDetailsFill(
-							service, customer, 
-							new BookingStatus(), 
-							avaliableFlightClasses, fic, result.s
-						);
-						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
-
-						openedBookings.Add(fic.flight.id, booking);
-						booking.Show();
+					if(result) { 
+						view = new PassangersView(service, fic, result.s, classesNames);
+						view.FormClosed += (obj, args) => { openedViews.Remove(flightId); };
 
 						updateErrorDisplay(false, null, null);
+					
+						openedViews.Add(fic.flight.id, view);
+						view.Show();
 					}
-					else updateErrorDisplay(true, result.f.message, null);
+					else {
+						updateErrorDisplay(true, result.f.message, null);
+					}
 				}
 				catch(Exception ex) {
 					updateErrorDisplay(true, null, ex);
 				}
-			}*/
+			}
 		}
 
 		void reconnect() {

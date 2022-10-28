@@ -70,6 +70,8 @@ namespace Communication {
 		}
 	}
 
+	[Serializable] public struct Success { };
+
 	[Serializable] public struct InputError {
 		public string message;
 

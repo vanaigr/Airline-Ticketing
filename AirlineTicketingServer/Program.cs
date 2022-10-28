@@ -133,26 +133,33 @@ namespace AirlineTicketingServer {
             string path = AppDomain.CurrentDomain.BaseDirectory;
             AppDomain.CurrentDomain.SetData("DataDirectory", path);
 
+			ServiceHost clientHost = null;
+			ServiceHost operatorHost = null;
+
             try {
 				string adress = "net.tcp://localhost:8080";
 				var clientService = LoggingProxy<ClientCommunication.MessageService>.Create("`Client server`", new MainClientMessageService());
 				var operatorService = LoggingProxy<OperatorViewCommunication.MessageService>.Create("`Operator server`",new MainOperatorMessageService());
 				
-				ServiceHost clientHost = new ServiceHost(clientService, new Uri[] { new Uri(adress) });
+				clientHost = new ServiceHost(clientService, new Uri[] { new Uri(adress) });
 				clientHost.AddServiceEndpoint(typeof(ClientCommunication.MessageService), new NetTcpBinding(), "client-query");
 				clientHost.Opened += (a, b) => Console.WriteLine("Client server opened");
 				clientHost.Open();
 
-				ServiceHost operatorHost = new ServiceHost(operatorService, new Uri[] { new Uri(adress) });
+				operatorHost = new ServiceHost(operatorService, new Uri[] { new Uri(adress) });
 				operatorHost.AddServiceEndpoint(typeof(OperatorViewCommunication.MessageService), new NetTcpBinding(), "operator-view");
 				operatorHost.Opened += (a, b) => Console.WriteLine("Operator server opened");
 				operatorHost.Open();
+
+				Console.ReadKey();
 			}
 			catch(Exception e) {
 				Console.Write("Error on startup:\n{0}", e);
 			}
-
-			Console.ReadKey();
+			finally {
+				if(clientHost != null) clientHost.Close();
+				if(operatorHost != null) operatorHost.Close();
+			}
 		}
 	}
 }

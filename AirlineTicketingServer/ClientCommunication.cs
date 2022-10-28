@@ -65,8 +65,6 @@ namespace ClientCommunication {
 		public int selectedSeat;
 		public SeatCost cost;
 	}
-	
-	[Serializable] public struct Success { };
 
 	[Serializable]
 	public struct LoginError {

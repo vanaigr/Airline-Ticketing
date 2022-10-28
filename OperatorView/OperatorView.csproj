@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{2AD9FFEB-364B-4E9E-B59D-551EF8076219}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>OperatorView</RootNamespace>
     <AssemblyName>OperatorView</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
@@ -30,6 +30,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,6 +61,9 @@
     <Compile Include="..\AirlineTicketingServer\OperatorViewCommunication.cs">
       <Link>OperatorViewCommunication.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\SeatsScheme.cs">
+      <Link>SeatsScheme.cs</Link>
+    </Compile>
     <Compile Include="..\AirlineTicketingServer\Validation.cs">
       <Link>Validation.cs</Link>
     </Compile>
@@ -85,6 +91,12 @@
       <DependentUpon>FlightDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="OperatorViewServerQuery.cs" />
+    <Compile Include="PassangersView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PassangersView.Designer.cs">
+      <DependentUpon>PassangersView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectFlight.cs">
@@ -93,6 +105,9 @@
     <Compile Include="SelectFlight.Designer.cs">
       <DependentUpon>SelectFlight.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="PassangersView.resx">
+      <DependentUpon>PassangersView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SelectFlight.resx">
       <DependentUpon>SelectFlight.cs</DependentUpon>
     </EmbeddedResource>
@@ -101,7 +116,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-	<EmbeddedResource Include="FlightDisplay.resx">
+    <EmbeddedResource Include="FlightDisplay.resx">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">

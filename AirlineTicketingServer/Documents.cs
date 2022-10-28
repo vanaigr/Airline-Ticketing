@@ -42,6 +42,17 @@ namespace Documents {
 			var s = (Passport) o;
 			return Equals(number, s.number);
 		}
+
+		public override int GetHashCode() {
+			int hashCode = -1882778528;
+			hashCode=hashCode*-1521134295+number.GetHashCode();
+			hashCode=hashCode*-1521134295+Number.GetHashCode();
+			return hashCode;
+		}
+
+		public override string ToString() {
+			return "Паспорт: " + number.ToString("00 00 000000");
+		}
 	}
 		
 	[Serializable] public sealed class InternationalPassport : Document {
@@ -95,6 +106,30 @@ namespace Documents {
 			return Equals(number, s.number) && Equals(expirationDate, s.expirationDate)
 				&& Equals(name, s.name) && Equals(surname, s.surname) && Equals(middleName, s.middleName);
 		}
+
+		public override int GetHashCode() {
+			int hashCode = 456306398;
+			hashCode=hashCode*-1521134295+number.GetHashCode();
+			hashCode=hashCode*-1521134295+expirationDate.GetHashCode();
+			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(name);
+			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(surname);
+			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(middleName);
+			hashCode=hashCode*-1521134295+Number.GetHashCode();
+			hashCode=hashCode*-1521134295+ExpirationDate.GetHashCode();
+			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(Name);
+			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(Surname);
+			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(MiddleName);
+			return hashCode;
+		}
+
+		public override string ToString() {
+			return String.Format(
+				"Заграничный паспорт: номер - {0}, дата окончания срока действия - {1}, фамилия: `{2}" +
+				", имя - {3}, отчество - {4}",
+				number.ToString("00 0000000"), expirationDate.ToString("dd.MM.yyyy"),
+				surname, name, middleName != null ? "`" + middleName + "`" : "нет"
+			);
+		}
 	}
 
 	static class DocumentsName {
@@ -103,22 +138,22 @@ namespace Documents {
 		static DocumentsName() {
 			documentsNames.Add(Passport.id, "Паспорт РФ");
 			documentsNames.Add(InternationalPassport.id, "Заграничный паспорт РФ");
-			documentsNames.Add(2, "Иностранный документ");
-			documentsNames.Add(3, "Вид на жительство");
-			documentsNames.Add(4, "Паспорт СССР");
-			documentsNames.Add(5, "Удостоверение личности моряка");
-			documentsNames.Add(6, "Свидетельство о рождении");
-			documentsNames.Add(7, "Медицинское свидетельство о рождении");
-			documentsNames.Add(8, "Военный билет для военнослужащих срочной службы, по контракту и курсантов");
-			documentsNames.Add(9, "Удостоверение личности военнослужащего");
-			documentsNames.Add(10, "Удостоверение личности лица без гражданства");
-			documentsNames.Add(11, "Справка об освобождении из мест лишения свободы");
-			documentsNames.Add(12, "Дипломатический паспорт");
-			documentsNames.Add(13, "Служебный паспорт");
-			documentsNames.Add(14, "Свидетельство на возвращение");
-			documentsNames.Add(15, "Справка об утере паспорта");
-			documentsNames.Add(16, "Свидетельство беженца");
-			documentsNames.Add(17, "Удостоверение беженца");
+			//documentsNames.Add(2, "Иностранный документ");
+			//documentsNames.Add(3, "Вид на жительство");
+			//documentsNames.Add(4, "Паспорт СССР");
+			//documentsNames.Add(5, "Удостоверение личности моряка");
+			//documentsNames.Add(6, "Свидетельство о рождении");
+			//documentsNames.Add(7, "Медицинское свидетельство о рождении");
+			//documentsNames.Add(8, "Военный билет для военнослужащих срочной службы, по контракту и курсантов");
+			//documentsNames.Add(9, "Удостоверение личности военнослужащего");
+			//documentsNames.Add(10, "Удостоверение личности лица без гражданства");
+			//documentsNames.Add(11, "Справка об освобождении из мест лишения свободы");
+			//documentsNames.Add(12, "Дипломатический паспорт");
+			//documentsNames.Add(13, "Служебный паспорт");
+			//documentsNames.Add(14, "Свидетельство на возвращение");
+			//documentsNames.Add(15, "Справка об утере паспорта");
+			//documentsNames.Add(16, "Свидетельство беженца");
+			//documentsNames.Add(17, "Удостоверение беженца");
 		}
 	}
 }
