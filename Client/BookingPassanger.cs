@@ -31,7 +31,7 @@ namespace ClientCommunication {
 			this.handLuggageOptionIndexForClass = handLuggageOptionIndexForClass;
 		}
 
-		public BookingPassanger(int defaultClass) {
+		public BookingPassanger(int defaultClass, int defaultDocumentId, Documents.Document defaultDocument) {
 			seatClassId = defaultClass;
 			baggageOptionIndexForClass = new Dictionary<int, int>();
 			handLuggageOptionIndexForClass = new Dictionary<int, int>();
@@ -43,7 +43,7 @@ namespace ClientCommunication {
 			seatIndex = this.seatIndex,
 			seatClassId = this.seatClassId,
 			baggageOptionIndexForClass = new Dictionary<int, int>(baggageOptionIndexForClass),
-			handLuggageOptionIndexForClass = new Dictionary<int, int>(handLuggageOptionIndexForClass)
+			handLuggageOptionIndexForClass = new Dictionary<int, int>(handLuggageOptionIndexForClass),
 		}; }
 
 		public int ClassId(FlightsSeats.Seats seats) {

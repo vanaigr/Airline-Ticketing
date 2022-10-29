@@ -27,6 +27,7 @@ namespace ClientCommunication {
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 			System.Windows.Forms.Label label2;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FlightDetailsFill));
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.selectedStatusLabel = new System.Windows.Forms.Label();
 			this.seatSelectTable = new ClientCommunication.SeatsTable();
@@ -354,6 +355,7 @@ namespace ClientCommunication {
 			this.ClientSize = new System.Drawing.Size(880, 502);
 			this.Controls.Add(tableLayoutPanel1);
 			this.Controls.Add(this.headerContainer);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FlightDetailsFill";
 			this.Text = "Бронирование мест";
 			this.Load += new System.EventHandler(this.FlightBooking_Load);

@@ -32,6 +32,7 @@ namespace OperatorView {
 			this.registerDepartureButton = new System.Windows.Forms.Button();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.statusLabel = new System.Windows.Forms.Label();
+			this.passangersDataGridView = new System.Windows.Forms.DataGridView();
 			this.headerTable = new System.Windows.Forms.TableLayoutPanel();
 			this.flightNameLabel = new System.Windows.Forms.Label();
 			this.airplaneNameLabel = new System.Windows.Forms.Label();
@@ -41,17 +42,16 @@ namespace OperatorView {
 			this.showCanceledCheckbox = new System.Windows.Forms.CheckBox();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
-			this.passangersDataGridView = new System.Windows.Forms.DataGridView();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.footerTable2.SuspendLayout();
 			this.footerTable.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.passangersDataGridView)).BeginInit();
 			this.headerTable.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.passangersDataGridView)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel2
@@ -130,7 +130,7 @@ namespace OperatorView {
 			this.registerDepartureButton.Name = "registerDepartureButton";
 			this.registerDepartureButton.Size = new System.Drawing.Size(104, 42);
 			this.registerDepartureButton.TabIndex = 5;
-			this.registerDepartureButton.Text = "Зафиксировать\r\nотправку";
+			this.registerDepartureButton.Text = "Зафиксировать\r\nприбытие";
 			this.registerDepartureButton.UseVisualStyleBackColor = false;
 			this.registerDepartureButton.Click += new System.EventHandler(this.registerDepartureButton_Click);
 			// 
@@ -163,14 +163,33 @@ namespace OperatorView {
 			// statusLabel
 			// 
 			this.statusLabel.AutoEllipsis = true;
+			this.footerTable.SetColumnSpan(this.statusLabel, 3);
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.statusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.statusLabel.Location = new System.Drawing.Point(10, 10);
 			this.statusLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(805, 17);
+			this.statusLabel.Size = new System.Drawing.Size(915, 17);
 			this.statusLabel.TabIndex = 7;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// passangersDataGridView
+			// 
+			this.passangersDataGridView.AllowUserToResizeRows = false;
+			this.passangersDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+			this.passangersDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+			this.passangersDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
+			this.passangersDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.passangersDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.passangersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.passangersDataGridView.GridColor = System.Drawing.SystemColors.Control;
+			this.passangersDataGridView.Location = new System.Drawing.Point(0, 0);
+			this.passangersDataGridView.Margin = new System.Windows.Forms.Padding(0);
+			this.passangersDataGridView.Name = "passangersDataGridView";
+			this.passangersDataGridView.Size = new System.Drawing.Size(935, 437);
+			this.passangersDataGridView.TabIndex = 3;
+			this.passangersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.passangersDataGridView_CellFormatting);
+			this.passangersDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.passangersDataGridView_CellValueChanged);
 			// 
 			// headerTable
 			// 
@@ -294,24 +313,6 @@ namespace OperatorView {
 			this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
 			this.splitContainer1.SizeChanged += new System.EventHandler(this.splitContainer1_SizeChanged);
 			// 
-			// passangersDataGridView
-			// 
-			this.passangersDataGridView.AllowUserToResizeRows = false;
-			this.passangersDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-			this.passangersDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.passangersDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.passangersDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.passangersDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.passangersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.passangersDataGridView.GridColor = System.Drawing.SystemColors.Control;
-			this.passangersDataGridView.Location = new System.Drawing.Point(0, 0);
-			this.passangersDataGridView.Margin = new System.Windows.Forms.Padding(0);
-			this.passangersDataGridView.Name = "passangersDataGridView";
-			this.passangersDataGridView.Size = new System.Drawing.Size(935, 437);
-			this.passangersDataGridView.TabIndex = 3;
-			this.passangersDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.passangersDataGridView_CellFormatting);
-			this.passangersDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.passangersDataGridView_CellValueChanged);
-			// 
 			// PassangersView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -328,6 +329,7 @@ namespace OperatorView {
 			this.footerTable.ResumeLayout(false);
 			this.footerTable.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.passangersDataGridView)).EndInit();
 			this.headerTable.ResumeLayout(false);
 			this.headerTable.PerformLayout();
 			this.splitContainer1.Panel1.ResumeLayout(false);
@@ -335,7 +337,6 @@ namespace OperatorView {
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
 			this.splitContainer1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.passangersDataGridView)).EndInit();
 			this.ResumeLayout(false);
 
 		}

@@ -158,6 +158,7 @@ namespace ClientCommunication {
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.LoginText);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "LoginRegisterForm";
 			this.Text = "Вход и регистрация";
 			((System.ComponentModel.ISupportInitialize)(this.showPassword)).EndInit();

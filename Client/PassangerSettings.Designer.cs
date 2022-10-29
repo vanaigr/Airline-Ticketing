@@ -25,6 +25,7 @@ namespace ClientCommunication {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PassangerSettings));
 			this.mainTabs = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.passangerUpdate = new ClientCommunication.PassangerList();
@@ -58,7 +59,7 @@ namespace ClientCommunication {
 			this.mainTabs.Margin = new System.Windows.Forms.Padding(0);
 			this.mainTabs.Name = "mainTabs";
 			this.mainTabs.SelectedIndex = 0;
-			this.mainTabs.Size = new System.Drawing.Size(803, 434);
+			this.mainTabs.Size = new System.Drawing.Size(881, 434);
 			this.mainTabs.TabIndex = 0;
 			// 
 			// tabPage1
@@ -67,7 +68,7 @@ namespace ClientCommunication {
 			this.tabPage1.Location = new System.Drawing.Point(4, 24);
 			this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(795, 406);
+			this.tabPage1.Size = new System.Drawing.Size(873, 406);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Данные пассажира";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -80,7 +81,7 @@ namespace ClientCommunication {
 			this.passangerUpdate.Location = new System.Drawing.Point(0, 0);
 			this.passangerUpdate.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerUpdate.Name = "passangerUpdate";
-			this.passangerUpdate.Size = new System.Drawing.Size(795, 406);
+			this.passangerUpdate.Size = new System.Drawing.Size(873, 406);
 			this.passangerUpdate.TabIndex = 0;
 			// 
 			// tabPage2
@@ -89,7 +90,7 @@ namespace ClientCommunication {
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(795, 406);
+			this.tabPage2.Size = new System.Drawing.Size(873, 406);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Опции";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -101,7 +102,7 @@ namespace ClientCommunication {
 			this.passangerOptions.Location = new System.Drawing.Point(0, 0);
 			this.passangerOptions.Margin = new System.Windows.Forms.Padding(0);
 			this.passangerOptions.Name = "passangerOptions";
-			this.passangerOptions.Size = new System.Drawing.Size(795, 406);
+			this.passangerOptions.Size = new System.Drawing.Size(873, 406);
 			this.passangerOptions.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -117,7 +118,7 @@ namespace ClientCommunication {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(803, 473);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(881, 473);
 			this.tableLayoutPanel1.TabIndex = 1;
 			// 
 			// tableLayoutPanel2
@@ -149,7 +150,7 @@ namespace ClientCommunication {
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 1;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(803, 39);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(881, 39);
 			this.tableLayoutPanel2.TabIndex = 2;
 			// 
 			// applyButton
@@ -162,7 +163,7 @@ namespace ClientCommunication {
 			this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.applyButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.applyButton.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.applyButton.Location = new System.Drawing.Point(715, 6);
+			this.applyButton.Location = new System.Drawing.Point(793, 6);
 			this.applyButton.Margin = new System.Windows.Forms.Padding(6);
 			this.applyButton.Name = "applyButton";
 			this.applyButton.Size = new System.Drawing.Size(82, 27);
@@ -180,7 +181,7 @@ namespace ClientCommunication {
 			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.cancelButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.cancelButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.cancelButton.Location = new System.Drawing.Point(642, 6);
+			this.cancelButton.Location = new System.Drawing.Point(720, 6);
 			this.cancelButton.Margin = new System.Windows.Forms.Padding(6);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.Size = new System.Drawing.Size(61, 27);
@@ -271,7 +272,7 @@ namespace ClientCommunication {
 			this.statusLabel.ForeColor = System.Drawing.Color.Salmon;
 			this.statusLabel.Location = new System.Drawing.Point(467, 0);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(166, 39);
+			this.statusLabel.Size = new System.Drawing.Size(244, 39);
 			this.statusLabel.TabIndex = 8;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -279,8 +280,9 @@ namespace ClientCommunication {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(803, 473);
+			this.ClientSize = new System.Drawing.Size(881, 473);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "PassangerSettings";
 			this.Text = "Выбор места";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PassangerSettings_FormClosing);

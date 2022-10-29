@@ -34,12 +34,12 @@ namespace ClientCommunication {
 			reconnect();
 
 			try {
-			fromLoc.SelectedIndex = 2;
-			toLoc.SelectedIndex = 1;
+			//fromLoc.SelectedIndex = 2;
+			//toLoc.SelectedIndex = 1;
 			
-			findFlightsButton_Click(findFlightsButton, new EventArgs());
+			//findFlightsButton_Click(findFlightsButton, new EventArgs());
 			
-			customer = new CustomerData("User123", "789456123");
+			//customer = new CustomerData("User123", "789456123");
 			} catch(Exception){ }
 
 			setupAvailableOptions();

@@ -21,6 +21,17 @@ namespace ClientCommunication {
 
 		private BookingPassanger passanger;
 
+		private DocumentFields generalDataFields;
+		private DocumentFields documentFields;
+
+		private sealed class FormPassanger {
+			public string name, surname, middleName;
+			public DateTime birthday;
+			public int selectedDocument;
+			public Dictionary<int, Documents.Document> documents;
+		}
+		private FormPassanger formPassanger;
+
 		private int? currentPassangerIndex {
 			get { return passanger.passangerIndex; }
 			set { passanger.passangerIndex = value; }
@@ -32,6 +43,8 @@ namespace ClientCommunication {
 
 		private State curState;
 		private void setStateAdd() {
+			setStatus(false, null);
+
 			if(status.booked) throw new InvalidOperationException();
 
 			curState = State.add;
@@ -51,6 +64,8 @@ namespace ClientCommunication {
 		}
 				
 		private void setStateSelect(int newSelectedPassangerId) {
+			setStatus(false, null);
+
 			curState = State.select;
 
 			deleteButton.Enabled = true;
@@ -68,6 +83,8 @@ namespace ClientCommunication {
 		}
 
 		private void setStateEdit() {
+			setStatus(false, null);
+
 			if(status.booked) throw new InvalidOperationException();
 
 			curState = State.edit;
@@ -85,6 +102,8 @@ namespace ClientCommunication {
 		}
 
 		public void setStateNone() {
+			setStatus(false, null);
+
 			curState = State.none;
 
 			deleteButton.Enabled = false;
@@ -101,6 +120,9 @@ namespace ClientCommunication {
 
 		public PassangerList() {
 			InitializeComponent();
+
+			generalDataFields = new DocumentFields(() => this.ActiveControl = null, setStatus, generalDataTooltip, generalDataPanel, startFieldIndex: 0);
+			documentFields = new DocumentFields(() => this.ActiveControl = null, setStatus, documentFieldsTooltip, documentTable, startFieldIndex: 1);
 		}
 
 		public void selectNone() {
@@ -108,16 +130,23 @@ namespace ClientCommunication {
 			setStateNone();
 		}
 
-		public void init(ClientCommunication.MessageService sq, CustomerData customer, BookingStatus status, BookingPassanger passanger) {
+		public void init(MessageService sq, CustomerData customer, BookingStatus status, BookingPassanger passanger) {
 			this.service = sq;
 			this.status = status;
 			this.customer = customer;
 			this.passanger = passanger;
 			this.passangersDisplays = new Dictionary<int, PassangerDisplay>();
-			
+
+			ignore__ = true;
+			documentTypeCombobox.DataSource = new BindingSource{ DataSource = Documents.DocumentsName.documentsNames };
+			documentTypeCombobox.DisplayMember = "Value";
+			ignore__ = false;
+
 			setupPassangersDisplay(passanger.passangerIndex);
 
 			if(status.booked) updateStatusBooked();
+
+			clearPassangerData();
 		}
 
 		public void updateStatusBooked() {
@@ -178,12 +207,19 @@ namespace ClientCommunication {
 			}
 		}
 
+		private void setStatus(bool error, string msg) {
+			statusLabel.Text = error ? msg : null;
+			statusLabel.ForeColor = error ? Color.Firebrick : SystemColors.ControlText;
+			statusTooltip.SetToolTip(statusLabel, error ? msg : null);
+		}
+
 		//returns false if save aborted
 		private bool promptSaveCustomer() {
 			if(curState == State.edit) {
 				var prevPassanger = customer.passangers[(int) currentPassangerIndex];
-				var curPassanger = formPassangerFromData();
-				if(!prevPassanger.Equals(curPassanger)) {
+				var curPassangerRes = formPassangerFromData();
+
+				if(!curPassangerRes.IsSuccess || !prevPassanger.Equals(curPassangerRes.s)) {
 					this.Focus();
 					var mb = MessageBox.Show(
 						"Данные пассажира были изменены. Хотите сохранить изменения?",
@@ -194,7 +230,11 @@ namespace ClientCommunication {
 					);
 
 					if(mb == DialogResult.Yes) {
-						var result = saveEditedPassanger(curPassanger, (int) currentPassangerIndex);
+						if(!curPassangerRes.IsSuccess) {
+							setStatus(true, curPassangerRes.f);
+							return false;
+						}
+						var result = saveEditedPassanger(curPassangerRes.s, (int) currentPassangerIndex);
 						return result != null;
 					}
 					else if(mb == DialogResult.No) return true;
@@ -207,7 +247,7 @@ namespace ClientCommunication {
 			}
 			else if(curState == State.add) {
 				this.Focus();
-				var curPassanger = formPassangerFromData();
+				var curPassangerRes = formPassangerFromData();
 				var mb = MessageBox.Show(
 					"Сохранить данные нового пассажира?",
 					"",
@@ -217,7 +257,12 @@ namespace ClientCommunication {
 				);
 
 				if(mb == DialogResult.Yes) {
-					var result = saveNewPassanger(curPassanger);
+					if(!curPassangerRes.IsSuccess) {
+						setStatus(true, curPassangerRes.f);
+						return false;
+					}
+
+					var result = saveNewPassanger(curPassangerRes.s);
 					if(result != null) setStateSelect((int) result);
 					return result != null;
 				}
@@ -257,7 +302,13 @@ namespace ClientCommunication {
 		private void save() {
 			if(status.booked) throw new InvalidOperationException();
 
-			var passanger = formPassangerFromData();
+			var passangerRes = formPassangerFromData();
+			if(!passangerRes.IsSuccess) {
+				setStatus(true, passangerRes.f);
+				return;
+			}
+			var passanger = passangerRes.s;
+
 			if(curState == State.add) {
 				var result = saveNewPassanger(passanger);
 				if(result != null) setStateSelect((int) result); 
@@ -272,30 +323,128 @@ namespace ClientCommunication {
 			else Debug.Assert(curState == State.select || curState == State.none);
 		}
 
-		private Passanger formPassangerFromData() { 
-			return new Passanger{
-				name = nameText.Text,
-				surname = surnameText.Text,
-				middleName = middleNameText.Text,
-				birthday = birthdayDatetime.Value,
-				document = new Documents.Passport{ Number = 1212785785 }
+		private Either<Passanger, String> formPassangerFromData() { 
+			var it = new Passanger{
+				name = formPassanger.name,
+				surname = formPassanger.surname,
+				middleName = formPassanger.middleName,
+				birthday = formPassanger.birthday,
+				document = formPassanger.documents[formPassanger.selectedDocument]
 			};
+
+			var es = Validation.ErrorString.Create();
+
+			if((it.name?.Length ?? 0) == 0 || (it.surname?.Length ?? 0) == 0) {
+				es.ac("ФИО должно быть заполнено");
+			}
+			var docRes = it.document.validate();
+			if(docRes.Error) {
+				es.ac("Данные документа должны быть заполнены: ").append(docRes.Message);
+			}
+
+			if(es.Error) {
+				return Either<Passanger, string>.Failure(es.Message);
+			}
+			else return Either<Passanger, string>.Success(it);
 		}
 
 		private void setDataFromPassanger(Passanger p) {
-			nameText.Text = p.name;
-			surnameText.Text = p.surname;
-			middleNameText.Text = p.middleName;
-			birthdayDatetime.Value = p.birthday;
-			//TODO: fill document
+			formPassanger = new FormPassanger();
+			formPassanger.name = p.name;
+			formPassanger.surname = p.surname;
+			formPassanger.middleName = p.middleName;
+			formPassanger.birthday = p.birthday;
+			formPassanger.documents = new Dictionary<int, Documents.Document>();
+
+			formPassanger.selectedDocument = p.document.Id;
+			formPassanger.documents.Clear();
+			formPassanger.documents.Add(formPassanger.selectedDocument, p.document);
+
+			updatePassanger();
+
+			/*((TextBox) generalDataFields.getField(0)).Text = p.name;
+			((TextBox) generalDataFields.getField(1)).Text = p.surname;
+			((TextBox) generalDataFields.getField(2)).Text = p.middleName;
+			((DateTimePicker) generalDataFields.getField(3)).Value = p.birthday;
+            
+			formPassanger.selectedDocument = p.document.Id;
+			formPassanger.documents.Clear();
+			formPassanger.documents.Add(Documents.Passport.id, p.document);
+			
+			var i = 0;
+			foreach(var doc in Documents.DocumentsName.documentsNames) {
+				if(doc.Key == p.document.Id) break;
+				i++;
+			}
+			Debug.Assert(i != Documents.DocumentsName.documentsNames.Count);
+
+			documentTypeCombobox.SelectedItem = i;*/
 		} 
 
 		private void clearPassangerData() {
-			nameText.Text = "";
-            surnameText.Text = "";
-            middleNameText.Text = "";
-            birthdayDatetime.Value = DateTime.Today;
-            //TODO: clear document
+			formPassanger = new FormPassanger();
+			formPassanger.birthday = DateTime.Now;
+			formPassanger.documents = new Dictionary<int, Documents.Document>();
+
+			formPassanger.selectedDocument = Documents.Passport.id;
+			formPassanger.documents.Clear();
+			formPassanger.documents.Add(Documents.Passport.id, new Documents.Passport());
+
+			updatePassanger();
+
+			/*((TextBox) generalDataFields.getField(0)).Text = "";
+			((TextBox) generalDataFields.getField(1)).Text = "";
+			((TextBox) generalDataFields.getField(2)).Text = "";
+			((DateTimePicker) generalDataFields.getField(3)).Value = DateTime.Now;
+            
+			formPassanger.selectedDocument = Documents.Passport.id;
+			formPassanger.documents.Clear();
+			formPassanger.documents.Add(Documents.Passport.id, new Documents.Passport());
+			
+			var i = 0;
+			foreach(var doc in Documents.DocumentsName.documentsNames) {
+				if(doc.Key == formPassanger.selectedDocument) break;
+				i++;
+			}
+			Debug.Assert(i != Documents.DocumentsName.documentsNames.Count);
+
+			documentTypeCombobox.SelectedItem = i;*/
+		}
+
+		private void updatePassanger() {
+			generalDataFields.Suspend();
+
+			generalDataFields.clear();
+
+			generalDataFields.addField();
+			generalDataFields.fieldName("Фамилия:*");
+			generalDataFields.textField(formPassanger.surname, text => formPassanger.surname = text);
+
+			generalDataFields.addField();
+			generalDataFields.fieldName("Имя:*");
+			generalDataFields.textField(formPassanger.name, text => formPassanger.name = text);
+			
+			generalDataFields.addField();
+			generalDataFields.fieldName("Отчество:");
+			generalDataFields.textField(formPassanger.middleName, text => formPassanger.middleName = text);
+
+			generalDataFields.addField();
+			generalDataFields.fieldName("Дата рождения:*");
+			generalDataFields.dateField(formPassanger.birthday, date => formPassanger.birthday = date).Format = DateTimePickerFormat.Short;
+
+			generalDataFields.Resume();
+
+
+			var i = 0;
+			foreach(var doc in Documents.DocumentsName.documentsNames) {
+				if(doc.Key == formPassanger.selectedDocument) break;
+				i++;
+			}
+			Debug.Assert(i != Documents.DocumentsName.documentsNames.Count);
+			documentTypeCombobox.SelectedIndex = i;
+
+			updateDocument(formPassanger.selectedDocument);
+
 		}
 
 		private void setErr(Exception e) { 
@@ -420,6 +569,8 @@ namespace ClientCommunication {
 			var passangerIdData = customer.passangerIds[index];
 			
 			if(passangerIdData.IsLocal) {
+				if(index == currentPassangerIndex) setStateNone();
+
 				passangersDisplays[index].Dispose();
 				passangersDisplays.Remove(index);
 
@@ -461,17 +612,20 @@ namespace ClientCommunication {
 		}
 
 		private void editButton_Click(object sender, EventArgs e) {
+			setStatus(false, null);
 			Debug.Assert(curState == State.select || curState == State.none);
 			setStateEdit();
 		}
 
 		private void addButton_Click(object sender, EventArgs e) {
+			setStatus(false, null);
 			Debug.Assert(curState == State.edit || curState == State.select || curState == State.none);
 			promptSaveCustomer();
 			setStateAdd();
 		}
 
 		private void deleteButton_Click(object sender, EventArgs e) {
+			setStatus(false, null);
 			var result = MessageBox.Show(
 				"Вы точно хотите удалить данного пассажира?", "",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2
@@ -495,6 +649,205 @@ namespace ClientCommunication {
 			if(!promptSaveCustomer()) return;
 			setStateSelect(number);
 			setStateEdit();
+		}
+
+		private class DocumentFields {
+			private int startFieldIndex;
+
+			private int fieldIndex;
+
+			private TableLayoutPanel panel;
+			private SetStatus setStatus;
+			private ToolTip documentFieldsTooltip;
+			private RemoveFocus removeFocus;
+
+			private List<Control> addedControls;
+
+			private List<Control> fields;
+
+			public delegate void RemoveFocus();
+			public delegate void SetStatus(bool err, string input);
+			public delegate void ValidateText(string input);
+			public delegate void ValidateDate(DateTime input);
+
+			public Control getField(int index) {
+				return fields[index];
+			}
+
+			public DocumentFields(
+				RemoveFocus removeFocus,
+				SetStatus setStatus,
+				ToolTip documentFieldsTooltip,
+				TableLayoutPanel panel,
+				int startFieldIndex
+			) {
+				this.removeFocus = removeFocus;
+				this.fieldIndex = (this.startFieldIndex = startFieldIndex) - 1;
+				this.fields = new List<Control>();
+				this.setStatus = setStatus;
+				this.documentFieldsTooltip = documentFieldsTooltip;
+				this.panel = panel;
+				addedControls = new List<Control>();
+			}
+
+			public void addField() {
+				fieldIndex++;
+				if(fieldIndex != 0 && fieldIndex % 3 == 0) {
+					panel.RowCount += 3;
+					panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 10));
+					panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+					panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+				}
+			}
+
+			public Label fieldName(string text) {
+				var it = new Label();
+
+				it.Dock = DockStyle.Fill;
+				it.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+				it.Text = text;
+				it.TextAlign = ContentAlignment.BottomLeft;
+				it.AutoSize = true;
+				documentFieldsTooltip.SetToolTip(it, text);
+
+				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 1);
+				addedControls.Add(it);
+				return it;
+			}
+
+			public TextBox textField(string defaultValue, ValidateText validate) {
+				var it = new TextBox();
+				it.Dock = DockStyle.Fill;
+				it.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+				it.Text = defaultValue;
+				it.KeyDown += (a, b) => { if(b.KeyCode == Keys.Enter) { validateTextField(it, validate); removeFocus(); } };
+				it.LostFocus += (a, b) => { validateTextField(it, validate); };
+				addedControls.Add(it);
+				fields.Add(it);
+				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 2);
+				return it;
+			}
+
+			private void validateTextField(TextBox it, ValidateText validate) {
+				try{ 
+					validate(it.Text);
+					it.ForeColor = SystemColors.ControlText;
+					documentFieldsTooltip.SetToolTip(it, null);
+					setStatus(false, null);
+				}
+				catch(Documents.IncorrectValue iv) {
+					it.ForeColor = Color.Firebrick;
+					documentFieldsTooltip.SetToolTip(it, iv.Message);
+					setStatus(true, iv.Message);
+				}
+			}
+
+			public DateTimePicker dateField(DateTime defaultValue, ValidateDate validate) {
+				var it = new DateTimePicker();
+				it.Dock = DockStyle.Fill;
+				it.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
+				it.Value = defaultValue;
+				it.KeyDown += (a, b) => { if(b.KeyCode == Keys.Enter) { validateDateField(it, validate); removeFocus(); } };
+				it.LostFocus += (a, b) => { validateDateField(it, validate); };
+				addedControls.Add(it);
+				fields.Add(it);
+				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 2);
+				return it;
+			}
+
+			private void validateDateField(DateTimePicker it, ValidateDate validate) {
+				try{ 
+					validate(it.Value);
+					it.ForeColor = SystemColors.ControlText;
+					documentFieldsTooltip.SetToolTip(it, null);
+					setStatus(false, null);
+				}
+				catch(Documents.IncorrectValue iv) {
+					it.ForeColor = Color.Firebrick;
+					documentFieldsTooltip.SetToolTip(it, iv.Message);
+					setStatus(true, iv.Message);
+				}
+			}
+
+			public void clear() {
+				this.fieldIndex = this.startFieldIndex - 1;
+				documentFieldsTooltip.RemoveAll();
+				foreach(var it in addedControls) it.Dispose();
+				addedControls.Clear();
+				fields.Clear();
+				panel.RowCount = 2;
+			}
+
+			public void Suspend() {
+				panel.SuspendLayout();
+			}
+
+			public void Resume() {
+				panel.ResumeLayout(false);
+				panel.PerformLayout();
+			}
+		}
+
+		
+		private bool ignore__;
+		private void documentTypeCombobox_SelectedIndexChanged(object sender, EventArgs e) {
+			if(ignore__) return;
+			updateDocument(((KeyValuePair<int, string>) documentTypeCombobox.SelectedItem).Key);
+		}
+
+		private void updateDocument(int documentId) {
+			Documents.Document document;
+			formPassanger.selectedDocument = documentId;
+			if(!formPassanger.documents.TryGetValue(documentId, out document)) {
+				if(documentId == Documents.Passport.id) { 
+					document = new Documents.Passport();
+				}
+				else if(documentId == Documents.InternationalPassport.id) {
+					document = new Documents.InternationalPassport();
+				}
+
+				Debug.Assert(document != null);
+				formPassanger.documents.Add(documentId, document);
+			}
+
+			documentFields.Suspend();
+			documentFields.clear();
+
+			if(documentId == Documents.Passport.id) {
+				var passport = (Documents.Passport) document;
+
+				documentFields.addField();
+				documentFields.fieldName("Номер:*");
+				documentFields.textField(passport.Number?.ToString(), text => passport.setNumber(text));
+			}
+			else if(documentId == Documents.InternationalPassport.id) {
+				var passport = (Documents.InternationalPassport) document;
+
+				documentFields.addField();
+				documentFields.fieldName("Номер:*");
+				documentFields.textField(passport.Number?.ToString(), text => passport.setNumber(text));
+
+				documentFields.addField();
+				documentFields.fieldName("Дата окончания срока действия:*");
+				var exDate = passport.ExpirationDate ?? DateTime.Now;
+				documentFields.dateField(exDate, date => passport.ExpirationDate = date)
+					.Format = DateTimePickerFormat.Short;
+				passport.ExpirationDate = exDate;
+
+				documentFields.addField();
+				documentFields.fieldName("Фамилия (на латинице):*");
+				documentFields.textField(passport.Surname, text => passport.Surname = text);
+
+				documentFields.addField();
+				documentFields.fieldName("Имя (на латинице):*");
+				documentFields.textField(passport.Name, text => passport.Name = text);
+
+				documentFields.addField();
+				documentFields.fieldName("Отчество (на латинице):");
+				documentFields.textField(passport.MiddleName, text => passport.MiddleName = text);
+			}
+
+			documentFields.Resume();
 		}
 	}
 }

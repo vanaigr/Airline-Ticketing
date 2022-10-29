@@ -177,8 +177,6 @@ namespace OperatorView {
 					rows.Add(new PassangerBinding{ index = i, details = details });
 			}
 
-			Console.WriteLine(details.passangerArrived.Count);
-
 			passangersDataGridView.SuspendLayout();
 
 			passangersDataGridView.DataSource = new BindingSource{ DataSource = rows };
@@ -213,17 +211,17 @@ namespace OperatorView {
 		}
 
 		private void recalculateStats() {
+			var bookedCount = new int[this.classesNames.Length];
 			var canceledCount = new int[this.classesNames.Length];
 			var occupiedCount = new int[this.classesNames.Length];
 
 			for(int i = 0; i < details.passangersAndSeats.Count; i++) {
-				if(details.passangerArrived[i]) occupiedCount[
-					details.seatsClasses[details.passangersAndSeats[i].seatIndex]
-				]++;
+				var classId = details.seatsClasses[details.passangersAndSeats[i].seatIndex];
 
-				if(details.passangersAndSeats[i].canceled) canceledCount[
-					details.seatsClasses[details.passangersAndSeats[i].seatIndex]
-				]++;
+				if(details.passangerArrived[i]) occupiedCount[classId]++;
+
+				if(details.passangersAndSeats[i].canceled) canceledCount[classId]++;
+				else bookedCount[classId]++;
 			}
 
 			seatsOccupationForClasses = new List<SeatsOccupation>(this.classesNames.Length);
@@ -231,8 +229,7 @@ namespace OperatorView {
 			for(int i = 0; i < this.classesNames.Length; i++) {
 				seatsOccupationForClasses.Add(new SeatsOccupation{ 
 					classId = i,
-					bookedCount = fac.flight.seatCountForClasses[i]
-						- fac.flight.availableSeatsForClasses[i],
+					bookedCount = bookedCount[i],
 					occupiedCount = occupiedCount[i],
 					canceledCount = canceledCount[i],
 					count = fac.flight.seatCountForClasses[i]

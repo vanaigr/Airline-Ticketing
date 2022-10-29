@@ -74,7 +74,7 @@ namespace ClientCommunication {
 			this.loginLayoutPanel.AutoSize = true;
 			this.loginLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.loginLayoutPanel.BackColor = System.Drawing.Color.Transparent;
-			this.loginLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.loginLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 202F));
 			this.loginLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.loginLayoutPanel.Location = new System.Drawing.Point(884, 0);
 			this.loginLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -229,6 +229,7 @@ namespace ClientCommunication {
 			this.ClientSize = new System.Drawing.Size(1096, 450);
 			this.Controls.Add(this.flightsTable);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(400, 39);
 			this.Name = "SelectFlight";
 			this.Text = "Выбор рейса";

@@ -25,20 +25,12 @@ namespace ClientCommunication {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label label1;
-			System.Windows.Forms.Label label2;
-			System.Windows.Forms.Label label3;
-			System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-			System.Windows.Forms.Label label4;
 			System.Windows.Forms.Label label5;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
-			this.nameText = new System.Windows.Forms.TextBox();
-			this.surnameText = new System.Windows.Forms.TextBox();
-			this.middleNameText = new System.Windows.Forms.TextBox();
-			this.birthdayDatetime = new System.Windows.Forms.DateTimePicker();
 			this.passangerDataTable = new System.Windows.Forms.TableLayoutPanel();
-			this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+			this.generalDataPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.documentTable = new System.Windows.Forms.TableLayoutPanel();
 			this.documentTypeCombobox = new System.Windows.Forms.ComboBox();
 			this.passangersDisplay = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
@@ -52,148 +44,36 @@ namespace ClientCommunication {
 			this.passangerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.изменитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			label1 = new System.Windows.Forms.Label();
-			label2 = new System.Windows.Forms.Label();
-			label3 = new System.Windows.Forms.Label();
-			tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-			label4 = new System.Windows.Forms.Label();
+			this.documentFieldsTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.generalDataTooltip = new System.Windows.Forms.ToolTip(this.components);
 			label5 = new System.Windows.Forms.Label();
 			tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
 			tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-			tableLayoutPanel4.SuspendLayout();
 			tableLayoutPanel8.SuspendLayout();
 			this.passangerDataTable.SuspendLayout();
-			this.tableLayoutPanel5.SuspendLayout();
+			this.documentTable.SuspendLayout();
 			this.tableLayoutPanel6.SuspendLayout();
 			tableLayoutPanel7.SuspendLayout();
 			this.passangerMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// label1
-			// 
-			label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			label1.AutoSize = true;
-			label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			label1.Location = new System.Drawing.Point(8, 15);
-			label1.Name = "label1";
-			label1.Size = new System.Drawing.Size(62, 13);
-			label1.TabIndex = 0;
-			label1.Text = "Фамилия:*";
-			// 
-			// label2
-			// 
-			label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			label2.AutoSize = true;
-			label2.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			label2.Location = new System.Drawing.Point(189, 15);
-			label2.Name = "label2";
-			label2.Size = new System.Drawing.Size(37, 13);
-			label2.TabIndex = 1;
-			label2.Text = "Имя:*";
-			// 
-			// label3
-			// 
-			label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			label3.AutoSize = true;
-			label3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			label3.Location = new System.Drawing.Point(370, 15);
-			label3.Name = "label3";
-			label3.Size = new System.Drawing.Size(60, 13);
-			label3.TabIndex = 2;
-			label3.Text = "Отчество:";
-			// 
-			// tableLayoutPanel4
-			// 
-			tableLayoutPanel4.AutoSize = true;
-			tableLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			tableLayoutPanel4.BackColor = System.Drawing.Color.White;
-			tableLayoutPanel4.ColumnCount = 3;
-			tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			tableLayoutPanel4.Controls.Add(label1, 0, 0);
-			tableLayoutPanel4.Controls.Add(label2, 1, 0);
-			tableLayoutPanel4.Controls.Add(label3, 2, 0);
-			tableLayoutPanel4.Controls.Add(this.nameText, 1, 1);
-			tableLayoutPanel4.Controls.Add(this.surnameText, 0, 1);
-			tableLayoutPanel4.Controls.Add(this.middleNameText, 2, 1);
-			tableLayoutPanel4.Controls.Add(label4, 0, 3);
-			tableLayoutPanel4.Controls.Add(this.birthdayDatetime, 0, 4);
-			tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-			tableLayoutPanel4.Location = new System.Drawing.Point(6, 6);
-			tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-			tableLayoutPanel4.Name = "tableLayoutPanel4";
-			tableLayoutPanel4.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);
-			tableLayoutPanel4.RowCount = 5;
-			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel4.Size = new System.Drawing.Size(553, 128);
-			tableLayoutPanel4.TabIndex = 0;
-			// 
-			// nameText
-			// 
-			this.nameText.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.nameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.nameText.Location = new System.Drawing.Point(189, 31);
-			this.nameText.Name = "nameText";
-			this.nameText.Size = new System.Drawing.Size(175, 25);
-			this.nameText.TabIndex = 4;
-			// 
-			// surnameText
-			// 
-			this.surnameText.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.surnameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.surnameText.Location = new System.Drawing.Point(8, 31);
-			this.surnameText.Name = "surnameText";
-			this.surnameText.Size = new System.Drawing.Size(175, 25);
-			this.surnameText.TabIndex = 3;
-			// 
-			// middleNameText
-			// 
-			this.middleNameText.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.middleNameText.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.middleNameText.Location = new System.Drawing.Point(370, 31);
-			this.middleNameText.Name = "middleNameText";
-			this.middleNameText.Size = new System.Drawing.Size(175, 25);
-			this.middleNameText.TabIndex = 5;
-			// 
-			// label4
-			// 
-			label4.AutoSize = true;
-			label4.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			label4.Location = new System.Drawing.Point(8, 69);
-			label4.Name = "label4";
-			label4.Size = new System.Drawing.Size(98, 13);
-			label4.TabIndex = 6;
-			label4.Text = "Дата рождения:*";
-			// 
-			// birthdayDatetime
-			// 
-			this.birthdayDatetime.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.birthdayDatetime.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-			this.birthdayDatetime.Location = new System.Drawing.Point(8, 85);
-			this.birthdayDatetime.Name = "birthdayDatetime";
-			this.birthdayDatetime.Size = new System.Drawing.Size(174, 25);
-			this.birthdayDatetime.TabIndex = 7;
-			// 
 			// label5
 			// 
-			label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			label5.AutoSize = true;
+			label5.Dock = System.Windows.Forms.DockStyle.Fill;
 			label5.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			label5.Location = new System.Drawing.Point(8, 15);
+			label5.Location = new System.Drawing.Point(8, 16);
 			label5.Name = "label5";
-			label5.Size = new System.Drawing.Size(94, 13);
+			label5.Size = new System.Drawing.Size(175, 13);
 			label5.TabIndex = 1;
 			label5.Text = "Тип документа:*";
+			label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// tableLayoutPanel8
 			// 
 			tableLayoutPanel8.AutoSize = true;
 			tableLayoutPanel8.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			tableLayoutPanel8.CausesValidation = false;
 			tableLayoutPanel8.ColumnCount = 2;
 			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
 			tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
@@ -213,11 +93,12 @@ namespace ClientCommunication {
 			// 
 			// passangerDataTable
 			// 
+			this.passangerDataTable.AutoScroll = true;
 			this.passangerDataTable.BackColor = System.Drawing.Color.WhiteSmoke;
 			this.passangerDataTable.ColumnCount = 1;
 			this.passangerDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.passangerDataTable.Controls.Add(tableLayoutPanel4, 0, 0);
-			this.passangerDataTable.Controls.Add(this.tableLayoutPanel5, 0, 2);
+			this.passangerDataTable.Controls.Add(this.generalDataPanel, 0, 0);
+			this.passangerDataTable.Controls.Add(this.documentTable, 0, 2);
 			this.passangerDataTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.passangerDataTable.Location = new System.Drawing.Point(242, 0);
 			this.passangerDataTable.Margin = new System.Windows.Forms.Padding(0);
@@ -233,41 +114,66 @@ namespace ClientCommunication {
 			this.passangerDataTable.Size = new System.Drawing.Size(565, 468);
 			this.passangerDataTable.TabIndex = 1;
 			// 
-			// tableLayoutPanel5
+			// generalDataPanel
 			// 
-			this.tableLayoutPanel5.AutoSize = true;
-			this.tableLayoutPanel5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel5.BackColor = System.Drawing.Color.White;
-			this.tableLayoutPanel5.ColumnCount = 3;
-			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel5.Controls.Add(this.documentTypeCombobox, 0, 1);
-			this.tableLayoutPanel5.Controls.Add(label5, 0, 0);
-			this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel5.Location = new System.Drawing.Point(6, 154);
-			this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
-			this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-			this.tableLayoutPanel5.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);
-			this.tableLayoutPanel5.RowCount = 2;
-			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel5.Size = new System.Drawing.Size(553, 74);
-			this.tableLayoutPanel5.TabIndex = 1;
+			this.generalDataPanel.AutoSize = true;
+			this.generalDataPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.generalDataPanel.BackColor = System.Drawing.Color.White;
+			this.generalDataPanel.ColumnCount = 3;
+			this.generalDataPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.generalDataPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.generalDataPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.generalDataPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.generalDataPanel.Location = new System.Drawing.Point(6, 6);
+			this.generalDataPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.generalDataPanel.Name = "generalDataPanel";
+			this.generalDataPanel.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);
+			this.generalDataPanel.RowCount = 3;
+			this.generalDataPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
+			this.generalDataPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.generalDataPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.generalDataPanel.Size = new System.Drawing.Size(553, 31);
+			this.generalDataPanel.TabIndex = 0;
+			// 
+			// documentTable
+			// 
+			this.documentTable.AutoSize = true;
+			this.documentTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.documentTable.BackColor = System.Drawing.Color.White;
+			this.documentTable.ColumnCount = 3;
+			this.documentTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.documentTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.documentTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+			this.documentTable.Controls.Add(this.documentTypeCombobox, 0, 2);
+			this.documentTable.Controls.Add(label5, 0, 1);
+			this.documentTable.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.documentTable.Location = new System.Drawing.Point(6, 57);
+			this.documentTable.Margin = new System.Windows.Forms.Padding(0);
+			this.documentTable.Name = "documentTable";
+			this.documentTable.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);
+			this.documentTable.RowCount = 3;
+			this.documentTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
+			this.documentTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.documentTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.documentTable.Size = new System.Drawing.Size(553, 75);
+			this.documentTable.TabIndex = 1;
 			// 
 			// documentTypeCombobox
 			// 
+			this.documentTypeCombobox.CausesValidation = false;
 			this.documentTypeCombobox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.documentTypeCombobox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.documentTypeCombobox.FormattingEnabled = true;
-			this.documentTypeCombobox.Location = new System.Drawing.Point(8, 31);
+			this.documentTypeCombobox.Location = new System.Drawing.Point(8, 32);
 			this.documentTypeCombobox.Name = "documentTypeCombobox";
 			this.documentTypeCombobox.Size = new System.Drawing.Size(175, 25);
 			this.documentTypeCombobox.TabIndex = 0;
+			this.documentTypeCombobox.SelectedIndexChanged += new System.EventHandler(this.documentTypeCombobox_SelectedIndexChanged);
 			// 
 			// passangersDisplay
 			// 
 			this.passangersDisplay.AutoScroll = true;
+			this.passangersDisplay.CausesValidation = false;
 			this.passangersDisplay.ColumnCount = 1;
 			this.passangersDisplay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.passangersDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -343,6 +249,7 @@ namespace ClientCommunication {
 			tableLayoutPanel7.AutoSize = true;
 			tableLayoutPanel7.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			tableLayoutPanel7.BackColor = System.Drawing.Color.White;
+			tableLayoutPanel7.CausesValidation = false;
 			tableLayoutPanel7.ColumnCount = 5;
 			tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
 			tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
@@ -367,6 +274,7 @@ namespace ClientCommunication {
 			this.addButton.AutoSize = true;
 			this.addButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.addButton.BackColor = System.Drawing.Color.Transparent;
+			this.addButton.CausesValidation = false;
 			this.addButton.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.addButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.addButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
@@ -388,6 +296,7 @@ namespace ClientCommunication {
 			this.deleteButton.AutoSize = true;
 			this.deleteButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.deleteButton.BackColor = System.Drawing.Color.Transparent;
+			this.deleteButton.CausesValidation = false;
 			this.deleteButton.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.deleteButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.deleteButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
@@ -407,6 +316,7 @@ namespace ClientCommunication {
 			// 
 			this.editButton.AutoSize = true;
 			this.editButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.editButton.CausesValidation = false;
 			this.editButton.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.editButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.editButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
@@ -460,14 +370,12 @@ namespace ClientCommunication {
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "PassangerList";
 			this.Size = new System.Drawing.Size(807, 505);
-			tableLayoutPanel4.ResumeLayout(false);
-			tableLayoutPanel4.PerformLayout();
 			tableLayoutPanel8.ResumeLayout(false);
 			tableLayoutPanel8.PerformLayout();
 			this.passangerDataTable.ResumeLayout(false);
 			this.passangerDataTable.PerformLayout();
-			this.tableLayoutPanel5.ResumeLayout(false);
-			this.tableLayoutPanel5.PerformLayout();
+			this.documentTable.ResumeLayout(false);
+			this.documentTable.PerformLayout();
 			this.tableLayoutPanel6.ResumeLayout(false);
 			this.tableLayoutPanel6.PerformLayout();
 			tableLayoutPanel7.ResumeLayout(false);
@@ -480,11 +388,7 @@ namespace ClientCommunication {
 
 		#endregion
 		private System.Windows.Forms.ToolTip passangerTooltip;
-		private System.Windows.Forms.TextBox nameText;
-		private System.Windows.Forms.TextBox surnameText;
-		private System.Windows.Forms.TextBox middleNameText;
-		private System.Windows.Forms.DateTimePicker birthdayDatetime;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+		private System.Windows.Forms.TableLayoutPanel documentTable;
 		private System.Windows.Forms.ComboBox documentTypeCombobox;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
 		private System.Windows.Forms.Button saveButton;
@@ -498,5 +402,8 @@ namespace ClientCommunication {
 		private System.Windows.Forms.ContextMenuStrip passangerMenu;
 		private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem изменитьToolStripMenuItem;
+		private System.Windows.Forms.ToolTip documentFieldsTooltip;
+		private System.Windows.Forms.ToolTip generalDataTooltip;
+		private System.Windows.Forms.TableLayoutPanel generalDataPanel;
 	}
 }

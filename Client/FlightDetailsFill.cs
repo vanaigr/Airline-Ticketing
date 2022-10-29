@@ -358,7 +358,11 @@ namespace ClientCommunication {
 			var enumerator = classesNames.Keys.GetEnumerator();
 			enumerator.MoveNext();
 			var index = bookingPassangers.Count;
-			bookingPassangers.Add(new BookingPassanger(enumerator.Current));
+			bookingPassangers.Add(new BookingPassanger(
+				enumerator.Current,
+				Documents.Passport.id, 
+				new Documents.Passport()
+			));
 			enumerator.Dispose();
 
 			addPassangerDisplay(index);

@@ -25,6 +25,7 @@ namespace ClientCommunication {
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FlightBook));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.passangersSummaryPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -134,6 +135,7 @@ namespace ClientCommunication {
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ClientSize = new System.Drawing.Size(718, 348);
 			this.Controls.Add(this.tableLayoutPanel1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FlightBook";
 			this.Text = "Бронирование билетов";
 			this.tableLayoutPanel1.ResumeLayout(false);
