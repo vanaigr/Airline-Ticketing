@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Client;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,20 +15,21 @@ namespace ClientCommunication {
 		private int bookedFlightIndex;
 		private ClientCommunication.BookedFlight bookedFlight;
 		private CustomerData customer;
-		private string[] classesNames;
+		private Context context;
 
 		private SetStatus setStatus;
 
 		public event EventHandler OnDelete;
 
 		public BookedFlightInfoControl(
-			ClientCommunication.MessageService service,
-			CustomerData customer, int bookedFlightIndex,
-			string[] classesNames,  SetStatus setStatus
+			MessageService service, CustomerData customer, 
+			Context context,
+			int bookedFlightIndex,
+			SetStatus setStatus
 		) {
 			this.service = service;
 			this.customer = customer;
-			this.classesNames = classesNames;
+			this.context = context;
 			this.bookedFlightIndex = bookedFlightIndex;
 			this.setStatus = setStatus;
 
@@ -39,10 +41,12 @@ namespace ClientCommunication {
 			flightNameLabel.Text = af.flightName;
 			airplaneNameLabel.Text = af.airplaneName;
 			departureLocationLabel.Text = bookedFlight.fromCode;
-			departireDatetimeLabel.Text = af.departureTime.ToString("d MMMM, ddd, HH:mm");
+			departireDatetimeLabel.Text = af.departureTime.AddMinutes(context.cities[bookedFlight.fromCode].timeOffsetMinutes)
+				.ToString("d MMMM, ddd, HH:mm");
 			arrivalLocationLabel.Text = bookedFlight.toCode;
-			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsteMinutes).ToString("d MMMM, ddd, HH:mm");
-			bookingFinishedTimeLabel.Text = "Дата бронирования: " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
+			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsteMinutes)
+				.AddMinutes(context.cities[bookedFlight.toCode].timeOffsetMinutes).ToString("d MMMM, ddd, HH:mm");
+			bookingFinishedTimeLabel.Text = "Дата бронирования (по локальному времени): " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
 			updateBookedSeatsCount();
 		}
 
@@ -83,8 +87,8 @@ namespace ClientCommunication {
 				};
 				
 				var form = new FlightDetailsFill(
-					service, customer, status,
-					classesNames, null, null
+					service, customer, context, 
+					status, null, null
 				);
 
 				form.FormClosed += (a, b) => {

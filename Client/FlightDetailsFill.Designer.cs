@@ -81,7 +81,7 @@ namespace ClientCommunication {
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel1.Size = new System.Drawing.Size(880, 449);
+			tableLayoutPanel1.Size = new System.Drawing.Size(1082, 501);
 			tableLayoutPanel1.TabIndex = 1;
 			// 
 			// tableLayoutPanel2
@@ -105,7 +105,7 @@ namespace ClientCommunication {
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(860, 100);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(1062, 100);
 			this.tableLayoutPanel2.TabIndex = 5;
 			// 
 			// label2
@@ -123,7 +123,7 @@ namespace ClientCommunication {
 			this.selectedStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.selectedStatusLabel.AutoSize = true;
 			this.selectedStatusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.selectedStatusLabel.Location = new System.Drawing.Point(742, 77);
+			this.selectedStatusLabel.Location = new System.Drawing.Point(944, 77);
 			this.selectedStatusLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.selectedStatusLabel.Name = "selectedStatusLabel";
 			this.selectedStatusLabel.Size = new System.Drawing.Size(108, 13);
@@ -143,7 +143,7 @@ namespace ClientCommunication {
 			this.seatSelectTable.Padding = new System.Windows.Forms.Padding(40, 20, 30, 20);
 			this.seatSelectTable.RowCount = 1;
 			this.seatSelectTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.seatSelectTable.Size = new System.Drawing.Size(840, 40);
+			this.seatSelectTable.Size = new System.Drawing.Size(1042, 40);
 			this.seatSelectTable.TabIndex = 3;
 			// 
 			// tableLayoutPanel3
@@ -166,7 +166,7 @@ namespace ClientCommunication {
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6F));
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(860, 85);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(1062, 85);
 			this.tableLayoutPanel3.TabIndex = 6;
 			// 
 			// label1
@@ -188,7 +188,7 @@ namespace ClientCommunication {
 			this.flowLayoutPanelHeightBug.Location = new System.Drawing.Point(109, 31);
 			this.flowLayoutPanelHeightBug.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanelHeightBug.Name = "flowLayoutPanelHeightBug";
-			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(741, 33);
+			this.flowLayoutPanelHeightBug.Size = new System.Drawing.Size(943, 33);
 			this.flowLayoutPanelHeightBug.TabIndex = 2;
 			// 
 			// passangersPanel
@@ -199,7 +199,7 @@ namespace ClientCommunication {
 			this.passangersPanel.Location = new System.Drawing.Point(0, 0);
 			this.passangersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.passangersPanel.Name = "passangersPanel";
-			this.passangersPanel.Size = new System.Drawing.Size(741, 0);
+			this.passangersPanel.Size = new System.Drawing.Size(943, 0);
 			this.passangersPanel.TabIndex = 0;
 			// 
 			// addAutoseat
@@ -256,7 +256,7 @@ namespace ClientCommunication {
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.headerContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-			this.headerContainer.Size = new System.Drawing.Size(880, 53);
+			this.headerContainer.Size = new System.Drawing.Size(1082, 53);
 			this.headerContainer.TabIndex = 0;
 			// 
 			// continueButton
@@ -271,7 +271,7 @@ namespace ClientCommunication {
 			this.continueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.continueButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.continueButton.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.continueButton.Location = new System.Drawing.Point(778, 13);
+			this.continueButton.Location = new System.Drawing.Point(980, 13);
 			this.continueButton.Name = "continueButton";
 			this.headerContainer.SetRowSpan(this.continueButton, 3);
 			this.continueButton.Size = new System.Drawing.Size(89, 27);
@@ -330,7 +330,7 @@ namespace ClientCommunication {
 			this.statusLabel.Location = new System.Drawing.Point(216, 10);
 			this.statusLabel.Name = "statusLabel";
 			this.headerContainer.SetRowSpan(this.statusLabel, 3);
-			this.statusLabel.Size = new System.Drawing.Size(556, 33);
+			this.statusLabel.Size = new System.Drawing.Size(758, 33);
 			this.statusLabel.TabIndex = 7;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -352,7 +352,7 @@ namespace ClientCommunication {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(880, 502);
+			this.ClientSize = new System.Drawing.Size(1082, 554);
 			this.Controls.Add(tableLayoutPanel1);
 			this.Controls.Add(this.headerContainer);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

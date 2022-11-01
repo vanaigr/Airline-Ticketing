@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using Client;
+using Common;
 using Communication;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace ClientCommunication {
 			table.Controls.Add(textLabel);
 		}
 
-		string[] classesNames;
+		Context context;
 		FlightAndCities flightAndCities;
 
 		public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
@@ -75,19 +76,21 @@ namespace ClientCommunication {
 		}
 
 		public void updateFromFlight(
-			string[] classesNames,
-			FlightAndCities flightAndCities
+			Context context,
+			FlightAndCities fac
 		) {
-			this.classesNames = classesNames;
-			this.flightAndCities = flightAndCities;
+			this.context = context;
+			this.flightAndCities = fac;
 
-			var flight = flightAndCities.flight;
+			var flight = fac.flight;
 
-			var depart = flight.departureTime;
-			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes);
+			var depart = flight.departureTime
+				.AddMinutes(context.cities[fac.fromCityCode].timeOffsetMinutes);
+			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes)
+				.AddMinutes(context.cities[fac.toCityCode].timeOffsetMinutes);
 
-			fromCityCode.Text = flightAndCities.fromCityCode;
-			toCityCode.Text = flightAndCities.toCityCode;
+			fromCityCode.Text = fac.fromCityCode;
+			toCityCode.Text = fac.toCityCode;
 			
 			fromDate.Text = depart.Date.ToString("d MMM, ddd");
 			toDate.Text = arrive.Date.ToString("d MMM, ddd");
@@ -110,7 +113,7 @@ namespace ClientCommunication {
 
 			var availableClassesNames = new Dictionary<int, string>();
 			foreach(var key in flight.optionsForClasses.Keys) {
-				availableClassesNames.Add(key, classesNames[key]);
+				availableClassesNames.Add(key, context.classesNames[key]);
 			}
 			classType.DataSource = new BindingSource{ DataSource = availableClassesNames };
 			classType.DisplayMember = "Value";

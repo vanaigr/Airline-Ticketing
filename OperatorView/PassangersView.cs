@@ -34,7 +34,7 @@ namespace OperatorView {
 
 		public OperatorViewCommunication.FlightDetails details;
 
-		string[] classesNames;
+		Context context;
 
 		DateTime lastUpdateTime;
 		Timer updateTimer;
@@ -43,12 +43,12 @@ namespace OperatorView {
 			OperatorViewCommunication.MessageService service, 
 			Communication.FlightAndCities fac, 
 			OperatorViewCommunication.FlightDetails details,
-			string[] classesNames
+			Context context
 		) {
 			this.service = service;
 			this.fac = fac;
 			this.details = details;
-			this.classesNames = classesNames;
+			this.context = context;
 
 			InitializeComponent();
 
@@ -60,7 +60,8 @@ namespace OperatorView {
 
 			flightNameLabel.Text = fac.flight.flightName;
 			airplaneNameLabel.Text = fac.flight.airplaneName;
-			fromDatetime.Text = fac.flight.departureTime.ToString("d HH:mm");
+			fromDatetime.Text = fac.flight.departureTime
+				.AddMinutes(context.cities[fac.fromCityCode].timeOffsetMinutes).ToString("d HH:mm");
 			fromCityCodeLabel.Text = fac.fromCityCode;
 
 			var now = DateTime.Now;
@@ -109,7 +110,7 @@ namespace OperatorView {
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
 			if(e.ColumnIndex == 0) {
-				e.Value = classesNames[(int) e.Value];
+				e.Value = context.classesNames[(int) e.Value];
 				e.FormattingApplied = true;
 			}
 		}
@@ -211,9 +212,9 @@ namespace OperatorView {
 		}
 
 		private void recalculateStats() {
-			var bookedCount = new int[this.classesNames.Length];
-			var canceledCount = new int[this.classesNames.Length];
-			var occupiedCount = new int[this.classesNames.Length];
+			var bookedCount = new int[context.classesNames.Length];
+			var canceledCount = new int[context.classesNames.Length];
+			var occupiedCount = new int[context.classesNames.Length];
 
 			for(int i = 0; i < details.passangersAndSeats.Count; i++) {
 				var classId = details.seatsClasses[details.passangersAndSeats[i].seatIndex];
@@ -224,9 +225,9 @@ namespace OperatorView {
 				else bookedCount[classId]++;
 			}
 
-			seatsOccupationForClasses = new List<SeatsOccupation>(this.classesNames.Length);
+			seatsOccupationForClasses = new List<SeatsOccupation>(context.classesNames.Length);
 
-			for(int i = 0; i < this.classesNames.Length; i++) {
+			for(int i = 0; i < context.classesNames.Length; i++) {
 				seatsOccupationForClasses.Add(new SeatsOccupation{ 
 					classId = i,
 					bookedCount = bookedCount[i],

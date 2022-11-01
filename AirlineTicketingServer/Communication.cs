@@ -37,6 +37,7 @@ namespace Communication {
 
 	[Serializable] public struct City {
 		public string country, code;
+		public int timeOffsetMinutes;
 		public string name { get; set; } //display in combobox requires property
 	}
 

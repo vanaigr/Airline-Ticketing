@@ -84,6 +84,7 @@
       <Link>TransparentPanel.cs</Link>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Context.cs" />
     <Compile Include="FlightDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>

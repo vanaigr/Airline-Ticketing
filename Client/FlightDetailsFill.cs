@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using Client;
+using Common;
 using Communication;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class FlightDetailsFill : Form {
+		private Context context;
 		private MessageService service;
 		private CustomerData customer;
 
@@ -26,10 +28,11 @@ namespace ClientCommunication {
 
 		public FlightDetailsFill(
 			MessageService service, CustomerData customer,
+			Context context,
 			BookingStatus status,
-			string[] classesNames,
 			FlightAndCities flightAndCities, FlightsSeats.Seats seats
 		) {
+			this.context = context;
 			this.status = status;
 			this.service = service;
 			this.customer = customer;
@@ -77,7 +80,7 @@ namespace ClientCommunication {
 
 			this.classesNames = new Dictionary<int, string>();
 			foreach(var classId in this.flightAndCities.flight.optionsForClasses.Keys) {
-				this.classesNames.Add(classId, classesNames[classId]);
+				this.classesNames.Add(classId, context.classesNames[classId]);
 			}
 
 			var flight = this.flightAndCities.flight;
@@ -93,7 +96,8 @@ namespace ClientCommunication {
 			headerContainer.SuspendLayout();
 			flightNameLabel.Text = flight.flightName;
 			aitrplaneNameLavel.Text = flight.airplaneName;
-			departureDatetimeLabel.Text = flight.departureTime.ToString("d MMMM, dddd, HH:mm");
+			departureDatetimeLabel.Text = flight.departureTime
+				.AddMinutes(context.cities[flightAndCities.fromCityCode].timeOffsetMinutes).ToString("d MMMM, dddd, HH:mm");
 			departureLocationLabel.Text = this.flightAndCities.fromCityCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();

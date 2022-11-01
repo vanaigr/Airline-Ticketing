@@ -14,8 +14,7 @@ namespace OperatorView {
 	public partial class SelectFlight : Form {
 		private MessageService service;
 
-		string[] classesNames;
-		List<City> cities;
+		Context context;
 		
 		public SelectFlight() {
             InitializeComponent();
@@ -40,8 +39,19 @@ namespace OperatorView {
 		void setupAvailableOptions() {
 			try {
 				var options = service.availableOptions();
-				classesNames = options.flightClasses;
-				cities = options.cities;
+				var classesNames = options.flightClasses;
+				var citiesList = options.cities;
+
+				var cities = new Dictionary<string, City>(citiesList.Count);
+				foreach(var city in citiesList) {
+					cities.Add(city.code, city);
+				}
+
+				context = new Context{ 
+					classesNames = classesNames,
+					cities = cities
+				};
+
 				updateErrorDisplay(false, null, null);
 			}
 			catch(Exception e) {
@@ -93,7 +103,7 @@ namespace OperatorView {
 						var flightAndCities = new FlightAndCities{
 							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
 						};
-						flightDisplay.updateFromFlight(classesNames, flightAndCities);
+						flightDisplay.updateFromFlight(context, flightAndCities);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openPassangersView);
 						flightsTable.RowStyles.Add(new RowStyle());
@@ -135,7 +145,7 @@ namespace OperatorView {
 					var result = service.flightDetails(fic.flight.id);
 
 					if(result) { 
-						view = new PassangersView(service, fic, result.s, classesNames);
+						view = new PassangersView(service, fic, result.s, context);
 						view.FormClosed += (obj, args) => { openedViews.Remove(flightId); };
 
 						updateErrorDisplay(false, null, null);
@@ -163,10 +173,9 @@ namespace OperatorView {
 			fromLoc.DisplayMember = "name";
 			toLoc.DisplayMember = "name";
 
-			fromLoc.BindingContext = new BindingContext();
-			fromLoc.DataSource = cities;
+			fromLoc.DataSource = new BindingSource{ DataSource = context?.cities.Values };
 			toLoc.BindingContext = new BindingContext();
-			toLoc.DataSource = cities;
+			toLoc.DataSource = new BindingSource{ DataSource = context?.cities.Values };
 
 			fromLoc.SelectedIndex = -1;
 			toLoc.SelectedIndex = -1;

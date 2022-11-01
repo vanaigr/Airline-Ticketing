@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using Client;
+using Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,7 @@ namespace ClientCommunication {
 
 		public FlightsHistory(
 			ClientCommunication.MessageService service,
-			string[] classesNames,
+			Context context,
 			CustomerData customer
 		) {
 			this.service = service;
@@ -69,8 +70,8 @@ namespace ClientCommunication {
 					customer.bookedFlightsDetails.TryGetValue(pair.Key, out details);
 
 					var it = new BookedFlightInfoControl(
-						service, customer, pair.Key, 
-						classesNames, setStatus
+						service, customer, context,
+						pair.Key, setStatus
 					);
 
 					it.Dock = DockStyle.Top;

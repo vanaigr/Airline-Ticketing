@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace OperatorView {
 	public partial class FlightDisplay : UserControl {
-		string[] classesNames;
+		Context context;
 		FlightAndCities flightAndCities;
 
 		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
@@ -22,16 +22,17 @@ namespace OperatorView {
 		}
 
 		public void updateFromFlight(
-			string[] classesNames,
+			Context context,
 			FlightAndCities flightAndCities
 		) {
-			this.classesNames = classesNames;
+			this.context = context;
 			this.flightAndCities = flightAndCities;
 
 			var flight = flightAndCities.flight;
 
-			var depart = flight.departureTime;
-			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes);
+			var depart = flight.departureTime.AddMinutes(context.cities[flightAndCities.fromCityCode].timeOffsetMinutes);
+			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes)
+				.AddMinutes(context.cities[flightAndCities.toCityCode].timeOffsetMinutes);
 
 			fromCityCode.Text = flightAndCities.fromCityCode;
 			toCityCode.Text = flightAndCities.toCityCode;
@@ -55,7 +56,7 @@ namespace OperatorView {
 
 			var availableClassesNames = new Dictionary<int, string>();
 			foreach(var key in flight.optionsForClasses.Keys) {
-				availableClassesNames.Add(key, classesNames[key]);
+				availableClassesNames.Add(key, context.classesNames[key]);
 			}
 
 			economyClassSeatsLabel.Text = "Заняо в эконом классе: "  + (flight.seatCountForClasses[0] - flight.availableSeatsForClasses[0]) + "/" + flight.seatCountForClasses[0];

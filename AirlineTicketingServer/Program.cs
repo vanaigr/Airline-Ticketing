@@ -17,8 +17,8 @@ namespace AirlineTicketingServer {
 			var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 
 			using(
-			var selectCities = new SqlCommand("select [Id], [Name], [Country] from [Flights].[Airports]")) {
-			selectCities.CommandType = System.Data.CommandType.Text;
+			var selectCities = new SqlCommand("select [Id], [Name], [Country], [UTCDifferenceMinutes] from [Flights].[Airports]")) {
+			selectCities.CommandType = CommandType.Text;
 
 			selectCities.Connection = connection;
 			connection.Open();
@@ -27,14 +27,14 @@ namespace AirlineTicketingServer {
 			while(result.Read()) cities.Add(new City{ 
 				code = (string) result[0], 
 				name = (string) result[1],
-				country = (string) result[2] 
+				country = (string) result[2],
+				timeOffsetMinutes = (int) result[3] 
 			});
 			}
 			
 			}
-
-
-			if(false) { //update options
+			
+			if(true) { //update options
 				var economOptins = new Options{
 				baggageOptions = new BaggageOptions{
 					baggage = new List<Baggage> {
@@ -53,21 +53,21 @@ namespace AirlineTicketingServer {
 				servicesOptions = new ServicesOptions {
 					seatChoiceCostRub = 450
 				},
-				basePriceRub = 2400
+				basePriceRub = 2500
 			};
 			var busunessOptions = new Options{
 				baggageOptions = new BaggageOptions{
 					baggage = new List<Baggage> {
 						new Baggage(costRub: 0, count: 1, maxWeightKg: 32),
-						new Baggage(costRub: 2500, count: 2, maxWeightKg: 32),
-						new Baggage(costRub: 5000, count: 3, maxWeightKg: 32)
+						new Baggage(costRub: 2640, count: 2, maxWeightKg: 32),
+						new Baggage(costRub: 5940, count: 3, maxWeightKg: 32)
 					},
 					handLuggage = new List<Baggage>{
 						new Baggage(costRub: 0, count: 1, maxWeightKg: 15, maxDim: new Size3{ x=55, y=40, z=20 }),
 					},
 				},
 				termsOptions = new TermsOptions {
-					changeFlightCostRub = 3250,
+					changeFlightCostRub = 3500,
 					refundCostRub = -1
 				},
 				servicesOptions = new ServicesOptions {
@@ -91,17 +91,20 @@ namespace AirlineTicketingServer {
 				selectClassesCommand.Parameters.AddWithValue("@Options", BinaryOptions.toBytes(optionsForClasses));
 	
 				connView.Open();
-				for(int i = 3; i < 6; i++){ 
-					id.Value = i;
-					selectClassesCommand.ExecuteNonQuery();
-				}
+				id.Value = 3;
+				selectClassesCommand.ExecuteNonQuery();
+								id.Value = 4;
+				selectClassesCommand.ExecuteNonQuery();
+								id.Value = 5;
+				selectClassesCommand.ExecuteNonQuery();
+				
 				}
 				connView.Dispose();
 			}
 
 			if(false) { //write seats scheme
-				var sizes = new Point[]{ new Point(2, 4), new Point(25, 6) };
-				var seatsScheme = new FlightsSeats.SeatsScheme(((IEnumerable<Point>)sizes).GetEnumerator());
+				var sizes = new Point[]{ new Point(2, 4), new Point(33, 6) };
+				var seatsScheme = new SeatsScheme(((IEnumerable<Point>)sizes).GetEnumerator());
 
 				var connView = new SqlConnectionView(connection, false);
 				using(
@@ -113,11 +116,10 @@ namespace AirlineTicketingServer {
 					[BusinessClassSeatsCount] ,
 					[FirstClassSeatsCount]  , 
 					[SeatsScheme]         )
-					values ('Airbus A320', 150, 0, 8, 0, @Scheme);",
+					values ('Airbus A321 Neo', 198, 0, 8, 0, @Scheme);",
 					connView.connection
 				)) {
-				selectClassesCommand.CommandType = System.Data.CommandType.Text;
-				selectClassesCommand.Parameters.AddWithValue("@Name", "Airbus A320");
+				selectClassesCommand.CommandType = CommandType.Text;
 				selectClassesCommand.Parameters.AddWithValue("@Scheme", BinarySeats.toBytes(seatsScheme));
 	
 				connView.Open();

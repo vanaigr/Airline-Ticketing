@@ -16,8 +16,9 @@ namespace ClientCommunication {
 		private MessageService service;
 		private CustomerData customer;
 
-		string[] avaliableFlightClasses;
-		List<City> cities;
+		//string[] avaliableFlightClasses;
+		//List<City> cities;
+		Context context;
 
 		private Dictionary<int/*flightId*/, FlightDetailsFill> openedBookings = new Dictionary<int, FlightDetailsFill>();
 		
@@ -48,8 +49,17 @@ namespace ClientCommunication {
 		void setupAvailableOptions() {
 			try {
 				var options = service.availableOptions();
-				avaliableFlightClasses = options.flightClasses;
-				cities = options.cities;
+				var avaliableFlightClasses = options.flightClasses;
+				var citiesList = options.cities;
+				var cities = new Dictionary<string, City>(citiesList.Count);
+				foreach(var city in citiesList) {
+					cities.Add(city.code, city);
+				}
+
+				context = new Context{ 
+					classesNames = avaliableFlightClasses,
+					cities = cities
+				};
 				updateErrorDisplay(false, null, null);
 			}
 			catch(Exception e) {
@@ -184,7 +194,7 @@ namespace ClientCommunication {
 						var flightAndCities = new FlightAndCities{
 							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
 						};
-						flightDisplay.updateFromFlight(avaliableFlightClasses, flightAndCities);
+						flightDisplay.updateFromFlight(context, flightAndCities);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openFlightBooking);
 						flightsTable.RowStyles.Add(new RowStyle());
@@ -223,8 +233,8 @@ namespace ClientCommunication {
 					if(result) {
 						booking = new FlightDetailsFill(
 							service, customer, 
-							new BookingStatus(), 
-							avaliableFlightClasses, fic, result.s
+							context, new BookingStatus(), 
+							fic, result.s
 						);
 						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
 
@@ -254,10 +264,10 @@ namespace ClientCommunication {
 			fromLoc.DisplayMember = "name";
 			toLoc.DisplayMember = "name";
 
-			fromLoc.BindingContext = new BindingContext();
-			fromLoc.DataSource = cities;
-			toLoc.BindingContext = new BindingContext();
-			toLoc.DataSource = cities;
+			fromLoc.DataSource = new BindingSource(){ DataSource = context?.cities.Values };
+			//fromLoc.DisplayMember = "Value";
+			toLoc.DataSource = new BindingSource(){ DataSource = context?.cities.Values };
+			//fromLoc.DisplayMember = "Value";
 
 			fromLoc.SelectedIndex = -1;
 			toLoc.SelectedIndex = -1;
@@ -280,7 +290,7 @@ namespace ClientCommunication {
 		}
 
 		private void openBookedFlightsHistory() {
-			var it = new FlightsHistory(service, avaliableFlightClasses, customer);
+			var it = new FlightsHistory(service, context, customer);
 			it.ShowDialog();
 		}
 
