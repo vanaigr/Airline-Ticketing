@@ -64,7 +64,7 @@ namespace OperatorView {
 				.AddMinutes(context.cities[fac.fromCityCode].timeOffsetMinutes).ToString("d HH:mm");
 			fromCityCodeLabel.Text = fac.fromCityCode;
 
-			var now = DateTime.Now;
+			var now = DateTime.UtcNow;
 			lastUpdateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 			updateCountdown();
 			checkUpdateCountdown();
@@ -252,7 +252,7 @@ namespace OperatorView {
 		}
 
 		private void checkUpdateCountdown() {
-			var now = DateTime.Now;
+			var now = DateTime.UtcNow;
 			var thisTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
 			if(lastUpdateTime != thisTime) {

@@ -391,24 +391,6 @@ namespace ClientCommunication {
 			formPassanger.documents.Add(Documents.Passport.id, new Documents.Passport());
 
 			updatePassanger();
-
-			/*((TextBox) generalDataFields.getField(0)).Text = "";
-			((TextBox) generalDataFields.getField(1)).Text = "";
-			((TextBox) generalDataFields.getField(2)).Text = "";
-			((DateTimePicker) generalDataFields.getField(3)).Value = DateTime.Now;
-            
-			formPassanger.selectedDocument = Documents.Passport.id;
-			formPassanger.documents.Clear();
-			formPassanger.documents.Add(Documents.Passport.id, new Documents.Passport());
-			
-			var i = 0;
-			foreach(var doc in Documents.DocumentsName.documentsNames) {
-				if(doc.Key == formPassanger.selectedDocument) break;
-				i++;
-			}
-			Debug.Assert(i != Documents.DocumentsName.documentsNames.Count);
-
-			documentTypeCombobox.SelectedItem = i;*/
 		}
 
 		private void updatePassanger() {

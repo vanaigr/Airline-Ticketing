@@ -22,7 +22,7 @@ namespace AirlineTicketingServer {
         static readonly int minutesInDay = 60 * 24;
 
 		public static void checkAndUpdate(SqlConnectionView connectionView) {	
-			var thisDay = DateTime.Today;
+			var thisDay = DateTime.UtcNow.Date;
 
 			var connection = connectionView.connection;
 			//archive old flights
