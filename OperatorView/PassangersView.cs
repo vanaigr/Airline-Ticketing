@@ -30,7 +30,6 @@ namespace OperatorView {
 		OperatorViewCommunication.MessageService service;
 
 		Communication.AvailableFlight flight;
-		List<SeatsOccupation> seatsOccupationForClasses;
 
 		public OperatorViewCommunication.FlightDetails details;
 
@@ -100,7 +99,7 @@ namespace OperatorView {
 		}
 
 		private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e) {
-			var height = 0;
+			var height = dataGridView1.ColumnHeadersHeight;
 			foreach (DataGridViewRow dr in dataGridView1.Rows) {
 			    height += dr.Height;
 			}
@@ -109,16 +108,22 @@ namespace OperatorView {
 		}
 
 		private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
+			e.CellStyle.BackColor = e.RowIndex % 2 == 0 ? Color.FromArgb(255, 255, 255) : Color.FromArgb(240, 240, 240);
+
 			if(e.ColumnIndex == 0) {
-				e.Value = context.classesNames[(int) e.Value];
-				e.FormattingApplied = true;
+				if((int) e.Value == -1) {
+					e.Value = "Итого";
+					e.FormattingApplied = true;
+				}
+				else { 
+					e.Value = context.classesNames[(int) e.Value];
+					e.FormattingApplied = true;
+				}
 			}
 		}
 
 		private void PassangersView_Shown(object sender, EventArgs e) {
 			dataGridView1.ClearSelection();
-			
-			//showCanceledCheckbox.Checked = false;
 			showCanceledCheckbox.Checked = true;
 		}
 
@@ -212,6 +217,11 @@ namespace OperatorView {
 		}
 
 		private void recalculateStats() {
+			var totalBookedCount = 0;
+			var totalCanceledCount = 0;
+			var totalOccupiedCount = 0;
+			var totalSeatsCount = 0;
+
 			var bookedCount = new int[context.classesNames.Length];
 			var canceledCount = new int[context.classesNames.Length];
 			var occupiedCount = new int[context.classesNames.Length];
@@ -225,7 +235,14 @@ namespace OperatorView {
 				else bookedCount[classId]++;
 			}
 
-			seatsOccupationForClasses = new List<SeatsOccupation>(context.classesNames.Length);
+			for(int i = 0; i < context.classesNames.Length; i++) {
+				totalBookedCount += bookedCount[i];
+				totalCanceledCount += canceledCount[i];
+				totalOccupiedCount += occupiedCount[i];
+				totalSeatsCount += flight.seatCountForClasses[i];
+			}
+
+			var seatsOccupationForClasses = new List<SeatsOccupation>(context.classesNames.Length + 1);
 
 			for(int i = 0; i < context.classesNames.Length; i++) {
 				seatsOccupationForClasses.Add(new SeatsOccupation{ 
@@ -237,7 +254,17 @@ namespace OperatorView {
 				});
 			}
 
+			seatsOccupationForClasses.Add(new SeatsOccupation{ 
+				classId = -1,
+				bookedCount = totalBookedCount,
+				occupiedCount = totalOccupiedCount,
+				canceledCount = totalCanceledCount,
+				count = totalSeatsCount
+			});
+
+
 			dataGridView1.DataSource = new BindingSource{ DataSource = seatsOccupationForClasses };
+			Console.WriteLine(dataGridView1.RowCount);
 
 			dataGridView1.ClearSelection();
 		}
