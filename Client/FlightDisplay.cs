@@ -248,6 +248,8 @@ namespace ClientCommunication {
 
 				var options = thisOptions.servicesOptions;
 				
+				addListItem(servicesOptionsTable, Status.paid, "Цена билета: " + options.basePriceRub + "руб.");
+				
 				if(options.seatChoiceCostRub == 0) {
 					addListItem(servicesOptionsTable, Status.free, "Выбор места при регистрации");
 				}

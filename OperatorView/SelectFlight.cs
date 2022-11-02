@@ -25,14 +25,6 @@ namespace OperatorView {
 			pictureBox1.Image = TintImage.applyTint(pictureBox1.Image, Color.RoyalBlue);
 
 			reconnect();
-
-			try {
-			fromLoc.SelectedIndex = 2;
-			toLoc.SelectedIndex = 1;
-			
-			findFlightsButton_Click(findFlightsButton, new EventArgs());
-			} catch(Exception){ }
-
 			setupAvailableOptions();
 		}
 

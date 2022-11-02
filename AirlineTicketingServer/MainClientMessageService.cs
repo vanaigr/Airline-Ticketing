@@ -211,7 +211,7 @@ namespace AirlineTicketingServer {
 			var handLuggageOption = opt.baggageOptions.handLuggage[hi];
 
 			var sd = new SeatCost(){
-				basePrice = opt.basePriceRub,
+				basePrice = opt.servicesOptions.basePriceRub,
 				baggageCost = baggageOption.costRub + handLuggageOption.costRub,
 				seatCost = opt.servicesOptions.seatChoiceCostRub * (seat.selectedOptions.servicesOptions.seatSelected ? 1 : 0)
 			};

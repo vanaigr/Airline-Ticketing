@@ -36,48 +36,48 @@ namespace AirlineTicketingServer {
 			
 			if(true) { //update options
 				var economOptins = new Options{
-				baggageOptions = new BaggageOptions{
-					baggage = new List<Baggage> {
-						new Baggage(costRub: 0, count: 0),
-						new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
-						new Baggage(costRub: 5000, count: 2, maxWeightKg: 23)
+					baggageOptions = new BaggageOptions{
+						baggage = new List<Baggage> {
+							new Baggage(costRub: 0, count: 0),
+							new Baggage(costRub: 2500, count: 1, maxWeightKg: 23),
+							new Baggage(costRub: 5000, count: 2, maxWeightKg: 23)
+						},
+						handLuggage = new List<Baggage>{
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 10, maxDim: new Size3{ x=55, y=40, z=20 }),
+						},
 					},
-					handLuggage = new List<Baggage>{
-						new Baggage(costRub: 0, count: 1, maxWeightKg: 10, maxDim: new Size3{ x=55, y=40, z=20 }),
+					termsOptions = new TermsOptions {
+						changeFlightCostRub = -1,
+						refundCostRub = 0
 					},
-				},
-				termsOptions = new TermsOptions {
-					changeFlightCostRub = 3250,
-					refundCostRub = -1
-				},
-				servicesOptions = new ServicesOptions {
-					seatChoiceCostRub = 450
-				},
-				basePriceRub = 2500
-			};
-			var busunessOptions = new Options{
-				baggageOptions = new BaggageOptions{
-					baggage = new List<Baggage> {
-						new Baggage(costRub: 0, count: 1, maxWeightKg: 32),
-						new Baggage(costRub: 2640, count: 2, maxWeightKg: 32),
-						new Baggage(costRub: 5940, count: 3, maxWeightKg: 32)
+					servicesOptions = new ServicesOptions {
+						basePriceRub = 2500,
+						seatChoiceCostRub = 450
 					},
-					handLuggage = new List<Baggage>{
-						new Baggage(costRub: 0, count: 1, maxWeightKg: 15, maxDim: new Size3{ x=55, y=40, z=20 }),
+				};
+				var busunessOptions = new Options{
+					baggageOptions = new BaggageOptions{
+						baggage = new List<Baggage> {
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 32),
+							new Baggage(costRub: 2640, count: 2, maxWeightKg: 32),
+							new Baggage(costRub: 5940, count: 3, maxWeightKg: 32)
+						},
+						handLuggage = new List<Baggage>{
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 15, maxDim: new Size3{ x=55, y=40, z=20 }),
+						},
 					},
-				},
-				termsOptions = new TermsOptions {
-					changeFlightCostRub = 3500,
-					refundCostRub = -1
-				},
-				servicesOptions = new ServicesOptions {
-					seatChoiceCostRub = 0
-				},
-				basePriceRub = 3500
-			};
-			var optionsForClasses = new Dictionary<int, Options>(2);
-			optionsForClasses.Add(0, economOptins);
-			optionsForClasses.Add(2, busunessOptions);
+					termsOptions = new TermsOptions {
+						changeFlightCostRub = -1,
+						refundCostRub = 0
+					},
+					servicesOptions = new ServicesOptions {
+						basePriceRub = 3500,
+						seatChoiceCostRub = 0
+					}
+				};
+				var optionsForClasses = new Dictionary<int, Options>(2);
+				optionsForClasses.Add(0, economOptins);
+				optionsForClasses.Add(2, busunessOptions);
 
 				var connView = new SqlConnectionView(connection, false);
 				using(
@@ -96,6 +96,71 @@ namespace AirlineTicketingServer {
 								id.Value = 4;
 				selectClassesCommand.ExecuteNonQuery();
 								id.Value = 5;
+				selectClassesCommand.ExecuteNonQuery();
+				
+				}
+				connView.Dispose();
+			}
+			if(true) { //update options 2
+				var economOptins = new Options{
+					baggageOptions = new BaggageOptions{
+						baggage = new List<Baggage> {
+							new Baggage(costRub: 0, count: 0),
+							new Baggage(costRub: 4600, count: 1, maxWeightKg: 23),
+							new Baggage(costRub: 9100, count: 2, maxWeightKg: 23)
+						},
+						handLuggage = new List<Baggage>{
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 10, maxDim: new Size3{ x=55, y=40, z=20 }),
+						},
+					},
+					termsOptions = new TermsOptions {
+						changeFlightCostRub = -1,
+						refundCostRub = 0
+					},
+					servicesOptions = new ServicesOptions {
+						basePriceRub = 11719,
+						seatChoiceCostRub = 450
+					},
+				};
+				var busunessOptions = new Options{
+					baggageOptions = new BaggageOptions{
+						baggage = new List<Baggage> {
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 32),
+							new Baggage(costRub: 4600, count: 2, maxWeightKg: 32),
+							new Baggage(costRub: 9100, count: 3, maxWeightKg: 32)
+						},
+						handLuggage = new List<Baggage>{
+							new Baggage(costRub: 0, count: 1, maxWeightKg: 15, maxDim: new Size3{ x=55, y=40, z=20 }),
+						},
+					},
+					termsOptions = new TermsOptions {
+						changeFlightCostRub = -1,
+						refundCostRub = 0
+					},
+					servicesOptions = new ServicesOptions {
+						basePriceRub = 75000,
+						seatChoiceCostRub = 0
+					}
+				};
+				var optionsForClasses = new Dictionary<int, Options>(2);
+				optionsForClasses.Add(0, economOptins);
+				optionsForClasses.Add(2, busunessOptions);
+
+				var connView = new SqlConnectionView(connection, false);
+				using(
+				var selectClassesCommand = new SqlCommand(
+					//@"insert into [dbo].[Table]([Options]) values (@Options)",
+					@"update [Flights].[FlightInfo] set [Options] = @Options where [Id] = @id",
+					connView.connection
+				)) {
+				selectClassesCommand.CommandType = System.Data.CommandType.Text;
+				var id = selectClassesCommand.Parameters.Add("@Id", SqlDbType.Int);
+				selectClassesCommand.Parameters.AddWithValue("@Options", BinaryOptions.toBytes(optionsForClasses));
+	
+				connView.Open();
+				id.Value = 6;
+				selectClassesCommand.ExecuteNonQuery();
+				id.Value = 7;
 				selectClassesCommand.ExecuteNonQuery();
 				
 				}

@@ -22,8 +22,8 @@ namespace FlightsOptions {
 	    }
 	
 		public static Baggage ReadBaggage(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 0);
-			var costRub = it.ReadInt16();
+			Debug.Assert(it.ReadByte() == 1);
+			var costRub = it.ReadInt32();
 			var count = it.ReadInt16();
 			var maxWeight = it.ReadInt16();
 			var maxDim = it.ReadSize3();
@@ -31,7 +31,7 @@ namespace FlightsOptions {
 	    }
 	
 	    public static void Write(this BinaryWriter it, Baggage v) {
-			it.Write((byte)0);
+			it.Write((byte)1);
 			it.Write(v.costRub);
 			it.Write(v.count);
 			it.Write(v.maxWeightKg);
@@ -64,46 +64,50 @@ namespace FlightsOptions {
 	    }
 	
 		public static TermsOptions ReadTermsOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 0);
-			var changeFlightCostRub = it.ReadInt16();
-			var refundCostRub = it.ReadInt16();
+			Debug.Assert(it.ReadByte() == 1);
+			var changeFlightCostRub = it.ReadInt32();
+			var refundCostRub = it.ReadInt32();
 	
 			return new TermsOptions{ changeFlightCostRub = changeFlightCostRub, refundCostRub = refundCostRub };
 	    }
 		public static void Write(this BinaryWriter it, TermsOptions v) {
-			it.Write((byte)0);
+			it.Write((byte)1);
 			it.Write(v.changeFlightCostRub);
 			it.Write(v.refundCostRub);
 	    }
 	
 		public static ServicesOptions ReadServicesOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 0);
-			var seatChoiceCostRub = it.ReadInt16();
+			Debug.Assert(it.ReadByte() == 2);
+			var basePrice = it.ReadInt32();
+			var seatChoiceCostRub = it.ReadInt32();
 	
-			return new ServicesOptions{ seatChoiceCostRub = seatChoiceCostRub };
+			return new ServicesOptions{ 
+				basePriceRub = basePrice,
+				seatChoiceCostRub = seatChoiceCostRub 
+			};
 	    }
 		public static void Write(this BinaryWriter it, ServicesOptions v) {
-			it.Write((byte) 0);
+			it.Write((byte) 2);
+			it.Write(v.basePriceRub);
 			it.Write(v.seatChoiceCostRub);
 	    }
 	
 		public static Options ReadOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 1);
+			Debug.Assert(it.ReadByte() == 2);
 			var baggageOptions = it.ReadBaggageOptions();
 			var termsOptions = it.ReadTermsOptions();
 			var servicesOptions = it.ReadServicesOptions();
-			var basePrice = it.ReadInt32();
 			return new Options{ 
-				baggageOptions = baggageOptions, termsOptions = termsOptions, servicesOptions = servicesOptions,
-				basePriceRub = basePrice
+				baggageOptions = baggageOptions, 
+				termsOptions = termsOptions, 
+				servicesOptions = servicesOptions,
 			};
 	    }
 		public static void Write(this BinaryWriter it, Options v) {
-			it.Write((byte)1);
+			it.Write((byte)2);
 			it.Write(v.baggageOptions);
 			it.Write(v.termsOptions);
 			it.Write(v.servicesOptions);
-			it.Write(v.basePriceRub);
 	    }
 	}
 
