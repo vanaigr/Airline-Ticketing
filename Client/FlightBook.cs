@@ -21,7 +21,7 @@ namespace ClientCommunication {
 		private SeatAndOptions[] seatsAndOptions;
 		private SelectedSeat[] selectedSeats;
 
-		private FlightAndCities flightAndCities;
+		private AvailableFlight flight;
 		private FlightsSeats.Seats seats;
 
 		private BookingStatus status;
@@ -29,7 +29,7 @@ namespace ClientCommunication {
 		public FlightBook(
 			MessageService service,
 			CustomerData customer, List<BookingPassanger> bookingPassangers,
-			FlightAndCities flightAndCities, FlightsSeats.Seats seats,
+			AvailableFlight flight, FlightsSeats.Seats seats,
 			Dictionary<int, string> classesNames,
 			BookingStatus status
 		) {
@@ -39,7 +39,7 @@ namespace ClientCommunication {
 			this.customer = customer;
 			this.bookingPassangers = bookingPassangers;
 
-			this.flightAndCities = flightAndCities;
+			this.flight = flight;
 			this.seats = seats;
 
 			this.status = status;
@@ -99,7 +99,7 @@ namespace ClientCommunication {
 					ClientCommunication.SeatCost[] seatsCost;
 
 					if(!status.booked) {
-						var result = service.seatsData(flightAndCities.flight.id, seatsAndOptions);
+						var result = service.seatsData(this.flight.id, seatsAndOptions);
 
 						if(result) {
 							seatsCost = result.s;
@@ -153,7 +153,7 @@ namespace ClientCommunication {
 
 				it.set(
 					customer, passanger,
-					seats, flightAndCities.flight.optionsForClasses, 
+					seats, this.flight.optionsForClasses, 
 					bookedSeatInfo, seatCost, 
 					classesNames
 				);
@@ -185,7 +185,7 @@ namespace ClientCommunication {
 
 			var booked = false;
 			try {
-				var result = service.bookFlight(customer.customer, selectedSeats, localPassangers, flightAndCities.flight.id);
+				var result = service.bookFlight(customer.customer, selectedSeats, localPassangers, flight.id);
 
 				if(result) {
 					booked = true;
@@ -203,8 +203,7 @@ namespace ClientCommunication {
 
 					customer.flightsBooked.Add(newIndex, new ClientCommunication.BookedFlight{
 						bookedFlightId = booking.customerBookedFlightId, bookingFinishedTime = booking.bookingFinishedTime,
-						availableFlight = flightAndCities.flight, bookedPassangerCount = bookingPassangers.Count,
-						fromCode = flightAndCities.fromCityCode, toCode = flightAndCities.toCityCode
+						availableFlight = flight, bookedPassangerCount = bookingPassangers.Count,
 					});
 
 					customer.bookedFlightsDetails.Add(newIndex, new ClientCommunication.BookedFlightDetails{

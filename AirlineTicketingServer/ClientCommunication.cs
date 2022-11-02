@@ -40,7 +40,6 @@ namespace ClientCommunication {
 	public sealed class BookedFlight {
 		public int? bookedFlightId;
 		public AvailableFlight availableFlight;
-		public string fromCode, toCode;
 		public int bookedPassangerCount;
 		public DateTime bookingFinishedTime;
 	}

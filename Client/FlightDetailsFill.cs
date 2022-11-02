@@ -17,20 +17,20 @@ namespace ClientCommunication {
 		private List<BookingPassanger> bookingPassangers;
 
 		private Dictionary<int, string> classesNames;
-		private FlightAndCities flightAndCities;
+		private AvailableFlight flight;
 		private FlightsSeats.Seats seats;
 
 		private BookingStatus status;
 
-		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
-
 		public event EventHandler OnBookedPassangersChanged;
+
+		public AvailableFlight CurrentFlight{ get{ return flight; } }
 
 		public FlightDetailsFill(
 			MessageService service, CustomerData customer,
 			Context context,
 			BookingStatus status,
-			FlightAndCities flightAndCities, FlightsSeats.Seats seats
+			AvailableFlight flight, FlightsSeats.Seats seats
 		) {
 			this.context = context;
 			this.status = status;
@@ -41,10 +41,7 @@ namespace ClientCommunication {
 				var bookedFlight = status.BookedFlight(this.customer);
 				var bookedFlightDetails = status.BookedFlightDetails(this.customer);
 
-				this.flightAndCities = new FlightAndCities();
-				this.flightAndCities.flight = bookedFlight.availableFlight;
-				this.flightAndCities.fromCityCode = bookedFlight.fromCode;
-				this.flightAndCities.toCityCode = bookedFlight.toCode;
+				this.flight = bookedFlight.availableFlight;
 
 				this.seats = bookedFlightDetails.seats;
 				
@@ -72,18 +69,16 @@ namespace ClientCommunication {
 			}
 			else {
 				this.seats = seats;
-				this.flightAndCities = flightAndCities;
+				this.flight = flight;
 
 				this.bookingPassangers = new List<BookingPassanger>();
 				this.curPassangersDisplays = new List<PassangerDisplay>();
 			}
 
 			this.classesNames = new Dictionary<int, string>();
-			foreach(var classId in this.flightAndCities.flight.optionsForClasses.Keys) {
+			foreach(var classId in this.flight.optionsForClasses.Keys) {
 				this.classesNames.Add(classId, context.classesNames[classId]);
 			}
-
-			var flight = this.flightAndCities.flight;
 
 
 			InitializeComponent();
@@ -94,11 +89,11 @@ namespace ClientCommunication {
 			Misc.fixFlowLayoutPanelHeight(passangersPanel);
 
 			headerContainer.SuspendLayout();
-			flightNameLabel.Text = flight.flightName;
-			aitrplaneNameLavel.Text = flight.airplaneName;
-			departureDatetimeLabel.Text = flight.departureTime
-				.AddMinutes(context.cities[flightAndCities.fromCityCode].timeOffsetMinutes).ToString("d MMMM, dddd, HH:mm");
-			departureLocationLabel.Text = this.flightAndCities.fromCityCode;
+			flightNameLabel.Text = this.flight.flightName;
+			aitrplaneNameLavel.Text = this.flight.airplaneName;
+			departureDatetimeLabel.Text = this.flight.departureTime
+				.AddMinutes(context.cities[this.flight.fromCode].timeOffsetMinutes).ToString("d MMMM, dddd, HH:mm");
+			departureLocationLabel.Text = this.flight.fromCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();
 			
@@ -156,10 +151,10 @@ namespace ClientCommunication {
 
             var selectionForm = new PassangerSettings(
 				service, customer, status,
-				flightAndCities.flight.id, 
+				flight.id, 
 				seats, seatHandling, 
 				newBookingPassanger, index,
-				flightAndCities.flight.optionsForClasses, classesNames
+				flight.optionsForClasses, classesNames
 			);
 			var result = selectionForm.ShowDialog();
 
@@ -278,7 +273,7 @@ namespace ClientCommunication {
 				new FlightBook(
 					service, 
 					customer, bookingPassangers, 
-					flightAndCities, seats, 
+					flight, seats, 
 					classesNames, status
 				).ShowDialog();
 				return;
@@ -339,7 +334,7 @@ namespace ClientCommunication {
 			new FlightBook(
 				service, 
 				customer, bookingPassangers, 
-				flightAndCities, seats, 
+				flight, seats, 
 				classesNames, status
 			).ShowDialog();
 

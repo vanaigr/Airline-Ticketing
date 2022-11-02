@@ -191,10 +191,7 @@ namespace ClientCommunication {
 					}
 					else foreach(var flight in result) {
 						var flightDisplay = new FlightDisplay();
-						var flightAndCities = new FlightAndCities{
-							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
-						};
-						flightDisplay.updateFromFlight(context, flightAndCities);
+						flightDisplay.updateFromFlight(context, flight);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openFlightBooking);
 						flightsTable.RowStyles.Add(new RowStyle());
@@ -220,25 +217,25 @@ namespace ClientCommunication {
 
 		private void openFlightBooking(object sender, EventArgs e) {
 			var flightDisplay = (FlightDisplay) sender;
-			var fic = flightDisplay.CurrentFlight;
+			var flight = flightDisplay.CurrentFlight;
 
 			FlightDetailsFill booking;
-			if(openedBookings.TryGetValue(fic.flight.id, out booking)) {
+			if(openedBookings.TryGetValue(flight.id, out booking)) {
 				booking.Focus();
 			}
 			else {
 				try {
-					var result = service.seatsForFlight(fic.flight.id);
+					var result = service.seatsForFlight(flight.id);
 
 					if(result) {
 						booking = new FlightDetailsFill(
 							service, customer, 
 							context, new BookingStatus(), 
-							fic, result.s
+							flight, result.s
 						);
-						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.flight.id); };
+						booking.FormClosed += (obj, args) => { openedBookings.Remove(((FlightDetailsFill) obj).CurrentFlight.id); };
 
-						openedBookings.Add(fic.flight.id, booking);
+						openedBookings.Add(flight.id, booking);
 						booking.Show();
 
 						updateErrorDisplay(false, null, null);

@@ -106,6 +106,7 @@ namespace ClientCommunication {
 
 			curState = State.none;
 
+			addButton.Enabled = true;
 			deleteButton.Enabled = false;
 			editButton.Enabled = false;
 			passangerDataTable.Enabled = false;
@@ -323,7 +324,10 @@ namespace ClientCommunication {
 			else Debug.Assert(curState == State.select || curState == State.none);
 		}
 
-		private Either<Passanger, String> formPassangerFromData() { 
+		private Either<Passanger, string> formPassangerFromData() { 
+			//generalDataFields.forceUpdateAllFields();
+			//documentFields.forceUpdateAllFields();
+
 			var it = new Passanger{
 				name = formPassanger.name,
 				surname = formPassanger.surname,
@@ -342,9 +346,7 @@ namespace ClientCommunication {
 				es.ac("Данные документа должны быть заполнены: ").append(docRes.Message);
 			}
 
-			if(es.Error) {
-				return Either<Passanger, string>.Failure(es.Message);
-			}
+			if(es.Error) return Either<Passanger, string>.Failure(es.Message);
 			else return Either<Passanger, string>.Success(it);
 		}
 
@@ -361,24 +363,6 @@ namespace ClientCommunication {
 			formPassanger.documents.Add(formPassanger.selectedDocument, p.document);
 
 			updatePassanger();
-
-			/*((TextBox) generalDataFields.getField(0)).Text = p.name;
-			((TextBox) generalDataFields.getField(1)).Text = p.surname;
-			((TextBox) generalDataFields.getField(2)).Text = p.middleName;
-			((DateTimePicker) generalDataFields.getField(3)).Value = p.birthday;
-            
-			formPassanger.selectedDocument = p.document.Id;
-			formPassanger.documents.Clear();
-			formPassanger.documents.Add(Documents.Passport.id, p.document);
-			
-			var i = 0;
-			foreach(var doc in Documents.DocumentsName.documentsNames) {
-				if(doc.Key == p.document.Id) break;
-				i++;
-			}
-			Debug.Assert(i != Documents.DocumentsName.documentsNames.Count);
-
-			documentTypeCombobox.SelectedItem = i;*/
 		} 
 
 		private void clearPassangerData() {
@@ -644,17 +628,12 @@ namespace ClientCommunication {
 			private RemoveFocus removeFocus;
 
 			private List<Control> addedControls;
-
-			private List<Control> fields;
+			private List<Action> fieldUpdates;
 
 			public delegate void RemoveFocus();
 			public delegate void SetStatus(bool err, string input);
 			public delegate void ValidateText(string input);
 			public delegate void ValidateDate(DateTime input);
-
-			public Control getField(int index) {
-				return fields[index];
-			}
 
 			public DocumentFields(
 				RemoveFocus removeFocus,
@@ -665,7 +644,7 @@ namespace ClientCommunication {
 			) {
 				this.removeFocus = removeFocus;
 				this.fieldIndex = (this.startFieldIndex = startFieldIndex) - 1;
-				this.fields = new List<Control>();
+				this.fieldUpdates = new List<Action>();
 				this.setStatus = setStatus;
 				this.documentFieldsTooltip = documentFieldsTooltip;
 				this.panel = panel;
@@ -702,10 +681,12 @@ namespace ClientCommunication {
 				it.Dock = DockStyle.Fill;
 				it.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
 				it.Text = defaultValue;
-				it.KeyDown += (a, b) => { if(b.KeyCode == Keys.Enter) { validateTextField(it, validate); removeFocus(); } };
+
+				it.KeyDown += (a, b) => { validateTextField(it, validate);  if(b.KeyCode == Keys.Enter) { removeFocus(); } };
 				it.LostFocus += (a, b) => { validateTextField(it, validate); };
+				fieldUpdates.Add(() => { validateTextField(it, validate); });
+
 				addedControls.Add(it);
-				fields.Add(it);
 				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 2);
 				return it;
 			}
@@ -729,10 +710,12 @@ namespace ClientCommunication {
 				it.Dock = DockStyle.Fill;
 				it.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
 				it.Value = defaultValue;
+
 				it.KeyDown += (a, b) => { if(b.KeyCode == Keys.Enter) { validateDateField(it, validate); removeFocus(); } };
 				it.LostFocus += (a, b) => { validateDateField(it, validate); };
+				fieldUpdates.Add(() => { validateDateField(it, validate); });
+
 				addedControls.Add(it);
-				fields.Add(it);
 				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 2);
 				return it;
 			}
@@ -756,7 +739,7 @@ namespace ClientCommunication {
 				documentFieldsTooltip.RemoveAll();
 				foreach(var it in addedControls) it.Dispose();
 				addedControls.Clear();
-				fields.Clear();
+				fieldUpdates.Clear();
 				panel.RowCount = 2;
 			}
 
@@ -767,6 +750,12 @@ namespace ClientCommunication {
 			public void Resume() {
 				panel.ResumeLayout(false);
 				panel.PerformLayout();
+			}
+
+			public void forceUpdateAllFields() {
+				foreach(var update in fieldUpdates) {
+					update.Invoke();
+				}
 			}
 		}
 

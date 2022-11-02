@@ -40,12 +40,12 @@ namespace ClientCommunication {
 
 			flightNameLabel.Text = af.flightName;
 			airplaneNameLabel.Text = af.airplaneName;
-			departureLocationLabel.Text = bookedFlight.fromCode;
-			departireDatetimeLabel.Text = af.departureTime.AddMinutes(context.cities[bookedFlight.fromCode].timeOffsetMinutes)
+			departureLocationLabel.Text = bookedFlight.availableFlight.fromCode;
+			departireDatetimeLabel.Text = af.departureTime.AddMinutes(context.cities[bookedFlight.availableFlight.fromCode].timeOffsetMinutes)
 				.ToString("d MMMM, ddd, HH:mm");
-			arrivalLocationLabel.Text = bookedFlight.toCode;
+			arrivalLocationLabel.Text = bookedFlight.availableFlight.toCode;
 			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsteMinutes)
-				.AddMinutes(context.cities[bookedFlight.toCode].timeOffsetMinutes).ToString("d MMMM, ddd, HH:mm");
+				.AddMinutes(context.cities[bookedFlight.availableFlight.toCode].timeOffsetMinutes).ToString("d MMMM, ddd, HH:mm");
 			bookingFinishedTimeLabel.Text = "Дата бронирования (по локальному времени): " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
 			updateBookedSeatsCount();
 		}

@@ -29,7 +29,7 @@ namespace OperatorView {
 
 		OperatorViewCommunication.MessageService service;
 
-		Communication.FlightAndCities fac;
+		Communication.AvailableFlight flight;
 		List<SeatsOccupation> seatsOccupationForClasses;
 
 		public OperatorViewCommunication.FlightDetails details;
@@ -40,13 +40,13 @@ namespace OperatorView {
 		Timer updateTimer;
 
 		public PassangersView(
-			OperatorViewCommunication.MessageService service, 
-			Communication.FlightAndCities fac, 
+			OperatorViewCommunication.MessageService service,
+			Communication.AvailableFlight flight, 
 			OperatorViewCommunication.FlightDetails details,
 			Context context
 		) {
 			this.service = service;
-			this.fac = fac;
+			this.flight = flight;
 			this.details = details;
 			this.context = context;
 
@@ -58,11 +58,11 @@ namespace OperatorView {
 
 			splitContainer1_SizeChanged(null, null);
 
-			flightNameLabel.Text = fac.flight.flightName;
-			airplaneNameLabel.Text = fac.flight.airplaneName;
-			fromDatetime.Text = fac.flight.departureTime
-				.AddMinutes(context.cities[fac.fromCityCode].timeOffsetMinutes).ToString("d HH:mm");
-			fromCityCodeLabel.Text = fac.fromCityCode;
+			flightNameLabel.Text = flight.flightName;
+			airplaneNameLabel.Text = flight.airplaneName;
+			fromDatetime.Text = flight.departureTime
+				.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes).ToString("d HH:mm");
+			fromCityCodeLabel.Text = flight.fromCode;
 
 			var now = DateTime.UtcNow;
 			lastUpdateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
@@ -233,7 +233,7 @@ namespace OperatorView {
 					bookedCount = bookedCount[i],
 					occupiedCount = occupiedCount[i],
 					canceledCount = canceledCount[i],
-					count = fac.flight.seatCountForClasses[i]
+					count = flight.seatCountForClasses[i]
 				});
 			}
 
@@ -264,8 +264,7 @@ namespace OperatorView {
 		}
 
 		private void updateCountdown() {
-			var diff = fac.flight.departureTime - lastUpdateTime;
-
+			var diff = flight.departureTime - lastUpdateTime;
 			
 			remainingTimeLabel.Text = "До вылёта: " + timespanString(diff);
 			remainingTimeLabel.ForeColor = diff.Ticks >= 0 ? SystemColors.ControlText : Color.Firebrick;
@@ -292,7 +291,7 @@ namespace OperatorView {
 			}
 
 			try{
-				var result = service.updateArrivaltatus(fac.flight.id, seatsArrival);
+				var result = service.updateArrivaltatus(flight.id, seatsArrival);
 
 				if(result) {
 					statusLabel.Text = "Фиксация прошла успешно";

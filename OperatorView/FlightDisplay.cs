@@ -13,9 +13,9 @@ using System.Windows.Forms;
 namespace OperatorView {
 	public partial class FlightDisplay : UserControl {
 		Context context;
-		FlightAndCities flightAndCities;
+		AvailableFlight flight;
 
-		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
+		public AvailableFlight CurrentFlight{ get{ return flight; } }
 
 		public FlightDisplay() {
 			InitializeComponent();
@@ -23,19 +23,17 @@ namespace OperatorView {
 
 		public void updateFromFlight(
 			Context context,
-			FlightAndCities flightAndCities
+			AvailableFlight flight
 		) {
 			this.context = context;
-			this.flightAndCities = flightAndCities;
+			this.flight = flight;
 
-			var flight = flightAndCities.flight;
-
-			var depart = flight.departureTime.AddMinutes(context.cities[flightAndCities.fromCityCode].timeOffsetMinutes);
+			var depart = flight.departureTime.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes);
 			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes)
-				.AddMinutes(context.cities[flightAndCities.toCityCode].timeOffsetMinutes);
+				.AddMinutes(context.cities[flight.toCode].timeOffsetMinutes);
 
-			fromCityCode.Text = flightAndCities.fromCityCode;
-			toCityCode.Text = flightAndCities.toCityCode;
+			fromCityCode.Text = flight.fromCode;
+			toCityCode.Text = flight.toCode;
 			
 			fromDate.Text = depart.Date.ToString("d MMM, ddd");
 			toDate.Text = arrive.Date.ToString("d MMM, ddd");

@@ -92,10 +92,7 @@ namespace OperatorView {
 					}
 					else foreach(var flight in result) {
 						var flightDisplay = new FlightDisplay();
-						var flightAndCities = new FlightAndCities{
-							flight = flight, fromCityCode = fromCode, toCityCode = toCode,
-						};
-						flightDisplay.updateFromFlight(context, flightAndCities);
+						flightDisplay.updateFromFlight(context, flight);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openPassangersView);
 						flightsTable.RowStyles.Add(new RowStyle());
@@ -124,9 +121,9 @@ namespace OperatorView {
 
 		private void openPassangersView(object sender, EventArgs e) {
 			var flightDisplay = (FlightDisplay) sender;
-			var fic = flightDisplay.CurrentFlight;
+			var flight = flightDisplay.CurrentFlight;
 
-			var flightId = fic.flight.id;
+			var flightId = flight.id;
 
 			PassangersView view;
 			if(openedViews.TryGetValue(flightId, out view)) {
@@ -134,15 +131,15 @@ namespace OperatorView {
 			}
 			else {
 				try {
-					var result = service.flightDetails(fic.flight.id);
+					var result = service.flightDetails(flight.id);
 
 					if(result) { 
-						view = new PassangersView(service, fic, result.s, context);
+						view = new PassangersView(service, flight, result.s, context);
 						view.FormClosed += (obj, args) => { openedViews.Remove(flightId); };
 
 						updateErrorDisplay(false, null, null);
 					
-						openedViews.Add(fic.flight.id, view);
+						openedViews.Add(flight.id, view);
 						view.Show();
 					}
 					else {

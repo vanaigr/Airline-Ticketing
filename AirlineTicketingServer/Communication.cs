@@ -5,12 +5,6 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace Communication {
-	[Serializable]  public class FlightAndCities {
-		public AvailableFlight flight;
-		public string fromCityCode;
-		public string toCityCode;
-	}
-
 	[Serializable] public struct AvailableOptionsResponse {
 		public string[] flightClasses;
 		public List<City> cities;
@@ -26,6 +20,9 @@ namespace Communication {
 		public int id;
 		public DateTime departureTime;
 		public int arrivalOffsteMinutes;
+
+		public string fromCode;
+		public string toCode;
 
 		public string flightName;
 		public string airplaneName;

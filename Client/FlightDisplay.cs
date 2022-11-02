@@ -66,10 +66,10 @@ namespace ClientCommunication {
 		}
 
 		Context context;
-		FlightAndCities flightAndCities;
+		AvailableFlight flight;
 
 		public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
-		public FlightAndCities CurrentFlight{ get{ return this.flightAndCities; } }
+		public AvailableFlight CurrentFlight{ get{ return this.flight; } }
 
 		public FlightDisplay() {
 			InitializeComponent();
@@ -77,20 +77,18 @@ namespace ClientCommunication {
 
 		public void updateFromFlight(
 			Context context,
-			FlightAndCities fac
+			AvailableFlight flight
 		) {
 			this.context = context;
-			this.flightAndCities = fac;
-
-			var flight = fac.flight;
+			this.flight = flight;
 
 			var depart = flight.departureTime
-				.AddMinutes(context.cities[fac.fromCityCode].timeOffsetMinutes);
+				.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes);
 			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes)
-				.AddMinutes(context.cities[fac.toCityCode].timeOffsetMinutes);
+				.AddMinutes(context.cities[flight.toCode].timeOffsetMinutes);
 
-			fromCityCode.Text = fac.fromCityCode;
-			toCityCode.Text = fac.toCityCode;
+			fromCityCode.Text = flight.fromCode;
+			toCityCode.Text = flight.toCode;
 			
 			fromDate.Text = depart.Date.ToString("d MMM, ddd");
 			toDate.Text = arrive.Date.ToString("d MMM, ddd");
@@ -172,7 +170,7 @@ namespace ClientCommunication {
 		}
 
 		private void updateOptions() {
-			var flight = flightAndCities.flight;
+			var flight = this.flight;
 
 			var selectedClassIndex = ((KeyValuePair<int, string>)classType.SelectedItem).Key;
 			var thisOptions = flight.optionsForClasses[selectedClassIndex];

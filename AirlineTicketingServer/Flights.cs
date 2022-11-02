@@ -17,6 +17,8 @@ namespace AirlineTicketingServer {
 			public string flightName;
 			public string airplaneName;
 
+			public string fromCode, toCode;
+
 			public byte[] optionsBin;
 			public int[] seatsCountForClasses;
 			public int[] availableSeatsForClasses;
@@ -41,15 +43,17 @@ namespace AirlineTicketingServer {
 					[AvailableEconomyClassSeatsCount], 
 					[AvailableComfortClassSeatsCount],
 					[AvailableBusinessClassSeatsCount],
-					[AvailableFirstClassSeatsCount]
+					[AvailableFirstClassSeatsCount],
+
+					[fromCode], [toCode]
 				from [Flights].[FindFlights](@fromCity, @toCity, @time, @MustBeAbleToBook) 
 				order by [DepartureDatetime] desc",
 				connection
 			)) {
 			selectClasses.CommandType = CommandType.Text;
-			selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode);
-			selectClasses.Parameters.AddWithValue("@toCity", p.toCode);
-			selectClasses.Parameters.AddWithValue("@time", p.when);
+			selectClasses.Parameters.AddWithValue("@fromCity", p.fromCode ?? (object) DBNull.Value);
+			selectClasses.Parameters.AddWithValue("@toCity", p.toCode ?? (object) DBNull.Value);
+			selectClasses.Parameters.AddWithValue("@time", (object) p.when ?? (object) DBNull.Value);
 			selectClasses.Parameters.AddWithValue("@MustBeAbleToBook", mustBeAbeToBook);
 
 			connection.Open();
@@ -67,7 +71,9 @@ namespace AirlineTicketingServer {
 				availableSeatsForClasses = new int[]{
 					(short) result[10], (short) result[11],
 					(short) result[12], (short) result[13],
-				}
+				},
+				fromCode = (string) result[14],
+				toCode = (string) result[15],
 			});
 			}}}
 
@@ -79,6 +85,9 @@ namespace AirlineTicketingServer {
 					id = raf.id,
 					departureTime = raf.departureTime,
 					arrivalOffsteMinutes = raf.arrivalOffsteMinutes,
+
+					fromCode = raf.fromCode,
+					toCode = raf.toCode,
 
 					flightName = raf.flightName,
 					airplaneName = raf.airplaneName,

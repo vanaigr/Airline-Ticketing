@@ -482,7 +482,7 @@ namespace AirlineTicketingServer {
 				[fi].[FromCity],
 				[fi].[ToCity],
 				[cbf].[PassangersCount],
-				[cbf].[BookedDatetime]
+				[cbf].[BookedDatetime],
 			from (
 				select *
 				from [Customers].[CustomersBookedFlights] as [cbf]
@@ -543,15 +543,19 @@ namespace AirlineTicketingServer {
 				bookedFlightId = rawFlight.id,
 				availableFlight = new AvailableFlight{
 					id = rawFlight.availableFlightId,
+
 					departureTime = rawFlight.departureDatetime,
 					arrivalOffsteMinutes = rawFlight.arrivalOffsetMinutes,
+
 					flightName = rawFlight.flightName,
 					airplaneName = rawFlight.airplaneName,
+
 					optionsForClasses = BinaryOptions.fromBytes(rawFlight.optionsBin),
-					availableSeatsForClasses = null
+					availableSeatsForClasses = null,
+
+					fromCode = rawFlight.fromCode,
+					toCode = rawFlight.toCode,
 				},
-				fromCode = rawFlight.fromCode,
-				toCode = rawFlight.toCode,
 				bookedPassangerCount = rawFlight.bookedPassangersCount,
 				bookingFinishedTime = rawFlight.bookedDatetime
 			};				
