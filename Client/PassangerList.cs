@@ -219,7 +219,9 @@ namespace ClientCommunication {
 				var prevPassanger = customer.passangers[(int) currentPassangerIndex];
 				var curPassangerRes = formPassangerFromData();
 
-				if(!curPassangerRes.IsSuccess || !prevPassanger.Equals(curPassangerRes.s)) {
+				if(!curPassangerRes.IsSuccess) {
+					if(prevPassanger.Equals(curPassangerRes.s)) return true;
+
 					this.Focus();
 					var mb = MessageBox.Show(
 						"Данные пассажира были изменены. Хотите сохранить изменения?",
@@ -788,33 +790,87 @@ namespace ClientCommunication {
 
 				documentFields.addField();
 				documentFields.fieldName("Номер:*");
-				documentFields.textField(passport.Number?.ToString(), text => passport.setNumber(text));
+				documentFields.textField(passport.Number?.ToString(), text => {
+					try { 
+						long res;
+						var success = long.TryParse(text, out res);
+						if(!success) throw new Documents.IncorrectValue("Номер паспорта дожлен включать только цифры");
+						Documents.PassportValidation.checkNumber(passport, res)
+							.exception((msg) => new Documents.IncorrectValue(msg));
+						passport.Number = res;
+					}
+					catch(Exception e) {
+						passport.Number = null;
+						throw e;
+					}
+				});
 			}
 			else if(documentId == Documents.InternationalPassport.id) {
 				var passport = (Documents.InternationalPassport) document;
 
 				documentFields.addField();
 				documentFields.fieldName("Номер:*");
-				documentFields.textField(passport.Number?.ToString(), text => passport.setNumber(text));
+				documentFields.textField(passport.Number?.ToString(), text => {
+					try {
+						int res;
+						var success = int.TryParse(text, out res);
+						if(!success) throw new Documents.IncorrectValue("Номер заграничного паспорта дожлен включать только цифры");
+						Documents.InternationalPassportValidation.checkNumber(passport, res)
+							.exception((msg) => new Documents.IncorrectValue(msg));
+						passport.Number = res;
+					}
+					catch(Exception e) {
+						passport.Number = null;
+						throw e;
+					}
+				});
 
 				documentFields.addField();
 				documentFields.fieldName("Дата окончания срока действия:*");
 				var exDate = passport.ExpirationDate ?? DateTime.Now;
-				documentFields.dateField(exDate, date => passport.ExpirationDate = date)
+				documentFields.dateField(exDate, date => {
+					var res = Documents.InternationalPassportValidation.checkExpirationDate(passport, date);
+					if(res.Error) {
+						passport.ExpirationDate = null;
+						throw new Documents.IncorrectValue(res.Message);
+					}
+					else passport.ExpirationDate = date;
+				})
 					.Format = DateTimePickerFormat.Short;
 				passport.ExpirationDate = exDate;
 
 				documentFields.addField();
 				documentFields.fieldName("Фамилия (на латинице):*");
-				documentFields.textField(passport.Surname, text => passport.Surname = text);
+				documentFields.textField(passport.Surname, text => {
+					var res = Documents.InternationalPassportValidation.checkSurname(passport, text);
+					if(res.Error) {
+						passport.Surname = null;
+						throw new Documents.IncorrectValue(res.Message);
+					}
+					else passport.Surname = text;
+				});
 
 				documentFields.addField();
 				documentFields.fieldName("Имя (на латинице):*");
-				documentFields.textField(passport.Name, text => passport.Name = text);
+				documentFields.textField(passport.Name, text => {
+					var res = Documents.InternationalPassportValidation.checkName(passport, text);
+					if(res.Error) {
+						passport.Name = null;
+						throw new Documents.IncorrectValue(res.Message);
+					}
+					else passport.Name = text;
+				});
 
 				documentFields.addField();
 				documentFields.fieldName("Отчество (на латинице):");
-				documentFields.textField(passport.MiddleName, text => passport.MiddleName = text);
+				documentFields.textField(passport.MiddleName, text => {
+					var res = Documents.InternationalPassportValidation.checkMiddleName(passport, text);
+					if(res.Error) {
+						passport.MiddleName = null;
+						throw new Documents.IncorrectValue(res.Message);
+					}
+					else passport.MiddleName = text;
+				});
 			}
 
 			documentFields.Resume();

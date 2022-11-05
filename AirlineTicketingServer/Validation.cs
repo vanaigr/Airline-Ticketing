@@ -13,9 +13,15 @@ namespace Validation {
 		public static CheckResult Ok() { return new CheckResult{ ok = true }; }
 	}
 
+	public delegate T Throw<T>(String msg);
+
 	public struct ErrorString {
 		private bool error;
-		private StringBuilder sb;
+		private StringBuilder sb_;
+		private StringBuilder sb{ get{
+			if(sb_ == null) sb_ = new StringBuilder();
+			return sb_;
+		} }
 
 		public string Message{ get{ return sb.ToString(); } }
 
@@ -23,7 +29,7 @@ namespace Validation {
 
 		public static ErrorString Create() {
 			return new ErrorString{
-				error = false, sb = new StringBuilder()
+				error = false, sb_ = new StringBuilder()
 			};
 		}
 
@@ -59,6 +65,10 @@ namespace Validation {
 
 		public static bool operator false(ErrorString it) {
 			return !it.Error;
+		}
+
+		public void exception<T>(Throw<T> t) where T : Exception {
+			if(Error) throw t(Message);
 		}
 	}
 

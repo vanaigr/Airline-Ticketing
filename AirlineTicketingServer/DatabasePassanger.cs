@@ -113,7 +113,7 @@ namespace Server {
 			command.Parameters.AddWithValue("@Document", documentBin);
 			command.Parameters.AddWithValue("@Name", passanger.name);
 			command.Parameters.AddWithValue("@Surname", passanger.surname);
-			command.Parameters.AddWithValue("@MiddleName", passanger.middleName);
+			command.Parameters.AddWithValue("@MiddleName", passanger.middleName == null ? DBNull.Value : (object) passanger.middleName);
 			command.Parameters.AddWithValue("@CustomerId", customerId);
 			var result = command.Parameters.Add("@NewId", System.Data.SqlDbType.Int);
 			result.Direction = System.Data.ParameterDirection.Output;

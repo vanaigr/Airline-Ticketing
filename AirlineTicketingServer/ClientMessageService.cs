@@ -13,7 +13,7 @@ namespace Server {
 
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = false)]
 	partial class ClientMessageService : ClientService {
-	Either<Success, LoginError> testLoginPasswordValid(Account c) {
+	Either<Success, LoginError> checkAccountDataValid(Account c) {
 		if(c.login == null) c.login = "";
 		if(c.password == null) c.password = "";
 		var invalidLogin = LoginRegister.checkLogin(c.login);
@@ -45,7 +45,7 @@ namespace Server {
 	}
 
 	Either<Success, LoginError> ClientService.registerAccount(Account c) {
-		var result = testLoginPasswordValid(c);
+		var result = checkAccountDataValid(c);
 		if(!result.IsSuccess) return result;
 
 		using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
@@ -68,7 +68,7 @@ namespace Server {
 
 	private Either<int, LoginError> getUserId(SqlConnectionView cv, Account c) {
 		using(cv) {
-		var error = testLoginPasswordValid(c);
+		var error = checkAccountDataValid(c);
 		if(!error.IsSuccess) return Either<int, LoginError>.Failure(error.Failure());
 		
 		var loggedIn = LoginRegister.login(cv, c.login, c.password);

@@ -32,196 +32,154 @@ namespace Documents {
 		public abstract Validation.ErrorString validate();
 	}
 
+	public static class PassportValidation {
+		public static ErrorString checkNumber(Passport it, long? value, ErrorString e = new ErrorString()) {
+			//value is not 10 digits long
+			if(value != null && !(value >= 1000000000L && value < 10000000000L)) 
+				e.ac("номер паспорта должен состоять из 10 цифр");
+			return e;
+		}
+
+		public static ErrorString validate(Passport it, ErrorString e = new ErrorString()) {
+			if(it.Number == null) e.ac("номер должен быть заполнен");
+			else checkNumber(it, it.Number, e);
+
+			return e;
+		}
+	}
+
 	[Serializable] public sealed class Passport : Document {
 		public static readonly int id = 0;
-		private long? number;
-		public long? Number{ 
-			get{ return number; } 
-			set{
-				try {
-					if(value == null) number = value;
-					else if(value >= 1000000000L && value < 10000000000L) //value is 10 digits long
-						number = value;
-					else throw new IncorrectValue("Номер паспорта должен состоять из 10 цифр");
-				}
-				catch(Exception e) {
-					number = null;
-					throw e;
-				}
-			}
+
+
+		public long? Number{ get; set; }
+	
+
+		public override int Id{ get{ return id; } }
+
+		public override ErrorString validate() {
+			return PassportValidation.validate(this);
 		}
 
-		public override int Id{ get{ return Passport.id; } }
-
-		public void setNumber(string text) {
-			try { 
-				long res;
-				var success = long.TryParse(text, out res);
-				if(!success) throw new IncorrectValue("Номер паспорта дожлен включать только цифры");
-				Number = res;
-			}
-			catch(Exception e) {
-				Number = null;
-				throw e;
-			}
-		}
 
 		public override bool Equals(object o) {
 			if(o == null || !(o is Passport)) return false;
 			var s = (Passport) o;
-			return Equals(number, s.number);
+			return Equals(Number, s.Number);
 		}
 
 		public override int GetHashCode() {
-			int hashCode = -1882778528;
-			hashCode=hashCode*-1521134295+number.GetHashCode();
-			hashCode=hashCode*-1521134295+Number.GetHashCode();
-			return hashCode;
+			return 187193536+Number.GetHashCode();
 		}
 
 		public override string ToString() {
-			return "Паспорт: " + ((long) number).ToString("00 00 000000");
+			return "Паспорт: " + ((long) Number).ToString("00 00 000000");
+		}
+	}
+
+	public static class InternationalPassportValidation {
+		public static ErrorString checkNumber(InternationalPassport it, int? value, ErrorString e = new ErrorString()) {
+			//value is not 9 digits long
+			if(value != null) {
+				if(!(value >= 100000000 && value < 1000000000)) 
+					e.ac("номер заграничного паспорта должен состоять из 9 цифр");
+			}
+			return e;
 		}
 
-		public override ErrorString validate() {
-			var it = ErrorString.Create();
-			if(Number == null) {
-				it.ac("номер должен быть заполнен");
-			}
+		public static ErrorString checkExpirationDate(InternationalPassport it, DateTime? value, ErrorString e = new ErrorString()) {
+			return e;
+		}
 
-			return it;
+		public static ErrorString checkName(InternationalPassport it, string value, ErrorString e = new ErrorString()) {
+			if(value != null) {
+				if(value.Length == 0) e.ac("имя должно быть заполнено");
+				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
+					e.ac("имя должно содержать только латинские буквы или символ дефиса");
+					break;
+				}
+			}
+			return e;
+		}
+
+		public static ErrorString checkSurname(InternationalPassport it, string value, ErrorString e = new ErrorString()) {
+			if(value != null) {
+				if(value.Length == 0) e.ac("фамилия должна быть заполнена");
+				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
+					e.ac("фамилия должна содержать только латинские буквы или символ дефиса");
+					break;
+				}
+			}
+			return e;
+		}
+
+		public static ErrorString checkMiddleName(InternationalPassport it, string value, ErrorString e = new ErrorString()) {
+			if(value != null) {
+				if(value.Length == 0) e.ac("отчество должно быть заполнена");
+				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
+					e.ac("отчество должно содержать только латинские буквы или символ дефиса");
+					break;
+				}
+			}
+			return e;
+		}
+
+		public static ErrorString validate(InternationalPassport it, ErrorString e = new ErrorString()) {
+			if(it.Number == null) e.ac("Номер должен быть заполнен");
+			else checkNumber(it, it.Number, e);
+
+			if(it.ExpirationDate == null) e.ac("дата окончания срока действия должна быть заполнена");
+			checkExpirationDate(it, it.ExpirationDate, e);
+
+			if(it.Name == null) e.ac("Имя должно быть заполнено");
+			else checkName(it, it.Name, e);
+
+			if(it.Surname == null) e.ac("Фамилия должна быть заполнена");
+			else checkSurname(it, it.Surname, e);
+
+			if(it.MiddleName == null); //null middle name is fine
+			else checkMiddleName(it, it.Name, e);
+
+			return e;
 		}
 	}
 		
 	[Serializable] public sealed class InternationalPassport : Document {
 		public static readonly int id = 1;
-		private int? number;
-		private DateTime? expirationDate;
-		private string name, surname, middleName;
 
-		public int? Number{ 
-			get{ return number; } 
-			set{ 
-				try { 
-					if(value == null) number = value;
-					else if(value >= 100000000 && value < 1000000000) //value is 9 digits long
-						number = value;
-					else throw new IncorrectValue("Номер заграничного паспорта должен состоять из 9 цифр");
-				}
-				catch(Exception e) {
-					number = null;
-					throw e;
-				}
-			}
-		}
+
+		public int? Number;
+		private DateTime? expirationDate;
+		public string Name, Surname, MiddleName;
+
 		public DateTime? ExpirationDate{ 
 			get{ return expirationDate; } 
-			set{ try {
-					expirationDate = value?.Date; 
-				}
-				catch(Exception e) {
-					expirationDate = null;
-					throw e;
-				}
-			}
-		}
-		public string Name{ 
-			get{ return name; } 
-			set{
-				try {
-					if(value != null) {
-						if(value.Length == 0) throw new IncorrectValue("Имя должно быть заполнено");
-						foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) 
-							throw new IncorrectValue("Имя должно содержать только латинские буквы или символ дефиса");
-					}
-					name = value;
-				}
-				catch(Exception e) {
-					name = null;
-					throw e;
-				}
-			}
-		}
-		public string Surname{ 
-			get{ return surname; } 
-			set{
-				try {
-					if(value != null) {
-						if(value.Length == 0) throw new IncorrectValue("Фамилия должна быть заполнена");
-						foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) 
-							throw new IncorrectValue("Фамилия должна содержать только латинские буквы или символ дефиса");
-					}
-					surname = value;
-				}
-				catch(Exception e) {
-					surname = null;
-					throw e;
-				}
-			}
+			set{ expirationDate = value?.Date; }
 		}
 
-		public string MiddleName{ 
-			get{ return middleName; } 
-			set{
-				try {
-					if(value != null) foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) 
-						throw new IncorrectValue("Фамилия должна содержать только латинские буквы или символ дефиса");
-					middleName = value;
-				}
-				catch(Exception e) {
-					Number = null;
-					throw e;
-				}
-			}
-		}
 
-		public override int Id{ get{ return InternationalPassport.id; } }
+		public override int Id{ get{ return id; } }
 
-		public void setNumber(string text) {
-			try {
-				int res;
-				var success = int.TryParse(text, out res);
-				if(!success) throw new IncorrectValue("Номер заграничного паспорта дожлен включать только цифры");
-				Number = res;
-			}
-			catch(Exception e) {
-				Number = null;
-				throw e;
-			}
+		public override ErrorString validate() {
+			return InternationalPassportValidation.validate(this);
 		}
-
-		public void setExpirationDate(string text) {
-			try {
-				DateTime res;
-				var success = DateTime.TryParseExact(text, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out res);
-				if(!success) throw new IncorrectValue("Дата окончания срока действия должнеа быть в формате дд.мм.гггг");
-				expirationDate = res;
-			}
-			catch(Exception e) {
-				expirationDate = null;
-				throw e;
-			}
-		}
+		
 
 		public override bool Equals(object o) {
 			if(o == null || !(o is InternationalPassport)) return false;
 			var s = (InternationalPassport) o;
-			return Equals(number, s.number) && Equals(expirationDate, s.expirationDate)
-				&& Equals(name, s.name) && Equals(surname, s.surname) && Equals(middleName, s.middleName);
+			return Equals(Number, s.Number) && Equals(expirationDate, s.expirationDate)
+				&& Equals(Name, s.Name) && Equals(Surname, s.Surname) && Equals(MiddleName, s.MiddleName);
 		}
 
 		public override int GetHashCode() {
-			int hashCode = 456306398;
-			hashCode=hashCode*-1521134295+number.GetHashCode();
-			hashCode=hashCode*-1521134295+expirationDate.GetHashCode();
-			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(name);
-			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(surname);
-			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(middleName);
+			int hashCode = -1848562201;
 			hashCode=hashCode*-1521134295+Number.GetHashCode();
-			hashCode=hashCode*-1521134295+ExpirationDate.GetHashCode();
+			hashCode=hashCode*-1521134295+expirationDate.GetHashCode();
 			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(Name);
 			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(Surname);
 			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(MiddleName);
+			hashCode=hashCode*-1521134295+ExpirationDate.GetHashCode();
 			return hashCode;
 		}
 
@@ -229,24 +187,9 @@ namespace Documents {
 			return String.Format(
 				"Заграничный паспорт: номер - {0}, дата окончания срока действия - {1}, фамилия: `{2}" +
 				", имя - {3}, отчество - {4}",
-				((long) number).ToString("00 0000000"), ((DateTime) expirationDate).ToString("dd.MM.yyyy"),
-				surname, name, middleName != null ? "`" + middleName + "`" : "нет"
+				((long) Number).ToString("00 0000000"), ((DateTime) ExpirationDate).ToString("dd.MM.yyyy"),
+				Surname, Name, MiddleName != null ? "`" + MiddleName + "`" : "нет"
 			);
-		}
-
-		public override ErrorString validate() {
-			var it = ErrorString.Create();
-
-			if(Number == null) {
-				it.ac("номер должен быть заполнен");
-			}
-			if(ExpirationDate == null) {
-				it.ac("дата окончания срока действия должна быть заполнена");
-			}
-			if(name == null) it.ac("имя должно быть заполнено");
-			if(surname == null) it.ac("фамилия должна быть заполнена");
-
-			return it;
 		}
 	}
 

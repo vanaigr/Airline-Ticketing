@@ -64,6 +64,7 @@ namespace Server {
 			else throw new System.InvalidOperationException();
 
 			Common.Debug2.AssertPersistent(stream.Position == stream.Length);
+			Common.Debug2.AssertPersistent(document.validate().Error == false);
 			return document;
 			}}
 		}
