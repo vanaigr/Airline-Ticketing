@@ -24,7 +24,7 @@ namespace FlightsOptions {
 	internal Size3 maxDim; //per baggare
 
 	public Baggage(short count, int costRub, short maxWeightKg = 0, Size3 maxDim = new Size3()) {
-		Debug.Assert(
+		Common.Debug2.AssertPersistent(
 			costRub >= 0 && count >= 0 && maxWeightKg >= 0
 			&& ((maxDim.x > 0 && maxDim.y > 0 && maxDim.z > 0) || Equals(maxDim, new Size3()))
 		);
@@ -49,8 +49,8 @@ namespace FlightsOptions {
 	internal int changeFlightCostRub;
 	internal int refundCostRub;
 
-	public int ChangeFlightCostRub { get { Debug.Assert(CanChangeFlights); return changeFlightCostRub; } }
-	public int RefundCostRub { get { Debug.Assert(Refundable); return refundCostRub; } }
+	public int ChangeFlightCostRub { get { Common.Debug2.AssertPersistent(CanChangeFlights); return changeFlightCostRub; } }
+	public int RefundCostRub { get { Common.Debug2.AssertPersistent(Refundable); return refundCostRub; } }
 
 	public bool CanChangeFlights { get { return changeFlightCostRub >= 0; } }
 	public bool Refundable { get { return refundCostRub >= 0; } }

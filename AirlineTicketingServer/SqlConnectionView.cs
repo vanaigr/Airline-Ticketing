@@ -4,21 +4,38 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
-namespace AirlineTicketingServer {
+namespace Server {
+	public static class SqlConnectionOpen {
+		public static void Open2(this SqlConnection connection) {
+			if(connection != null && connection.State == System.Data.ConnectionState.Closed) 
+				connection.Open();
+		}
+	}
 	public struct SqlConnectionView : IDisposable {
 		public SqlConnection connection;
-		private bool allowClose;
+		private bool canClose, canDispose;
 
-		public SqlConnectionView(SqlConnection connection, bool allowClose) {
+		public SqlConnectionView(SqlConnection connection, bool allowClose/*misleading naming*/) {
 			this.connection = connection;
-			this.allowClose = allowClose;
+			this.canDispose = allowClose;
+			this.canClose = this.canDispose;
+		}
+
+		public SqlConnectionView(SqlConnection connection, bool canClose, bool canDispose) {
+			this.connection = connection;
+			this.canClose = canClose;
+			this.canDispose = canDispose;
 		}
 
 		public void Open() {
-			if(connection.State != System.Data.ConnectionState.Open) 
-				connection.Open();
+			connection.Open2();
 		}
 
-		public void Dispose() { if(allowClose && connection != null) connection.Dispose(); }
+		public void Close() { if(canClose && connection != null) connection.Close(); }
+
+		public void Dispose() { 
+			if(canDispose && connection != null) connection.Dispose();
+			else Close();
+		}
 	}
 }

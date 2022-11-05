@@ -46,7 +46,7 @@ namespace ClientCommunication {
 			this.flightsTable.Name = "flightsTable";
 			this.flightsTable.RowCount = 1;
 			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.flightsTable.Size = new System.Drawing.Size(780, 407);
+			this.flightsTable.Size = new System.Drawing.Size(913, 407);
 			this.flightsTable.TabIndex = 0;
 			// 
 			// tableLayoutPanel1
@@ -62,7 +62,7 @@ namespace ClientCommunication {
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 450);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(933, 450);
 			this.tableLayoutPanel1.TabIndex = 1;
 			// 
 			// tableLayoutPanel2
@@ -83,7 +83,7 @@ namespace ClientCommunication {
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(800, 33);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(933, 33);
 			this.tableLayoutPanel2.TabIndex = 1;
 			// 
 			// statusLabel
@@ -93,14 +93,14 @@ namespace ClientCommunication {
 			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
 			this.statusLabel.Location = new System.Drawing.Point(13, 10);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(774, 13);
+			this.statusLabel.Size = new System.Drawing.Size(907, 13);
 			this.statusLabel.TabIndex = 0;
 			// 
 			// FlightsHistory
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.ClientSize = new System.Drawing.Size(933, 450);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FlightsHistory";

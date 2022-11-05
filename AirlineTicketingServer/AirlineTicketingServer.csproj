@@ -6,12 +6,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CAADD150-8476-4B6C-9C0B-F841F5EE66E8}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AirlineTicketingServer</RootNamespace>
-    <AssemblyName>AirlineTicketingServer</AssemblyName>
+    <RootNamespace>Server</RootNamespace>
+    <AssemblyName>Server</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>G:\Users\Dekstop\Downloads\AirlineTicketingServer\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -23,7 +24,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>.\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -72,22 +72,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvailableFlightsUpdate.cs" />
-    <Compile Include="BinaryDocument.cs" />
+    <Compile Include="FlightsUpdate.cs" />
+    <Compile Include="DatabaseDocument.cs" />
     <Compile Include="ClientCommunication.cs" />
     <Compile Include="DatabaseOptions.cs" />
     <Compile Include="DatabasePassanger.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="DatabaseSeatsExtraction.cs" />
-    <Compile Include="Flights.cs" />
+    <Compile Include="Debug2.cs" />
+    <Compile Include="DatabaseFlights.cs" />
     <Compile Include="FlightsOptions.cs" />
     <Compile Include="LoggingProxy.cs" />
-    <Compile Include="Login.cs" />
+    <Compile Include="CustomerLoginRegister.cs" />
     <Compile Include="Documents.cs" />
-    <Compile Include="MainClientMessageService.cs" />
-    <Compile Include="MainOperatorMessageService.cs" />
-    <Compile Include="OperatorViewCommunication.cs" />
-    <Compile Include="PasswordHashing.cs" />
+    <Compile Include="ClientMessageService.cs" />
+    <Compile Include="OperatorMessageService.cs" />
+    <Compile Include="OperatorCommunication.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

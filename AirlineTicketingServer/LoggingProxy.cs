@@ -5,7 +5,7 @@ using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
 using System.Text;
 
-namespace AirlineTicketingServer {
+namespace Server {
 	partial class Program {
 		[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
 		public class LoggingProxy<T> : System.Runtime.Remoting.Proxies.RealProxy {

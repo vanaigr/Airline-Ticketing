@@ -13,8 +13,8 @@ using Communication;
 
 namespace ClientCommunication {
 	public partial class SelectFlight : Form {
-		private MessageService service;
-		private CustomerData customer;
+		private ClientService service;
+		private Customer customer;
 
 		//string[] avaliableFlightClasses;
 		//List<City> cities;
@@ -23,7 +23,7 @@ namespace ClientCommunication {
 		private Dictionary<int/*flightId*/, FlightDetailsFill> openedBookings = new Dictionary<int, FlightDetailsFill>();
 		
 		public SelectFlight() {
-			customer = new CustomerData();
+			customer = new Customer();
 
             InitializeComponent();
 
@@ -48,7 +48,7 @@ namespace ClientCommunication {
 
 		void setupAvailableOptions() {
 			try {
-				var options = service.availableOptions();
+				var options = service.parameters();
 				var avaliableFlightClasses = options.flightClasses;
 				var citiesList = options.cities;
 				var cities = new Dictionary<string, City>(citiesList.Count);
@@ -166,7 +166,7 @@ namespace ClientCommunication {
 				var fromCode = (fromLoc.SelectedItem as City?)?.code;
 				var toCode = (toLoc.SelectedItem as City?)?.code;
 				
-				var response = service.matchingFlights(new MatchingFlightsParams{
+				var response = service.findMatchingFlights(new MatchingFlightsParams{
 					fromCode = fromCode, toCode = toCode,
 					when = fromDepDate.Value
 				});
@@ -178,6 +178,7 @@ namespace ClientCommunication {
 
 					flightsTable.Controls.Clear();
 					flightsTable.RowStyles.Clear();
+					flightsTable.RowCount = 0;
 
 					if(result.Count == 0) {
 						var noResultsLabel = new Label();
@@ -187,7 +188,7 @@ namespace ClientCommunication {
 
 						noResultsLabel.Dock = DockStyle.Top;
 						flightsTable.RowStyles.Add(new RowStyle());
-						flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
+						flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount++, 0);
 					}
 					else foreach(var flight in result) {
 						var flightDisplay = new FlightDisplay();
@@ -195,7 +196,7 @@ namespace ClientCommunication {
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openFlightBooking);
 						flightsTable.RowStyles.Add(new RowStyle());
-						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
+						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount++, 0);
 					}
 
 					flightsTable.ResumeLayout(false);
@@ -225,7 +226,7 @@ namespace ClientCommunication {
 			}
 			else {
 				try {
-					var result = service.seatsForFlight(flight.id);
+					var result = service.getSeatsForFlight(flight.id);
 
 					if(result) {
 						booking = new FlightDetailsFill(

@@ -10,12 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace OperatorView {
+namespace Operator {
 	public partial class FlightDisplay : UserControl {
 		Context context;
-		AvailableFlight flight;
+		Flight flight;
 
-		public AvailableFlight CurrentFlight{ get{ return flight; } }
+		public Flight CurrentFlight{ get{ return flight; } }
 
 		public FlightDisplay() {
 			InitializeComponent();
@@ -23,7 +23,7 @@ namespace OperatorView {
 
 		public void updateFromFlight(
 			Context context,
-			AvailableFlight flight
+			Flight flight
 		) {
 			this.context = context;
 			this.flight = flight;

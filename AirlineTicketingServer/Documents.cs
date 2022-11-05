@@ -24,6 +24,8 @@ namespace Documents {
 		protected IncorrectValue(SerializationInfo info, StreamingContext context) : base(info, context) {}
 	}
 
+	[KnownType(typeof(Documents.Passport))]
+	[KnownType(typeof(Documents.InternationalPassport))]
 	[Serializable] public abstract class Document {
 		public abstract int Id{ get; }
 

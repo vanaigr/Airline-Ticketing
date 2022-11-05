@@ -10,9 +10,9 @@ using Common;
 using Communication;
 using OperatorViewCommunication;
 
-namespace OperatorView {
+namespace Operator {
 	public partial class SelectFlight : Form {
-		private MessageService service;
+		private OperatorService service;
 
 		Context context;
 		
@@ -30,7 +30,7 @@ namespace OperatorView {
 
 		void setupAvailableOptions() {
 			try {
-				var options = service.availableOptions();
+				var options = service.parameters();
 				var classesNames = options.flightClasses;
 				var citiesList = options.cities;
 
@@ -67,7 +67,7 @@ namespace OperatorView {
 				var fromCode = (fromLoc.SelectedItem as City?)?.code;
 				var toCode = (toLoc.SelectedItem as City?)?.code;
 				
-				var response = service.matchingFlights(new MatchingFlightsParams{
+				var response = service.findMatchingFlights(new MatchingFlightsParams{
 					fromCode = fromCode, toCode = toCode,
 					when = fromDepDate.Value
 				});
@@ -85,18 +85,21 @@ namespace OperatorView {
 						noResultsLabel.Font = new Font(noResultsLabel.Font.FontFamily, 12);
 						noResultsLabel.Text = "Результаты не найдены";
 						noResultsLabel.TextAlign = ContentAlignment.TopCenter;
-
 						noResultsLabel.Dock = DockStyle.Top;
-						flightsTable.RowStyles.Add(new RowStyle());
+
 						flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
+						flightsTable.RowCount++;
+						flightsTable.RowStyles.Add(new RowStyle());
 					}
 					else foreach(var flight in result) {
 						var flightDisplay = new FlightDisplay();
 						flightDisplay.updateFromFlight(context, flight);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openPassangersView);
-						flightsTable.RowStyles.Add(new RowStyle());
+
 						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
+						flightsTable.RowCount++;
+						flightsTable.RowStyles.Add(new RowStyle());
 					}
 
 					flightsTable.ResumeLayout(false);
@@ -131,7 +134,7 @@ namespace OperatorView {
 			}
 			else {
 				try {
-					var result = service.flightDetails(flight.id);
+					var result = service.getFlightDetails(flight.id);
 
 					if(result) { 
 						view = new PassangersView(service, flight, result.s, context);
@@ -155,7 +158,7 @@ namespace OperatorView {
 		void reconnect() {
 			updateErrorDisplay(false, null, null);
 			(service as IDisposable)?.Dispose();
-			service = OperatorViewServerQuery.Create();
+			service = OperatorServerQuery.Create();
 
 			setupAvailableOptions();
 

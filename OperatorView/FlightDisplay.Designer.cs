@@ -1,5 +1,5 @@
 ﻿
-namespace OperatorView {
+namespace Operator {
 	partial class FlightDisplay {
 		/// <summary> 
 		/// Обязательная переменная конструктора.

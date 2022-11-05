@@ -11,13 +11,13 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class FlightsHistory : Form {
-		private ClientCommunication.MessageService service;
-		private CustomerData customer;
+		private ClientCommunication.ClientService service;
+		private Customer customer;
 
 		public FlightsHistory(
-			ClientCommunication.MessageService service,
+			ClientCommunication.ClientService service,
 			Context context,
-			CustomerData customer
+			Customer customer
 		) {
 			this.service = service;
 			this.customer = customer;

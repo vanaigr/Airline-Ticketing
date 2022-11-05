@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
-namespace AirlineTicketingServer {
+namespace Server {
 	public class DatabaseSeatsExtraction {
 		private List<RawSeat> rawSeatsOccupation;
 		private byte[] seatsSchemeBin;
@@ -30,6 +30,19 @@ namespace AirlineTicketingServer {
 			inner join [Flights].[Airplanes] as [ap]
 			on [fi].[Airplane] = [ap].[Id];
 
+			--get current flight airplane
+			declare @FlightAirplane int;
+
+			select top 1 @FlightAirplane = [fi].[Airplane]
+			from (
+				select top 1 *
+				from [Flights].[AvailableFlights] as [af]
+				where [af].[Id] = @AvailableFlight
+			) as [af]
+			
+			inner join [Flights].[FlightInfo] as [fi]
+			on [af].[FlightInfo] = [fi].[Id];
+
 
 			--get seats occupation
 			select 
@@ -44,7 +57,7 @@ namespace AirlineTicketingServer {
 			) as [afs]
 
 			inner join [Flights].[AirplanesSeats] as [aps]
-			on [afs].[Airplane] = [aps].[Airplane] and [afs].[SeatIndex] = [aps].[SeatIndex]
+			on @FlightAirplane = [aps].[Airplane] and [afs].[SeatIndex] = [aps].[SeatIndex]
 			order by [afs].[SeatIndex] ASC;
 		";
 
@@ -58,7 +71,7 @@ namespace AirlineTicketingServer {
 			));
 			this.seatsSchemeBin = (byte[]) result[0];
 
-			Debug.Assert(result.NextResult());
+			Common.Debug2.AssertPersistent(result.NextResult());
 
 			while(result.Read()) this.rawSeatsOccupation.Add(new RawSeat{
 				index = (short) result[0],
@@ -70,19 +83,19 @@ namespace AirlineTicketingServer {
 		}
 
 		public Seats calculate() {
-			var seatsScheme = BinarySeats.fromBytes(seatsSchemeBin);
+			var seatsScheme = DatabaseSeats.fromBytes(seatsSchemeBin);
 
-			Debug.Assert(seatsScheme.SeatsCount == rawSeatsOccupation.Count);
+			Common.Debug2.AssertPersistent(seatsScheme.SeatsCount == rawSeatsOccupation.Count);
 
 			var classes = new byte[seatsScheme.SeatsCount];
 			for(int i = 0; i < classes.Length; i++) {
-				Debug.Assert(rawSeatsOccupation[i].index == i);
+				Common.Debug2.AssertPersistent(rawSeatsOccupation[i].index == i);
 				classes[i] = rawSeatsOccupation[i].classId;
 			}
 
 			var occupation = new bool[seatsScheme.SeatsCount];
 			for(int i = 0; i < occupation.Length; i++) {
-				Debug.Assert(rawSeatsOccupation[i].index == i);
+				Common.Debug2.AssertPersistent(rawSeatsOccupation[i].index == i);
 				occupation[i] = rawSeatsOccupation[i].occupied;
 			}
 

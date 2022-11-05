@@ -1,5 +1,5 @@
 ﻿
-namespace OperatorView {
+namespace Operator {
 	partial class PassangersView {
 		/// <summary>
 		/// Required designer variable.

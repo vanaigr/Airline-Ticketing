@@ -11,8 +11,8 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class PassangerSettings : Form {
-		private ClientCommunication.MessageService service;
-		private CustomerData customer;
+		private ClientCommunication.ClientService service;
+		private Customer customer;
 		private BookingStatus status;
 
 		private Dictionary<int, string> classesNames;
@@ -38,7 +38,7 @@ namespace ClientCommunication {
 		bool ignore__ = false;
 
 		public PassangerSettings(
-			ClientCommunication.MessageService service, CustomerData customer, BookingStatus status,
+			ClientCommunication.ClientService service, Customer customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats, SeatHandling seatHandling,
 			BookingPassanger passanger, int bookingPassangerIndex,
 			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
@@ -151,13 +151,13 @@ namespace ClientCommunication {
 				);
 
 				if(dResult == DialogResult.Yes) try {
-					var result = service.deleteBookedFlightSeat(
+					var result = service.deleteBookedSeat(
 						customer.customer.Value, (int) bookedFlight.bookedFlightId, 
 						bookedFlightDetails.bookedSeats[bookingPassangerIndex].selectedSeat
 					);
 
 					if(result) {
-						Debug.Assert(result.s == bookedFlightDetails.bookedSeats.Length-1);
+						Common.Debug2.AssertPersistent(result.s == bookedFlightDetails.bookedSeats.Length-1);
 
 						DialogResult = DialogResult.Abort;
 					}

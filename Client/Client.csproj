@@ -64,6 +64,9 @@
     <Compile Include="..\AirlineTicketingServer\Communication.cs">
       <Link>Communication.cs</Link>
     </Compile>
+    <Compile Include="..\AirlineTicketingServer\Debug2.cs">
+      <Link>Debug2.cs</Link>
+    </Compile>
     <Compile Include="..\AirlineTicketingServer\Documents.cs">
       <Link>Documents.cs</Link>
     </Compile>
@@ -142,7 +145,7 @@
     <Compile Include="PassangerList.Designer.cs">
       <DependentUpon>PassangerList.cs</DependentUpon>
     </Compile>
-    <Compile Include="CustomerData.cs" />
+    <Compile Include="Customer.cs" />
     <Compile Include="PassangerDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>

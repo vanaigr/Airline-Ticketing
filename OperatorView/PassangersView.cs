@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace OperatorView {
+namespace Operator {
 	public partial class PassangersView : Form {
 		class SeatsOccupation {
 			[DisplayName("Класс")]
@@ -27,9 +27,9 @@ namespace OperatorView {
 			public int count{ get; set; }
 		}
 
-		OperatorViewCommunication.MessageService service;
+		OperatorViewCommunication.OperatorService service;
 
-		Communication.AvailableFlight flight;
+		Communication.Flight flight;
 
 		public OperatorViewCommunication.FlightDetails details;
 
@@ -39,8 +39,8 @@ namespace OperatorView {
 		Timer updateTimer;
 
 		public PassangersView(
-			OperatorViewCommunication.MessageService service,
-			Communication.AvailableFlight flight, 
+			OperatorViewCommunication.OperatorService service,
+			Communication.Flight flight, 
 			OperatorViewCommunication.FlightDetails details,
 			Context context
 		) {
@@ -318,7 +318,7 @@ namespace OperatorView {
 			}
 
 			try{
-				var result = service.updateArrivaltatus(flight.id, seatsArrival);
+				var result = service.updateArrivalStatus(flight.id, seatsArrival);
 
 				if(result) {
 					statusLabel.Text = "Фиксация прошла успешно";

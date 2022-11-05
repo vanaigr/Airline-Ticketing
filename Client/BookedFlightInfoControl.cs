@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class BookedFlightInfoControl : UserControl {
-		private ClientCommunication.MessageService service;
+		private ClientCommunication.ClientService service;
 
 		private int bookedFlightIndex;
 		private ClientCommunication.BookedFlight bookedFlight;
-		private CustomerData customer;
+		private Customer customer;
 		private Context context;
 
 		private SetStatus setStatus;
@@ -22,7 +22,7 @@ namespace ClientCommunication {
 		public event EventHandler OnDelete;
 
 		public BookedFlightInfoControl(
-			MessageService service, CustomerData customer, 
+			ClientService service, Customer customer, 
 			Context context,
 			int bookedFlightIndex,
 			SetStatus setStatus

@@ -7,7 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.ServiceModel;
 
-namespace AirlineTicketingServer {
+namespace Server {
 	partial class Program {
 		internal static readonly string[] flightClasses = new string[]{ "Эконом", "Комфорт", "Бизнес", "Первый класс" };
 		internal static readonly List<City> cities = new List<City>();
@@ -34,7 +34,7 @@ namespace AirlineTicketingServer {
 			
 			}
 			
-			if(true) { //update options
+			if(false) { //update options
 				var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
@@ -88,7 +88,7 @@ namespace AirlineTicketingServer {
 				)) {
 				selectClassesCommand.CommandType = System.Data.CommandType.Text;
 				var id = selectClassesCommand.Parameters.Add("@Id", SqlDbType.Int);
-				selectClassesCommand.Parameters.AddWithValue("@Options", BinaryOptions.toBytes(optionsForClasses));
+				selectClassesCommand.Parameters.AddWithValue("@Options", DatabaseOptions.optionsToBytes(optionsForClasses));
 	
 				connView.Open();
 				id.Value = 3;
@@ -101,7 +101,7 @@ namespace AirlineTicketingServer {
 				}
 				connView.Dispose();
 			}
-			if(true) { //update options 2
+			if(false) { //update options 2
 				var economOptins = new Options{
 					baggageOptions = new BaggageOptions{
 						baggage = new List<Baggage> {
@@ -155,7 +155,7 @@ namespace AirlineTicketingServer {
 				)) {
 				selectClassesCommand.CommandType = System.Data.CommandType.Text;
 				var id = selectClassesCommand.Parameters.Add("@Id", SqlDbType.Int);
-				selectClassesCommand.Parameters.AddWithValue("@Options", BinaryOptions.toBytes(optionsForClasses));
+				selectClassesCommand.Parameters.AddWithValue("@Options", DatabaseOptions.optionsToBytes(optionsForClasses));
 	
 				connView.Open();
 				id.Value = 6;
@@ -185,7 +185,7 @@ namespace AirlineTicketingServer {
 					connView.connection
 				)) {
 				selectClassesCommand.CommandType = CommandType.Text;
-				selectClassesCommand.Parameters.AddWithValue("@Scheme", BinarySeats.toBytes(seatsScheme));
+				selectClassesCommand.Parameters.AddWithValue("@Scheme", DatabaseSeats.toBytes(seatsScheme));
 	
 				connView.Open();
 				selectClassesCommand.ExecuteNonQuery();
@@ -193,7 +193,7 @@ namespace AirlineTicketingServer {
 				connView.Dispose();
 			}
 			
-			AvailableFlightsUpdate.checkAndUpdate(new SqlConnectionView(connection, true));
+			FlightsUpdate.checkAndUpdate(new SqlConnectionView(connection, true));
 			}	
 		}
 		static void Main(string[] args) {
@@ -205,16 +205,16 @@ namespace AirlineTicketingServer {
 
             try {
 				string adress = "net.tcp://localhost:8080";
-				var clientService = LoggingProxy<ClientCommunication.MessageService>.Create("`Client server`", new MainClientMessageService());
-				var operatorService = LoggingProxy<OperatorViewCommunication.MessageService>.Create("`Operator server`",new MainOperatorMessageService());
+				var clientService = LoggingProxy<ClientCommunication.ClientService>.Create("`Client server`", new ClientMessageService());
+				var operatorService = LoggingProxy<OperatorViewCommunication.OperatorService>.Create("`Operator server`",new OperatorMessageService());
 				
 				clientHost = new ServiceHost(clientService, new Uri[] { new Uri(adress) });
-				clientHost.AddServiceEndpoint(typeof(ClientCommunication.MessageService), new NetTcpBinding(), "client-query");
+				clientHost.AddServiceEndpoint(typeof(ClientCommunication.ClientService), new NetTcpBinding(), "client-query");
 				clientHost.Opened += (a, b) => Console.WriteLine("Client server opened");
 				clientHost.Open();
 
 				operatorHost = new ServiceHost(operatorService, new Uri[] { new Uri(adress) });
-				operatorHost.AddServiceEndpoint(typeof(OperatorViewCommunication.MessageService), new NetTcpBinding(), "operator-view");
+				operatorHost.AddServiceEndpoint(typeof(OperatorViewCommunication.OperatorService), new NetTcpBinding(), "operator-view");
 				operatorHost.Opened += (a, b) => Console.WriteLine("Operator server opened");
 				operatorHost.Open();
 

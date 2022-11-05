@@ -13,8 +13,8 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class PassangerList : UserControl {
-		private ClientCommunication.MessageService service;
-		private CustomerData customer;
+		private ClientCommunication.ClientService service;
+		private Customer customer;
 		private BookingStatus status;
 
 		private Dictionary<int, PassangerDisplay> passangersDisplays;
@@ -63,7 +63,7 @@ namespace ClientCommunication {
 			saveButton.Text = "Добавить";
 		}
 				
-		private void setStateSelect(int newSelectedPassangerId) {
+		private void setStateSelect(int newSelectedPassangerIndex) {
 			setStatus(false, null);
 
 			curState = State.select;
@@ -74,10 +74,10 @@ namespace ClientCommunication {
 			passangerDataTable.Enabled = false;
 
 			if(currentPassangerIndex != null) passangersDisplays[(int) currentPassangerIndex].BackColor = Color.White;
-			currentPassangerIndex = newSelectedPassangerId;
-			passangersDisplays[newSelectedPassangerId].BackColor = Misc.selectionColor3;
+			currentPassangerIndex = newSelectedPassangerIndex;
+			passangersDisplays[newSelectedPassangerIndex].BackColor = Misc.selectionColor3;
 			
-			setDataFromPassanger(customer.passangers[newSelectedPassangerId]);
+			setDataFromPassanger(customer.passangers[newSelectedPassangerIndex]);
 
 			saveButton.Visible = false;
 		}
@@ -131,7 +131,7 @@ namespace ClientCommunication {
 			setStateNone();
 		}
 
-		public void init(MessageService sq, CustomerData customer, BookingStatus status, BookingPassanger passanger) {
+		public void init(ClientService sq, Customer customer, BookingStatus status, BookingPassanger passanger) {
 			this.service = sq;
 			this.status = status;
 			this.customer = customer;
@@ -143,11 +143,13 @@ namespace ClientCommunication {
 			documentTypeCombobox.DisplayMember = "Value";
 			ignore__ = false;
 
-			setupPassangersDisplay(passanger.passangerIndex);
+			setupPassangersDisplay();
 
 			if(status.booked) updateStatusBooked();
 
-			clearPassangerData();
+			if(passanger.passangerIndex != null) setStateSelect((int) passanger.passangerIndex);
+			else if(customer.passangers.Count != 0) setStateNone();
+			else setStateAdd();
 		}
 
 		public void updateStatusBooked() {
@@ -173,7 +175,7 @@ namespace ClientCommunication {
 			return promptSaveCustomer();
 		}
 
-		private void setupPassangersDisplay(int? defaultPassangerIndex) {
+		private void setupPassangersDisplay() {
 			passangersDisplay.SuspendLayout();
 			passangersDisplay.Controls.Clear();
 			passangersDisplay.RowStyles.Clear();
@@ -187,9 +189,6 @@ namespace ClientCommunication {
 
 			passangersDisplay.ResumeLayout(false);
 			passangersDisplay.PerformLayout();
-
-			if(defaultPassangerIndex != null) setStateSelect((int) defaultPassangerIndex);
-			else setStateNone();
 		}
 
 		private void promptFillCustomer(string msg = null) {
@@ -240,7 +239,7 @@ namespace ClientCommunication {
 					}
 					else if(mb == DialogResult.No) return true;
 					else {
-						Debug.Assert(mb == DialogResult.Cancel);
+						Common.Debug2.AssertPersistent(mb == DialogResult.Cancel);
 						return false;
 					}
 				} 
@@ -269,7 +268,7 @@ namespace ClientCommunication {
 				}
 				else if(mb == DialogResult.No) return true;
 				else {
-					Debug.Assert(mb == DialogResult.Cancel);
+					Common.Debug2.AssertPersistent(mb == DialogResult.Cancel);
 					return false;
 				}
 			}
@@ -321,7 +320,7 @@ namespace ClientCommunication {
 					if(result != null) setStateSelect((int) result);
 				}
 			}
-			else Debug.Assert(curState == State.select || curState == State.none);
+			else Common.Debug2.AssertPersistent(curState == State.select || curState == State.none);
 		}
 
 		private Either<Passanger, string> formPassangerFromData() { 
@@ -406,7 +405,7 @@ namespace ClientCommunication {
 				if(doc.Key == formPassanger.selectedDocument) break;
 				i++;
 			}
-			Debug.Assert(i != Documents.DocumentsName.documentsNames.Count);
+			Common.Debug2.AssertPersistent(i != Documents.DocumentsName.documentsNames.Count);
 			documentTypeCombobox.SelectedIndex = i;
 
 			updateDocument(formPassanger.selectedDocument);
@@ -579,13 +578,13 @@ namespace ClientCommunication {
 
 		private void editButton_Click(object sender, EventArgs e) {
 			setStatus(false, null);
-			Debug.Assert(curState == State.select || curState == State.none);
+			Common.Debug2.AssertPersistent(curState == State.select || curState == State.none);
 			setStateEdit();
 		}
 
 		private void addButton_Click(object sender, EventArgs e) {
 			setStatus(false, null);
-			Debug.Assert(curState == State.edit || curState == State.select || curState == State.none);
+			Common.Debug2.AssertPersistent(curState == State.edit || curState == State.select || curState == State.none);
 			promptSaveCustomer();
 			setStateAdd();
 		}
@@ -777,7 +776,7 @@ namespace ClientCommunication {
 					document = new Documents.InternationalPassport();
 				}
 
-				Debug.Assert(document != null);
+				Common.Debug2.AssertPersistent(document != null);
 				formPassanger.documents.Add(documentId, document);
 			}
 

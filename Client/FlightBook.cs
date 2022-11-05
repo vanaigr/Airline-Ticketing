@@ -11,25 +11,25 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class FlightBook : Form {
-		private MessageService service;
+		private ClientService service;
 		private Dictionary<int, string> classesNames;
 
-		private CustomerData customer;
+		private Customer customer;
 		private List<BookingPassanger> bookingPassangers;
 
 		private Dictionary<int, Passanger> localPassangers;
 		private SeatAndOptions[] seatsAndOptions;
 		private SelectedSeat[] selectedSeats;
 
-		private AvailableFlight flight;
+		private Flight flight;
 		private FlightsSeats.Seats seats;
 
 		private BookingStatus status;
 		
 		public FlightBook(
-			MessageService service,
-			CustomerData customer, List<BookingPassanger> bookingPassangers,
-			AvailableFlight flight, FlightsSeats.Seats seats,
+			ClientService service,
+			Customer customer, List<BookingPassanger> bookingPassangers,
+			Flight flight, FlightsSeats.Seats seats,
 			Dictionary<int, string> classesNames,
 			BookingStatus status
 		) {
@@ -99,7 +99,7 @@ namespace ClientCommunication {
 					ClientCommunication.SeatCost[] seatsCost;
 
 					if(!status.booked) {
-						var result = service.seatsData(this.flight.id, seatsAndOptions);
+						var result = service.calculateSeatsCost(this.flight.id, seatsAndOptions);
 
 						if(result) {
 							seatsCost = result.s;

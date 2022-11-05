@@ -39,7 +39,7 @@ namespace ClientCommunication {
 				l.Text = cross;
 				l.BackColor2 = unavailableColor;
 			}
-			else Debug.Assert(false);
+			else Common.Debug2.AssertPersistent(false);
 			l.Font = new Font(l.Font.FontFamily, 8);
 			l.ForeColor = Color.White;
 			l.Dock = DockStyle.Fill;
@@ -66,10 +66,10 @@ namespace ClientCommunication {
 		}
 
 		Context context;
-		AvailableFlight flight;
+		Flight flight;
 
 		public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
-		public AvailableFlight CurrentFlight{ get{ return this.flight; } }
+		public Flight CurrentFlight{ get{ return this.flight; } }
 
 		public FlightDisplay() {
 			InitializeComponent();
@@ -77,7 +77,7 @@ namespace ClientCommunication {
 
 		public void updateFromFlight(
 			Context context,
-			AvailableFlight flight
+			Flight flight
 		) {
 			this.context = context;
 			this.flight = flight;

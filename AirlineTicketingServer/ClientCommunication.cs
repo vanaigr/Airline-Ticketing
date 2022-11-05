@@ -6,10 +6,10 @@ using System.ServiceModel;
 
 
 namespace ClientCommunication {
-	[Serializable] public struct Customer {
+	[Serializable] public struct Account {
 		public string login, password;
 
-		public Customer(string login, string password) {
+		public Account(string login, string password) {
 			this.login = login;
 			this.password = password;
 		}
@@ -39,7 +39,7 @@ namespace ClientCommunication {
 	[Serializable]
 	public sealed class BookedFlight {
 		public int? bookedFlightId;
-		public AvailableFlight availableFlight;
+		public Flight availableFlight;
 		public int bookedPassangerCount;
 		public DateTime bookingFinishedTime;
 	}
@@ -78,45 +78,45 @@ namespace ClientCommunication {
 		LoginError loginError;
 		InputError inputError;
 
-		public LoginError LoginError { get { Debug.Assert(error == 0); return loginError; } set { error = 0; loginError = value; } }
-		public InputError InputError { get { Debug.Assert(error == 1); return inputError; } set { error = 1; inputError = value; } }
+		public LoginError LoginError { get { Common.Debug2.AssertPersistent(error == 0); return loginError; } set { error = 0; loginError = value; } }
+		public InputError InputError { get { Common.Debug2.AssertPersistent(error == 1); return inputError; } set { error = 1; inputError = value; } }
 
 		public bool isLoginError { get { return error == 0; } }
 		public bool isInputError { get { return error == 1; } }
 	}
 
 	[ServiceContract]
-	public interface MessageService {
-		[OperationContract] AvailableOptionsResponse availableOptions();
+	public interface ClientService {
+		[OperationContract] Parameters parameters();
 
 
-		[OperationContract] Either<object, LoginError> register(Customer customer);
+		[OperationContract] Either<Success, LoginError> registerAccount(Account account);
 
-		[OperationContract] Either<object, LoginError> logIn(Customer customer);
-
-
-		[OperationContract] Either<List<AvailableFlight>, InputError> matchingFlights(MatchingFlightsParams p);
-
-		[OperationContract] Either<FlightsSeats.Seats, InputError> seatsForFlight(int flightId);
+		[OperationContract] Either<Success, LoginError> logInAccount(Account account);
 
 
-		[OperationContract] Either<Dictionary<int, Passanger>, LoginError> getPassangers(Customer customer);
+		[OperationContract] Either<List<Flight>, InputError> findMatchingFlights(MatchingFlightsParams p);
 
-		[OperationContract] Either<int, LoginOrInputError> addPassanger(Customer customer, Passanger passanger);
-
-		[OperationContract] Either<int, LoginOrInputError> replacePassanger(Customer customer, int index, Passanger passanger);
-
-		[OperationContract] Either<object, LoginOrInputError> removePassanger(Customer customer, int index);
+		[OperationContract] Either<FlightsSeats.Seats, InputError> getSeatsForFlight(int flightId);
 
 
-		[OperationContract] Either<SeatCost[], InputError> seatsData(int flightId, SeatAndOptions[] seats);
+		[OperationContract] Either<Dictionary<int, Passanger>, LoginError> getPassangers(Account account);
 
-		[OperationContract] Either<BookingFlightResult, LoginOrInputError> bookFlight(Customer? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId);
+		[OperationContract] Either<int, LoginOrInputError> addPassanger(Account account, Passanger passanger);
 
-		[OperationContract] Either<BookedFlight[], LoginError> getBookedFlights(Customer customer);
+		[OperationContract] Either<int, LoginOrInputError> replacePassanger(Account account, int id, Passanger passanger);
 
-		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Customer customer, int bookedFlightId);
+		[OperationContract] Either<Success, LoginOrInputError> removePassanger(Account account, int id);
 
-		[OperationContract] Either<int/*remainingPassangersCount*/, LoginOrInputError> deleteBookedFlightSeat(Customer customer, int bookedFlightId, int seatIndex);
+
+		[OperationContract] Either<SeatCost[], InputError> calculateSeatsCost(int flightId, SeatAndOptions[] seats);
+
+		[OperationContract] Either<BookingFlightResult, LoginOrInputError> bookFlight(Account? customer, SelectedSeat[] selectedSeats, Dictionary<int, Passanger> tempPassangers, int flightId);
+
+		[OperationContract] Either<BookedFlight[], LoginError> getBookedFlights(Account customer);
+
+		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Account customer, int bookedFlightId);
+
+		[OperationContract] Either<int/*remainingPassangersCount*/, LoginOrInputError> deleteBookedSeat(Account customer, int bookedFlightId, int seatIndex);
 	}
 }

@@ -14,14 +14,14 @@ using Common;
 namespace ClientCommunication {
 
 	public partial class LoginRegisterForm : Form {
-		CustomerData customer;
-		MessageService service;
+		Customer customer;
+		ClientService service;
 
 		public BeforeChangeAccountAbort beforeChangeAccount;
 
-		public delegate bool BeforeChangeAccountAbort(Customer newCustomer);
+		public delegate bool BeforeChangeAccountAbort(Account newCustomer);
 
-		public LoginRegisterForm(MessageService service, CustomerData customer) {
+		public LoginRegisterForm(ClientService service, Customer customer) {
 			this.service = service;
 			this.customer = customer;
 
@@ -49,8 +49,8 @@ namespace ClientCommunication {
 			var password = PasswordText.Text;
 
 			try {
-				var newCust = new Customer(login, password);
-				var response = service.register(newCust);
+				var newCust = new Account(login, password);
+				var response = service.registerAccount(newCust);
 				if(response) {
 					customer.setFrom(newCust);
 
@@ -73,8 +73,8 @@ namespace ClientCommunication {
 			var password = PasswordText.Text;
 			
 			try {
-				var newCust = new Customer(login, password);
-				var response = service.logIn(newCust);
+				var newCust = new Account(login, password);
+				var response = service.logInAccount(newCust);
 				if(response) {
 					var response2 = service.getPassangers(newCust);
 					if(response2) {

@@ -1,7 +1,7 @@
 ﻿
 using System.Drawing;
 
-namespace OperatorView {
+namespace Operator {
 	partial class SelectFlight {
 		/// <summary>
 		/// Required designer variable.

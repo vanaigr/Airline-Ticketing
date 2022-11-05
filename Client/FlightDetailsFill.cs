@@ -10,27 +10,27 @@ using System.Windows.Forms;
 namespace ClientCommunication {
 	public partial class FlightDetailsFill : Form {
 		private Context context;
-		private MessageService service;
-		private CustomerData customer;
+		private ClientService service;
+		private Customer customer;
 
 		private List<PassangerDisplay> curPassangersDisplays;
 		private List<BookingPassanger> bookingPassangers;
 
 		private Dictionary<int, string> classesNames;
-		private AvailableFlight flight;
+		private Flight flight;
 		private FlightsSeats.Seats seats;
 
 		private BookingStatus status;
 
 		public event EventHandler OnBookedPassangersChanged;
 
-		public AvailableFlight CurrentFlight{ get{ return flight; } }
+		public Flight CurrentFlight{ get{ return flight; } }
 
 		public FlightDetailsFill(
-			MessageService service, CustomerData customer,
+			ClientService service, Customer customer,
 			Context context,
 			BookingStatus status,
-			AvailableFlight flight, FlightsSeats.Seats seats
+			Flight flight, FlightsSeats.Seats seats
 		) {
 			this.context = context;
 			this.status = status;
@@ -708,11 +708,11 @@ namespace ClientCommunication {
 		public int bookedFlightIndex;
 		//public Communication.BookedSeatInfo[] seatsInfo;
 
-		public ClientCommunication.BookedFlight BookedFlight(CustomerData it) {
+		public ClientCommunication.BookedFlight BookedFlight(Customer it) {
 			return it.flightsBooked[bookedFlightIndex];
 		}
 
-		public ClientCommunication.BookedFlightDetails BookedFlightDetails(CustomerData it) {
+		public ClientCommunication.BookedFlightDetails BookedFlightDetails(Customer it) {
 			return it.bookedFlightsDetails[bookedFlightIndex];
 		}
 	}

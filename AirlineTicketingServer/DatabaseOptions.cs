@@ -7,7 +7,7 @@ using System.IO;
 namespace FlightsOptions {
 	internal static class Ext {
 		public static Size3 ReadSize3(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 0);
+			Common.Debug2.AssertPersistent(it.ReadByte() == 0);
 			var x = it.ReadInt16();
 			var y = it.ReadInt16();
 			var z = it.ReadInt16();
@@ -22,7 +22,7 @@ namespace FlightsOptions {
 	    }
 	
 		public static Baggage ReadBaggage(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 1);
+			Common.Debug2.AssertPersistent(it.ReadByte() == 1);
 			var costRub = it.ReadInt32();
 			var count = it.ReadInt16();
 			var maxWeight = it.ReadInt16();
@@ -39,7 +39,7 @@ namespace FlightsOptions {
 	    }
 	
 		public static BaggageOptions ReadBaggageOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 0);
+			Common.Debug2.AssertPersistent(it.ReadByte() == 0);
 	
 			var baggageCount = it.ReadByte();
 			var baggage = new List<Baggage>(baggageCount);
@@ -54,17 +54,17 @@ namespace FlightsOptions {
 		public static void Write(this BinaryWriter it, BaggageOptions v) {
 			it.Write((byte)0);
 	
-			Debug.Assert(v.baggage.Count <= byte.MaxValue);
+			Common.Debug2.AssertPersistent(v.baggage.Count <= byte.MaxValue);
 			it.Write((byte) v.baggage.Count);
 			for(int i = 0; i < v.baggage.Count; i++) it.Write(v.baggage[i]);
 	
-			Debug.Assert(v.handLuggage.Count <= byte.MaxValue);
+			Common.Debug2.AssertPersistent(v.handLuggage.Count <= byte.MaxValue);
 			it.Write((byte) v.handLuggage.Count);
 			for(int i = 0; i < v.handLuggage.Count; i++) it.Write(v.handLuggage[i]);
 	    }
 	
 		public static TermsOptions ReadTermsOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 1);
+			Common.Debug2.AssertPersistent(it.ReadByte() == 1);
 			var changeFlightCostRub = it.ReadInt32();
 			var refundCostRub = it.ReadInt32();
 	
@@ -77,7 +77,7 @@ namespace FlightsOptions {
 	    }
 	
 		public static ServicesOptions ReadServicesOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 2);
+			Common.Debug2.AssertPersistent(it.ReadByte() == 2);
 			var basePrice = it.ReadInt32();
 			var seatChoiceCostRub = it.ReadInt32();
 	
@@ -93,7 +93,7 @@ namespace FlightsOptions {
 	    }
 	
 		public static Options ReadOptions(this BinaryReader it) {
-			Debug.Assert(it.ReadByte() == 2);
+			Common.Debug2.AssertPersistent(it.ReadByte() == 2);
 			var baggageOptions = it.ReadBaggageOptions();
 			var termsOptions = it.ReadTermsOptions();
 			var servicesOptions = it.ReadServicesOptions();
@@ -111,8 +111,8 @@ namespace FlightsOptions {
 	    }
 	}
 
-	public static class BinaryOptions {
-		public static byte[] toBytes(Dictionary<int, Options> optionsForClasses) {
+	public static class DatabaseOptions {
+		public static byte[] optionsToBytes(Dictionary<int, Options> optionsForClasses) {
 			using(
 			MemoryStream ms = new MemoryStream()) { 
 			using(
@@ -129,13 +129,13 @@ namespace FlightsOptions {
 			}}
 		}
 	
-		public static Dictionary<int, Options> fromBytes(byte[] bytes) {
+		public static Dictionary<int, Options> optionsFromBytes(byte[] bytes) {
 			using(
 			var stream = new MemoryStream(bytes, false)) { 
 			using(
 			var reader = new BinaryReader(stream)) {
 
-			Debug.Assert(reader.ReadByte() == 0);
+			Common.Debug2.AssertPersistent(reader.ReadByte() == 0);
 			var count = reader.ReadInt32();
 			var result = new Dictionary<int, Options>(count);
 			for(int i = 0; i < count; i++) { 
@@ -143,13 +143,13 @@ namespace FlightsOptions {
 				var value = reader.ReadOptions();
 				result.Add(key, value);
 			}
-			Debug.Assert(stream.Position == stream.Length);
+			Common.Debug2.AssertPersistent(stream.Position == stream.Length);
 			return result;
 			}}
 		}
 
 
-        public static byte[] toBytes(SelectedOptions it) {
+        public static byte[] selectedOptionsToBytes(SelectedOptions it) {
 			using(
 			var ms = new MemoryStream(9)) {
 			using(
@@ -170,12 +170,12 @@ namespace FlightsOptions {
 			using(
 			var reader = new BinaryReader(stream)) {
 
-			Debug.Assert(reader.ReadByte() == 1);
+			Common.Debug2.AssertPersistent(reader.ReadByte() == 1);
 			var baggageIndex = reader.ReadInt32();
 			var handLuggageIndex = reader.ReadInt32();
 			var seatSelected = reader.ReadBoolean();
 
-			Debug.Assert(stream.Position == stream.Length);
+			Common.Debug2.AssertPersistent(stream.Position == stream.Length);
 			stream.Dispose();
 			reader.Dispose();
 

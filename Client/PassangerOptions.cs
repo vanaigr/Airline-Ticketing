@@ -10,8 +10,8 @@ using System.Windows.Forms;
 
 namespace ClientCommunication {
 	public partial class PassangerOptions : UserControl {
-		private ClientCommunication.MessageService service;
-		private CustomerData customer;
+		private ClientCommunication.ClientService service;
+		private Customer customer;
 		private BookingStatus status;
 		private int flightId;
 
@@ -36,8 +36,8 @@ namespace ClientCommunication {
 		}
 
 		public void init(
-			ClientCommunication.MessageService service,
-			CustomerData customer, BookingStatus status,
+			ClientCommunication.ClientService service,
+			Customer customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
 			BookingPassanger passanger, int bookingPassangerIndex
@@ -219,7 +219,7 @@ namespace ClientCommunication {
 						seatData = status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex].cost;
 					}
 					else { 
-						var result = service.seatsData(flightId, new ClientCommunication.SeatAndOptions[]{ new ClientCommunication.SeatAndOptions{
+						var result = service.calculateSeatsCost(flightId, new ClientCommunication.SeatAndOptions[]{ new ClientCommunication.SeatAndOptions{
 							selectedSeatClass = curClassId,
 							seatIndex = passanger.manualSeatSelected ? passanger.seatIndex : (int?) null,
 							selectedOptions = new FlightsOptions.SelectedOptions(

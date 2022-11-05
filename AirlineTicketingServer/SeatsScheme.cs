@@ -27,7 +27,7 @@ namespace FlightsSeats {
 		public int SizesCount => sizes.Count;
 		
 		public int coordToIndex(int x, int z) {
-			Debug.Assert(x >= 0 && x < WidthForRow(z));
+			Common.Debug2.AssertPersistent(x >= 0 && x < WidthForRow(z));
 			return SeatsBeforeZ(z) + x;
 		}
 
@@ -58,7 +58,7 @@ namespace FlightsSeats {
 		}
 		
 		protected SeatsScheme(SerializationInfo info, StreamingContext context) {
-			Debug.Assert(info.GetInt32("version") == 1);
+			Common.Debug2.AssertPersistent(info.GetInt32("version") == 1);
 			var sizes = (List<Point>) info.GetValue("sizes", typeof(List<Point>));
 			setFromIterators(sizes.GetEnumerator());
 		}
@@ -147,14 +147,14 @@ namespace FlightsSeats {
 
 			var seatClassI = 0;
 			while(seatsClasses.MoveNext()) this.seatsClasses[seatClassI++] = seatsClasses.Current;
-			Debug.Assert(seatClassI == scheme.SeatsCount);
+			Common.Debug2.AssertPersistent(seatClassI == scheme.SeatsCount);
 
 			var seatOccupiedI = 0;
 			while(seatsOccupied.MoveNext()) {
 				this.seatsOccupied[seatOccupiedI >> 3] |= (byte) (seatsOccupied.Current ? 1 << (seatOccupiedI & 7) : 0);
 				seatOccupiedI++;
 			}
-			Debug.Assert(seatOccupiedI == scheme.SeatsCount);
+			Common.Debug2.AssertPersistent(seatOccupiedI == scheme.SeatsCount);
 		}
 
 		public int Size{ get{ return Scheme.SeatsCount; } }
@@ -261,7 +261,7 @@ namespace FlightsSeats {
 			public bool MoveNext() {
 				var f = classes.MoveNext();
 				var s = occupied.MoveNext();
-				Debug.Assert(f == s);
+				Common.Debug2.AssertPersistent(f == s);
 				return f;
 			}
 
@@ -272,7 +272,7 @@ namespace FlightsSeats {
 		}
 
 		private Seats(SerializationInfo info, StreamingContext context) {
-			Debug.Assert(info.GetInt32("version") == 0);
+			Common.Debug2.AssertPersistent(info.GetInt32("version") == 0);
 			this.Scheme = (SeatsScheme) info.GetValue("scheme", typeof(SeatsScheme));
 			this.seatsClasses = (byte[]) info.GetValue("seatsClasses", typeof(byte[]));
 			this.seatsOccupied = (byte[]) info.GetValue("seatsOccupied", typeof(byte[]));

@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Validation;
 
-namespace AirlineTicketingServer {
+namespace Server {
 	static class ValidatePassanger {
 		public static Validation.CheckResult validate(Passanger it) {
 			var sb = new StringBuilder();
@@ -37,6 +37,7 @@ namespace AirlineTicketingServer {
 			public DateTime birthday;
 			public byte[] documentBin;
 		}
+
 		public static Dictionary<int, Passanger> getAll(SqlConnectionView cv, int customerId) {
 			using(cv) {
 			using(
@@ -71,7 +72,7 @@ namespace AirlineTicketingServer {
 				passangers.Add(rp.index, new Passanger{
 					archived = rp.archived,
 					name = rp.name, surname = rp.surname, middleName = rp.middleName,
-					birthday = rp.birthday, document = BinaryDocument.fromBytes(rp.documentBin)
+					birthday = rp.birthday, document = DatabaseDocument.fromBytes(rp.documentBin)
 				});
 			}
 			return passangers;
@@ -80,7 +81,7 @@ namespace AirlineTicketingServer {
 
 		public static int? replace(SqlConnectionView cv, int customerId, int index, Passanger passanger) {
 			using(cv) {
-			var documentBin = BinaryDocument.toBytes(passanger.document);
+			var documentBin = DatabaseDocument.toBytes(passanger.document);
 
 			using(
 			var command = new SqlCommand("[Customers].[ReplacePassanger]", cv.connection)) {
@@ -103,7 +104,7 @@ namespace AirlineTicketingServer {
 		}
 
 		public static int add(SqlConnectionView cv, int customerId, Passanger passanger) {
-			var documentBin = BinaryDocument.toBytes(passanger.document);
+			var documentBin = DatabaseDocument.toBytes(passanger.document);
 
 			using(
 			var command = new SqlCommand("[Customers].[AddPassanger]",cv.connection)) {

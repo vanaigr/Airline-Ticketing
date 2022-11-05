@@ -14,7 +14,7 @@ namespace ClientCommunication {
 		}
 
 		public void set(
-			CustomerData customer, BookingPassanger bookingP,
+			Customer customer, BookingPassanger bookingP,
 			FlightsSeats.Seats seats, Dictionary<int, FlightsOptions.Options> optionsForClasses, 
 			ClientCommunication.BookedSeatInfo? bookedSeatInfo, ClientCommunication.SeatCost seatCost,
 			Dictionary<int, string> classesNames

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace Communication {
-	[Serializable] public struct AvailableOptionsResponse {
+	[Serializable] public struct Parameters {
 		public string[] flightClasses;
 		public List<City> cities;
 	}
@@ -16,7 +16,7 @@ namespace Communication {
 		public DateTime when;
 	}
 
-	[Serializable] public sealed class AvailableFlight {
+	[Serializable] public sealed class Flight {
 		public int id;
 		public DateTime departureTime;
 		public int arrivalOffsteMinutes;
@@ -38,8 +38,8 @@ namespace Communication {
 		public string name { get; set; } //display in combobox requires property
 	}
 
-	[KnownType(typeof(Documents.Passport))]
-	[KnownType(typeof(Documents.InternationalPassport))]
+	//[KnownType(typeof(Documents.Passport))]
+	//[KnownType(typeof(Documents.InternationalPassport))]
 	[Serializable]
 	public sealed class Passanger {
 		public bool archived;
@@ -94,12 +94,12 @@ namespace Communication {
 		public TF f { get { return Failure(); } }
 
 		public TS Success() {
-			Debug.Assert(isFirst);
+			Common.Debug2.AssertPersistent(isFirst);
 			return first;
 		}
 
 		public TF Failure() {
-			Debug.Assert(!isFirst);
+			Common.Debug2.AssertPersistent(!isFirst);
 			return second;
 		}
 
