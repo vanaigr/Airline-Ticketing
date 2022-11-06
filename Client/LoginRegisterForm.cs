@@ -18,9 +18,9 @@ namespace Client {
 		Customer customer;
 		ClientService service;
 
-		public BeforeChangeAccountAbort beforeChangeAccount;
+		public AbortAction beforeChangeAccount;
 
-		public delegate bool BeforeChangeAccountAbort(Account newCustomer);
+		public delegate bool AbortAction();
 
 		public LoginRegisterForm(ClientService service, Customer customer) {
 			this.service = service;
@@ -74,22 +74,19 @@ namespace Client {
 			var password = PasswordText.Text;
 			
 			try {
+				var abort = beforeChangeAccount?.Invoke();
+				if(abort == true) {
+					setFine("Вход отменён");
+					return;
+				}
+
 				var newCust = new Account(login, password);
 				var response = service.logInAccount(newCust);
 				if(response) {
 					var response2 = service.getPassangers(newCust);
 					if(response2) {
-						var abort = beforeChangeAccount?.Invoke(newCust);
-						if(abort == true) {
-							setFine("Вход отменён");
-							return;
-						}
 
-						customer.unlogin() /*
-							all the passangers used previously are lost
-							if the user was unlogged
-						*/;
-						//TODO: fix looging in if any flight is being booked
+						customer.unlogin();
 
 						customer.setFrom(newCust);
 

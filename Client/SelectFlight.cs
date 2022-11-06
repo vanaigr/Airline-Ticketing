@@ -129,9 +129,7 @@ namespace Client {
 
 		void LoginButton_Click(object sender, EventArgs e) {
 			var form = new LoginRegisterForm(service, customer);
-			form.beforeChangeAccount = (a) => { 
-				return warnEverythingWillBeClosed();  
-			};
+			form.beforeChangeAccount = () => warnEverythingWillBeClosed();  
 
 			var result = form.ShowDialog();
 			if(result == DialogResult.OK) {
@@ -289,14 +287,17 @@ namespace Client {
 		}
 
 		private bool warnEverythingWillBeClosed() {
-			if(openedBookings.Count == 0) return false;
+			if(openedBookings.Count != 0
+				|| (!customer.LoggedIn && customer.flightsBooked.Count != 0)
+			) { 
+				var result = MessageBox.Show(
+					"При входе/выходе из аккаунта все данные в выбранных рейсах будут потеряны. Продолжить?",
+					"", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2
+				);
 
-			var result = MessageBox.Show(
-				"При входе/выходе из аккаунта все данные в выбранных рейсах будут потеряны. Продолжить?",
-				"", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2
-			);
-
-			return result != DialogResult.Yes;
+				return result != DialogResult.Yes;
+			}
+			else return false;
 		}
 	}
 }
