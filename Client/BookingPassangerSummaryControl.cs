@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientCommunication;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class BookingPassangerSummaryControl : UserControl {
 		public BookingPassangerSummaryControl() {
 			InitializeComponent();
@@ -16,7 +17,7 @@ namespace ClientCommunication {
 		public void set(
 			Customer customer, BookingPassanger bookingP,
 			FlightsSeats.Seats seats, Dictionary<int, FlightsOptions.Options> optionsForClasses, 
-			ClientCommunication.BookedSeatInfo? bookedSeatInfo, ClientCommunication.SeatCost seatCost,
+			BookedSeatInfo? bookedSeatInfo, SeatCost seatCost,
 			Dictionary<int, string> classesNames
 		) {
 			var passanger = customer.passangers[(int) bookingP.passangerIndex];
@@ -66,7 +67,7 @@ namespace ClientCommunication {
 			if(b.count == 0) sb.Append("без багажа");
 			else {
 				sb.Append(b.count).Append(" x ");
-				if(b.RestrictionSize) sb.Append(b.maxWeightKg).Append("кг");
+				if(b.RestrictedSize) sb.Append(b.maxWeightKg).Append("кг");
 				else sb.Append("сумка");
 			}
 			sb.Append(", ").Append(b.costRub).Append(" руб.").ToString();
@@ -78,7 +79,7 @@ namespace ClientCommunication {
 			if(h.count == 0) sb.Append("без ручной клади");
 			else {
 				sb.Append(h.count).Append(" x ");
-				if(h.RestrictionSize) sb.Append(h.maxWeightKg).Append("кг");
+				if(h.RestrictedSize) sb.Append(h.maxWeightKg).Append("кг");
 				else sb.Append("сумка");
 			}
 			sb.Append(", ").Append(h.costRub).Append(" руб.").ToString();

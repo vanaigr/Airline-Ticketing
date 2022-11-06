@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	class ListItemLabel : Label {
 		public Color BackColor2 = Color.Transparent;
 		

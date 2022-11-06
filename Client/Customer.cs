@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Client;
 using ClientCommunication;
 using Communication;
 
-namespace ClientCommunication {
+namespace Client {
 	public class Customer {
 		public Account? customer;
 

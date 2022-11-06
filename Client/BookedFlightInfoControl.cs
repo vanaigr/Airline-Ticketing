@@ -1,4 +1,5 @@
 ﻿using Client;
+using ClientCommunication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,12 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class BookedFlightInfoControl : UserControl {
-		private ClientCommunication.ClientService service;
+		private ClientService service;
 
 		private int bookedFlightIndex;
-		private ClientCommunication.BookedFlight bookedFlight;
+		private BookedFlight bookedFlight;
 		private Customer customer;
 		private Context context;
 

@@ -3,7 +3,7 @@ using Communication;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class PassangerDisplay : UserControl {
 		bool showNumber;
 		int number;

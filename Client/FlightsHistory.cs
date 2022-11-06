@@ -1,4 +1,5 @@
 ﻿using Client;
+using ClientCommunication;
 using Common;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class FlightsHistory : Form {
-		private ClientCommunication.ClientService service;
+		private ClientService service;
 		private Customer customer;
 
 		public FlightsHistory(
-			ClientCommunication.ClientService service,
+			ClientService service,
 			Context context,
 			Customer customer
 		) {
@@ -66,7 +67,7 @@ namespace ClientCommunication {
 				flightsTable.RowCount = customer.flightsBooked.Count;
 
 				foreach(var pair in customer.flightsBooked) {
-					ClientCommunication.BookedFlightDetails details;
+					BookedFlightDetails details;
 					customer.bookedFlightsDetails.TryGetValue(pair.Key, out details);
 
 					var it = new BookedFlightInfoControl(

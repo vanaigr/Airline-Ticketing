@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class FlightDisplay : UserControl {
 		private static string rub = '\u20BD'.ToString();
 		private static string check = '\u2713'.ToString();
@@ -146,14 +146,14 @@ namespace ClientCommunication {
 				sb.Append(baggage.count);
 				if(baggage.count == 1) sb.Append(" сумка");
 				else sb.Append(" сумок");
-				if(baggage.RestrictionWeight) {
+				if(baggage.RestrictedWeight) {
 					sb.Append(" до ")
 					  .Append(baggage.maxWeightKg)
 					  .Append(nbs)
 					  .Append("кг");
 				}
-				if(baggage.RestrictionWeight && baggage.RestrictionSize) sb.Append(",");
-				if(baggage.RestrictionSize) {
+				if(baggage.RestrictedWeight && baggage.RestrictedSize) sb.Append(",");
+				if(baggage.RestrictedSize) {
 					sb.Append(" до ") 
 					  .Append(baggage.maxDim.x)
 					  .Append('x')
@@ -163,7 +163,7 @@ namespace ClientCommunication {
 					  .Append(nbs)
 					  .Append("см");
 				}
-				if((baggage.RestrictionWeight || baggage.RestrictionSize) && baggage.count != 1) sb.Append(" за шт.");
+				if((baggage.RestrictedWeight || baggage.RestrictedSize) && baggage.count != 1) sb.Append(" за шт.");
 
 				addListItem(baggageOptionsTable, Status.free, sb.ToString());
 			}

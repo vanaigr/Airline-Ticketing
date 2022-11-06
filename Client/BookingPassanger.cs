@@ -1,10 +1,10 @@
-﻿using ClientCommunication;
+﻿using Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ClientCommunication {
+namespace Client {
 	public class BookingPassanger {
 		public int? passangerIndex;
 		public bool manualSeatSelected;
@@ -31,7 +31,7 @@ namespace ClientCommunication {
 			this.handLuggageOptionIndexForClass = handLuggageOptionIndexForClass;
 		}
 
-		public BookingPassanger(int defaultClass, int defaultDocumentId, Documents.Document defaultDocument) {
+		public BookingPassanger(int defaultClass) {
 			seatClassId = defaultClass;
 			baggageOptionIndexForClass = new Dictionary<int, int>();
 			handLuggageOptionIndexForClass = new Dictionary<int, int>();

@@ -7,7 +7,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using Communication;
-using OperatorViewCommunication;
+using OperatorCommunication;
 
 namespace Server {
 

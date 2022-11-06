@@ -1,5 +1,5 @@
 ﻿
-namespace ClientCommunication {
+namespace Client {
 	partial class BaggageOption {
 		/// <summary> 
 		/// Обязательная переменная конструктора.

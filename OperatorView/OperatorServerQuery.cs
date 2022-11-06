@@ -1,5 +1,5 @@
 ﻿using Common;
-using OperatorViewCommunication;
+using OperatorCommunication;
 
 
 namespace Operator {

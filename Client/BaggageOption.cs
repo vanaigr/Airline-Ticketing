@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class BaggageOption : UserControl {
 		private FlightsOptions.Baggage baggage;
 
@@ -41,18 +41,18 @@ namespace ClientCommunication {
 			if(baggage.count == 0) {
 				mainParamLabel.Text = "Без багажа";
 			}
-			else if(baggage.RestrictionWeight) {
+			else if(baggage.RestrictedWeight) {
 				mainParamLabel.Text = baggage.count + " x " + baggage.maxWeightKg + " кг" + (
-					baggage.RestrictionSize ? "*" : ""	
+					baggage.RestrictedSize ? "*" : ""	
 				);
 
-				if(baggage.RestrictionSize) {
+				if(baggage.RestrictedSize) {
 					var md = baggage.maxDim;
 					axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
 				}
 
 			}
-			else if(baggage.RestrictionSize) {
+			else if(baggage.RestrictedSize) {
 				mainParamLabel.Text = baggage.count + " x сумка*";
 
 				var md = baggage.maxDim;

@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using ClientCommunication;
+using Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class PassangerOptions : UserControl {
-		private ClientCommunication.ClientService service;
+		private ClientService service;
 		private Customer customer;
 		private BookingStatus status;
 		private int flightId;
@@ -36,7 +37,7 @@ namespace ClientCommunication {
 		}
 
 		public void init(
-			ClientCommunication.ClientService service,
+			ClientService service,
 			Customer customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
@@ -213,13 +214,13 @@ namespace ClientCommunication {
 			}
 			else { 
 				try {
-					ClientCommunication.SeatCost seatData;
+					SeatCost seatData;
 
 					if(status.booked) {
 						seatData = status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex].cost;
 					}
 					else { 
-						var result = service.calculateSeatsCost(flightId, new ClientCommunication.SeatAndOptions[]{ new ClientCommunication.SeatAndOptions{
+						var result = service.calculateSeatsCost(flightId, new SeatAndOptions[]{ new SeatAndOptions{
 							selectedSeatClass = curClassId,
 							seatIndex = passanger.manualSeatSelected ? passanger.seatIndex : (int?) null,
 							selectedOptions = new FlightsOptions.SelectedOptions(

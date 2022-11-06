@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.ServiceModel;
 
-namespace ClientCommunication {
+namespace Client {
 	static class Program {
 		[STAThread]
 		static void Main() {

@@ -15,10 +15,17 @@ namespace FlightsOptions {
 		return x == s.x && y == s.y && z == s.z;
 	}
 
+	public override int GetHashCode() {
+		int hashCode = 373119288;
+		hashCode=hashCode*-1521134295+x.GetHashCode();
+		hashCode=hashCode*-1521134295+y.GetHashCode();
+		hashCode=hashCode*-1521134295+z.GetHashCode();
+		return hashCode;
+	}
 }
 
 [Serializable] public class Baggage {
-	internal int costRub; //times count
+	internal int costRub; //entire cost
 	internal short count;
 	internal short maxWeightKg; //per baggage
 	internal Size3 maxDim; //per baggare
@@ -36,8 +43,8 @@ namespace FlightsOptions {
 	}
 
 	public bool IsFree{ get{ return costRub == 0; } }
-	public bool RestrictionWeight{ get{ return maxWeightKg != 0; } }
-	public bool RestrictionSize{ get{ return !Equals(maxDim, new Size3()); } }
+	public bool RestrictedWeight{ get{ return maxWeightKg != 0; } }
+	public bool RestrictedSize{ get{ return !Equals(maxDim, new Size3()); } }
 }
 
 [Serializable] public class BaggageOptions {

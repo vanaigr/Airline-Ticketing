@@ -1,5 +1,5 @@
 ﻿
-namespace ClientCommunication {
+namespace Client {
 	partial class PassangerDisplay {
 		/// <summary> 
 		/// Обязательная переменная конструктора.

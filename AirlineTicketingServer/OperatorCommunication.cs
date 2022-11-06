@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
-namespace OperatorViewCommunication {	
-
-	//[KnownType(typeof(Documents.Passport))]
-	//[KnownType(typeof(Documents.InternationalPassport))]
+namespace OperatorCommunication {	
 	[Serializable] public sealed class BookedPassanger {
 		public int seatIndex;
 		public bool canceled;

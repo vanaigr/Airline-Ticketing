@@ -2,18 +2,13 @@
 using Communication;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
 using System.Windows.Forms;
+using ClientCommunication;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class PassangerList : UserControl {
-		private ClientCommunication.ClientService service;
+		private ClientService service;
 		private Customer customer;
 		private BookingStatus status;
 
@@ -28,7 +23,7 @@ namespace ClientCommunication {
 			public string name, surname, middleName;
 			public DateTime birthday;
 			public int selectedDocument;
-			public Dictionary<int, Documents.Document> documents;
+			public Dictionary<int, DocumentForm> documentsForms;
 		}
 		private FormPassanger formPassanger;
 
@@ -219,7 +214,7 @@ namespace ClientCommunication {
 				var prevPassanger = customer.passangers[(int) currentPassangerIndex];
 				var curPassangerRes = formPassangerFromData();
 
-				if(!curPassangerRes.IsSuccess) {
+				if(curPassangerRes.IsSuccess) {
 					if(prevPassanger.Equals(curPassangerRes.s)) return true;
 
 					this.Focus();
@@ -245,7 +240,7 @@ namespace ClientCommunication {
 						return false;
 					}
 				} 
-				else return true;
+				else return false;
 			}
 			else if(curState == State.add) {
 				this.Focus();
@@ -321,20 +316,17 @@ namespace ClientCommunication {
 					var result = saveEditedPassanger(passanger, (int) currentPassangerIndex);
 					if(result != null) setStateSelect((int) result);
 				}
+				else setStateSelect((int) currentPassangerIndex);
 			}
 			else Common.Debug2.AssertPersistent(curState == State.select || curState == State.none);
 		}
 
 		private Either<Passanger, string> formPassangerFromData() { 
-			//generalDataFields.forceUpdateAllFields();
-			//documentFields.forceUpdateAllFields();
-
 			var it = new Passanger{
 				name = formPassanger.name,
 				surname = formPassanger.surname,
 				middleName = formPassanger.middleName,
-				birthday = formPassanger.birthday,
-				document = formPassanger.documents[formPassanger.selectedDocument]
+				birthday = formPassanger.birthday
 			};
 
 			var es = Validation.ErrorString.Create();
@@ -342,26 +334,39 @@ namespace ClientCommunication {
 			if((it.name?.Length ?? 0) == 0 || (it.surname?.Length ?? 0) == 0) {
 				es.ac("ФИО должно быть заполнено");
 			}
-			var docRes = it.document.validate();
-			if(docRes.Error) {
-				es.ac("Данные документа должны быть заполнены: ").append(docRes.Message);
+
+			var document = formPassanger.documentsForms[formPassanger.selectedDocument].toDocument();
+			if(document.IsSuccess) {
+				var docRes = document.s.validate();
+				if(docRes.Error) es.ac("Данные документа должны быть заполнены: ").append(docRes.Message);
+				else it.document = document.s;
 			}
+			else es.ac("Данные документа должны быть заполнены: ").append(document.f.Message);
 
 			if(es.Error) return Either<Passanger, string>.Failure(es.Message);
 			else return Either<Passanger, string>.Success(it);
 		}
 
 		private void setDataFromPassanger(Passanger p) {
+
+			DocumentForm form;
+			if(p.document.Id == Documents.Passport.id) {
+				form = PassportForm.fromDocument((Documents.Passport) p.document);
+			}
+			else if(p.document.Id == Documents.InternationalPassport.id) {
+				form = InternationalPassportForm.fromDocument((Documents.InternationalPassport) p.document);
+			}
+			else throw new InvalidOperationException();
+
 			formPassanger = new FormPassanger();
 			formPassanger.name = p.name;
 			formPassanger.surname = p.surname;
 			formPassanger.middleName = p.middleName;
 			formPassanger.birthday = p.birthday;
-			formPassanger.documents = new Dictionary<int, Documents.Document>();
-
+			formPassanger.documentsForms = new Dictionary<int, DocumentForm>();
 			formPassanger.selectedDocument = p.document.Id;
-			formPassanger.documents.Clear();
-			formPassanger.documents.Add(formPassanger.selectedDocument, p.document);
+			formPassanger.documentsForms.Clear();
+			formPassanger.documentsForms.Add(formPassanger.selectedDocument, form);
 
 			updatePassanger();
 		} 
@@ -369,11 +374,11 @@ namespace ClientCommunication {
 		private void clearPassangerData() {
 			formPassanger = new FormPassanger();
 			formPassanger.birthday = DateTime.Now;
-			formPassanger.documents = new Dictionary<int, Documents.Document>();
+			formPassanger.documentsForms = new Dictionary<int, DocumentForm>();
 
 			formPassanger.selectedDocument = Documents.Passport.id;
-			formPassanger.documents.Clear();
-			formPassanger.documents.Add(Documents.Passport.id, new Documents.Passport());
+			formPassanger.documentsForms.Clear();
+			formPassanger.documentsForms.Add(Documents.Passport.id, new PassportForm());
 
 			updatePassanger();
 		}
@@ -768,25 +773,25 @@ namespace ClientCommunication {
 		}
 
 		private void updateDocument(int documentId) {
-			Documents.Document document;
+			DocumentForm document;
 			formPassanger.selectedDocument = documentId;
-			if(!formPassanger.documents.TryGetValue(documentId, out document)) {
+			if(!formPassanger.documentsForms.TryGetValue(documentId, out document)) {
 				if(documentId == Documents.Passport.id) { 
-					document = new Documents.Passport();
+					document = new PassportForm();
 				}
 				else if(documentId == Documents.InternationalPassport.id) {
-					document = new Documents.InternationalPassport();
+					document = new InternationalPassportForm();
 				}
 
 				Common.Debug2.AssertPersistent(document != null);
-				formPassanger.documents.Add(documentId, document);
+				formPassanger.documentsForms.Add(documentId, document);
 			}
 
 			documentFields.Suspend();
 			documentFields.clear();
 
 			if(documentId == Documents.Passport.id) {
-				var passport = (Documents.Passport) document;
+				var passport = (PassportForm) document;
 
 				documentFields.addField();
 				documentFields.fieldName("Номер:*");
@@ -795,7 +800,7 @@ namespace ClientCommunication {
 						long res;
 						var success = long.TryParse(text, out res);
 						if(!success) throw new Documents.IncorrectValue("Номер паспорта дожлен включать только цифры");
-						Documents.PassportValidation.checkNumber(passport, res)
+						Documents.PassportValidation.checkNumber(res)
 							.exception((msg) => new Documents.IncorrectValue(msg));
 						passport.Number = res;
 					}
@@ -806,7 +811,7 @@ namespace ClientCommunication {
 				});
 			}
 			else if(documentId == Documents.InternationalPassport.id) {
-				var passport = (Documents.InternationalPassport) document;
+				var passport = (InternationalPassportForm) document;
 
 				documentFields.addField();
 				documentFields.fieldName("Номер:*");
@@ -815,7 +820,7 @@ namespace ClientCommunication {
 						int res;
 						var success = int.TryParse(text, out res);
 						if(!success) throw new Documents.IncorrectValue("Номер заграничного паспорта дожлен включать только цифры");
-						Documents.InternationalPassportValidation.checkNumber(passport, res)
+						Documents.InternationalPassportValidation.checkNumber(res)
 							.exception((msg) => new Documents.IncorrectValue(msg));
 						passport.Number = res;
 					}
@@ -829,7 +834,7 @@ namespace ClientCommunication {
 				documentFields.fieldName("Дата окончания срока действия:*");
 				var exDate = passport.ExpirationDate ?? DateTime.Now;
 				documentFields.dateField(exDate, date => {
-					var res = Documents.InternationalPassportValidation.checkExpirationDate(passport, date);
+					var res = Documents.InternationalPassportValidation.checkExpirationDate(date);
 					if(res.Error) {
 						passport.ExpirationDate = null;
 						throw new Documents.IncorrectValue(res.Message);
@@ -842,7 +847,7 @@ namespace ClientCommunication {
 				documentFields.addField();
 				documentFields.fieldName("Фамилия (на латинице):*");
 				documentFields.textField(passport.Surname, text => {
-					var res = Documents.InternationalPassportValidation.checkSurname(passport, text);
+					var res = Documents.InternationalPassportValidation.checkSurname(text);
 					if(res.Error) {
 						passport.Surname = null;
 						throw new Documents.IncorrectValue(res.Message);
@@ -853,7 +858,7 @@ namespace ClientCommunication {
 				documentFields.addField();
 				documentFields.fieldName("Имя (на латинице):*");
 				documentFields.textField(passport.Name, text => {
-					var res = Documents.InternationalPassportValidation.checkName(passport, text);
+					var res = Documents.InternationalPassportValidation.checkName(text);
 					if(res.Error) {
 						passport.Name = null;
 						throw new Documents.IncorrectValue(res.Message);
@@ -864,7 +869,7 @@ namespace ClientCommunication {
 				documentFields.addField();
 				documentFields.fieldName("Отчество (на латинице):");
 				documentFields.textField(passport.MiddleName, text => {
-					var res = Documents.InternationalPassportValidation.checkMiddleName(passport, text);
+					var res = Documents.InternationalPassportValidation.checkMiddleName(text);
 					if(res.Error) {
 						passport.MiddleName = null;
 						throw new Documents.IncorrectValue(res.Message);

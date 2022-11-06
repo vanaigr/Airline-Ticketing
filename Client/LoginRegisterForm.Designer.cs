@@ -1,5 +1,5 @@
 ﻿
-namespace ClientCommunication {
+namespace Client {
 	partial class LoginRegisterForm {
 
 		private System.ComponentModel.IContainer components = null;

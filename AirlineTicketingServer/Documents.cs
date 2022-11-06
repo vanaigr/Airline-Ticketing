@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Communication;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -33,16 +34,15 @@ namespace Documents {
 	}
 
 	public static class PassportValidation {
-		public static ErrorString checkNumber(Passport it, long? value, ErrorString e = new ErrorString()) {
+		public static ErrorString checkNumber(long value, ErrorString e = new ErrorString()) {
 			//value is not 10 digits long
-			if(value != null && !(value >= 1000000000L && value < 10000000000L)) 
+			if(!(value >= 1000000000L && value < 10000000000L)) 
 				e.ac("номер паспорта должен состоять из 10 цифр");
 			return e;
 		}
 
 		public static ErrorString validate(Passport it, ErrorString e = new ErrorString()) {
-			if(it.Number == null) e.ac("номер должен быть заполнен");
-			else checkNumber(it, it.Number, e);
+			checkNumber(it.Number, e);
 
 			return e;
 		}
@@ -51,9 +51,11 @@ namespace Documents {
 	[Serializable] public sealed class Passport : Document {
 		public static readonly int id = 0;
 
+		public long Number{ get; }
 
-		public long? Number{ get; set; }
-	
+		public Passport(long number) {
+			Number = number;
+		}
 
 		public override int Id{ get{ return id; } }
 
@@ -78,7 +80,7 @@ namespace Documents {
 	}
 
 	public static class InternationalPassportValidation {
-		public static ErrorString checkNumber(InternationalPassport it, int? value, ErrorString e = new ErrorString()) {
+		public static ErrorString checkNumber(int? value, ErrorString e = new ErrorString()) {
 			//value is not 9 digits long
 			if(value != null) {
 				if(!(value >= 100000000 && value < 1000000000)) 
@@ -87,11 +89,11 @@ namespace Documents {
 			return e;
 		}
 
-		public static ErrorString checkExpirationDate(InternationalPassport it, DateTime? value, ErrorString e = new ErrorString()) {
+		public static ErrorString checkExpirationDate(DateTime? value, ErrorString e = new ErrorString()) {
 			return e;
 		}
 
-		public static ErrorString checkName(InternationalPassport it, string value, ErrorString e = new ErrorString()) {
+		public static ErrorString checkName(string value, ErrorString e = new ErrorString()) {
 			if(value != null) {
 				if(value.Length == 0) e.ac("имя должно быть заполнено");
 				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
@@ -102,7 +104,7 @@ namespace Documents {
 			return e;
 		}
 
-		public static ErrorString checkSurname(InternationalPassport it, string value, ErrorString e = new ErrorString()) {
+		public static ErrorString checkSurname(string value, ErrorString e = new ErrorString()) {
 			if(value != null) {
 				if(value.Length == 0) e.ac("фамилия должна быть заполнена");
 				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
@@ -113,7 +115,7 @@ namespace Documents {
 			return e;
 		}
 
-		public static ErrorString checkMiddleName(InternationalPassport it, string value, ErrorString e = new ErrorString()) {
+		public static ErrorString checkMiddleName(string value, ErrorString e = new ErrorString()) {
 			if(value != null) {
 				if(value.Length == 0) e.ac("отчество должно быть заполнена");
 				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
@@ -125,20 +127,11 @@ namespace Documents {
 		}
 
 		public static ErrorString validate(InternationalPassport it, ErrorString e = new ErrorString()) {
-			if(it.Number == null) e.ac("Номер должен быть заполнен");
-			else checkNumber(it, it.Number, e);
-
-			if(it.ExpirationDate == null) e.ac("дата окончания срока действия должна быть заполнена");
-			checkExpirationDate(it, it.ExpirationDate, e);
-
-			if(it.Name == null) e.ac("Имя должно быть заполнено");
-			else checkName(it, it.Name, e);
-
-			if(it.Surname == null) e.ac("Фамилия должна быть заполнена");
-			else checkSurname(it, it.Surname, e);
-
-			if(it.MiddleName == null); //null middle name is fine
-			else checkMiddleName(it, it.Name, e);
+			checkNumber(it.Number, e);
+			checkExpirationDate(it.ExpirationDate, e);
+			checkName(it.Name, e);
+			checkSurname(it.Surname, e);
+			checkMiddleName(it.Name, e);
 
 			return e;
 		}
@@ -146,40 +139,42 @@ namespace Documents {
 		
 	[Serializable] public sealed class InternationalPassport : Document {
 		public static readonly int id = 1;
+		
+		public int Number{ get; }
+		public DateTime ExpirationDate{ get; }
+		public string Name{ get; }
+		public string Surname{ get; } 
+		public string MiddleName{ get; }
 
-
-		public int? Number;
-		private DateTime? expirationDate;
-		public string Name, Surname, MiddleName;
-
-		public DateTime? ExpirationDate{ 
-			get{ return expirationDate; } 
-			set{ expirationDate = value?.Date; }
+		public InternationalPassport(int number, DateTime expirationDate, string name, string surname, string middleName) {
+			if(name == null || surname == null) throw new InvalidOperationException();
+			this.Number = number;
+			this.ExpirationDate = expirationDate.Date;
+			this.Name = name;
+			this.Surname = surname;
+			this.MiddleName = middleName;
 		}
-
 
 		public override int Id{ get{ return id; } }
 
 		public override ErrorString validate() {
 			return InternationalPassportValidation.validate(this);
 		}
-		
 
 		public override bool Equals(object o) {
 			if(o == null || !(o is InternationalPassport)) return false;
 			var s = (InternationalPassport) o;
-			return Equals(Number, s.Number) && Equals(expirationDate, s.expirationDate)
+			return Equals(Number, s.Number) && Equals(ExpirationDate, s.ExpirationDate)
 				&& Equals(Name, s.Name) && Equals(Surname, s.Surname) && Equals(MiddleName, s.MiddleName);
 		}
 
 		public override int GetHashCode() {
 			int hashCode = -1848562201;
 			hashCode=hashCode*-1521134295+Number.GetHashCode();
-			hashCode=hashCode*-1521134295+expirationDate.GetHashCode();
+			hashCode=hashCode*-1521134295+ExpirationDate.GetHashCode();
 			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(Name);
 			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(Surname);
 			hashCode=hashCode*-1521134295+EqualityComparer<string>.Default.GetHashCode(MiddleName);
-			hashCode=hashCode*-1521134295+ExpirationDate.GetHashCode();
 			return hashCode;
 		}
 

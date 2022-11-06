@@ -8,7 +8,7 @@ using System.ServiceModel;
 using System.Windows.Forms;
 using Common;
 using Communication;
-using OperatorViewCommunication;
+using OperatorCommunication;
 
 namespace Operator {
 	public partial class SelectFlight : Form {

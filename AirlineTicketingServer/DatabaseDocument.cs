@@ -20,7 +20,7 @@ namespace Server {
 			else if(id == InternationalPassport.id) {
 				var it = (InternationalPassport) document;
 				s.Write((int) it.Number);
-				s.Write(it.ExpirationDate.Value.Ticks);
+				s.Write(it.ExpirationDate.Ticks);
 				s.Write(it.Name);
 				s.Write(it.Surname);
 				if(it.MiddleName == null) s.Write(false);
@@ -46,19 +46,21 @@ namespace Server {
 			var id = s.ReadInt32();
 
 			if(id == Passport.id) {
-				var it = new Passport();
-				it.Number = s.ReadInt64();
+				var number = s.ReadInt64();
+				var it = new Passport(number);
 				document = it;
 			}
 			else if(id == InternationalPassport.id) {
-				var it = new InternationalPassport();
-				it.Number = s.ReadInt32();
-				it.ExpirationDate = new System.DateTime(s.ReadInt64());
-				it.Name = s.ReadString();
-				it.Surname = s.ReadString();
+				var number = s.ReadInt32();
+				var expirationDate = new System.DateTime(s.ReadInt64());
+				var name = s.ReadString();
+				var surname = s.ReadString();
+				string middleName;
 				var hasMiddleName = s.ReadBoolean();
-				if(hasMiddleName) it.MiddleName = s.ReadString();
-				else it.MiddleName = null;
+				if(hasMiddleName) middleName = s.ReadString();
+				else middleName = null;
+
+				var it = new InternationalPassport(number, expirationDate, name, surname, middleName);
 				document = it;
 			}
 			else throw new System.InvalidOperationException();

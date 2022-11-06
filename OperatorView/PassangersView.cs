@@ -27,11 +27,11 @@ namespace Operator {
 			public int count{ get; set; }
 		}
 
-		OperatorViewCommunication.OperatorService service;
+		OperatorCommunication.OperatorService service;
 
 		Communication.Flight flight;
 
-		public OperatorViewCommunication.FlightDetails details;
+		public OperatorCommunication.FlightDetails details;
 
 		Context context;
 
@@ -39,9 +39,9 @@ namespace Operator {
 		Timer updateTimer;
 
 		public PassangersView(
-			OperatorViewCommunication.OperatorService service,
+			OperatorCommunication.OperatorService service,
 			Communication.Flight flight, 
-			OperatorViewCommunication.FlightDetails details,
+			OperatorCommunication.FlightDetails details,
 			Context context
 		) {
 			this.service = service;
@@ -129,7 +129,7 @@ namespace Operator {
 
 		struct PassangerBinding {
 			public int index;
-			public OperatorViewCommunication.FlightDetails details;
+			public OperatorCommunication.FlightDetails details;
 
 			[DisplayName("Место")] public string Seat{ get{
 				return details.seats.ToName(details.passangersAndSeats[index].seatIndex);

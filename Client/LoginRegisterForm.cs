@@ -8,10 +8,11 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Windows.Forms;
+using Client;
 using ClientCommunication;
 using Common;
 
-namespace ClientCommunication {
+namespace Client {
 
 	public partial class LoginRegisterForm : Form {
 		Customer customer;

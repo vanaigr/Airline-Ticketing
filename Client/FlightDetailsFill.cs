@@ -1,4 +1,5 @@
 ﻿using Client;
+using ClientCommunication;
 using Common;
 using Communication;
 using System;
@@ -7,7 +8,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class FlightDetailsFill : Form {
 		private Context context;
 		private ClientService service;
@@ -358,9 +359,7 @@ namespace ClientCommunication {
 			enumerator.MoveNext();
 			var index = bookingPassangers.Count;
 			bookingPassangers.Add(new BookingPassanger(
-				enumerator.Current,
-				Documents.Passport.id, 
-				new Documents.Passport()
+				enumerator.Current
 			));
 			enumerator.Dispose();
 
@@ -708,11 +707,11 @@ namespace ClientCommunication {
 		public int bookedFlightIndex;
 		//public Communication.BookedSeatInfo[] seatsInfo;
 
-		public ClientCommunication.BookedFlight BookedFlight(Customer it) {
+		public BookedFlight BookedFlight(Customer it) {
 			return it.flightsBooked[bookedFlightIndex];
 		}
 
-		public ClientCommunication.BookedFlightDetails BookedFlightDetails(Customer it) {
+		public BookedFlightDetails BookedFlightDetails(Customer it) {
 			return it.bookedFlightsDetails[bookedFlightIndex];
 		}
 	}

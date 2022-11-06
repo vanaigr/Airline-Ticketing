@@ -1,5 +1,5 @@
 ﻿
-namespace ClientCommunication {
+namespace Client {
 	partial class PassangerSettings {
 		/// <summary>
 		/// Required designer variable.
@@ -28,9 +28,9 @@ namespace ClientCommunication {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PassangerSettings));
 			this.mainTabs = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.passangerUpdate = new ClientCommunication.PassangerList();
+			this.passangerUpdate = new Client.PassangerList();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.passangerOptions = new ClientCommunication.PassangerOptions();
+			this.passangerOptions = new Client.PassangerOptions();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.applyButton = new System.Windows.Forms.Button();

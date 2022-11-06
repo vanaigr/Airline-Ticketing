@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Windows.Forms;
-using Client;
+using ClientCommunication;
 using Common;
 using Communication;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class SelectFlight : Form {
 		private ClientService service;
 		private Customer customer;

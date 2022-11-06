@@ -99,6 +99,7 @@
       <DependentUpon>BookingPassangerSummaryControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Context.cs" />
+    <Compile Include="DocumentsForms.cs" />
     <Compile Include="FlightBook.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -206,7 +206,7 @@ namespace Server {
             try {
 				string adress = "net.tcp://localhost:8080";
 				var clientService = LoggingProxy<ClientCommunication.ClientService>.Create("`Client server`", new ClientMessageService());
-				var operatorService = LoggingProxy<OperatorViewCommunication.OperatorService>.Create("`Operator server`",new OperatorMessageService());
+				var operatorService = LoggingProxy<OperatorCommunication.OperatorService>.Create("`Operator server`",new OperatorMessageService());
 				
 				clientHost = new ServiceHost(clientService, new Uri[] { new Uri(adress) });
 				clientHost.AddServiceEndpoint(typeof(ClientCommunication.ClientService), new NetTcpBinding(), "client-query");
@@ -214,7 +214,7 @@ namespace Server {
 				clientHost.Open();
 
 				operatorHost = new ServiceHost(operatorService, new Uri[] { new Uri(adress) });
-				operatorHost.AddServiceEndpoint(typeof(OperatorViewCommunication.OperatorService), new NetTcpBinding(), "operator-view");
+				operatorHost.AddServiceEndpoint(typeof(OperatorCommunication.OperatorService), new NetTcpBinding(), "operator-view");
 				operatorHost.Opened += (a, b) => Console.WriteLine("Operator server opened");
 				operatorHost.Open();
 

@@ -1,7 +1,7 @@
 ﻿
 using System.Drawing;
 
-namespace ClientCommunication {
+namespace Client {
 	partial class SelectFlight {
 		/// <summary>
 		/// Required designer variable.

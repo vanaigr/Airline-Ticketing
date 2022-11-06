@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using ClientCommunication;
+using Common;
 using Communication;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClientCommunication {
+namespace Client {
 	public partial class FlightBook : Form {
 		private ClientService service;
 		private Dictionary<int, string> classesNames;
@@ -57,12 +58,12 @@ namespace ClientCommunication {
 				bookFlightButton.Enabled = false;
 			}
 			else {
-				seatsAndOptions = new ClientCommunication.SeatAndOptions[bookingPassangers.Count];
+				seatsAndOptions = new SeatAndOptions[bookingPassangers.Count];
 				for(int i = 0; i < seatsAndOptions.Length; i++) {
 					var p = bookingPassangers[i];
 					var seatClassId = p.ClassId(seats);
 
-					seatsAndOptions[i] = new ClientCommunication.SeatAndOptions{
+					seatsAndOptions[i] = new SeatAndOptions{
 						selectedSeatClass = seatClassId,
 						seatIndex = p.manualSeatSelected ? p.seatIndex : (int?) null,
 						selectedOptions = new FlightsOptions.SelectedOptions(
@@ -78,13 +79,13 @@ namespace ClientCommunication {
 				}
 
 				localPassangers = new Dictionary<int, Passanger>();
-				selectedSeats = new ClientCommunication.SelectedSeat[seatsAndOptions.Length];
+				selectedSeats = new SelectedSeat[seatsAndOptions.Length];
 
 				for(int i = 0; i < bookingPassangers.Count; i++) {
 					var index = (int) bookingPassangers[i].passangerIndex;
 					var idInfo = customer.passangerIds[index];
 
-					selectedSeats[i] = new ClientCommunication.SelectedSeat{
+					selectedSeats[i] = new SelectedSeat{
 						fromTempPassangers = idInfo.IsLocal,
 						passangerId = idInfo.IsLocal ? index : idInfo.DatabaseId,
 						seatAndOptions = seatsAndOptions[i]
@@ -96,7 +97,7 @@ namespace ClientCommunication {
 				}
 				
 				try {
-					ClientCommunication.SeatCost[] seatsCost;
+					SeatCost[] seatsCost;
 
 					if(!status.booked) {
 						var result = service.calculateSeatsCost(this.flight.id, seatsAndOptions);
@@ -130,7 +131,7 @@ namespace ClientCommunication {
 			this.passangersSummaryPanel.PerformLayout();
 		}
 
-		private void updateSum(ClientCommunication.SeatCost[] seatsCost) {
+		private void updateSum(SeatCost[] seatsCost) {
 			var totalSum = 0;
 
 			var flightDetails = status.booked ? status.BookedFlightDetails(customer) : null;
@@ -139,8 +140,8 @@ namespace ClientCommunication {
 				var passanger = bookingPassangers[i];
 				var it = new BookingPassangerSummaryControl();
 
-				ClientCommunication.BookedSeatInfo? bookedSeatInfo;;
-				ClientCommunication.SeatCost seatCost;
+				BookedSeatInfo? bookedSeatInfo;;
+				SeatCost seatCost;
 
 				if(status.booked) {
 					bookedSeatInfo = flightDetails.bookedSeats[i];
@@ -201,12 +202,12 @@ namespace ClientCommunication {
 
 					var newIndex = customer.newBookedFlightIndex++;
 
-					customer.flightsBooked.Add(newIndex, new ClientCommunication.BookedFlight{
+					customer.flightsBooked.Add(newIndex, new BookedFlight{
 						bookedFlightId = booking.customerBookedFlightId, bookingFinishedTime = booking.bookingFinishedTime,
 						availableFlight = flight, bookedPassangerCount = bookingPassangers.Count,
 					});
 
-					customer.bookedFlightsDetails.Add(newIndex, new ClientCommunication.BookedFlightDetails{
+					customer.bookedFlightsDetails.Add(newIndex, new BookedFlightDetails{
 						bookedSeats = booking.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
 					});
 

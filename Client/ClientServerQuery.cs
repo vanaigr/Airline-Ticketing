@@ -1,4 +1,5 @@
-﻿using ClientCommunication;
+﻿using Client;
+using ClientCommunication;
 using Common;
 
 namespace Client {
