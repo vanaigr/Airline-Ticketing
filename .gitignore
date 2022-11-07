@@ -362,3 +362,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /AirlineTicketingServer/AirlineTicketingServer.exe
 /AirlineTicketingServer/AirlineTicketingServer.exe.config
+
+
+*.exe

@@ -17,7 +17,10 @@ namespace Server {
 		}
 
 		class PasswordHashing {
-			static readonly byte[] salt2 = new byte[] { 151, 232, 178, 30, 118, 115, 133, 45, 198, 114 };
+			private static readonly byte[] salt2 = new byte[] { 151, 232, 178, 30, 118, 115, 133, 45, 198, 114 };
+			private static System.Security.Cryptography.SHA512 sha512 
+				= System.Security.Cryptography.SHA512.Create();
+
 			public static readonly int maxLengh = (448/8) - salt2.Length;
 
 			public static byte[] computePasswordHash(byte[] salt, byte[] password) {
@@ -31,7 +34,7 @@ namespace Server {
 				salt2.CopyTo(passBytes, salt.Length);
 				password.CopyTo(passBytes, salt.Length + salt2.Length);
 
-				return new System.Security.Cryptography.SHA512Managed().ComputeHash(passBytes);
+				return sha512.ComputeHash(passBytes);
 			}
 		}
 
@@ -46,7 +49,8 @@ namespace Server {
 			var passE = PasswordHashing.computePasswordHash(
 				salt, Encoding.ASCII.GetBytes(password)
 			);
-
+			Common.Debug2.AssertPersistent(passE.Length == 64);
+			
 			command.CommandType = CommandType.StoredProcedure;
 			command.Parameters.AddWithValue("@Login", Encoding.ASCII.GetBytes(login));
 			command.Parameters.AddWithValue("@Salt", salt);
@@ -78,55 +82,55 @@ namespace Server {
 			using(cv) {
 			using(
 			var command = new SqlCommand(
-				@"SELECT TOP 1
-				  [LoginInfo].[CustomerID] AS ID,
-				  [LoginInfo].[Salt] AS Salt,
-				  [LoginInfo].[PasswordHash] AS PasswordHash
-				FROM [Customers].[LoginInfo] AS [LoginInfo]
-				WHERE [LoginInfo].[Login] = @Login", 
+				@"select top 1
+				  [LoginInfo].[CustomerID],
+				  [LoginInfo].[Salt],
+				  [LoginInfo].[PasswordHash]
+				from [Customers].[LoginInfo] as [LoginInfo]
+				where [LoginInfo].[Login] = @Login", 
 				cv.connection
 			)) {
-			command.CommandType = System.Data.CommandType.Text;
+			command.CommandType = CommandType.Text;
 			command.Parameters.AddWithValue("@Login", Encoding.ASCII.GetBytes(login));
 
 			cv.Open();
 			using(
 			var result = command.ExecuteReader()) {
 
-			if(result.Read()) {
-				var passEInDB = (byte[]) result["PasswordHash"];
-				var salt = (byte[])result["Salt"];
-				var id = (int) result["ID"];
-				result.Close();
-				command.Dispose();
-				cv.Dispose();
-				Common.Debug2.AssertPersistent(salt.Length == saltLength);
-
-				var passE = PasswordHashing.computePasswordHash(
-					salt, Encoding.ASCII.GetBytes(password)
-				);
-
-				bool passEqual = true;
-				Common.Debug2.AssertPersistent(passEInDB.Length == passE.Length && passE.Length == 64);
-
-				for(int i = 0; i < passEInDB.Length; i++) {
-					if(passEInDB[i] != passE[i]) {
-						passEqual = false;
-						break;
-					}
-				}
-
-				if(passEqual) return new LoginResult {
-					status = LoginResultStatus.OK,
-					userID = id
-				};
-				else return new LoginResult {
-					status = LoginResultStatus.WRONG_PASSWORD
-				};
-			}
-			else return new LoginResult {
+			if(!result.Read())  return new LoginResult {
 				status = LoginResultStatus.USER_NOT_EXISTS
 			};
+			
+			var id = (int) result[0];
+			var salt = (byte[])result[1];
+			var passEInDB = (byte[]) result[2];
+			result.Close();
+			command.Dispose();
+			cv.Dispose();
+			Common.Debug2.AssertPersistent(salt.Length == saltLength);
+
+			var passE = PasswordHashing.computePasswordHash(
+				salt, Encoding.ASCII.GetBytes(password)
+			);
+
+			Common.Debug2.AssertPersistent(passEInDB.Length == passE.Length && passE.Length == 64);
+
+			bool passEqual = true;
+			for(int i = 0; i < passEInDB.Length; i++) {
+				if(passEInDB[i] != passE[i]) {
+					passEqual = false;
+					break;
+				}
+			}
+
+			if(passEqual) return new LoginResult {
+				status = LoginResultStatus.OK,
+				userID = id
+			};
+			else return new LoginResult {
+				status = LoginResultStatus.WRONG_PASSWORD
+			};
+			
 			}}}
 		}
 		
