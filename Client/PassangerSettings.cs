@@ -108,6 +108,8 @@ namespace Client {
 			seatPositionTextbox.Enabled = false;
 			seatClassCombobox.Enabled = false;
 
+			pnrLabel.Text = "PNR: " + status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex].pnr;
+
 			applyButton.Text = "Выйти";
 			updateAutoseatClass();
 		}
@@ -152,14 +154,13 @@ namespace Client {
 				);
 
 				if(dResult == DialogResult.Yes) try {
+					var seat = bookedFlightDetails.bookedSeats[bookingPassangerIndex];
 					var result = service.deleteBookedSeat(
-						customer.customer.Value, (int) bookedFlight.bookedFlightId, 
-						bookedFlightDetails.bookedSeats[bookingPassangerIndex].selectedSeat
+						customer.passangers[customer.findPasangerIndexByDatabaseId(seat.passangerId).Value].surname,
+						seat.pnr
 					);
 
 					if(result) {
-						Common.Debug2.AssertPersistent(result.s == bookedFlightDetails.bookedSeats.Length-1);
-
 						DialogResult = DialogResult.Abort;
 					}
 					else {

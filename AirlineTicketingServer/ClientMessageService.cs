@@ -360,8 +360,9 @@ namespace Server {
 		});
 
 		//throw unexpected error
-		if(flightBookingResult == null || flightBookingResult.Tables.Count != 2
+		if(flightBookingResult == null || flightBookingResult.Tables.Count != 3
 			|| flightBookingResult.Tables[0] == null || flightBookingResult.Tables[1] == null
+			|| flightBookingResult.Tables[2] == null
 		) throw new Exception();
 
 		//extract data from procedure
@@ -393,6 +394,20 @@ namespace Server {
 			}
 		}
 
+		Dictionary<int, string> passangersPNRs; 
+		{
+			var table = flightBookingResult.Tables[2];
+
+			passangersPNRs = new Dictionary<int, string>(table.Rows.Count);
+
+			var ids = table.Columns["TempId"].Ordinal;
+			var pnr = table.Columns["PNR"].Ordinal;
+			for(var i = 0; i < table.Rows.Count; i++) {
+				var row = table.Rows[i];
+				passangersPNRs.Add((int) row[ids], (string) row[pnr]);
+			}
+		}
+
 		//prepare result
 		var result = new BookedSeatInfo[selectedSeats.Length];
 		for(int i = 0; i < result.Length; i++) {
@@ -412,6 +427,8 @@ namespace Server {
 				bookingSeatInfo.selectedSeat = selectedSeatsIndices[i];
 			}
 			else bookingSeatInfo.selectedSeat = (int) seat.seatAndOptions.seatIndex;
+
+			bookingSeatInfo.pnr = passangersPNRs[i];
 
 			bookingSeatInfo.cost = costs[i];
 
@@ -570,6 +587,7 @@ namespace Server {
 		public int passanger;
 		public short seatIndex;
 		public byte[] selectedOptionsBin;
+		public string pnr;
 	}
 
 	Either<BookedFlightDetails, LoginOrInputError> ClientService.getBookedFlightDetails(Account customer, int bookedFlightId) {
@@ -589,7 +607,7 @@ namespace Server {
 			end;
 
 
-			select [afs].[Passanger], [afs].[SeatIndex], [afs].[SelectedOptions]
+			select [afs].[Passanger], [afs].[SeatIndex], [afs].[SelectedOptions], [afs].[PNR]
 			from [Flights].[AvailableFlightsSeats] as [afs]
 			where [afs].[AvailableFlight] = @AvailableFlight
 				and [afs].[CustomerBookedFlightId] = @BookedFlightId
@@ -638,7 +656,8 @@ namespace Server {
 			rawPassangersData.Add(new RawPassangerData{
 				passanger = (int) result[0],
 				seatIndex = (short) result[1],
-				selectedOptionsBin = (byte[]) result[2]
+				selectedOptionsBin = (byte[]) result[2],
+				pnr = (string) result[3]
 			});
 		}
 
@@ -696,8 +715,11 @@ namespace Server {
 		for(int i = 0; i < selectedSeatsOptions.Length; i++) {
 			var it = new BookedSeatInfo();
 
-			it.passangerId = rawPassangersData[i].passanger;
-			it.selectedSeat = rawPassangersData[i].seatIndex;
+			var rpd = rawPassangersData[i];
+
+			it.pnr = rpd.pnr;
+			it.passangerId = rpd.passanger;
+			it.selectedSeat = rpd.seatIndex;
 			it.cost = costsResult.s[i];
 
 			bookedSeats[i] = it;
@@ -711,58 +733,49 @@ namespace Server {
 		}}
 	}
 
-	Either<int, LoginOrInputError> ClientService.deleteBookedSeat(Account customer, int bookedFlightId, int seatIndex) {
+	Either<Success, LoginOrInputError> ClientService.deleteBookedSeat(string surname, string pnr) {
 		using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 		using(
 		var command = new SqlCommand(
 			"[Flights].[UnbookSeat]", connection
 		)) {
 		command.CommandType = CommandType.StoredProcedure;
-		command.Parameters.AddWithValue("@BookedFlightId", bookedFlightId);
-		command.Parameters.AddWithValue("@SeatIndex", seatIndex);
-		var customerParam = command.Parameters.Add("@Customer", SqlDbType.Int);
-		var remainingPassangersParam = command.Parameters.Add("@RemainingPassangersCount", SqlDbType.Int);
-		remainingPassangersParam.Direction = ParameterDirection.Output;
+		command.Parameters.AddWithValue("@Surname", surname);
+		command.Parameters.AddWithValue("@PNR", pnr);
 
 		connection.Open();
-		var userIdRes = getUserId(new SqlConnectionView(connection, false), customer);
-		if(!userIdRes.IsSuccess) return Either<int, LoginOrInputError>.Failure(
-			new LoginOrInputError{ LoginError = userIdRes.Failure() }
-		);
-		customerParam.Value = userIdRes.s;
-
-		int remainingPassangersCount;
-		try{
-		command.ExecuteNonQuery();
-		remainingPassangersCount = (int) remainingPassangersParam.Value;
-		}
+		try{ command.ExecuteNonQuery(); }
 		catch(SqlException e) {
 			if(e.State == 2) {
-				return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+				return Either<Success, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError("Данный рейс не найден")
 				});
 			}
 			else if(e.State == 5) {
-				return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+				return Either<Success, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError("Данная бронь не найдена или не может быть отменена")
 				});
 			}
 			else if(e.State == 10) {
-				return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+				return Either<Success, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError("Бронь на данный полёт уже нельзя отменить")
 				});
 			}
 			else if(e.State == 20) {
-				return Either<int, LoginOrInputError>.Failure(new LoginOrInputError{
+				return Either<Success, LoginOrInputError>.Failure(new LoginOrInputError{
 					InputError = new InputError("Внутренняя ошибка")
 				});
 			}
 			else throw e;
 		}
 
-		return Either<int, LoginOrInputError>.Success(remainingPassangersCount);
+		return Either<Success, LoginOrInputError>.Success(new Success());
 		}}
 	}
-}
+
+		Either<BookedFlightDetails, LoginOrInputError> ClientService.getBookedFlightFromSurnameAndPNR(string surname, string pnr) {
+			throw new NotImplementedException();
+		}
+	}
 
 }

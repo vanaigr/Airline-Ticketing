@@ -61,6 +61,7 @@ namespace ClientCommunication {
 	[Serializable]
 	public struct BookedSeatInfo {
 		public int passangerId;
+		public string pnr;
 		public int selectedSeat;
 		public SeatCost cost;
 	}
@@ -117,6 +118,8 @@ namespace ClientCommunication {
 
 		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Account customer, int bookedFlightId);
 
-		[OperationContract] Either<int/*remainingPassangersCount*/, LoginOrInputError> deleteBookedSeat(Account customer, int bookedFlightId, int seatIndex);
+		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
+
+		[OperationContract] Either<Success, LoginOrInputError> deleteBookedSeat(string surname, string pnr);
 	}
 }

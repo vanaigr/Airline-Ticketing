@@ -86,6 +86,12 @@ namespace Client {
 			handLuggageLabel.Text = sb.ToString();
 
 			this.totalPriceLabel.Text = sb.Clear().Append("Итого: ").Append(seatCost.totalCost).Append(" руб.").ToString();
+
+			this.pnrLabel.Text = "";
+		}
+
+		public void setPNR(string pnr) {
+			this.pnrLabel.Text = "PNR: " + pnr;
 		}
 	}
 }

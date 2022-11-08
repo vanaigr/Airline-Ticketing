@@ -31,6 +31,7 @@ namespace Client {
 			this.baggageLabel = new System.Windows.Forms.Label();
 			this.seatLabel = new System.Windows.Forms.Label();
 			this.totalPriceLabel = new System.Windows.Forms.Label();
+			this.pnrLabel = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -40,6 +41,7 @@ namespace Client {
 			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this.pnrLabel, 0, 12);
 			this.tableLayoutPanel1.Controls.Add(this.basePriceLabel, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this.handLuggageLabel, 0, 8);
 			this.tableLayoutPanel1.Controls.Add(this.passangerNameLabel, 0, 0);
@@ -51,7 +53,7 @@ namespace Client {
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(3);
-			this.tableLayoutPanel1.RowCount = 11;
+			this.tableLayoutPanel1.RowCount = 13;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -63,7 +65,9 @@ namespace Client {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(51, 121);
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(51, 141);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// basePriceLabel
@@ -144,6 +148,19 @@ namespace Client {
 			this.totalPriceLabel.Text = "label1";
 			this.totalPriceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// pnrLabel
+			// 
+			this.pnrLabel.AutoSize = true;
+			this.pnrLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pnrLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.pnrLabel.Location = new System.Drawing.Point(3, 123);
+			this.pnrLabel.Margin = new System.Windows.Forms.Padding(0);
+			this.pnrLabel.Name = "pnrLabel";
+			this.pnrLabel.Size = new System.Drawing.Size(45, 15);
+			this.pnrLabel.TabIndex = 7;
+			this.pnrLabel.Text = "label1";
+			this.pnrLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
 			// BookingPassangerSummaryControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -154,7 +171,7 @@ namespace Client {
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "BookingPassangerSummaryControl";
-			this.Size = new System.Drawing.Size(51, 121);
+			this.Size = new System.Drawing.Size(51, 141);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
@@ -171,5 +188,6 @@ namespace Client {
 		private System.Windows.Forms.Label totalPriceLabel;
 		private System.Windows.Forms.Label handLuggageLabel;
 		private System.Windows.Forms.Label basePriceLabel;
+		private System.Windows.Forms.Label pnrLabel;
 	}
 }

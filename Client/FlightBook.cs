@@ -22,6 +22,8 @@ namespace Client {
 		private SeatAndOptions[] seatsAndOptions;
 		private SelectedSeat[] selectedSeats;
 
+		private BookingPassangerSummaryControl[] controls;
+
 		private Flight flight;
 		private FlightsSeats.Seats seats;
 
@@ -45,6 +47,8 @@ namespace Client {
 
 			this.status = status;
 
+			controls = new BookingPassangerSummaryControl[bookingPassangers.Count];
+
 			InitializeComponent();
 
 			Misc.fixFlowLayoutPanelHeight(passangersSummaryPanel);
@@ -54,6 +58,12 @@ namespace Client {
 
 			if(status.booked) {
 				updateSum(null);
+
+				for(int i = 0; i < controls.Length; i++) {
+					var it = controls[i];
+					it.setPNR(status.BookedFlightDetails(customer).bookedSeats[i].pnr);
+				}
+
 				statusOk("Бронирование было выполено успешно");
 				bookFlightButton.Enabled = false;
 			}
@@ -158,6 +168,8 @@ namespace Client {
 					bookedSeatInfo, seatCost, 
 					classesNames
 				);
+
+				controls[i] = it;
 				passangersSummaryPanel.Controls.Add(it);
 				totalSum += seatCost.totalCost;
 			}
@@ -210,6 +222,11 @@ namespace Client {
 					customer.bookedFlightsDetails.Add(newIndex, new BookedFlightDetails{
 						bookedSeats = booking.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
 					});
+
+					for(int i = 0; i < controls.Length; i++) {
+						var it = controls[i];
+						it.setPNR(booking.seatsInfo[i].pnr);
+					}
 
 					statusOk("Бронирование выполено успешно");
 					bookFlightButton.Enabled = false;

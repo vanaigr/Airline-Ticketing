@@ -42,6 +42,7 @@ namespace Client {
 			this.seatClassLabel = new System.Windows.Forms.Label();
 			this.statusLabel = new System.Windows.Forms.Label();
 			this.statusToolitp = new System.Windows.Forms.ToolTip(this.components);
+			this.pnrLabel = new System.Windows.Forms.Label();
 			this.mainTabs.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -126,9 +127,10 @@ namespace Client {
 			this.tableLayoutPanel2.AutoSize = true;
 			this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.BackColor = System.Drawing.Color.RoyalBlue;
-			this.tableLayoutPanel2.ColumnCount = 9;
+			this.tableLayoutPanel2.ColumnCount = 10;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -136,14 +138,15 @@ namespace Client {
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel2.Controls.Add(this.applyButton, 8, 0);
-			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 7, 0);
+			this.tableLayoutPanel2.Controls.Add(this.applyButton, 9, 0);
+			this.tableLayoutPanel2.Controls.Add(this.cancelButton, 8, 0);
 			this.tableLayoutPanel2.Controls.Add(this.deleteButton, 0, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatSelect, 2, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatPositionTextbox, 3, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatClassCombobox, 5, 0);
 			this.tableLayoutPanel2.Controls.Add(this.seatClassLabel, 4, 0);
-			this.tableLayoutPanel2.Controls.Add(this.statusLabel, 6, 0);
+			this.tableLayoutPanel2.Controls.Add(this.statusLabel, 7, 0);
+			this.tableLayoutPanel2.Controls.Add(this.pnrLabel, 6, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 434);
 			this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -270,11 +273,22 @@ namespace Client {
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.statusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.statusLabel.ForeColor = System.Drawing.Color.Salmon;
-			this.statusLabel.Location = new System.Drawing.Point(467, 0);
+			this.statusLabel.Location = new System.Drawing.Point(473, 0);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(244, 39);
+			this.statusLabel.Size = new System.Drawing.Size(238, 39);
 			this.statusLabel.TabIndex = 8;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// pnrLabel
+			// 
+			this.pnrLabel.AutoSize = true;
+			this.pnrLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pnrLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this.pnrLabel.Location = new System.Drawing.Point(467, 0);
+			this.pnrLabel.Name = "pnrLabel";
+			this.pnrLabel.Size = new System.Drawing.Size(1, 39);
+			this.pnrLabel.TabIndex = 9;
+			this.pnrLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// PassangerSettings
 			// 
@@ -316,5 +330,6 @@ namespace Client {
 		private System.Windows.Forms.Label seatClassLabel;
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.ToolTip statusToolitp;
+		private System.Windows.Forms.Label pnrLabel;
 	}
 }

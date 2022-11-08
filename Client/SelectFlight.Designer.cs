@@ -40,6 +40,7 @@ namespace Client {
 			this.fromLoc = new Common.CityComboBox();
 			this.flightsTable = new System.Windows.Forms.TableLayoutPanel();
 			this.elementHint = new System.Windows.Forms.ToolTip(this.components);
+			this.showBookedPassangerButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -57,6 +58,7 @@ namespace Client {
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+			this.tableLayoutPanel1.Controls.Add(this.statusLabel, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this.loginLayoutPanel, 4, 0);
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 2, 0);
@@ -64,9 +66,10 @@ namespace Client {
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1096, 51);
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1096, 71);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// loginLayoutPanel
@@ -92,7 +95,7 @@ namespace Client {
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel3.Controls.Add(this.pictureBox1, 0, 0);
-			this.tableLayoutPanel3.Controls.Add(this.statusLabel, 2, 0);
+			this.tableLayoutPanel3.Controls.Add(this.showBookedPassangerButton, 2, 0);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -119,14 +122,15 @@ namespace Client {
 			// 
 			// statusLabel
 			// 
-			this.statusLabel.AutoEllipsis = true;
+			this.statusLabel.AutoSize = true;
+			this.tableLayoutPanel1.SetColumnSpan(this.statusLabel, 5);
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.statusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
-			this.statusLabel.Location = new System.Drawing.Point(35, 10);
+			this.statusLabel.Location = new System.Drawing.Point(0, 51);
 			this.statusLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(176, 31);
+			this.statusLabel.Size = new System.Drawing.Size(1096, 20);
 			this.statusLabel.TabIndex = 1;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -212,21 +216,37 @@ namespace Client {
 			this.flightsTable.ColumnCount = 1;
 			this.flightsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.flightsTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flightsTable.Location = new System.Drawing.Point(0, 51);
+			this.flightsTable.Location = new System.Drawing.Point(0, 71);
 			this.flightsTable.Name = "flightsTable";
 			this.flightsTable.Padding = new System.Windows.Forms.Padding(10);
 			this.flightsTable.RowCount = 1;
 			this.flightsTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.flightsTable.Size = new System.Drawing.Size(1096, 399);
+			this.flightsTable.Size = new System.Drawing.Size(1096, 430);
 			this.flightsTable.TabIndex = 4;
 			this.flightsTable.Paint += new System.Windows.Forms.PaintEventHandler(this.flightsTable_Paint);
+			// 
+			// showBookedPassangerButton
+			// 
+			this.showBookedPassangerButton.AutoSize = true;
+			this.showBookedPassangerButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.showBookedPassangerButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+			this.showBookedPassangerButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
+			this.showBookedPassangerButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
+			this.showBookedPassangerButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.showBookedPassangerButton.Location = new System.Drawing.Point(38, 13);
+			this.showBookedPassangerButton.Name = "showBookedPassangerButton";
+			this.showBookedPassangerButton.Size = new System.Drawing.Size(114, 25);
+			this.showBookedPassangerButton.TabIndex = 1;
+			this.showBookedPassangerButton.Text = "Посмотреть бронь";
+			this.showBookedPassangerButton.UseVisualStyleBackColor = true;
+			this.showBookedPassangerButton.Click += new System.EventHandler(this.showBookedPassangerButton_Click);
 			// 
 			// SelectFlight
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
-			this.ClientSize = new System.Drawing.Size(1096, 450);
+			this.ClientSize = new System.Drawing.Size(1096, 501);
 			this.Controls.Add(this.flightsTable);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -236,6 +256,7 @@ namespace Client {
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);
+			this.tableLayoutPanel3.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.tableLayoutPanel4.ResumeLayout(false);
 			this.tableLayoutPanel4.PerformLayout();
@@ -258,5 +279,6 @@ namespace Client {
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
 		private System.Windows.Forms.Button findFlightsButton;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Button showBookedPassangerButton;
 	}
 }
