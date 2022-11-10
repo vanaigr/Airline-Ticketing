@@ -15,7 +15,7 @@ namespace Client {
 		private ClientService service;
 		private Dictionary<int, string> classesNames;
 
-		private Customer customer;
+		private CustomerContext customer;
 		private List<BookingPassanger> bookingPassangers;
 
 		private Dictionary<int, Passanger> localPassangers;
@@ -31,7 +31,7 @@ namespace Client {
 		
 		public FlightBook(
 			ClientService service,
-			Customer customer, List<BookingPassanger> bookingPassangers,
+			CustomerContext customer, List<BookingPassanger> bookingPassangers,
 			Flight flight, FlightsSeats.Seats seats,
 			Dictionary<int, string> classesNames,
 			BookingStatus status

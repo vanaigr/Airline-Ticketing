@@ -13,12 +13,12 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class FlightsHistory : Form {
 		private ClientService service;
-		private Customer customer;
+		private CustomerContext customer;
 
 		public FlightsHistory(
 			ClientService service,
 			Context context,
-			Customer customer
+			CustomerContext customer
 		) {
 			this.service = service;
 			this.customer = customer;

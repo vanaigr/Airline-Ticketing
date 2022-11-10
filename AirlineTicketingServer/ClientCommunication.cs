@@ -67,6 +67,14 @@ namespace ClientCommunication {
 		public SeatCost cost;
 	}
 
+	[Serializable] public sealed class PassangerBookedFlight {
+		public bool cancelled;
+		public int passangerId;
+		public Passanger Passanger;
+		public BookedFlight flight;
+		public BookedFlightDetails details;
+	}
+
 	[Serializable]
 	public struct LoginError {
 		public string message;
@@ -119,7 +127,7 @@ namespace ClientCommunication {
 
 		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Account customer, int bookedFlightId);
 
-		[OperationContract] Either<BookedFlightPassanger, InputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
+		[OperationContract] Either<PassangerBookedFlight, InputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
 
 		[OperationContract] Either<Success, LoginOrInputError> deleteBookedSeat(string surname, string pnr);
 	}

@@ -469,7 +469,7 @@ partial class ClientMessageService : ClientService {
 	}
 
 	class RawBookedFlight {
-		public int id;
+		public int bookedFlightId;
 		public int availableFlightId;
 		public string flightName;
 		public string airplaneName;
@@ -535,7 +535,7 @@ partial class ClientMessageService : ClientService {
 		var reader = command.ExecuteReader()) {
 		while(reader.Read()) {
 			var it = new RawBookedFlight();
-			it.id = (int) reader[0];
+			it.bookedFlightId = (int) reader[0];
 			it.availableFlightId = (int) reader[1];
 			it.flightName = (string) reader[2];
 			it.airplaneName = (string) reader[3];
@@ -556,7 +556,7 @@ partial class ClientMessageService : ClientService {
 		for(int i = 0; i < flights.Length; i++) {
 			var rawFlight = rawFlights[flights.Length-1 - i];
 			var it = new BookedFlight{
-				bookedFlightId = rawFlight.id,
+				bookedFlightId = rawFlight.bookedFlightId,
 				availableFlight = new Flight{
 					id = rawFlight.availableFlightId,
 
@@ -773,94 +773,174 @@ partial class ClientMessageService : ClientService {
 		}}
 	}
 
-	Either<BookedFlightPassanger, InputError> ClientService.getBookedFlightFromSurnameAndPNR(string surname, string pnr) {
-        using (var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
-        using (
-        var command = new SqlCommand(
-            @"
-            select 
-			    [pi].[Id], [pi].[Archived], [pi].[Name], [pi].[Surname],
-			    [pi].[MiddleName], [pi].[Birthday], [pi].[Document],
-			
-			    [afs].[SeatIndex], [aps].[SeatClass],
-				[afs].[SelectedOptions], [fi].[Options]
+	Either<PassangerBookedFlight, InputError> ClientService.getBookedFlightFromSurnameAndPNR(string surname, string pnr) {
+        using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+
+		using(var command = new SqlCommand(
+			@"
+			declare @AvailableFlight int;
+
+			select @AvailableFlight = [afs].[AvailableFlight]
+			from [Flights].[AvailableFlightsSeats] as [afs]
+			where [afs].[PNR] = @PNR;
+
+			select
+				[cbf].[Id] as [BookedFlightId],
+				[af].[Id] as [AvailableFlightId],
+				concat([fi].[AirlineDesignator], ' ', cast([fi].[Number] as char(4))) as [FlightName],
+				[ap].[Name] as [AirplaneName],
+				dateadd(minute, [af].[DepartureTimeMinutes], cast([af].[DepartureDate] as datetime)) as [DepDatetime],
+				[fi].[ArrivalOffsetMinutes] as [ArrivalOffsetMinutes],
+				[fi].[Options] as [Options],
+				[fi].[FromCity],
+				[fi].[ToCity],
+				[cbf].[PassangersCount],
+				[cbf].[BookedDatetime],
+
+				[pr].[Id], [pr].[Archived], [pr].[Name], [pr].[Surname],
+				[pr].[MiddleName], [pr].[Birthday], [pr].[Document],
+
+				[afs].[SelectedOptions], cast(case when [afs].[CanceledIndex] != 0 then 1 else 0 end as bit),
+				[afs].[SeatIndex], 
+				[fi].[Options]
 			from (
-			    select top 1 *
-			    from [Flights].[AvailableFlightsSeats] as [afs]
-			    where [afs].[PNR] = @PNR
+				select *
+				from [Flights].[AvailableFlightsSeats] as [afs]
+				where [afs].[PNR] = @PNR 
 			) as [afs]
-			
-			inner join [Customers].[Passanger] as [pi]
-			on [afs].[Passangers] = [pi].[Id] and [pi].[Surname] = @Surname
-			
+
+			inner join [Customers].[Passanger] as [pr]
+			on [afs].[Passanger] = [pr].[Id] and
+				[pr].[Surname] = @Surname
+
 			inner join [Flights].[AvailableFlights] as [af]
-			on [afs].[AvailableFLight] = [af].[Id]
+			on [af].[Id] = @AvailableFlight
 			
 			inner join [Flights].[FlightInfo] as [fi]
-			on [af].[FlightOptions] = [fi].[Id]
+			on [af].[FlightInfo]  = [fi].[Id]
 			
-			inner join [Flights].[AirplanesSeats] as [aps]
-			on [afs].[SeatIndex] = [aps].[SeatIndex]
-				 and [fi].[Airplane] = [aps].[Airplane]
-			",
-            connection
-        )) {
+			inner join [Flights].[Airplanes] as [ap]
+			on [fi].[Airplane] = [ap].[Id]
+			
+			left join [Customers].[CustomersBookedFlights] as [cbf]
+			on [afs].[CustomerBookedFlightId] = [cbf].[Id]
+			;
+
+			" + DatabaseSeatsExtraction.commandText, 
+			connection
+		)) {
 		command.CommandType = CommandType.Text;
 		command.Parameters.AddWithValue("@PNR", pnr);
 		command.Parameters.AddWithValue("@Surname", surname);
-		
-		var p = new Passanger();
 
-		using (
-		var result = command.ExecuteReader()) {
-		if(!result.Read()) return Either<BookedFlightPassanger, InputError>.Failure(
-			new InputError("Пассажир не найден")
-		);
-		
-		var pId = (int) result[0];
-		p.archived = (bool) result[1];
-		p.name = (string) result[2];
-		p.surname = (string) result[3];
-		p.middleName = (string) (result[4] is DBNull ? null : result[4]);
-		p.birthday = (DateTime) result[5];
-		var documentBin = (byte[]) result[6];
-		var seatIndex = (short) result[7];
-		var seatClass = (byte) result[8];
-		var selectedOptionsBin = (byte[]) result[9];
-		var optionsBin = (byte[]) result[10];
-		Common.Debug2.AssertPersistent(!result.Read());
+		var extractor = new DatabaseSeatsExtraction();
+		var rawFlight = new RawBookedFlight();
+		var passanger = new Passanger();
 
-		result.Close();
+		connection.Open();
+		using(
+		var reader = command.ExecuteReader()) {
+		if(!reader.Read()) return Either<PassangerBookedFlight, InputError>.Failure(new InputError(
+			"Пассажир не найден"
+		));
+
+		var bookedFlightId = (int?) (reader[0] is DBNull ? null : reader[0]);
+		rawFlight.availableFlightId = (int) reader[1];
+		rawFlight.flightName = (string) reader[2];
+		rawFlight.airplaneName = (string) reader[3];
+		rawFlight.departureDatetime = (DateTime) reader[4];
+		rawFlight.arrivalOffsetMinutes = (int) reader[5];
+		rawFlight.optionsBin = (byte[]) reader[6];
+		rawFlight.fromCode = (string) reader[7];
+		rawFlight.toCode = (string) reader[8];
+		rawFlight.bookedPassangersCount = (int) reader[9];
+		rawFlight.bookedDatetime = (DateTime) reader[10];
+
+		var passangerId = (int) reader[11];
+		passanger.archived = (bool) reader[12];
+		passanger.name = (string) reader[13];
+		passanger.surname = (string) reader[14];
+		passanger.middleName = (string) (reader[15] is DBNull ? null : reader[15]);
+		passanger.birthday = (DateTime) reader[16];
+		var documentBin = (byte[]) reader[17];
+
+		var selectedOptionsBin = (byte[]) reader[18];
+		var cancelled = (bool) reader[19];
+		var seatIndex = (short) reader[20];
+		var optionsBin = (byte[]) reader[21];
+
+		Common.Debug2.AssertPersistent(reader.FieldCount == 22);
+
+		Common.Debug2.AssertPersistent(reader.NextResult());
+		var executionResult = extractor.execute(reader);
+
+		Common.Debug2.AssertPersistent(!reader.Read());
+
+		reader.Close();
 		command.Dispose();
 		connection.Dispose();
+
+		if(!executionResult.IsSuccess) return Either<PassangerBookedFlight, InputError>.Failure(
+			executionResult.f
+		);
+
+		passanger.document = DatabaseDocument.fromBytes(documentBin);
+
+		var flight = new BookedFlight{
+			bookedFlightId = bookedFlightId,
+			availableFlight = new Flight{
+				id = rawFlight.availableFlightId,
+
+				departureTime = rawFlight.departureDatetime,
+				arrivalOffsteMinutes = rawFlight.arrivalOffsetMinutes,
+
+				flightName = rawFlight.flightName,
+				airplaneName = rawFlight.airplaneName,
+
+				optionsForClasses = DatabaseOptions.optionsFromBytes(rawFlight.optionsBin),
+				availableSeatsForClasses = null,
+
+				fromCode = rawFlight.fromCode,
+				toCode = rawFlight.toCode,
+			},
+			bookedPassangerCount = rawFlight.bookedPassangersCount,
+			bookingFinishedTime = rawFlight.bookedDatetime
+		};	
 		
+		var seats = extractor.calculate();
+
 		var options = DatabaseOptions.optionsFromBytes(optionsBin);
 		var selectedOptions = DatabaseOptions.selectedOptionsFromBytes(selectedOptionsBin);
 
-		var seatAndOptions = new SeatAndOptions[1];
-		seatAndOptions[0] = new SeatAndOptions{
-			seatIndex = seatIndex,
-			selectedOptions = selectedOptions,
-			selectedSeatClass = seatClass
-		};
+		var seatAndOptions = new SeatAndOptions();
+		seatAndOptions.seatIndex = selectedOptions.servicesOptions.seatSelected ? (int?) seatIndex : null;
+		seatAndOptions.selectedOptions = selectedOptions;
+		seatAndOptions.selectedSeatClass = seats.Class(seatIndex);
+
+
+		var costsArrResult = calculateSeatsCosts(options, new SeatAndOptions[]{ seatAndOptions });
+		if(!costsArrResult.IsSuccess) return Either<PassangerBookedFlight, InputError>.Failure(
+			new InputError("Ошибка вычисления цены: " + costsArrResult.f.message)
+		);
+		var costs = costsArrResult.s[0];
+
+		var bookedSeat = new BookedSeatInfo();
+		bookedSeat.pnr = pnr;
+		bookedSeat.passangerId = passangerId;
+		bookedSeat.selectedSeat = seatIndex;
+		bookedSeat.cost = costs;
 		
-		var costsRes = calculateSeatsCosts(options, seatAndOptions);
-		if(!costsRes.IsSuccess) return Either<BookedFlightPassanger, InputError>.Failure(costsRes.f);
-		var costs = costsRes.s;
 
-		p.document = DatabaseDocument.fromBytes(documentBin);
-
-		return Either<BookedFlightPassanger, InputError>.Success(new BookedFlightPassanger {
-			passanger = p,
-			bookedSeat = new BookedSeatInfo{ 
-				passangerId = pId, selectedSeat = seatIndex,
-				pnr = pnr, cost = costs[0]
+		return Either<PassangerBookedFlight, InputError>.Success(new PassangerBookedFlight{
+			cancelled = cancelled,
+			details = new BookedFlightDetails{ 
+				bookedSeats = new BookedSeatInfo[]{ bookedSeat },
+				seats = seats,
+				seatsAndOptions = new SeatAndOptions[]{ seatAndOptions },
 			},
-			seatAndOptions = new SeatAndOptions {
-				seatIndex = seatIndex,
-				selectedOptions = selectedOptions,
-				selectedSeatClass = seatClass
-			}
+			flight = flight,
+			passangerId = passangerId,
+			Passanger = passanger
 		});
 		}}}
     }

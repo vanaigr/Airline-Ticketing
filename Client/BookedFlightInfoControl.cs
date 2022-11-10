@@ -15,7 +15,7 @@ namespace Client {
 
 		private int bookedFlightIndex;
 		private BookedFlight bookedFlight;
-		private Customer customer;
+		private CustomerContext customer;
 		private Context context;
 
 		private SetStatus setStatus;
@@ -23,7 +23,7 @@ namespace Client {
 		public event EventHandler OnDelete;
 
 		public BookedFlightInfoControl(
-			ClientService service, Customer customer, 
+			ClientService service, CustomerContext customer, 
 			Context context,
 			int bookedFlightIndex,
 			SetStatus setStatus

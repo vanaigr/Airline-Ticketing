@@ -15,7 +15,7 @@ namespace Client {
 		}
 
 		public void set(
-			Customer customer, BookingPassanger bookingP,
+			CustomerContext customer, BookingPassanger bookingP,
 			FlightsSeats.Seats seats, Dictionary<int, FlightsOptions.Options> optionsForClasses, 
 			BookedSeatInfo? bookedSeatInfo, SeatCost seatCost,
 			Dictionary<int, string> classesNames

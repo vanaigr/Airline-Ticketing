@@ -13,7 +13,7 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class PassangerSettings : Form {
 		private ClientService service;
-		private Customer customer;
+		private CustomerContext customer;
 		private BookingStatus status;
 
 		private Dictionary<int, string> classesNames;
@@ -39,7 +39,7 @@ namespace Client {
 		bool ignore__ = false;
 
 		public PassangerSettings(
-			ClientService service, Customer customer, BookingStatus status,
+			ClientService service, CustomerContext customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats, SeatHandling seatHandling,
 			BookingPassanger passanger, int bookingPassangerIndex,
 			Dictionary<int , FlightsOptions.Options> optionsForClasses, 
@@ -108,7 +108,8 @@ namespace Client {
 			seatPositionTextbox.Enabled = false;
 			seatClassCombobox.Enabled = false;
 
-			pnrLabel.Text = "PNR: " + status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex].pnr;
+			pnrNameLabel.Visible = true;
+			pnrLabel.Text = status.BookedFlightDetails(customer).bookedSeats[bookingPassangerIndex].pnr;
 
 			applyButton.Text = "Выйти";
 			updateAutoseatClass();

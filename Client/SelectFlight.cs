@@ -10,7 +10,7 @@ using Communication;
 namespace Client {
 	public partial class SelectFlight : Form {
 		private ClientService service;
-		private Customer customer;
+		private CustomerContext customer;
 
 		//string[] avaliableFlightClasses;
 		//List<City> cities;
@@ -19,7 +19,7 @@ namespace Client {
 		private Dictionary<int/*flightId*/, FlightDetailsFill> openedBookings = new Dictionary<int, FlightDetailsFill>();
 		
 		public SelectFlight() {
-			customer = new Customer();
+			customer = new CustomerContext();
 
             InitializeComponent();
 
@@ -301,7 +301,7 @@ namespace Client {
 		}
 
 		private void showBookedPassangerButton_Click(object sender, EventArgs e) {
-
+			new BookedFlightByPNRForm(context, service).Show();
 		}
 	}
 }

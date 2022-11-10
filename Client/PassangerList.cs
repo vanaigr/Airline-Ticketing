@@ -9,7 +9,7 @@ using ClientCommunication;
 namespace Client {
 	public partial class PassangerList : UserControl {
 		private ClientService service;
-		private Customer customer;
+		private CustomerContext customer;
 		private BookingStatus status;
 
 		private Dictionary<int, PassangerDisplay> passangersDisplays;
@@ -126,7 +126,7 @@ namespace Client {
 			setStateNone();
 		}
 
-		public void init(ClientService sq, Customer customer, BookingStatus status, BookingPassanger passanger) {
+		public void init(ClientService sq, CustomerContext customer, BookingStatus status, BookingPassanger passanger) {
 			this.service = sq;
 			this.status = status;
 			this.customer = customer;

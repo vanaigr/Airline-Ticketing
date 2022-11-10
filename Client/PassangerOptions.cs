@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Client {
 	public partial class PassangerOptions : UserControl {
 		private ClientService service;
-		private Customer customer;
+		private CustomerContext customer;
 		private BookingStatus status;
 		private int flightId;
 
@@ -38,7 +38,7 @@ namespace Client {
 
 		public void init(
 			ClientService service,
-			Customer customer, BookingStatus status,
+			CustomerContext customer, BookingStatus status,
 			int flightId, FlightsSeats.Seats seats,
 			Dictionary<int, FlightsOptions.Options> optionsForClasses,
 			BookingPassanger passanger, int bookingPassangerIndex

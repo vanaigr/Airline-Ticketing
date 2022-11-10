@@ -85,6 +85,12 @@
     <Compile Include="BaggageOption.Designer.cs">
       <DependentUpon>BaggageOption.cs</DependentUpon>
     </Compile>
+    <Compile Include="BookedFlightByPNRForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BookedFlightByPNRForm.Designer.cs">
+      <DependentUpon>BookedFlightByPNRForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="BookedFlightInfoControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -147,7 +153,7 @@
     <Compile Include="PassangerList.Designer.cs">
       <DependentUpon>PassangerList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Customer.cs" />
+    <Compile Include="CustomerContext.cs" />
     <Compile Include="PassangerDisplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -184,6 +190,9 @@
     </Compile>
     <EmbeddedResource Include="BaggageOption.resx">
       <DependentUpon>BaggageOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BookedFlightByPNRForm.resx">
+      <DependentUpon>BookedFlightByPNRForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="BookedFlightInfoControl.resx">
       <DependentUpon>BookedFlightInfoControl.cs</DependentUpon>

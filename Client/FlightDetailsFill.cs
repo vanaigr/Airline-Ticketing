@@ -12,7 +12,7 @@ namespace Client {
 	public partial class FlightDetailsFill : Form {
 		private Context context;
 		private ClientService service;
-		private Customer customer;
+		private CustomerContext customer;
 
 		private List<PassangerDisplay> curPassangersDisplays;
 		private List<BookingPassanger> bookingPassangers;
@@ -28,7 +28,7 @@ namespace Client {
 		public Flight CurrentFlight{ get{ return flight; } }
 
 		public FlightDetailsFill(
-			ClientService service, Customer customer,
+			ClientService service, CustomerContext customer,
 			Context context,
 			BookingStatus status,
 			Flight flight, FlightsSeats.Seats seats
@@ -707,11 +707,11 @@ namespace Client {
 		public int bookedFlightIndex;
 		//public Communication.BookedSeatInfo[] seatsInfo;
 
-		public BookedFlight BookedFlight(Customer it) {
+		public BookedFlight BookedFlight(CustomerContext it) {
 			return it.flightsBooked[bookedFlightIndex];
 		}
 
-		public BookedFlightDetails BookedFlightDetails(Customer it) {
+		public BookedFlightDetails BookedFlightDetails(CustomerContext it) {
 			return it.bookedFlightsDetails[bookedFlightIndex];
 		}
 	}

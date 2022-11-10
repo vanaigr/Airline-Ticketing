@@ -15,14 +15,14 @@ using Common;
 namespace Client {
 
 	public partial class LoginRegisterForm : Form {
-		Customer customer;
+		CustomerContext customer;
 		ClientService service;
 
 		public AbortAction beforeChangeAccount;
 
 		public delegate bool AbortAction();
 
-		public LoginRegisterForm(ClientService service, Customer customer) {
+		public LoginRegisterForm(ClientService service, CustomerContext customer) {
 			this.service = service;
 			this.customer = customer;
 
