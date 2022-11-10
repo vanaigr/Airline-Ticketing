@@ -47,7 +47,7 @@ static class DatabaseFlights {
 
 				[fromCode], [toCode]
 			from [Flights].[FindFlights](@fromCity, @toCity, @time, @MustBeAbleToBook) 
-			order by [DepartureDatetime] desc",
+			order by [DepartureDatetime] asc",
 			connection
 		)) {
 		selectClasses.CommandType = CommandType.Text;
@@ -78,9 +78,8 @@ static class DatabaseFlights {
 		}}}
 
 		var list = new List<Flight>(rawAvailableFlights.Count);
-		for(int i = rawAvailableFlights.Count-1; i >= 0 ; i--) {
+		for(int i = 0; i < rawAvailableFlights.Count; i++) {
 			var raf = rawAvailableFlights[i];
-			rawAvailableFlights.RemoveAt(i);
 			list.Add(new Flight{
 				id = raf.id,
 				departureTime = raf.departureTime,

@@ -91,6 +91,7 @@
     <Compile Include="BookedFlightInfoControl.Designer.cs">
       <DependentUpon>BookedFlightInfoControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="BookedPassanger.cs" />
     <Compile Include="BookingPassanger.cs" />
     <Compile Include="BookingPassangerSummaryControl.cs">
       <SubType>UserControl</SubType>

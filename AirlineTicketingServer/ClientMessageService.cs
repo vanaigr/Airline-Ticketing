@@ -11,8 +11,8 @@ using System.ServiceModel;
 
 namespace Server {
 
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = false)]
-	partial class ClientMessageService : ClientService {
+[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = false)]
+partial class ClientMessageService : ClientService {
 	Either<Success, LoginError> checkAccountDataValid(Account c) {
 		if(c.login == null) c.login = "";
 		if(c.password == null) c.password = "";
@@ -773,9 +773,97 @@ namespace Server {
 		}}
 	}
 
-		Either<BookedFlightDetails, LoginOrInputError> ClientService.getBookedFlightFromSurnameAndPNR(string surname, string pnr) {
-			throw new NotImplementedException();
-		}
-	}
+	Either<BookedFlightPassanger, InputError> ClientService.getBookedFlightFromSurnameAndPNR(string surname, string pnr) {
+        using (var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+        using (
+        var command = new SqlCommand(
+            @"
+            select 
+			    [pi].[Id], [pi].[Archived], [pi].[Name], [pi].[Surname],
+			    [pi].[MiddleName], [pi].[Birthday], [pi].[Document],
+			
+			    [afs].[SeatIndex], [aps].[SeatClass],
+				[afs].[SelectedOptions], [fi].[Options]
+			from (
+			    select top 1 *
+			    from [Flights].[AvailableFlightsSeats] as [afs]
+			    where [afs].[PNR] = @PNR
+			) as [afs]
+			
+			inner join [Customers].[Passanger] as [pi]
+			on [afs].[Passangers] = [pi].[Id] and [pi].[Surname] = @Surname
+			
+			inner join [Flights].[AvailableFlights] as [af]
+			on [afs].[AvailableFLight] = [af].[Id]
+			
+			inner join [Flights].[FlightInfo] as [fi]
+			on [af].[FlightOptions] = [fi].[Id]
+			
+			inner join [Flights].[AirplanesSeats] as [aps]
+			on [afs].[SeatIndex] = [aps].[SeatIndex]
+				 and [fi].[Airplane] = [aps].[Airplane]
+			",
+            connection
+        )) {
+		command.CommandType = CommandType.Text;
+		command.Parameters.AddWithValue("@PNR", pnr);
+		command.Parameters.AddWithValue("@Surname", surname);
+		
+		var p = new Passanger();
+
+		using (
+		var result = command.ExecuteReader()) {
+		if(!result.Read()) return Either<BookedFlightPassanger, InputError>.Failure(
+			new InputError("Пассажир не найден")
+		);
+		
+		var pId = (int) result[0];
+		p.archived = (bool) result[1];
+		p.name = (string) result[2];
+		p.surname = (string) result[3];
+		p.middleName = (string) (result[4] is DBNull ? null : result[4]);
+		p.birthday = (DateTime) result[5];
+		var documentBin = (byte[]) result[6];
+		var seatIndex = (short) result[7];
+		var seatClass = (byte) result[8];
+		var selectedOptionsBin = (byte[]) result[9];
+		var optionsBin = (byte[]) result[10];
+		Common.Debug2.AssertPersistent(!result.Read());
+
+		result.Close();
+		command.Dispose();
+		connection.Dispose();
+		
+		var options = DatabaseOptions.optionsFromBytes(optionsBin);
+		var selectedOptions = DatabaseOptions.selectedOptionsFromBytes(selectedOptionsBin);
+
+		var seatAndOptions = new SeatAndOptions[1];
+		seatAndOptions[0] = new SeatAndOptions{
+			seatIndex = seatIndex,
+			selectedOptions = selectedOptions,
+			selectedSeatClass = seatClass
+		};
+		
+		var costsRes = calculateSeatsCosts(options, seatAndOptions);
+		if(!costsRes.IsSuccess) return Either<BookedFlightPassanger, InputError>.Failure(costsRes.f);
+		var costs = costsRes.s;
+
+		p.document = DatabaseDocument.fromBytes(documentBin);
+
+		return Either<BookedFlightPassanger, InputError>.Success(new BookedFlightPassanger {
+			passanger = p,
+			bookedSeat = new BookedSeatInfo{ 
+				passangerId = pId, selectedSeat = seatIndex,
+				pnr = pnr, cost = costs[0]
+			},
+			seatAndOptions = new SeatAndOptions {
+				seatIndex = seatIndex,
+				selectedOptions = selectedOptions,
+				selectedSeatClass = seatClass
+			}
+		});
+		}}}
+    }
+}
 
 }

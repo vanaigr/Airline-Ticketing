@@ -30,7 +30,7 @@ namespace Server {
 	}
 	
 	static class DatabasePassanger {
-		struct RawPassanger {
+		public struct RawPassanger {
 			public int index;
 			public bool archived;
 			public string name, surname, middleName;

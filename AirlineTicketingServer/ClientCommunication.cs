@@ -44,6 +44,7 @@ namespace ClientCommunication {
 		public DateTime bookingFinishedTime;
 	}
 
+
 	[Serializable]
 	public sealed class BookedFlightDetails {
 		public BookedSeatInfo[] bookedSeats;
@@ -118,7 +119,7 @@ namespace ClientCommunication {
 
 		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Account customer, int bookedFlightId);
 
-		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
+		[OperationContract] Either<BookedFlightPassanger, InputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
 
 		[OperationContract] Either<Success, LoginOrInputError> deleteBookedSeat(string surname, string pnr);
 	}
