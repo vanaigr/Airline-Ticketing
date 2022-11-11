@@ -5,6 +5,12 @@ using System.Linq;
 using System.Text;
 
 namespace Server {
+	public static class DBNullWrap {
+		public static object wrapDBNull<T>(this T it) {
+			return it == null ? DBNull.Value : (object) it;
+		}
+	}	
+
 	public static class SqlConnectionOpen {
 		public static void Open2(this SqlConnection connection) {
 			if(connection != null && connection.State == System.Data.ConnectionState.Closed) 

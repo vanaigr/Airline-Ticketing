@@ -94,7 +94,19 @@
     <Compile Include="FlightDisplay.Designer.cs">
       <DependentUpon>FlightDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="MenuForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MenuForm.Designer.cs">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="OperatorServerQuery.cs" />
+    <Compile Include="PassangersList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PassangersList.Designer.cs">
+      <DependentUpon>PassangersList.cs</DependentUpon>
+    </Compile>
     <Compile Include="PassangersView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,6 +121,18 @@
     <Compile Include="SelectFlight.Designer.cs">
       <DependentUpon>SelectFlight.cs</DependentUpon>
     </Compile>
+    <Compile Include="SelectPassanger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectPassanger.Designer.cs">
+      <DependentUpon>SelectPassanger.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="MenuForm.resx">
+      <DependentUpon>MenuForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PassangersList.resx">
+      <DependentUpon>PassangersList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PassangersView.resx">
       <DependentUpon>PassangersView.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,6 +152,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SelectPassanger.resx">
+      <DependentUpon>SelectPassanger.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

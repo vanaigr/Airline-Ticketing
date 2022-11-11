@@ -83,7 +83,7 @@ static class DatabaseFlights {
 			list.Add(new Flight{
 				id = raf.id,
 				departureTime = raf.departureTime,
-				arrivalOffsteMinutes = raf.arrivalOffsteMinutes,
+				arrivalOffsetMinutes = raf.arrivalOffsteMinutes,
 
 				fromCode = raf.fromCode,
 				toCode = raf.toCode,
@@ -98,6 +98,92 @@ static class DatabaseFlights {
 		}
 
 		return list;
+	}
+
+	public static Either<SeatCost[], InputError> calculateSeatsCosts(
+		Dictionary<int, Options> options, SeatAndOptions[] seats
+	) {
+		var seatsCost = new SeatCost[seats.Length];
+
+		for(int i = 0; i < seats.Length; i++) {
+			var seat = seats[i];
+			var opt = options[seat.selectedSeatClass];
+
+			var hi = seat.selectedOptions.baggageOptions.handLuggageIndex;
+			var bi = seat.selectedOptions.baggageOptions.baggageIndex;
+			if(
+				bi < 0 || bi >= opt.baggageOptions.baggage.Count ||
+				hi < 0 || hi >= opt.baggageOptions.handLuggage.Count
+			) return Either<SeatCost[], InputError>.Failure( 
+				new InputError{ message = "для пассажира" + (seats.Length == 1 ? "" : " " + i) + " не заданы опции для багажа" }
+			);
+
+			if(seat.selectedOptions.servicesOptions.seatSelected != (seat.seatIndex != null)) {
+				return Either<SeatCost[], InputError>.Failure(new InputError{ 
+						message = "для пассажира" + (seats.Length == 1 ? "" : " " + i) 
+						+ " неправильно задана опция автовыбора места" 
+				});
+			}
+
+			var baggageOption = opt.baggageOptions.baggage[bi];
+			var handLuggageOption = opt.baggageOptions.handLuggage[hi];
+
+			var sd = new SeatCost(){
+				basePrice = opt.servicesOptions.basePriceRub,
+				baggageCost = baggageOption.costRub + handLuggageOption.costRub,
+				seatCost = opt.servicesOptions.seatChoiceCostRub * (seat.selectedOptions.servicesOptions.seatSelected ? 1 : 0)
+			};
+
+			sd.totalCost = sd.basePrice + sd.baggageCost + sd.seatCost;
+
+			seatsCost[i] = sd;
+		}
+
+		return Either<SeatCost[], InputError>.Success(seatsCost);
+	}
+
+	public static Either<Dictionary<int, Options>, InputError> extractOptions(
+		SqlConnectionView cv, int availableFlightId
+	) {
+		using(cv) {
+		using(
+		var command = new SqlCommand(
+			@"select top 1 
+				[fi].[Options],
+				[ap].[SeatsScheme]
+			from (
+				select * from [Flights].[AvailableFlights] as [af]
+				where [af].[Id] = @AvailableFlight
+			) as [af]
+
+			inner join [Flights].[FlightInfo] as [fi]
+			on [af].[FlightInfo] = [fi].[Id]
+			
+			inner join [Flights].[Airplanes] as [ap]
+			on [fi].[Airplane] = [ap].[Id]",
+			cv.connection
+		)) {
+		command.CommandType = CommandType.Text;
+		command.Parameters.AddWithValue("@AvailableFlight", availableFlightId);
+
+		cv.Open();
+		using(
+		var result = command.ExecuteReader()) {
+
+		if(!result.Read()) return Either<Dictionary<int, Options>, InputError>.Failure(new InputError(
+			"Выбранного рейса не существует"
+		));
+
+		var optionsBin = (byte[]) result[0];
+
+		result.Close();
+		command.Dispose();
+		cv.Dispose();
+
+		var options = DatabaseOptions.optionsFromBytes(optionsBin);
+
+		return Either<Dictionary<int, Options>, InputError>.Success(options);
+		}}}
 	}
 }
 }

@@ -16,8 +16,8 @@ namespace Client {
 
 		private BookingPassanger passanger;
 
-		private DocumentFields generalDataFields;
-		private DocumentFields documentFields;
+		private FieldsDisplay generalDataFields;
+		private FieldsDisplay documentFields;
 
 		private sealed class FormPassanger {
 			public string name, surname, middleName;
@@ -63,16 +63,16 @@ namespace Client {
 
 			curState = State.select;
 
-			deleteButton.Enabled = true;
-			editButton.Enabled = true;
-			addButton.Enabled = true;
-			passangerDataTable.Enabled = false;
-
 			if(currentPassangerIndex != null) passangersDisplays[(int) currentPassangerIndex].BackColor = Color.White;
 			currentPassangerIndex = newSelectedPassangerIndex;
 			passangersDisplays[newSelectedPassangerIndex].BackColor = Misc.selectionColor3;
-			
-			setDataFromPassanger(customer.passangers[newSelectedPassangerIndex]);
+			var curPassanger = customer.passangers[newSelectedPassangerIndex];
+			setDataFromPassanger(curPassanger);
+
+			deleteButton.Enabled = !curPassanger.archived;
+			editButton.Enabled = true;
+			addButton.Enabled = true;
+			passangerDataTable.Enabled = false;
 
 			saveButton.Visible = false;
 		}
@@ -84,6 +84,8 @@ namespace Client {
 
 			curState = State.edit;
 
+			var passanger = customer.passangers[(int) currentPassangerIndex];
+
 			deleteButton.Enabled = true;
 			editButton.Enabled = false;
 			addButton.Enabled = true;
@@ -91,7 +93,6 @@ namespace Client {
 
 			saveButton.Visible = true;
 
-			var passanger = customer.passangers[(int) currentPassangerIndex];
 			if(passanger.archived) saveButton.Text = "Сохранить копию";
 			else saveButton.Text = "Сохранить";
 		}
@@ -101,9 +102,9 @@ namespace Client {
 
 			curState = State.none;
 
-			addButton.Enabled = true;
 			deleteButton.Enabled = false;
 			editButton.Enabled = false;
+			addButton.Enabled = true;
 			passangerDataTable.Enabled = false;
 
 			if(currentPassangerIndex != null) passangersDisplays[(int) currentPassangerIndex].BackColor = Color.White;
@@ -117,8 +118,16 @@ namespace Client {
 		public PassangerList() {
 			InitializeComponent();
 
-			generalDataFields = new DocumentFields(() => this.ActiveControl = null, setStatus, generalDataTooltip, generalDataPanel, startFieldIndex: 0);
-			documentFields = new DocumentFields(() => this.ActiveControl = null, setStatus, documentFieldsTooltip, documentTable, startFieldIndex: 1);
+			generalDataFields = new FieldsDisplay(
+				() => this.ActiveControl = null, setStatus, 
+				generalDataTooltip, generalDataPanel,
+				startFieldIndex: 0, colsCount: 3, rowOffset: 1
+			);
+			documentFields = new FieldsDisplay(
+				() => this.ActiveControl = null, setStatus, 
+				documentFieldsTooltip, documentTable, 
+				startFieldIndex: 1, colsCount: 3, rowOffset: 0
+			);
 		}
 
 		public void selectNone() {
@@ -623,147 +632,7 @@ namespace Client {
 			setStateEdit();
 		}
 
-		private class DocumentFields {
-			private int startFieldIndex;
-
-			private int fieldIndex;
-
-			private TableLayoutPanel panel;
-			private SetStatus setStatus;
-			private ToolTip documentFieldsTooltip;
-			private RemoveFocus removeFocus;
-
-			private List<Control> addedControls;
-			private List<Action> fieldUpdates;
-
-			public delegate void RemoveFocus();
-			public delegate void SetStatus(bool err, string input);
-			public delegate void ValidateText(string input);
-			public delegate void ValidateDate(DateTime input);
-
-			public DocumentFields(
-				RemoveFocus removeFocus,
-				SetStatus setStatus,
-				ToolTip documentFieldsTooltip,
-				TableLayoutPanel panel,
-				int startFieldIndex
-			) {
-				this.removeFocus = removeFocus;
-				this.fieldIndex = (this.startFieldIndex = startFieldIndex) - 1;
-				this.fieldUpdates = new List<Action>();
-				this.setStatus = setStatus;
-				this.documentFieldsTooltip = documentFieldsTooltip;
-				this.panel = panel;
-				addedControls = new List<Control>();
-			}
-
-			public void addField() {
-				fieldIndex++;
-				if(fieldIndex != 0 && fieldIndex % 3 == 0) {
-					panel.RowCount += 3;
-					panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 10));
-					panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-					panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-				}
-			}
-
-			public Label fieldName(string text) {
-				var it = new Label();
-
-				it.Dock = DockStyle.Fill;
-				it.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-				it.Text = text;
-				it.TextAlign = ContentAlignment.BottomLeft;
-				it.AutoSize = true;
-				documentFieldsTooltip.SetToolTip(it, text);
-
-				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 1);
-				addedControls.Add(it);
-				return it;
-			}
-
-			public TextBox textField(string defaultValue, ValidateText validate) {
-				var it = new TextBox();
-				it.Dock = DockStyle.Fill;
-				it.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-				it.Text = defaultValue;
-
-				it.KeyDown += (a, b) => { validateTextField(it, validate);  if(b.KeyCode == Keys.Enter) { removeFocus(); } };
-				it.LostFocus += (a, b) => { validateTextField(it, validate); };
-				fieldUpdates.Add(() => { validateTextField(it, validate); });
-
-				addedControls.Add(it);
-				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 2);
-				return it;
-			}
-
-			private void validateTextField(TextBox it, ValidateText validate) {
-				try{ 
-					validate(it.Text);
-					it.ForeColor = SystemColors.ControlText;
-					documentFieldsTooltip.SetToolTip(it, null);
-					setStatus(false, null);
-				}
-				catch(Documents.IncorrectValue iv) {
-					it.ForeColor = Color.Firebrick;
-					documentFieldsTooltip.SetToolTip(it, iv.Message);
-					setStatus(true, iv.Message);
-				}
-			}
-
-			public DateTimePicker dateField(DateTime defaultValue, ValidateDate validate) {
-				var it = new DateTimePicker();
-				it.Dock = DockStyle.Fill;
-				it.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-				it.Value = defaultValue;
-
-				it.KeyDown += (a, b) => { if(b.KeyCode == Keys.Enter) { validateDateField(it, validate); removeFocus(); } };
-				it.LostFocus += (a, b) => { validateDateField(it, validate); };
-				fieldUpdates.Add(() => { validateDateField(it, validate); });
-
-				addedControls.Add(it);
-				panel.Controls.Add(it, fieldIndex%3, fieldIndex/3 * 3 + 2);
-				return it;
-			}
-
-			private void validateDateField(DateTimePicker it, ValidateDate validate) {
-				try{ 
-					validate(it.Value);
-					it.ForeColor = SystemColors.ControlText;
-					documentFieldsTooltip.SetToolTip(it, null);
-					setStatus(false, null);
-				}
-				catch(Documents.IncorrectValue iv) {
-					it.ForeColor = Color.Firebrick;
-					documentFieldsTooltip.SetToolTip(it, iv.Message);
-					setStatus(true, iv.Message);
-				}
-			}
-
-			public void clear() {
-				this.fieldIndex = this.startFieldIndex - 1;
-				documentFieldsTooltip.RemoveAll();
-				foreach(var it in addedControls) it.Dispose();
-				addedControls.Clear();
-				fieldUpdates.Clear();
-				panel.RowCount = 2;
-			}
-
-			public void Suspend() {
-				panel.SuspendLayout();
-			}
-
-			public void Resume() {
-				panel.ResumeLayout(false);
-				panel.PerformLayout();
-			}
-
-			public void forceUpdateAllFields() {
-				foreach(var update in fieldUpdates) {
-					update.Invoke();
-				}
-			}
-		}
+		
 
 		
 		private bool ignore__;
@@ -795,87 +664,32 @@ namespace Client {
 
 				documentFields.addField();
 				documentFields.fieldName("Номер:*");
-				documentFields.textField(passport.Number?.ToString(), text => {
-					try { 
-						long res;
-						var success = long.TryParse(text, out res);
-						if(!success) throw new Documents.IncorrectValue("Номер паспорта дожлен включать только цифры");
-						Documents.PassportValidation.checkNumber(res)
-							.exception((msg) => new Documents.IncorrectValue(msg));
-						passport.Number = res;
-					}
-					catch(Exception e) {
-						passport.Number = null;
-						throw e;
-					}
-				});
+				documentFields.textField(passport.Number?.ToString(), passport.updateNumber);
 			}
 			else if(documentId == Documents.InternationalPassport.id) {
 				var passport = (InternationalPassportForm) document;
 
 				documentFields.addField();
 				documentFields.fieldName("Номер:*");
-				documentFields.textField(passport.Number?.ToString(), text => {
-					try {
-						int res;
-						var success = int.TryParse(text, out res);
-						if(!success) throw new Documents.IncorrectValue("Номер заграничного паспорта дожлен включать только цифры");
-						Documents.InternationalPassportValidation.checkNumber(res)
-							.exception((msg) => new Documents.IncorrectValue(msg));
-						passport.Number = res;
-					}
-					catch(Exception e) {
-						passport.Number = null;
-						throw e;
-					}
-				});
+				documentFields.textField(passport.Number?.ToString(), passport.updateNumber);
 
 				documentFields.addField();
 				documentFields.fieldName("Дата окончания срока действия:*");
 				var exDate = passport.ExpirationDate ?? DateTime.Now;
-				documentFields.dateField(exDate, date => {
-					var res = Documents.InternationalPassportValidation.checkExpirationDate(date);
-					if(res.Error) {
-						passport.ExpirationDate = null;
-						throw new Documents.IncorrectValue(res.Message);
-					}
-					else passport.ExpirationDate = date;
-				})
-					.Format = DateTimePickerFormat.Short;
+				documentFields.dateField(exDate, passport.updateExpirationDate).Format = DateTimePickerFormat.Short;
 				passport.ExpirationDate = exDate;
 
 				documentFields.addField();
 				documentFields.fieldName("Фамилия (на латинице):*");
-				documentFields.textField(passport.Surname, text => {
-					var res = Documents.InternationalPassportValidation.checkSurname(text);
-					if(res.Error) {
-						passport.Surname = null;
-						throw new Documents.IncorrectValue(res.Message);
-					}
-					else passport.Surname = text;
-				});
+				documentFields.textField(passport.Surname, passport.updateSurname);
 
 				documentFields.addField();
 				documentFields.fieldName("Имя (на латинице):*");
-				documentFields.textField(passport.Name, text => {
-					var res = Documents.InternationalPassportValidation.checkName(text);
-					if(res.Error) {
-						passport.Name = null;
-						throw new Documents.IncorrectValue(res.Message);
-					}
-					else passport.Name = text;
-				});
+				documentFields.textField(passport.Name, passport.updateName);
 
 				documentFields.addField();
 				documentFields.fieldName("Отчество (на латинице):");
-				documentFields.textField(passport.MiddleName, text => {
-					var res = Documents.InternationalPassportValidation.checkMiddleName(text);
-					if(res.Error) {
-						passport.MiddleName = null;
-						throw new Documents.IncorrectValue(res.Message);
-					}
-					else passport.MiddleName = text;
-				});
+				documentFields.textField(passport.MiddleName, passport.updateMiddleName);
 			}
 
 			documentFields.Resume();

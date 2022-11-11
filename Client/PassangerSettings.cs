@@ -69,6 +69,8 @@ namespace Client {
 
 			InitializeComponent();
 
+			pnrNameLabel.Visible = false;
+
 			Misc.addDummyButton(this);
 			Misc.addTopDivider(tableLayoutPanel2);
 
@@ -165,7 +167,7 @@ namespace Client {
 						DialogResult = DialogResult.Abort;
 					}
 					else {
-						var msg = result.f.isInputError ? result.f.InputError.message : result.f.LoginError.message;
+						var msg = result.f.message;
 						statusLabel.Text = msg;
 						statusToolitp.SetToolTip(statusLabel, msg);
 					}

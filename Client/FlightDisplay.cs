@@ -84,7 +84,7 @@ namespace Client {
 
 			var depart = flight.departureTime
 				.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes);
-			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsteMinutes)
+			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsetMinutes)
 				.AddMinutes(context.cities[flight.toCode].timeOffsetMinutes);
 
 			fromCityCode.Text = flight.fromCode;
@@ -96,7 +96,7 @@ namespace Client {
 			fromTime.Text = depart.TimeOfDay.ToString(@"h\:mm");
 			toTime.Text = arrive.TimeOfDay.ToString(@"h\:mm");
 			
-			var span = new TimeSpan(0, flight.arrivalOffsteMinutes, 0);
+			var span = new TimeSpan(0, flight.arrivalOffsetMinutes, 0);
 			
 			var spanText = new StringBuilder();
 			spanText.Append("в пути ");

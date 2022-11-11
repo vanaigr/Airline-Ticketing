@@ -127,12 +127,10 @@ namespace Client {
 			this.generalDataPanel.Location = new System.Drawing.Point(6, 6);
 			this.generalDataPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.generalDataPanel.Name = "generalDataPanel";
-			this.generalDataPanel.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);
-			this.generalDataPanel.RowCount = 3;
+			this.generalDataPanel.Padding = new System.Windows.Forms.Padding(5, 5, 5, 15);
+			this.generalDataPanel.RowCount = 1;
 			this.generalDataPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
-			this.generalDataPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.generalDataPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.generalDataPanel.Size = new System.Drawing.Size(553, 31);
+			this.generalDataPanel.Size = new System.Drawing.Size(553, 21);
 			this.generalDataPanel.TabIndex = 0;
 			// 
 			// documentTable
@@ -147,7 +145,7 @@ namespace Client {
 			this.documentTable.Controls.Add(this.documentTypeCombobox, 0, 2);
 			this.documentTable.Controls.Add(label5, 0, 1);
 			this.documentTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.documentTable.Location = new System.Drawing.Point(6, 57);
+			this.documentTable.Location = new System.Drawing.Point(6, 47);
 			this.documentTable.Margin = new System.Windows.Forms.Padding(0);
 			this.documentTable.Name = "documentTable";
 			this.documentTable.Padding = new System.Windows.Forms.Padding(5, 15, 5, 15);

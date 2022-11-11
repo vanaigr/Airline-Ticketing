@@ -41,9 +41,10 @@ namespace Client {
 			this.basePriceLabel = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.seatPriceLabel = new System.Windows.Forms.Label();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.totalCostLabel = new System.Windows.Forms.Label();
 			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+			this.label5 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel3.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel4.SuspendLayout();
@@ -51,7 +52,7 @@ namespace Client {
 			this.tableLayoutPanel2.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.tableLayoutPanel5.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
+			this.tableLayoutPanel6.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel3
@@ -79,7 +80,7 @@ namespace Client {
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel5, 0, 4);
-			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 6);
+			this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel6, 0, 6);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -286,27 +287,43 @@ namespace Client {
 			this.seatPriceLabel.TabIndex = 8;
 			this.seatPriceLabel.Text = "seatPrice";
 			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.AutoSize = true;
-			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.flowLayoutPanel1.Controls.Add(this.totalCostLabel);
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(9, 199);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(54, 13);
-			this.flowLayoutPanel1.TabIndex = 5;
-			this.flowLayoutPanel1.WrapContents = false;
-			// 
 			// totalCostLabel
 			// 
 			this.totalCostLabel.AutoSize = true;
 			this.totalCostLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.totalCostLabel.Location = new System.Drawing.Point(0, 0);
+			this.totalCostLabel.Location = new System.Drawing.Point(49, 0);
 			this.totalCostLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.totalCostLabel.Name = "totalCostLabel";
 			this.totalCostLabel.Size = new System.Drawing.Size(54, 13);
 			this.totalCostLabel.TabIndex = 6;
 			this.totalCostLabel.Text = "totalCost";
+			// 
+			// tableLayoutPanel6
+			// 
+			this.tableLayoutPanel6.AutoSize = true;
+			this.tableLayoutPanel6.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel6.ColumnCount = 2;
+			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel6.Controls.Add(this.totalCostLabel, 1, 0);
+			this.tableLayoutPanel6.Controls.Add(this.label5, 0, 0);
+			this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel6.Location = new System.Drawing.Point(6, 196);
+			this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+			this.tableLayoutPanel6.RowCount = 1;
+			this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel6.Size = new System.Drawing.Size(747, 13);
+			this.tableLayoutPanel6.TabIndex = 6;
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(3, 0);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(43, 13);
+			this.label5.TabIndex = 7;
+			this.label5.Text = "Итого: ";
 			// 
 			// PassangerOptions
 			// 
@@ -330,8 +347,8 @@ namespace Client {
 			this.panel1.PerformLayout();
 			this.tableLayoutPanel5.ResumeLayout(false);
 			this.tableLayoutPanel5.PerformLayout();
-			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
+			this.tableLayoutPanel6.ResumeLayout(false);
+			this.tableLayoutPanel6.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -354,8 +371,9 @@ namespace Client {
 		private System.Windows.Forms.Label basePriceLabel;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label seatPriceLabel;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Label totalCostLabel;
 		private System.Windows.Forms.ToolTip statusTooltip;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+		private System.Windows.Forms.Label label5;
 	}
 }

@@ -209,7 +209,7 @@ namespace Client {
 						var bp = bookingPassangers[i];
 
 						customer.passangerIds[(int) bp.passangerIndex] = new PassangerIdData(ss.passangerId);
-						customer.passangers[(int) bp.passangerIndex].archived = true;
+						if(customer.LoggedIn) customer.passangers[(int) bp.passangerIndex].archived = true;
 					}
 
 					var newIndex = customer.newBookedFlightIndex++;

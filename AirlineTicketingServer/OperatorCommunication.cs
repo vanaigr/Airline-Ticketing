@@ -22,6 +22,10 @@ namespace OperatorCommunication {
 		public List<bool> passangerArrived;
 	}
 
+	[Serializable] public sealed class PassangerSearchParams {
+		public string name, surname, middleName, pnr;
+	}
+
 
 	[ServiceContract]
 	public interface OperatorService {
@@ -32,5 +36,9 @@ namespace OperatorCommunication {
 		[OperationContract] Either<FlightDetails, InputError> getFlightDetails(int flightId);
 
 		[OperationContract] Either<Success, InputError> updateArrivalStatus(int flightId, Dictionary<int/*seatIndex*/, bool> seatArrived);
+
+		[OperationContract] Either<List<PassangerBookedFlight>, InputError> getPassangerBookedFlights(PassangerSearchParams ps);
+
+		[OperationContract] Either<Success, InputError> deleteBookedSeat(string pnr);
 	}
 }

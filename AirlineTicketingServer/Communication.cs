@@ -19,7 +19,7 @@ namespace Communication {
 	[Serializable] public sealed class Flight {
 		public int id;
 		public DateTime departureTime;
-		public int arrivalOffsteMinutes;
+		public int arrivalOffsetMinutes;
 
 		public string fromCode;
 		public string toCode;
@@ -38,8 +38,58 @@ namespace Communication {
 		public string name { get; set; } //display in combobox requires property
 	}
 
-	//[KnownType(typeof(Documents.Passport))]
-	//[KnownType(typeof(Documents.InternationalPassport))]
+
+	[Serializable] public struct SelectedSeat {
+		public SeatAndOptions seatAndOptions;
+		public bool fromTempPassangers;
+		public int passangerId;
+	}
+
+	[Serializable] public struct SeatAndOptions {
+		public FlightsOptions.SelectedOptions selectedOptions;
+		public int? seatIndex;
+		public int selectedSeatClass;
+	}
+
+	[Serializable] public struct SeatCost {
+		public int basePrice;
+		public int seatCost;
+		public int baggageCost;
+		public int totalCost;
+	}
+
+	[Serializable] public sealed class BookedFlight {
+		public int? bookedFlightId;
+		public Flight availableFlight;
+		public int bookedPassangerCount;
+		public DateTime bookingFinishedTime;
+	}
+
+	[Serializable] public struct BookedSeatInfo {
+		public int passangerId;
+		public string pnr;
+		public int selectedSeat;
+		public SeatCost cost;
+	}
+
+
+	[Serializable] public sealed class BookedFlightDetails {
+		public BookedSeatInfo[] bookedSeats;
+		public SeatAndOptions[] seatsAndOptions;
+		public FlightsSeats.Seats seats;
+	}
+
+	[Serializable] public sealed class PassangerBookedFlight {
+		public bool cancelled;
+		public int passangerId;
+		public Passanger passanger;
+		public BookedFlight flight;
+
+		public BookedSeatInfo bookedSeat;
+		public SeatAndOptions seatAndOptions;
+	}
+
+
 	[Serializable]
 	public sealed class Passanger {
 		public bool archived;
@@ -67,6 +117,7 @@ namespace Communication {
 			return hashCode;
 		}
 	}
+
 
 	[Serializable] public struct Success { };
 

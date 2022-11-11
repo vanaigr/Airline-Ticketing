@@ -244,5 +244,15 @@ class OperatorMessageService : OperatorService {
 		);
 		}}}
 	}
+
+	Either<List<PassangerBookedFlight>, InputError> OperatorService.getPassangerBookedFlights(PassangerSearchParams ps) {
+		using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
+		return SeatsBooking.getBookedFlight(new SqlConnectionView(connection, true), ps);
+		}
+	}
+
+	Either<Success, InputError> OperatorService.deleteBookedSeat(string pnr) {
+		return SeatsBooking.deleteBookedSeat(null, pnr);
+	}
 }
 }

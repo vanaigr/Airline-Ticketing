@@ -10,7 +10,7 @@ namespace Server {
 
 			var id = document.Id;
 
-			s.Write((byte) 0);
+			s.Write((byte) 1);
 			s.Write(id);
 
 			if(id == Passport.id) {
@@ -23,11 +23,7 @@ namespace Server {
 				s.Write(it.ExpirationDate.Ticks);
 				s.Write(it.Name);
 				s.Write(it.Surname);
-				if(it.MiddleName == null) s.Write(false);
-				else {
-					s.Write(true);
-					s.Write(it.MiddleName);
-				}
+				s.Write(it.MiddleName);
 			}
 			s.Close();
 			return ms.ToArray();
@@ -40,7 +36,8 @@ namespace Server {
 			using(
 			var s = new BinaryReader(stream)) {
 
-			Common.Debug2.AssertPersistent(s.ReadByte() == 0);
+			var version = s.ReadByte();
+			Common.Debug2.AssertPersistent(version == 0 || version == 1);
 
 			Document document;
 			var id = s.ReadInt32();
@@ -56,9 +53,14 @@ namespace Server {
 				var name = s.ReadString();
 				var surname = s.ReadString();
 				string middleName;
-				var hasMiddleName = s.ReadBoolean();
-				if(hasMiddleName) middleName = s.ReadString();
-				else middleName = null;
+				if(version == 0) { 
+					var hasMiddleName = s.ReadBoolean();
+					if(hasMiddleName) middleName = s.ReadString();
+					else middleName = "";
+				}
+				else {
+					middleName = s.ReadString();
+				}
 
 				var it = new InternationalPassport(number, expirationDate, name, surname, middleName);
 				document = it;

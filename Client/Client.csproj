@@ -97,7 +97,6 @@
     <Compile Include="BookedFlightInfoControl.Designer.cs">
       <DependentUpon>BookedFlightInfoControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="BookedPassanger.cs" />
     <Compile Include="BookingPassanger.cs" />
     <Compile Include="BookingPassangerSummaryControl.cs">
       <SubType>UserControl</SubType>
@@ -107,6 +106,7 @@
     </Compile>
     <Compile Include="Context.cs" />
     <Compile Include="DocumentsForms.cs" />
+    <Compile Include="FieldsDisplay.cs" />
     <Compile Include="FlightBook.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,5 +1,6 @@
 ﻿using ClientCommunication;
 using Common;
+using Communication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -197,8 +198,9 @@ namespace Client {
 		public void recalculatePrice() {
 			var curClassId = passanger.ClassId(seats);
 			
-			seatPriceLabel.Text = "";
-			basePriceLabel.Text = "";
+			seatPriceLabel.Text = passanger.manualSeatSelected ? optionsForClasses[curClassId].servicesOptions.seatChoiceCostRub.ToString() + "руб." : "0 руб.";
+
+			basePriceLabel.Text = optionsForClasses[curClassId].servicesOptions.basePriceRub.ToString() + " руб.";
 			totalCostLabel.Text = "";
 			totalCostLabel.ForeColor = SystemColors.ControlText;
 
@@ -246,8 +248,7 @@ namespace Client {
 
 					basePriceLabel.Text = seatData.basePrice + " руб.";
 
-					if(seatData.seatCost == 0) seatPriceLabel.Text = "бесплатно";
-					else seatPriceLabel.Text = seatData.seatCost + " руб.";
+					seatPriceLabel.Text = seatData.seatCost + " руб.";
 
 					totalCostLabel.Text = seatData.totalCost + " руб.";
 					

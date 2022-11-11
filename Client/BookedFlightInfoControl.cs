@@ -1,12 +1,6 @@
-﻿using Client;
-using ClientCommunication;
+﻿using ClientCommunication;
+using Communication;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
@@ -45,7 +39,7 @@ namespace Client {
 			departireDatetimeLabel.Text = af.departureTime.AddMinutes(context.cities[bookedFlight.availableFlight.fromCode].timeOffsetMinutes)
 				.ToString("d MMMM, ddd, HH:mm");
 			arrivalLocationLabel.Text = bookedFlight.availableFlight.toCode;
-			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsteMinutes)
+			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsetMinutes)
 				.AddMinutes(context.cities[bookedFlight.availableFlight.toCode].timeOffsetMinutes).ToString("d MMMM, ddd, HH:mm");
 			bookingFinishedTimeLabel.Text = "Дата бронирования (по локальному времени): " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
 			updateBookedSeatsCount();

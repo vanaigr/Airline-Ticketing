@@ -117,8 +117,7 @@ namespace Documents {
 
 		public static ErrorString checkMiddleName(string value, ErrorString e = new ErrorString()) {
 			if(value != null) {
-				if(value.Length == 0) e.ac("отчество должно быть заполнена");
-				else foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
+				foreach(var ch in value) if(!(Misc.isLatin(ch) || ch == '-')) { 
 					e.ac("отчество должно содержать только латинские буквы или символ дефиса");
 					break;
 				}
@@ -147,7 +146,7 @@ namespace Documents {
 		public string MiddleName{ get; }
 
 		public InternationalPassport(int number, DateTime expirationDate, string name, string surname, string middleName) {
-			if(name == null || surname == null) throw new InvalidOperationException();
+			if(name == null || surname == null || middleName == null) throw new InvalidOperationException();
 			this.Number = number;
 			this.ExpirationDate = expirationDate.Date;
 			this.Name = name;

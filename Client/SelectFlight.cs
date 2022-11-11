@@ -36,7 +36,7 @@ namespace Client {
 			
 			//findFlightsButton_Click(findFlightsButton, new EventArgs());
 			
-			//customer = new CustomerData("User123", "789456123");
+			//customer = new CustomerContext("User123", "789456123");
 			} catch(Exception){ }
 
 			setupAvailableOptions();
@@ -65,10 +65,13 @@ namespace Client {
 
 		void updateErrorDisplay(bool isError, string message, Exception e) {
 			if(isError) { 
+				statusLabel.AutoSize = true;
 				statusLabel.Text = message ?? "Неизвестная ошибка";
 				this.elementHint.SetToolTip(this.statusLabel, e?.ToString() ?? message);
 			}
 			else {
+				statusLabel.AutoSize = false;
+				statusLabel.Size = new Size(1, 1);
 				statusLabel.Text = "";
 				this.elementHint.SetToolTip(this.statusLabel, null);
 			}
@@ -186,6 +189,7 @@ namespace Client {
 					}
 					else foreach(var flight in result) {
 						var flightDisplay = new FlightDisplay();
+						flightDisplay.Margin = new Padding(0, 0, 0, 10);
 						flightDisplay.updateFromFlight(context, flight);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openFlightBooking);

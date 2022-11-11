@@ -15,43 +15,6 @@ namespace ClientCommunication {
 		}
 	}
 
-	[Serializable] public struct SelectedSeat {
-		public SeatAndOptions seatAndOptions;
-		public bool fromTempPassangers;
-		public int passangerId;
-	}
-
-	[Serializable]
-	public struct SeatAndOptions {
-		public FlightsOptions.SelectedOptions selectedOptions;
-		public int? seatIndex;
-		public int selectedSeatClass;
-	}
-
-	[Serializable]
-	public struct SeatCost {
-		public int basePrice;
-		public int seatCost;
-		public int baggageCost;
-		public int totalCost;
-	}
-
-	[Serializable]
-	public sealed class BookedFlight {
-		public int? bookedFlightId;
-		public Flight availableFlight;
-		public int bookedPassangerCount;
-		public DateTime bookingFinishedTime;
-	}
-
-
-	[Serializable]
-	public sealed class BookedFlightDetails {
-		public BookedSeatInfo[] bookedSeats;
-		public SeatAndOptions[] seatsAndOptions;
-		public FlightsSeats.Seats seats;
-	}
-
 	[Serializable]
 	public struct BookingFlightResult {
 		public int? customerBookedFlightId;
@@ -59,18 +22,10 @@ namespace ClientCommunication {
 		public BookedSeatInfo[] seatsInfo;
 	}
 
-	[Serializable]
-	public struct BookedSeatInfo {
-		public int passangerId;
-		public string pnr;
-		public int selectedSeat;
-		public SeatCost cost;
-	}
-
-	[Serializable] public sealed class PassangerBookedFlight {
+	[Serializable] public sealed class PassangerBookedFlightAndDetails {
 		public bool cancelled;
 		public int passangerId;
-		public Passanger Passanger;
+		public Passanger passanger;
 		public BookedFlight flight;
 		public BookedFlightDetails details;
 	}
@@ -127,8 +82,8 @@ namespace ClientCommunication {
 
 		[OperationContract] Either<BookedFlightDetails, LoginOrInputError> getBookedFlightDetails(Account customer, int bookedFlightId);
 
-		[OperationContract] Either<PassangerBookedFlight, InputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
+		[OperationContract] Either<PassangerBookedFlightAndDetails, InputError> getBookedFlightFromSurnameAndPNR(string surname, string pnr);
 
-		[OperationContract] Either<Success, LoginOrInputError> deleteBookedSeat(string surname, string pnr);
+		[OperationContract] Either<Success, InputError> deleteBookedSeat(string surname, string pnr);
 	}
 }

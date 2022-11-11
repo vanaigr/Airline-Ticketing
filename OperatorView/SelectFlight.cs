@@ -12,11 +12,13 @@ using OperatorCommunication;
 
 namespace Operator {
 	public partial class SelectFlight : Form {
-		private OperatorService service;
+		Context context{ get; }
 
-		Context context;
+		private OperatorService service{ get{ return context.service; } }
 		
-		public SelectFlight() {
+		public SelectFlight(Context context) {
+			this.context = context;
+
             InitializeComponent();
 
 			Misc.unfocusOnEscape(this);
@@ -30,19 +32,7 @@ namespace Operator {
 
 		void setupAvailableOptions() {
 			try {
-				var options = service.parameters();
-				var classesNames = options.flightClasses;
-				var citiesList = options.cities;
-
-				var cities = new Dictionary<string, City>(citiesList.Count);
-				foreach(var city in citiesList) {
-					cities.Add(city.code, city);
-				}
-
-				context = new Context{ 
-					classesNames = classesNames,
-					cities = cities
-				};
+				context.update();
 
 				updateErrorDisplay(false, null, null);
 			}
@@ -157,9 +147,7 @@ namespace Operator {
 
 		void reconnect() {
 			updateErrorDisplay(false, null, null);
-			(service as IDisposable)?.Dispose();
-			service = OperatorServerQuery.Create();
-
+			
 			setupAvailableOptions();
 
 			fromLoc.DisplayMember = "name";

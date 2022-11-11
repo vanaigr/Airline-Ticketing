@@ -1,5 +1,6 @@
 ﻿using Communication;
 using FlightsSeats;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -85,24 +86,44 @@ namespace Server {
 		public Seats calculate() {
 			var seatsScheme = DatabaseSeats.fromBytes(seatsSchemeBin);
 
-			Common.Debug2.AssertPersistent(seatsScheme.SeatsCount == rawSeatsOccupation.Count);
+			Debug.Assert(seatsScheme.SeatsCount == rawSeatsOccupation.Count);
 
-			var classes = new byte[seatsScheme.SeatsCount];
-			for(int i = 0; i < classes.Length; i++) {
-				Common.Debug2.AssertPersistent(rawSeatsOccupation[i].index == i);
-				classes[i] = rawSeatsOccupation[i].classId;
-			}
-
-			var occupation = new bool[seatsScheme.SeatsCount];
-			for(int i = 0; i < occupation.Length; i++) {
-				Common.Debug2.AssertPersistent(rawSeatsOccupation[i].index == i);
-				occupation[i] = rawSeatsOccupation[i].occupied;
+			for(int i = 0; i < seatsScheme.SeatsCount; i++) {
+				Debug.Assert(rawSeatsOccupation[i].index == i);
 			}
 
 			return new Seats(
-				seatsScheme, ((IEnumerable<byte>) classes).GetEnumerator(), 
-				((IEnumerable<bool>) occupation).GetEnumerator()
+				seatsScheme,
+				new MappingEnumerator<RawSeat, byte>(rawSeatsOccupation, it => it.classId),
+				new MappingEnumerator<RawSeat, bool>(rawSeatsOccupation, it => it.occupied)
 			);
+		}
+
+		private sealed class MappingEnumerator<T, T2> : IEnumerator<T2> {
+			private IEnumerator<T> inner;
+			private Map<T, T2> map;
+
+			public delegate T Map<F, T>(F f);
+
+			public MappingEnumerator(IEnumerable<T> it, Map<T, T2> map) {
+				this.inner = it.GetEnumerator();
+				this.map = map;
+			}
+
+			public MappingEnumerator(IEnumerator<T> inner, Map<T, T2> map) {
+				this.inner = inner;
+				this.map = map;
+			}
+
+			public T2 Current => map(inner.Current);
+
+			object IEnumerator.Current => this.Current;
+
+			public void Dispose() { inner.Dispose(); }
+
+			public bool MoveNext() { return inner.MoveNext(); }
+
+			public void Reset() { inner.Reset(); }
 		}
 	}
 }

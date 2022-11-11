@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SeatsBooking.cs" />
     <Compile Include="FlightsUpdate.cs" />
     <Compile Include="DatabaseDocument.cs" />
     <Compile Include="ClientCommunication.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="DatabaseFlights.cs" />
     <Compile Include="FlightsOptions.cs" />
     <Compile Include="LoggingProxy.cs" />
-    <Compile Include="CustomerLoginRegister.cs" />
+    <Compile Include="DatabaseAccount.cs" />
     <Compile Include="Documents.cs" />
     <Compile Include="ClientMessageService.cs" />
     <Compile Include="OperatorMessageService.cs" />

@@ -105,8 +105,7 @@ namespace Common {
 			it.BorderStyle = BorderStyle.FixedSingle;
 			it.Margin = new Padding(0);
 
-			p.RowCount++;
-			p.Controls.Add(it, 0, p.RowCount-1);
+			p.Controls.Add(it, 0, p.RowCount++);
 			p.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
 			p.SetColumnSpan(it, p.ColumnCount);
 		}

@@ -12,7 +12,7 @@ namespace Operator {
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new SelectFlight());
+			Application.Run(new MenuForm());
 		}
 	}
 }

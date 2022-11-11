@@ -1,6 +1,7 @@
 ﻿using Client;
 using ClientCommunication;
 using Common;
+using Communication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,13 +67,17 @@ namespace Client {
 			else {
 				flightsTable.RowCount = customer.flightsBooked.Count;
 
-				foreach(var pair in customer.flightsBooked) {
+				List<int> keysList = customer.flightsBooked.Keys.ToList();
+
+				for(int i = 0; i < customer.flightsBooked.Count; i++) {
+					var key = keysList[customer.flightsBooked.Count-1 - i];
+
 					BookedFlightDetails details;
-					customer.bookedFlightsDetails.TryGetValue(pair.Key, out details);
+					customer.bookedFlightsDetails.TryGetValue(key, out details);
 
 					var it = new BookedFlightInfoControl(
 						service, customer, context,
-						pair.Key, setStatus
+						key, setStatus
 					);
 
 					it.Dock = DockStyle.Top;

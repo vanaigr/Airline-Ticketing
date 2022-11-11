@@ -37,7 +37,7 @@ namespace Client {
 					cc.flightsBooked.Add(bookedFlightIndex, flight.flight);
 					
 					var passangerIndex = cc.newPassangerIndex++;
-					cc.passangers.Add(passangerIndex, flight.Passanger);
+					cc.passangers.Add(passangerIndex, flight.passanger);
 					cc.passangerIds.Add(passangerIndex, new PassangerIdData(flight.passangerId));
 
 					var bookingStatus = new BookingStatus{ booked = true, bookedFlightIndex = bookedFlightIndex };
