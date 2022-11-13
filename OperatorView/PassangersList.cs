@@ -32,6 +32,8 @@ namespace Operator {
 
 			InitializeComponent();
 
+			Common.Misc.unfocusOnEscape(this, (a, b) => { if(b.KeyCode == Keys.Escape) passangerGridView.ClearSelection(); });
+
 			onlyAvailableCB.Checked = false;
 			onlyAvailableCB.Checked = true;
 		}
@@ -77,9 +79,11 @@ namespace Operator {
 		}
 
 		private void passangerGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e) {
+			try{
 			Clipboard.SetText(
 				passangerGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString()
 			);
+			} catch(Exception ex) { }
 		}
 	}
 }

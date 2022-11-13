@@ -20,6 +20,8 @@ namespace Client {
 			this.service = service;
 			
 			InitializeComponent();
+
+			Common.Misc.unfocusOnEscape(this);
 		}
 
 		private void ContinueButton_Click(object sender, EventArgs ea) {

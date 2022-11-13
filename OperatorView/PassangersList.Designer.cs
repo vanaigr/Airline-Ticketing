@@ -40,6 +40,7 @@ namespace Operator {
 			this.passangerGridView.AllowUserToResizeColumns = false;
 			this.passangerGridView.AllowUserToResizeRows = false;
 			this.passangerGridView.BackgroundColor = System.Drawing.Color.White;
+			this.passangerGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.passangerGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.passangerGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.passangerGridView.GridColor = System.Drawing.Color.White;
@@ -103,7 +104,7 @@ namespace Operator {
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "PassangersList";
-			this.Text = "PassangersList";
+			this.Text = "Список мест";
 			((System.ComponentModel.ISupportInitialize)(this.passangerGridView)).EndInit();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();

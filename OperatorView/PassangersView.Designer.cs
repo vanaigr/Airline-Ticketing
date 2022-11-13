@@ -42,6 +42,8 @@ namespace Operator {
 			this.showCanceledCheckbox = new System.Windows.Forms.CheckBox();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.statusTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.toCityCodeLabel = new System.Windows.Forms.Label();
+			this.toCityDatetimeLabel = new System.Windows.Forms.Label();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.footerTable2.SuspendLayout();
 			this.footerTable.SuspendLayout();
@@ -197,8 +199,10 @@ namespace Operator {
 			this.headerTable.AutoSize = true;
 			this.headerTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.headerTable.BackColor = System.Drawing.Color.White;
-			this.headerTable.ColumnCount = 10;
+			this.headerTable.ColumnCount = 12;
 			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -210,10 +214,12 @@ namespace Operator {
 			this.headerTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
 			this.headerTable.Controls.Add(this.flightNameLabel, 1, 1);
 			this.headerTable.Controls.Add(this.airplaneNameLabel, 1, 3);
-			this.headerTable.Controls.Add(this.fromDatetime, 3, 1);
-			this.headerTable.Controls.Add(this.fromCityCodeLabel, 3, 3);
-			this.headerTable.Controls.Add(this.remainingTimeLabel, 5, 1);
-			this.headerTable.Controls.Add(this.showCanceledCheckbox, 7, 1);
+			this.headerTable.Controls.Add(this.remainingTimeLabel, 7, 1);
+			this.headerTable.Controls.Add(this.showCanceledCheckbox, 9, 1);
+			this.headerTable.Controls.Add(this.toCityDatetimeLabel, 5, 3);
+			this.headerTable.Controls.Add(this.fromCityCodeLabel, 3, 1);
+			this.headerTable.Controls.Add(this.toCityCodeLabel, 3, 3);
+			this.headerTable.Controls.Add(this.fromDatetime, 5, 1);
 			this.headerTable.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.headerTable.Location = new System.Drawing.Point(0, 0);
 			this.headerTable.Margin = new System.Windows.Forms.Padding(0);
@@ -251,7 +257,7 @@ namespace Operator {
 			// 
 			this.fromDatetime.AutoSize = true;
 			this.fromDatetime.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.fromDatetime.Location = new System.Drawing.Point(103, 10);
+			this.fromDatetime.Location = new System.Drawing.Point(194, 10);
 			this.fromDatetime.Name = "fromDatetime";
 			this.fromDatetime.Size = new System.Drawing.Size(81, 15);
 			this.fromDatetime.TabIndex = 2;
@@ -261,7 +267,7 @@ namespace Operator {
 			// 
 			this.fromCityCodeLabel.AutoSize = true;
 			this.fromCityCodeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.fromCityCodeLabel.Location = new System.Drawing.Point(103, 28);
+			this.fromCityCodeLabel.Location = new System.Drawing.Point(103, 10);
 			this.fromCityCodeLabel.Name = "fromCityCodeLabel";
 			this.fromCityCodeLabel.Size = new System.Drawing.Size(82, 15);
 			this.fromCityCodeLabel.TabIndex = 3;
@@ -271,7 +277,7 @@ namespace Operator {
 			// 
 			this.remainingTimeLabel.AutoSize = true;
 			this.remainingTimeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.remainingTimeLabel.Location = new System.Drawing.Point(194, 10);
+			this.remainingTimeLabel.Location = new System.Drawing.Point(290, 10);
 			this.remainingTimeLabel.Name = "remainingTimeLabel";
 			this.remainingTimeLabel.Size = new System.Drawing.Size(87, 15);
 			this.remainingTimeLabel.TabIndex = 4;
@@ -283,7 +289,7 @@ namespace Operator {
 			this.showCanceledCheckbox.AutoSize = true;
 			this.showCanceledCheckbox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.showCanceledCheckbox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.showCanceledCheckbox.Location = new System.Drawing.Point(293, 21);
+			this.showCanceledCheckbox.Location = new System.Drawing.Point(389, 21);
 			this.showCanceledCheckbox.Name = "showCanceledCheckbox";
 			this.headerTable.SetRowSpan(this.showCanceledCheckbox, 3);
 			this.showCanceledCheckbox.Size = new System.Drawing.Size(160, 19);
@@ -312,6 +318,26 @@ namespace Operator {
 			this.splitContainer1.TabIndex = 3;
 			this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
 			this.splitContainer1.SizeChanged += new System.EventHandler(this.splitContainer1_SizeChanged);
+			// 
+			// toCityCodeLabel
+			// 
+			this.toCityCodeLabel.AutoSize = true;
+			this.toCityCodeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.toCityCodeLabel.Location = new System.Drawing.Point(103, 28);
+			this.toCityCodeLabel.Name = "toCityCodeLabel";
+			this.toCityCodeLabel.Size = new System.Drawing.Size(67, 15);
+			this.toCityCodeLabel.TabIndex = 6;
+			this.toCityCodeLabel.Text = "toCityCode";
+			// 
+			// toCityDatetimeLabel
+			// 
+			this.toCityDatetimeLabel.AutoSize = true;
+			this.toCityDatetimeLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.toCityDatetimeLabel.Location = new System.Drawing.Point(194, 28);
+			this.toCityDatetimeLabel.Name = "toCityDatetimeLabel";
+			this.toCityDatetimeLabel.Size = new System.Drawing.Size(87, 15);
+			this.toCityDatetimeLabel.TabIndex = 7;
+			this.toCityDatetimeLabel.Text = "toCityDatetime";
 			// 
 			// PassangersView
 			// 
@@ -359,5 +385,7 @@ namespace Operator {
 		private System.Windows.Forms.ToolTip statusTooltip;
 		private System.Windows.Forms.TableLayoutPanel footerTable2;
 		private System.Windows.Forms.DataGridView passangersDataGridView;
+		private System.Windows.Forms.Label toCityCodeLabel;
+		private System.Windows.Forms.Label toCityDatetimeLabel;
 	}
 }

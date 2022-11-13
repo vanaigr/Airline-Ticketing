@@ -59,7 +59,7 @@ namespace Server {
 				archived = (bool) reader[1],
 				name = (string) reader[2],
 				surname = (string) reader[3],
-				middleName = (string) (reader[4] is DBNull ? null : reader[4]),
+				middleName = (string) (reader[4] is DBNull ? "" : reader[4]),
 				birthday = (DateTime) reader[5],
 				documentBin = (byte[]) reader[6]
 			});
@@ -90,7 +90,7 @@ namespace Server {
 			command.Parameters.AddWithValue("@Document", documentBin);
 			command.Parameters.AddWithValue("@Name", passanger.name);
 			command.Parameters.AddWithValue("@Surname", passanger.surname);
-			command.Parameters.AddWithValue("@MiddleName", passanger.middleName == null ? DBNull.Value : (object) passanger.middleName);
+			command.Parameters.AddWithValue("@MiddleName", passanger.middleName == null ? "" : passanger.middleName);
 			command.Parameters.AddWithValue("@Customer", customerId);
 			command.Parameters.AddWithValue("@Id", index);
 			var newIdParam = command.Parameters.Add("@NewId", System.Data.SqlDbType.Int);
@@ -113,7 +113,7 @@ namespace Server {
 			command.Parameters.AddWithValue("@Document", documentBin);
 			command.Parameters.AddWithValue("@Name", passanger.name);
 			command.Parameters.AddWithValue("@Surname", passanger.surname);
-			command.Parameters.AddWithValue("@MiddleName", passanger.middleName == null ? DBNull.Value : (object) passanger.middleName);
+			command.Parameters.AddWithValue("@MiddleName", passanger.middleName == null ? "" : passanger.middleName);
 			command.Parameters.AddWithValue("@CustomerId", customerId);
 			var result = command.Parameters.Add("@NewId", System.Data.SqlDbType.Int);
 			result.Direction = System.Data.ParameterDirection.Output;

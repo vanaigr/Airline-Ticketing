@@ -20,6 +20,8 @@ namespace Operator {
 
 			InitializeComponent();
 
+			Common.Misc.unfocusOnEscape(this);
+
 			if(ex != null) {
 				statusLabel.Text = ex.Message;
 				statusTooltip.SetToolTip(statusLabel, ex.ToString());

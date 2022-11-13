@@ -123,5 +123,33 @@ namespace Client {
 		private void showPassword_MouseLeave(object sender, EventArgs e) {
 			PasswordText.UseSystemPasswordChar = true;
 		}
+
+		bool focused = false;
+
+		private void PasswordText_Enter(object sender, EventArgs e) {
+			focused = true;
+			tableLayoutPanel3.Refresh();
+		}
+
+		private void PasswordText_Leave(object sender, EventArgs e) {
+			focused = false;
+			tableLayoutPanel3.Refresh();
+		}
+
+		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
+			if(focused) {
+				var cr = tableLayoutPanel3.ClientRectangle;
+				using(var p = new Pen(Color.FromArgb(0,120,215))) {
+					e.Graphics.DrawRectangle(p, new Rectangle(cr.X, cr.Y, cr.Width-1, cr.Height-1));
+				}
+			}
+			else {
+				var cr = tableLayoutPanel3.ClientRectangle;
+				using(var p = new Pen(Color.FromArgb(122,122,122))) {
+					e.Graphics.DrawRectangle(p, new Rectangle(cr.X, cr.Y, cr.Width-1, cr.Height-1));
+				}
+			}
+			//ControlPaint.DrawBorder(e.Graphics, tableLayoutPanel3.ClientRectangle, Color.FromArgb(0,120,215), ButtonBorderStyle.Solid);
+		}
 	}
 }

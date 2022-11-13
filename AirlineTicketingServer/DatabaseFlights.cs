@@ -148,9 +148,7 @@ static class DatabaseFlights {
 		using(cv) {
 		using(
 		var command = new SqlCommand(
-			@"select top 1 
-				[fi].[Options],
-				[ap].[SeatsScheme]
+			@"select top 1 [fi].[Options]
 			from (
 				select * from [Flights].[AvailableFlights] as [af]
 				where [af].[Id] = @AvailableFlight

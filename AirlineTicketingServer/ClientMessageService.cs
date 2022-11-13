@@ -121,7 +121,6 @@ partial class ClientMessageService : ClientService {
 
 
 	Either<Seats, InputError> ClientService.getSeatsForFlight(int flightId) {
-		Stopwatch sw = new Stopwatch();
 		using(var connection = new SqlConnection(Properties.Settings.Default.customersFlightsConnection)) {
 		using(
 		var command = new SqlCommand(DatabaseSeatsExtraction.commandText, connection)) {
@@ -133,23 +132,13 @@ partial class ClientMessageService : ClientService {
 		connection.Open();
 		using(
 		var result = command.ExecuteReader()) { 
-		sw.Restart();
-		sw.Start();
 		var res = rsr.execute(result);
-		sw.Stop();
-		var t1 = sw.Elapsed.TotalMilliseconds * 1000;
 
 		result.Close();
 		command.Dispose();
 		connection.Dispose();
 
-		sw.Restart();
-		sw.Start();
 		var c = rsr.calculate();
-		sw.Stop();
-		var t2 = sw.Elapsed.TotalMilliseconds * 1000;
-
-		Console.WriteLine("t1={0}, t2={1}", t1, t2);
 
 		if(res.IsSuccess) return Either<Seats, InputError>.Success(c);
 		else return Either<Seats, InputError>.Failure(res.f);

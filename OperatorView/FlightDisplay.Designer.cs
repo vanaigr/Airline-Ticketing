@@ -175,12 +175,12 @@ namespace Operator {
 			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button1.Location = new System.Drawing.Point(651, 10);
+			this.button1.Location = new System.Drawing.Point(647, 10);
 			this.button1.Margin = new System.Windows.Forms.Padding(0);
 			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(89, 27);
+			this.button1.Size = new System.Drawing.Size(93, 27);
 			this.button1.TabIndex = 3;
-			this.button1.Text = "Продолжить";
+			this.button1.Text = "Просмотреть";
 			this.button1.UseVisualStyleBackColor = false;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 

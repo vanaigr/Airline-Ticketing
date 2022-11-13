@@ -32,8 +32,8 @@ namespace Client {
 			this.surnameTextBox = new System.Windows.Forms.TextBox();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.ContinueButton = new System.Windows.Forms.Button();
-			this.statusToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.statusLabel = new System.Windows.Forms.Label();
+			this.statusToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.SuspendLayout();
@@ -129,6 +129,7 @@ namespace Client {
 			this.ContinueButton.AutoSize = true;
 			this.ContinueButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ContinueButton.BackColor = System.Drawing.Color.Transparent;
+			this.ContinueButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
 			this.ContinueButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.ContinueButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.ContinueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;

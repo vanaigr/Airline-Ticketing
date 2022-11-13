@@ -49,7 +49,9 @@ namespace Server {
 			if(!invalidLogin.ok || !invalidPassword.ok) {
 				var loginError = invalidLogin.errorMsg;
 				var passError = invalidPassword.errorMsg;
-				return Either<Success, LoginError>.Failure(new LoginError(loginError + "\n" + passError));
+				return Either<Success, LoginError>.Failure(new LoginError(
+					loginError + (!invalidLogin.ok ? "\n" : "") + passError
+				));
 			}
 			else return Either<Success, LoginError>.Success(new Success());
 		}
@@ -168,8 +170,8 @@ namespace Server {
 		}
 
 		
-		static readonly string forbiddenSymbols = "[^A-Za-z0-9!@#$%%^&*();:?\\-=_+\\.]";
-		static readonly string forbiddenSymbolsMessage = "содержать только заглавные и строчные символы латиницы, цифры, или символы !@#$%%^&*();:?-=_+.";
+		static readonly string forbiddenSymbols = "[^A-Za-z0-9!@#$%^&*();:?\\-=_+\\.]";
+		static readonly string forbiddenSymbolsMessage = "содержать только заглавные и строчные символы латиницы, цифры, или символы !@#$%^&*();:?-=_+.";
 
 		static Validation.CheckResult checkLogin(string login) {
 			var result = new StringBuilder();

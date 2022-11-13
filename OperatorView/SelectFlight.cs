@@ -83,6 +83,7 @@ namespace Operator {
 					}
 					else foreach(var flight in result) {
 						var flightDisplay = new FlightDisplay();
+						flightDisplay.Margin = new Padding(0, 0, 0, 10);
 						flightDisplay.updateFromFlight(context, flight);
 						flightDisplay.Dock = DockStyle.Top;
 						flightDisplay.Click += new EventHandler(openPassangersView);
@@ -105,6 +106,8 @@ namespace Operator {
 				updateErrorDisplay(true, null, ex);
 			}
 		}
+
+		
 
 		private void pictureBox1_Click(object sender, EventArgs e) {
 			reconnect();

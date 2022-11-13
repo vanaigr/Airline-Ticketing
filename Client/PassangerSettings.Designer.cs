@@ -276,9 +276,9 @@ namespace Client {
 			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.statusLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.statusLabel.ForeColor = System.Drawing.Color.Salmon;
-			this.statusLabel.Location = new System.Drawing.Point(515, 0);
+			this.statusLabel.Location = new System.Drawing.Point(503, 0);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(196, 39);
+			this.statusLabel.Size = new System.Drawing.Size(208, 39);
 			this.statusLabel.TabIndex = 8;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -287,7 +287,8 @@ namespace Client {
 			this.pnrLabel.AutoSize = true;
 			this.pnrLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.pnrLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.pnrLabel.Location = new System.Drawing.Point(509, 0);
+			this.pnrLabel.Location = new System.Drawing.Point(500, 0);
+			this.pnrLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.pnrLabel.Name = "pnrLabel";
 			this.pnrLabel.Size = new System.Drawing.Size(1, 39);
 			this.pnrLabel.TabIndex = 9;
@@ -299,10 +300,11 @@ namespace Client {
 			this.pnrNameLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.pnrNameLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
 			this.pnrNameLabel.Location = new System.Drawing.Point(467, 0);
+			this.pnrNameLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
 			this.pnrNameLabel.Name = "pnrNameLabel";
-			this.pnrNameLabel.Size = new System.Drawing.Size(36, 39);
+			this.pnrNameLabel.Size = new System.Drawing.Size(33, 39);
 			this.pnrNameLabel.TabIndex = 10;
-			this.pnrNameLabel.Text = "PNR: ";
+			this.pnrNameLabel.Text = "PNR:";
 			this.pnrNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// PassangerSettings

@@ -14,6 +14,8 @@ namespace Operator {
 			this.context = context;
 
 			InitializeComponent();
+
+			Common.Misc.unfocusOnEscape(this);
 		}
 
 		private void findButton_Click(object sender, EventArgs ea) {
@@ -21,7 +23,7 @@ namespace Operator {
 				var result = context.service.getPassangerBookedFlights(new OperatorCommunication.PassangerSearchParams{
 					name = nameTB.Text.emptyToNull(),
 					surname = surnameTB.Text.emptyToNull(),
-					middleName = middleNameTB.Text.emptyToNull(),
+					middleName = noMiddleName.Checked ? "" : middleNameTB.Text.emptyToNull(),
 					pnr = pnrTB.Text.emptyToNull()
 				});
 				if(result) {
@@ -40,6 +42,10 @@ namespace Operator {
 				statusLabel.Text = "Неизвестная ошибка";
 				statusTooltip.SetToolTip(statusLabel, e.ToString());
 			}
+		}
+
+		private void noMiddleName_CheckedChanged(object sender, EventArgs e) {
+			middleNameTB.Enabled = !noMiddleName.Checked;
 		}
 	}
 

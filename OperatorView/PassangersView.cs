@@ -53,15 +53,19 @@ namespace Operator {
 
 			Misc.addBottomDivider(headerTable);
 			Misc.addTopDivider(footerTable2);
-			Misc.unfocusOnEscape(this);
+			Misc.unfocusOnEscape(this, (a, b) => { if(b.KeyCode == Keys.Escape) passangersDataGridView.ClearSelection(); });
 
 			splitContainer1_SizeChanged(null, null);
 
 			flightNameLabel.Text = flight.flightName;
 			airplaneNameLabel.Text = flight.airplaneName;
 			fromDatetime.Text = flight.departureTime
-				.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes).ToString("d HH:mm");
+				.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes).ToString("dd.MM.yyyy HH:mm");
 			fromCityCodeLabel.Text = flight.fromCode;
+
+			toCityDatetimeLabel.Text = flight.departureTime.AddMinutes(flight.arrivalOffsetMinutes)
+				.AddMinutes(context.cities[flight.toCode].timeOffsetMinutes).ToString("dd.MM.yyyy HH:mm");
+			toCityCodeLabel.Text = flight.toCode;
 
 			var now = DateTime.UtcNow;
 			lastUpdateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
