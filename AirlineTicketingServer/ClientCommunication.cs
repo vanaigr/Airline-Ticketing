@@ -1,7 +1,6 @@
 ﻿using Communication;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.ServiceModel;
 
 
@@ -15,8 +14,7 @@ namespace ClientCommunication {
 		}
 	}
 
-	[Serializable]
-	public struct BookingFlightResult {
+	[Serializable] public struct BookingFlightResult {
 		public int? customerBookedFlightId;
 		public DateTime bookingFinishedTime;
 		public BookedSeatInfo[] seatsInfo;
@@ -30,15 +28,13 @@ namespace ClientCommunication {
 		public BookedFlightDetails details;
 	}
 
-	[Serializable]
-	public struct LoginError {
+	[Serializable] public struct LoginError {
 		public string message;
 
 		public LoginError(string message) { this.message = message; }
 	}
 
-	[Serializable]
-	public struct LoginOrInputError {
+	[Serializable] public struct LoginOrInputError {
 		int error;
 		LoginError loginError;
 		InputError inputError;
@@ -50,8 +46,7 @@ namespace ClientCommunication {
 		public bool isInputError { get { return error == 1; } }
 	}
 
-	[ServiceContract]
-	public interface ClientService {
+	[ServiceContract] public interface ClientService {
 		[OperationContract] Parameters parameters();
 
 
