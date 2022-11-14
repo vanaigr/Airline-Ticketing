@@ -55,7 +55,7 @@ namespace Operator {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(280, 148);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(318, 148);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// findFlightsButton
@@ -71,7 +71,7 @@ namespace Operator {
 			this.findFlightsButton.Location = new System.Drawing.Point(20, 73);
 			this.findFlightsButton.Margin = new System.Windows.Forms.Padding(0);
 			this.findFlightsButton.Name = "findFlightsButton";
-			this.findFlightsButton.Size = new System.Drawing.Size(240, 33);
+			this.findFlightsButton.Size = new System.Drawing.Size(278, 33);
 			this.findFlightsButton.TabIndex = 1;
 			this.findFlightsButton.Text = "Найти рейсы";
 			this.findFlightsButton.UseVisualStyleBackColor = true;
@@ -90,7 +90,7 @@ namespace Operator {
 			this.findPassangerButton.Location = new System.Drawing.Point(20, 20);
 			this.findPassangerButton.Margin = new System.Windows.Forms.Padding(0);
 			this.findPassangerButton.Name = "findPassangerButton";
-			this.findPassangerButton.Size = new System.Drawing.Size(240, 33);
+			this.findPassangerButton.Size = new System.Drawing.Size(278, 33);
 			this.findPassangerButton.TabIndex = 0;
 			this.findPassangerButton.Text = "Найти бронь";
 			this.findPassangerButton.UseVisualStyleBackColor = true;
@@ -104,7 +104,7 @@ namespace Operator {
 			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
 			this.statusLabel.Location = new System.Drawing.Point(23, 126);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(234, 15);
+			this.statusLabel.Size = new System.Drawing.Size(272, 15);
 			this.statusLabel.TabIndex = 2;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -112,10 +112,8 @@ namespace Operator {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.Color.White;
-			this.ClientSize = new System.Drawing.Size(280, 148);
+			this.ClientSize = new System.Drawing.Size(318, 148);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "MenuForm";
 			this.Text = "Опции";

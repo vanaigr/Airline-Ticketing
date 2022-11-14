@@ -63,7 +63,7 @@ namespace Operator {
 			tableLayoutPanel3.Controls.Add(this.fromDate, 1, 2);
 			tableLayoutPanel3.Controls.Add(this.toCityCode, 2, 4);
 			tableLayoutPanel3.Controls.Add(this.toDate, 1, 4);
-			tableLayoutPanel3.Controls.Add(this.button1, 6, 0);
+			tableLayoutPanel3.Controls.Add(this.button1, 4, 0);
 			tableLayoutPanel3.Controls.Add(this.flowLayoutPanel1, 0, 0);
 			tableLayoutPanel3.Controls.Add(this.economyClassSeatsLabel, 4, 2);
 			tableLayoutPanel3.Controls.Add(this.comfortClassSeatsLabel, 6, 2);
@@ -79,7 +79,7 @@ namespace Operator {
 			tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 3F));
 			tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			tableLayoutPanel3.Size = new System.Drawing.Size(750, 100);
+			tableLayoutPanel3.Size = new System.Drawing.Size(361, 94);
 			tableLayoutPanel3.TabIndex = 1;
 			// 
 			// fromTime
@@ -103,7 +103,7 @@ namespace Operator {
 			this.toTime.Location = new System.Drawing.Point(10, 65);
 			this.toTime.Margin = new System.Windows.Forms.Padding(0);
 			this.toTime.Name = "toTime";
-			this.toTime.Size = new System.Drawing.Size(67, 25);
+			this.toTime.Size = new System.Drawing.Size(67, 19);
 			this.toTime.TabIndex = 9;
 			this.toTime.Text = "toTime";
 			this.toTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -145,7 +145,7 @@ namespace Operator {
 			this.toCityCode.Location = new System.Drawing.Point(144, 65);
 			this.toCityCode.Margin = new System.Windows.Forms.Padding(0);
 			this.toCityCode.Name = "toCityCode";
-			this.toCityCode.Size = new System.Drawing.Size(94, 25);
+			this.toCityCode.Size = new System.Drawing.Size(94, 19);
 			this.toCityCode.TabIndex = 11;
 			this.toCityCode.Text = "toCicyCode";
 			this.toCityCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -159,7 +159,7 @@ namespace Operator {
 			this.toDate.Location = new System.Drawing.Point(77, 65);
 			this.toDate.Margin = new System.Windows.Forms.Padding(0);
 			this.toDate.Name = "toDate";
-			this.toDate.Size = new System.Drawing.Size(67, 25);
+			this.toDate.Size = new System.Drawing.Size(67, 19);
 			this.toDate.TabIndex = 12;
 			this.toDate.Text = "toDate";
 			this.toDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -170,12 +170,13 @@ namespace Operator {
 			this.button1.AutoSize = true;
 			this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.button1.BackColor = System.Drawing.Color.RoyalBlue;
+			tableLayoutPanel3.SetColumnSpan(this.button1, 3);
 			this.button1.FlatAppearance.BorderColor = System.Drawing.SystemColors.ControlLight;
 			this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.button1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.button1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-			this.button1.Location = new System.Drawing.Point(647, 10);
+			this.button1.Location = new System.Drawing.Point(258, 10);
 			this.button1.Margin = new System.Windows.Forms.Padding(0);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(93, 27);
@@ -233,7 +234,7 @@ namespace Operator {
 			this.economyClassSeatsLabel.Location = new System.Drawing.Point(258, 43);
 			this.economyClassSeatsLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.economyClassSeatsLabel.Name = "economyClassSeatsLabel";
-			this.economyClassSeatsLabel.Size = new System.Drawing.Size(239, 19);
+			this.economyClassSeatsLabel.Size = new System.Drawing.Size(45, 19);
 			this.economyClassSeatsLabel.TabIndex = 15;
 			this.economyClassSeatsLabel.Text = "label1";
 			this.economyClassSeatsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -243,10 +244,10 @@ namespace Operator {
 			this.comfortClassSeatsLabel.AutoSize = true;
 			this.comfortClassSeatsLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.comfortClassSeatsLabel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.comfortClassSeatsLabel.Location = new System.Drawing.Point(500, 43);
+			this.comfortClassSeatsLabel.Location = new System.Drawing.Point(306, 43);
 			this.comfortClassSeatsLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.comfortClassSeatsLabel.Name = "comfortClassSeatsLabel";
-			this.comfortClassSeatsLabel.Size = new System.Drawing.Size(240, 19);
+			this.comfortClassSeatsLabel.Size = new System.Drawing.Size(45, 19);
 			this.comfortClassSeatsLabel.TabIndex = 16;
 			this.comfortClassSeatsLabel.Text = "label2";
 			this.comfortClassSeatsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -259,7 +260,7 @@ namespace Operator {
 			this.businessClassSeatsLabel.Location = new System.Drawing.Point(258, 65);
 			this.businessClassSeatsLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.businessClassSeatsLabel.Name = "businessClassSeatsLabel";
-			this.businessClassSeatsLabel.Size = new System.Drawing.Size(239, 25);
+			this.businessClassSeatsLabel.Size = new System.Drawing.Size(45, 19);
 			this.businessClassSeatsLabel.TabIndex = 17;
 			this.businessClassSeatsLabel.Text = "label3";
 			this.businessClassSeatsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -269,10 +270,10 @@ namespace Operator {
 			this.firstClassSeatsLabel.AutoSize = true;
 			this.firstClassSeatsLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.firstClassSeatsLabel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.firstClassSeatsLabel.Location = new System.Drawing.Point(500, 65);
+			this.firstClassSeatsLabel.Location = new System.Drawing.Point(306, 65);
 			this.firstClassSeatsLabel.Margin = new System.Windows.Forms.Padding(0);
 			this.firstClassSeatsLabel.Name = "firstClassSeatsLabel";
-			this.firstClassSeatsLabel.Size = new System.Drawing.Size(240, 25);
+			this.firstClassSeatsLabel.Size = new System.Drawing.Size(45, 19);
 			this.firstClassSeatsLabel.TabIndex = 18;
 			this.firstClassSeatsLabel.Text = "label4";
 			this.firstClassSeatsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -285,9 +286,8 @@ namespace Operator {
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.Color.White;
 			this.Controls.Add(tableLayoutPanel3);
-			this.MinimumSize = new System.Drawing.Size(750, 100);
 			this.Name = "FlightDisplay";
-			this.Size = new System.Drawing.Size(750, 100);
+			this.Size = new System.Drawing.Size(361, 94);
 			this.MouseLeave += new System.EventHandler(this.FlightDisplay_MouseLeave);
 			this.MouseHover += new System.EventHandler(this.FlightDisplay_MouseHover);
 			tableLayoutPanel3.ResumeLayout(false);

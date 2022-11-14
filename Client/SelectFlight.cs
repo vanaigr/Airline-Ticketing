@@ -44,18 +44,8 @@ namespace Client {
 
 		void setupAvailableOptions() {
 			try {
-				var options = service.parameters();
-				var avaliableFlightClasses = options.flightClasses;
-				var citiesList = options.cities;
-				var cities = new Dictionary<string, City>(citiesList.Count);
-				foreach(var city in citiesList) {
-					cities.Add(city.code, city);
-				}
-
-				context = new Context{ 
-					classesNames = avaliableFlightClasses,
-					cities = cities
-				};
+				context = new Context(service);
+				context.updateParameters();
 				updateErrorDisplay(false, null, null);
 			}
 			catch(Exception e) {
@@ -260,9 +250,9 @@ namespace Client {
 			fromLoc.DisplayMember = "name";
 			toLoc.DisplayMember = "name";
 
-			fromLoc.DataSource = new BindingSource(){ DataSource = context?.cities.Values };
+			fromLoc.DataSource = new BindingSource(){ DataSource = context?.Cities?.Values };
 			//fromLoc.DisplayMember = "Value";
-			toLoc.DataSource = new BindingSource(){ DataSource = context?.cities.Values };
+			toLoc.DataSource = new BindingSource(){ DataSource = context?.Cities?.Values };
 			//fromLoc.DisplayMember = "Value";
 
 			fromLoc.SelectedIndex = -1;

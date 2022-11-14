@@ -411,7 +411,7 @@ partial class ClientMessageService : ClientService {
 		if(!res.IsSuccess) return Either<PassangerBookedFlightAndDetails, InputError>.Failure(res.f);
 		var flights = res.s;
 		if(flights.Count != 1) return Either<PassangerBookedFlightAndDetails, InputError>.Failure(new InputError(
-			"Пассажи не найден"
+			"Пассажир не найден"
 		));
 		var flight = flights[0];
 		afParam.Value = flight.flight.availableFlight.id;

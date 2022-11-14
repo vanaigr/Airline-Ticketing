@@ -155,6 +155,10 @@ namespace Operator {
 				return details.passangersAndSeats[index].birthday.ToString("d");
 			} }
 
+			[DisplayName("PNR")] public string PNR{ get{
+				return details.passangersAndSeats[index].pnr;
+			} }
+
 			[DisplayName("Документ")] public string Document{ get{
 				return details.passangersAndSeats[index].document.ToString();
 			} }
@@ -194,7 +198,7 @@ namespace Operator {
 			passangersDataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			passangersDataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			passangersDataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-			passangersDataGridView.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+			passangersDataGridView.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
 			passangersDataGridView.Columns[0].ReadOnly = true;
 			passangersDataGridView.Columns[1].ReadOnly = true;
@@ -203,7 +207,8 @@ namespace Operator {
 			passangersDataGridView.Columns[4].ReadOnly = true;
 			passangersDataGridView.Columns[5].ReadOnly = true;
 			passangersDataGridView.Columns[6].ReadOnly = true;
-			passangersDataGridView.Columns[7].ReadOnly = false;
+			passangersDataGridView.Columns[7].ReadOnly = true;
+			passangersDataGridView.Columns[8].ReadOnly = false;
 
 			for(int i = 0; i < passangersDataGridView.Rows.Count; i++) {
 				passangersDataGridView.Rows[i].ReadOnly = 

@@ -11,6 +11,7 @@ namespace OperatorCommunication {
 		public string name;
 		public string surname;
 		public string middleName;
+		public string pnr;
 		public DateTime birthday;
 		public Documents.Document document;
 	}

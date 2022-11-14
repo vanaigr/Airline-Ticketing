@@ -35,6 +35,7 @@ class OperatorMessageService : OperatorService {
 		public byte[] documentBin;
 		public short seatIndex;
 		public bool canceled, arrived;
+		public string pnr;
 	}
 
 	private struct RawSeat {
@@ -88,7 +89,8 @@ class OperatorMessageService : OperatorService {
 				[ps].[Surname],
 				[ps].[MiddleName],
 				[ps].[Birthday],
-				[ps].[Document]
+				[ps].[Document],
+				[afs].[PNR]
 			from (
 				select *
 				from [Flights].[AvailableFlightsSeats] as [afs]
@@ -135,7 +137,8 @@ class OperatorMessageService : OperatorService {
 				surname = (string) result[4],
 				middleName = (string) result[5],
 				birthday = (DateTime) result[6],
-				documentBin = (byte[]) result[7]
+				documentBin = (byte[]) result[7],
+				pnr = (string) result[8]
 			});
 		}
 
@@ -157,7 +160,8 @@ class OperatorMessageService : OperatorService {
 				surname = it.surname,
 				middleName = it.middleName,
 				birthday = it.birthday,
-				document = DatabaseDocument.fromBytes(it.documentBin)
+				document = DatabaseDocument.fromBytes(it.documentBin),
+				pnr = it.pnr
 			});
 			arrivalStatus.Add(it.arrived);
 		}

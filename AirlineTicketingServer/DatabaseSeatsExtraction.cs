@@ -47,19 +47,23 @@ namespace Server {
 
 			--get seats occupation
 			select 
-				[afs].[SeatIndex],
+				[aps].[SeatIndex],
 				[aps].[Class], 
 				cast(case when [afs].[Passanger] is not null then 1 else 0 end as bit) as [Occupied]
 			from (
+				select * 
+				from [Flights].[AirplanesSeats] as [aps]
+				where @FlightAirplane = [aps].[Airplane]
+			) as [aps]
+			
+			left join (
 				select *
 				from [Flights].[AvailableFlightsSeats] as [afs]
 				where @AvailableFlight = [afs].[AvailableFlight]
 					and [afs].[CanceledIndex] = 0
 			) as [afs]
-
-			inner join [Flights].[AirplanesSeats] as [aps]
-			on @FlightAirplane = [aps].[Airplane] and [afs].[SeatIndex] = [aps].[SeatIndex]
-			order by [afs].[SeatIndex] ASC;
+			on [aps].[SeatIndex] = [afs].[SeatIndex]
+			order by [aps].[SeatIndex] ASC;
 		";
 
 		public DatabaseSeatsExtraction() {				

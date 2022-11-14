@@ -19,6 +19,7 @@ namespace Operator {
 			[DisplayName("Фамилия")] public string Surname{ get{ return flight.passanger.surname; } }
 			[DisplayName("Отчество")] public string MiddleName{ get{ return flight.passanger.middleName; } }
 			[DisplayName("PNR")] public string PNR{ get{ return flight.bookedSeat.pnr; } }
+			[DisplayName("Документ")] public string Document{ get{ return flight.passanger.document.ToString(); } }
 			[DisplayName("Код рейса")] public string FlightName{ get{ return flight.flight.availableFlight.flightName; } }
 			[DisplayName("Время отлёта")] public string DepDatetime{ get{ return flight.flight.availableFlight.departureTime.ToString("dd.MM.yyyy, HH:mm"); } }
 		}
@@ -54,6 +55,7 @@ namespace Operator {
 			passangerGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			passangerGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 			passangerGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+			passangerGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
 			passangerGridView.ResumeLayout(false);
 			passangerGridView.PerformLayout();

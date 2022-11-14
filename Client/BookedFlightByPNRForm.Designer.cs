@@ -59,7 +59,7 @@ namespace Client {
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(343, 119);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(285, 111);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// label1
@@ -88,20 +88,20 @@ namespace Client {
 			// 
 			// pnrTextBox
 			// 
-			this.pnrTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pnrTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.pnrTextBox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.pnrTextBox.Location = new System.Drawing.Point(83, 13);
 			this.pnrTextBox.Name = "pnrTextBox";
-			this.pnrTextBox.Size = new System.Drawing.Size(247, 25);
+			this.pnrTextBox.Size = new System.Drawing.Size(189, 25);
 			this.pnrTextBox.TabIndex = 2;
 			// 
 			// surnameTextBox
 			// 
-			this.surnameTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.surnameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.surnameTextBox.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.surnameTextBox.Location = new System.Drawing.Point(83, 44);
 			this.surnameTextBox.Name = "surnameTextBox";
-			this.surnameTextBox.Size = new System.Drawing.Size(247, 25);
+			this.surnameTextBox.Size = new System.Drawing.Size(189, 25);
 			this.surnameTextBox.TabIndex = 3;
 			// 
 			// tableLayoutPanel2
@@ -120,7 +120,7 @@ namespace Client {
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
 			this.tableLayoutPanel2.RowCount = 1;
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(323, 37);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(265, 31);
 			this.tableLayoutPanel2.TabIndex = 5;
 			// 
 			// ContinueButton
@@ -133,7 +133,7 @@ namespace Client {
 			this.ContinueButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.RoyalBlue;
 			this.ContinueButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.CornflowerBlue;
 			this.ContinueButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.ContinueButton.Location = new System.Drawing.Point(238, 9);
+			this.ContinueButton.Location = new System.Drawing.Point(180, 3);
 			this.ContinueButton.Name = "ContinueButton";
 			this.ContinueButton.Size = new System.Drawing.Size(82, 25);
 			this.ContinueButton.TabIndex = 4;
@@ -148,7 +148,7 @@ namespace Client {
 			this.statusLabel.ForeColor = System.Drawing.Color.Firebrick;
 			this.statusLabel.Location = new System.Drawing.Point(3, 0);
 			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(229, 37);
+			this.statusLabel.Size = new System.Drawing.Size(171, 31);
 			this.statusLabel.TabIndex = 5;
 			this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -156,13 +156,11 @@ namespace Client {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.BackColor = System.Drawing.Color.White;
-			this.ClientSize = new System.Drawing.Size(343, 119);
+			this.ClientSize = new System.Drawing.Size(285, 111);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "BookedFlightByPNRForm";
-			this.Text = "Просмотри билета по PNR";
+			this.Text = "Просмотр билета по PNR";
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel2.ResumeLayout(false);

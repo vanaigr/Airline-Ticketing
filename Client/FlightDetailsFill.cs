@@ -78,7 +78,7 @@ namespace Client {
 
 			this.classesNames = new Dictionary<int, string>();
 			foreach(var classId in this.flight.optionsForClasses.Keys) {
-				this.classesNames.Add(classId, context.classesNames[classId]);
+				this.classesNames.Add(classId, context.ClassesNames[classId]);
 			}
 
 
@@ -93,7 +93,7 @@ namespace Client {
 			flightNameLabel.Text = this.flight.flightName;
 			aitrplaneNameLavel.Text = this.flight.airplaneName;
 			departureDatetimeLabel.Text = this.flight.departureTime
-				.AddMinutes(context.cities[this.flight.fromCode].timeOffsetMinutes).ToString("d MMMM, dddd, HH:mm");
+				.AddMinutes(context.Cities[this.flight.fromCode].timeOffsetMinutes).ToString("d MMMM, dddd, HH:mm");
 			departureLocationLabel.Text = this.flight.fromCode;
 			headerContainer.ResumeLayout(false);
 			headerContainer.PerformLayout();

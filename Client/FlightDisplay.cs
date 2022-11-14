@@ -83,9 +83,9 @@ namespace Client {
 			this.flight = flight;
 
 			var depart = flight.departureTime
-				.AddMinutes(context.cities[flight.fromCode].timeOffsetMinutes);
+				.AddMinutes(context.Cities[flight.fromCode].timeOffsetMinutes);
 			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsetMinutes)
-				.AddMinutes(context.cities[flight.toCode].timeOffsetMinutes);
+				.AddMinutes(context.Cities[flight.toCode].timeOffsetMinutes);
 
 			fromCityCode.Text = flight.fromCode;
 			toCityCode.Text = flight.toCode;
@@ -111,7 +111,7 @@ namespace Client {
 
 			var availableClassesNames = new Dictionary<int, string>();
 			foreach(var key in flight.optionsForClasses.Keys) {
-				availableClassesNames.Add(key, context.classesNames[key]);
+				availableClassesNames.Add(key, context.ClassesNames[key]);
 			}
 			classType.DataSource = new BindingSource{ DataSource = availableClassesNames };
 			classType.DisplayMember = "Value";

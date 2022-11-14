@@ -51,7 +51,6 @@ namespace Client {
 
 			InitializeComponent();
 
-			Misc.fixFlowLayoutPanelHeight(passangersSummaryPanel);
 			Misc.unfocusOnEscape(this);
 
 			this.passangersSummaryPanel.SuspendLayout();

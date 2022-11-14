@@ -358,9 +358,9 @@ public static class SeatsBooking {
 		);
 
 		System.Diagnostics.Debug.Assert(
-			flightBookingResult == null || flightBookingResult.Tables.Count != 3
-			|| flightBookingResult.Tables[0] == null || flightBookingResult.Tables[1] == null
-			|| flightBookingResult.Tables[2] == null
+			flightBookingResult != null && flightBookingResult.Tables.Count == 3
+			&& flightBookingResult.Tables[0] != null && flightBookingResult.Tables[1] != null
+			&& flightBookingResult.Tables[2] != null
 		);
 
 		var customerBookedFlightId = customerBookedFlightIdParam.Value is DBNull ? 
