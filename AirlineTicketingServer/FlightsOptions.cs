@@ -7,102 +7,102 @@ using System.IO;
 namespace FlightsOptions {
 
 [Serializable] public struct Size3 {
-	public short x, y, z;
+    public short x, y, z;
 
-	public override bool Equals(Object o) { 
-		if(o == null || !(o is Size3)) return false;
-		var s = (Size3) o;
-		return x == s.x && y == s.y && z == s.z;
-	}
+    public override bool Equals(Object o) {
+        if(o == null || !(o is Size3)) return false;
+        var s = (Size3) o;
+        return x == s.x && y == s.y && z == s.z;
+    }
 
-	public override int GetHashCode() {
-		int hashCode = 373119288;
-		hashCode=hashCode*-1521134295+x.GetHashCode();
-		hashCode=hashCode*-1521134295+y.GetHashCode();
-		hashCode=hashCode*-1521134295+z.GetHashCode();
-		return hashCode;
-	}
+    public override int GetHashCode() {
+        int hashCode = 373119288;
+        hashCode=hashCode*-1521134295+x.GetHashCode();
+        hashCode=hashCode*-1521134295+y.GetHashCode();
+        hashCode=hashCode*-1521134295+z.GetHashCode();
+        return hashCode;
+    }
 }
 
 [Serializable] public class Baggage {
-	internal int costRub; //entire cost
-	internal short count;
-	internal short maxWeightKg; //per baggage
-	internal Size3 maxDim; //per baggare
+    internal int costRub; //entire cost
+    internal short count;
+    internal short maxWeightKg; //per baggage
+    internal Size3 maxDim; //per baggare
 
-	public Baggage(short count, int costRub, short maxWeightKg = 0, Size3 maxDim = new Size3()) {
-		Common.Debug2.AssertPersistent(
-			costRub >= 0 && count >= 0 && maxWeightKg >= 0
-			&& ((maxDim.x > 0 && maxDim.y > 0 && maxDim.z > 0) || Equals(maxDim, new Size3()))
-		);
+    public Baggage(short count, int costRub, short maxWeightKg = 0, Size3 maxDim = new Size3()) {
+        Common.Debug2.AssertPersistent(
+            costRub >= 0 && count >= 0 && maxWeightKg >= 0
+            && ((maxDim.x > 0 && maxDim.y > 0 && maxDim.z > 0) || Equals(maxDim, new Size3()))
+        );
 
-		this.costRub = costRub;
-		this.count = count;
-		this.maxWeightKg = maxWeightKg;
-		this.maxDim = maxDim;
-	}
+        this.costRub = costRub;
+        this.count = count;
+        this.maxWeightKg = maxWeightKg;
+        this.maxDim = maxDim;
+    }
 
-	public bool IsFree{ get{ return costRub == 0; } }
-	public bool RestrictedWeight{ get{ return maxWeightKg != 0; } }
-	public bool RestrictedSize{ get{ return !Equals(maxDim, new Size3()); } }
+    public bool IsFree{ get{ return costRub == 0; } }
+    public bool RestrictedWeight{ get{ return maxWeightKg != 0; } }
+    public bool RestrictedSize{ get{ return !Equals(maxDim, new Size3()); } }
 }
 
 [Serializable] public class BaggageOptions {
-	public List<Baggage> baggage;
-	public List<Baggage> handLuggage;
+    public List<Baggage> baggage;
+    public List<Baggage> handLuggage;
 }
 
 [Serializable] public struct TermsOptions {
-	internal int changeFlightCostRub;
-	internal int refundCostRub;
+    internal int changeFlightCostRub;
+    internal int refundCostRub;
 
-	public int ChangeFlightCostRub { get { Common.Debug2.AssertPersistent(CanChangeFlights); return changeFlightCostRub; } }
-	public int RefundCostRub { get { Common.Debug2.AssertPersistent(Refundable); return refundCostRub; } }
+    public int ChangeFlightCostRub { get { Common.Debug2.AssertPersistent(CanChangeFlights); return changeFlightCostRub; } }
+    public int RefundCostRub { get { Common.Debug2.AssertPersistent(Refundable); return refundCostRub; } }
 
-	public bool CanChangeFlights { get { return changeFlightCostRub >= 0; } }
-	public bool Refundable { get { return refundCostRub >= 0; } }
+    public bool CanChangeFlights { get { return changeFlightCostRub >= 0; } }
+    public bool Refundable { get { return refundCostRub >= 0; } }
 }
 
 [Serializable] public struct ServicesOptions {
-	public int basePriceRub;
-	public int seatChoiceCostRub;
+    public int basePriceRub;
+    public int seatChoiceCostRub;
 }
 
 [Serializable] public class Options {
-	public BaggageOptions baggageOptions;
-	public TermsOptions termsOptions;
-	public ServicesOptions servicesOptions;
+    public BaggageOptions baggageOptions;
+    public TermsOptions termsOptions;
+    public ServicesOptions servicesOptions;
 }
 
 [Serializable] public class SelectedBaggageOptions {
-	public int baggageIndex;
-	public int handLuggageIndex;
+    public int baggageIndex;
+    public int handLuggageIndex;
 
-	public SelectedBaggageOptions(int baggageIndex, int handLuggageIndex) {
-		this.baggageIndex = baggageIndex;
-		this.handLuggageIndex = handLuggageIndex;
-	}
+    public SelectedBaggageOptions(int baggageIndex, int handLuggageIndex) {
+        this.baggageIndex = baggageIndex;
+        this.handLuggageIndex = handLuggageIndex;
+    }
 }
 
 [Serializable] public class SelectedServicesOptions {
-	public bool seatSelected;
+    public bool seatSelected;
 
-	public SelectedServicesOptions(bool seatSelected) {
-		this.seatSelected = seatSelected;
-	}
+    public SelectedServicesOptions(bool seatSelected) {
+        this.seatSelected = seatSelected;
+    }
 }
 
 [Serializable] public class SelectedOptions {
-	public SelectedBaggageOptions baggageOptions;
-	public SelectedServicesOptions servicesOptions;
+    public SelectedBaggageOptions baggageOptions;
+    public SelectedServicesOptions servicesOptions;
 
-	public SelectedOptions(
-		SelectedBaggageOptions baggageOptions,
-		SelectedServicesOptions servicesOptions
-	) {
-		this.baggageOptions = baggageOptions;
-		this.servicesOptions = servicesOptions;
-	}
+    public SelectedOptions(
+        SelectedBaggageOptions baggageOptions,
+        SelectedServicesOptions servicesOptions
+    ) {
+        this.baggageOptions = baggageOptions;
+        this.servicesOptions = servicesOptions;
+    }
 }
 
 }

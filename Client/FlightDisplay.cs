@@ -12,257 +12,257 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class FlightDisplay : UserControl {
-		private static string rub = '\u20BD'.ToString();
-		private static string check = '\u2713'.ToString();
-		private static string cross = '\u274C'.ToString();
-		private static string nbs = '\u00A0'.ToString();
+    public partial class FlightDisplay : UserControl {
+        private static string rub = '\u20BD'.ToString();
+        private static string check = '\u2713'.ToString();
+        private static string cross = '\u274C'.ToString();
+        private static string nbs = '\u00A0'.ToString();
 
-		private static Color paidColor = Color.FromArgb(255, 0xff, 0x99, 0x1f);
-		public static Color freeColor = Color.FromArgb(255, 0x97, 0xba, 0x1e);
-		private static Color unavailableColor = Color.FromArgb(255, 0x95, 0xa0, 0xb3);
-		private static Color foreColor = Color.White;
+        private static Color paidColor = Color.FromArgb(255, 0xff, 0x99, 0x1f);
+        public static Color freeColor = Color.FromArgb(255, 0x97, 0xba, 0x1e);
+        private static Color unavailableColor = Color.FromArgb(255, 0x95, 0xa0, 0xb3);
+        private static Color foreColor = Color.White;
 
-		enum Status { free, paid, unavailable }
+        enum Status { free, paid, unavailable }
 
-		static ListItemLabel listItem(Status status) {
-			var l = new ListItemLabel();
-			if(status == Status.free) {
-				l.Text = check;
-				l.BackColor2 = freeColor;
-			}
-			else if(status == Status.paid) {
-				l.Text = rub;
-				l.BackColor2 = paidColor;
-			}
-			else if(status == Status.unavailable) {
-				l.Text = cross;
-				l.BackColor2 = unavailableColor;
-			}
-			else Common.Debug2.AssertPersistent(false);
-			l.Font = new Font(l.Font.FontFamily, 8);
-			l.ForeColor = Color.White;
-			l.Dock = DockStyle.Fill;
-			l.ForeColor = foreColor;
-			return l;
-		}
+        static ListItemLabel listItem(Status status) {
+            var l = new ListItemLabel();
+            if(status == Status.free) {
+                l.Text = check;
+                l.BackColor2 = freeColor;
+            }
+            else if(status == Status.paid) {
+                l.Text = rub;
+                l.BackColor2 = paidColor;
+            }
+            else if(status == Status.unavailable) {
+                l.Text = cross;
+                l.BackColor2 = unavailableColor;
+            }
+            else Common.Debug2.AssertPersistent(false);
+            l.Font = new Font(l.Font.FontFamily, 8);
+            l.ForeColor = Color.White;
+            l.Dock = DockStyle.Fill;
+            l.ForeColor = foreColor;
+            return l;
+        }
 
-		static void addListItem(TableLayoutPanel table, Status status, string text) {
-			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        static void addListItem(TableLayoutPanel table, Status status, string text) {
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
-			var li = listItem(status);
-			li.Margin = new Padding(0, 0, 0, 5);
-			li.Dock = DockStyle.Fill;
-			table.Controls.Add(li);
+            var li = listItem(status);
+            li.Margin = new Padding(0, 0, 0, 5);
+            li.Dock = DockStyle.Fill;
+            table.Controls.Add(li);
 
-			var textLabel = new Label();
-			Misc.setBetterFont(textLabel);
-			textLabel.TextAlign = ContentAlignment.MiddleLeft;
-			textLabel.AutoSize = true;
-			textLabel.Margin = new Padding(0, 0, 0, 5);
-			textLabel.Dock = DockStyle.Fill;
-			textLabel.Text = text;
-			table.Controls.Add(textLabel);
-		}
+            var textLabel = new Label();
+            Misc.setBetterFont(textLabel);
+            textLabel.TextAlign = ContentAlignment.MiddleLeft;
+            textLabel.AutoSize = true;
+            textLabel.Margin = new Padding(0, 0, 0, 5);
+            textLabel.Dock = DockStyle.Fill;
+            textLabel.Text = text;
+            table.Controls.Add(textLabel);
+        }
 
-		Context context;
-		Flight flight;
+        Context context;
+        Flight flight;
 
-		public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
-		public Flight CurrentFlight{ get{ return this.flight; } }
+        public int SelectedClass{ get{ return ((KeyValuePair<int, string>) this.classType.SelectedItem).Key; } }
+        public Flight CurrentFlight{ get{ return this.flight; } }
 
-		public FlightDisplay() {
-			InitializeComponent();
-		}
+        public FlightDisplay() {
+            InitializeComponent();
+        }
 
-		public void updateFromFlight(
-			Context context,
-			Flight flight
-		) {
-			this.context = context;
-			this.flight = flight;
+        public void updateFromFlight(
+            Context context,
+            Flight flight
+        ) {
+            this.context = context;
+            this.flight = flight;
 
-			var depart = flight.departureTime
-				.AddMinutes(context.Cities[flight.fromCode].timeOffsetMinutes);
-			var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsetMinutes)
-				.AddMinutes(context.Cities[flight.toCode].timeOffsetMinutes);
+            var depart = flight.departureTime
+                .AddMinutes(context.Cities[flight.fromCode].timeOffsetMinutes);
+            var arrive = flight.departureTime.AddMinutes(flight.arrivalOffsetMinutes)
+                .AddMinutes(context.Cities[flight.toCode].timeOffsetMinutes);
 
-			fromCityCode.Text = flight.fromCode;
-			toCityCode.Text = flight.toCode;
-			
-			fromDate.Text = depart.Date.ToString("d MMM, ddd");
-			toDate.Text = arrive.Date.ToString("d MMM, ddd");
-			
-			fromTime.Text = depart.TimeOfDay.ToString(@"h\:mm");
-			toTime.Text = arrive.TimeOfDay.ToString(@"h\:mm");
-			
-			var span = new TimeSpan(0, flight.arrivalOffsetMinutes, 0);
-			
-			var spanText = new StringBuilder();
-			spanText.Append("в пути ");
-			if(span.Days != 0) spanText.Append(span.Days).Append("д ");
-			if(span.Hours != 0) spanText.Append(span.Hours).Append("ч ");
-			if(span.Minutes != 0) spanText.Append(span.Minutes).Append("м ");
-			
-			flightTime.Text = spanText.ToString();
+            fromCityCode.Text = flight.fromCode;
+            toCityCode.Text = flight.toCode;
 
-			flightNameLabel.Text = flight.flightName;
-			airplaneNameLabel.Text = flight.airplaneName;
+            fromDate.Text = depart.Date.ToString("d MMM, ddd");
+            toDate.Text = arrive.Date.ToString("d MMM, ddd");
 
-			var availableClassesNames = new Dictionary<int, string>();
-			foreach(var key in flight.optionsForClasses.Keys) {
-				availableClassesNames.Add(key, context.ClassesNames[key]);
-			}
-			classType.DataSource = new BindingSource{ DataSource = availableClassesNames };
-			classType.DisplayMember = "Value";
+            fromTime.Text = depart.TimeOfDay.ToString(@"h\:mm");
+            toTime.Text = arrive.TimeOfDay.ToString(@"h\:mm");
 
-			updateOptions();
-		}
+            var span = new TimeSpan(0, flight.arrivalOffsetMinutes, 0);
 
-		private void classType_SelectedIndexChanged(object sender, EventArgs e) {
-			updateOptions();
-		}
+            var spanText = new StringBuilder();
+            spanText.Append("в пути ");
+            if(span.Days != 0) spanText.Append(span.Days).Append("д ");
+            if(span.Hours != 0) spanText.Append(span.Hours).Append("ч ");
+            if(span.Minutes != 0) spanText.Append(span.Minutes).Append("м ");
+
+            flightTime.Text = spanText.ToString();
+
+            flightNameLabel.Text = flight.flightName;
+            airplaneNameLabel.Text = flight.airplaneName;
+
+            var availableClassesNames = new Dictionary<int, string>();
+            foreach(var key in flight.optionsForClasses.Keys) {
+                availableClassesNames.Add(key, context.ClassesNames[key]);
+            }
+            classType.DataSource = new BindingSource{ DataSource = availableClassesNames };
+            classType.DisplayMember = "Value";
+
+            updateOptions();
+        }
+
+        private void classType_SelectedIndexChanged(object sender, EventArgs e) {
+            updateOptions();
+        }
 
         private void addBaggageList(string label, string baggagePaid, List<FlightsOptions.Baggage> baggages) { //appendBaggage
             var sb = new StringBuilder();
-			var freeBaggage = new List<FlightsOptions.Baggage>();
-			var paidBaggage = new List<FlightsOptions.Baggage>();
-			
-			foreach(var baggage in baggages) {
-				if(baggage.IsFree) {
-					if(baggage.count != 0) freeBaggage.Add(baggage);
-				}
-				else {
-					paidBaggage.Add(baggage);
-				}
-			}
+            var freeBaggage = new List<FlightsOptions.Baggage>();
+            var paidBaggage = new List<FlightsOptions.Baggage>();
 
-			if(freeBaggage.Count == 0) {
-				addListItem(baggageOptionsTable, Status.paid, baggagePaid);
-			}
+            foreach(var baggage in baggages) {
+                if(baggage.IsFree) {
+                    if(baggage.count != 0) freeBaggage.Add(baggage);
+                }
+                else {
+                    paidBaggage.Add(baggage);
+                }
+            }
 
-			foreach(var baggage in freeBaggage) {
-				sb.Clear().Append(label).Append(' ');
-				sb.Append(baggage.count);
-				if(baggage.count == 1) sb.Append(" сумка");
-				else sb.Append(" сумок");
-				if(baggage.RestrictedWeight) {
-					sb.Append(" до ")
-					  .Append(baggage.maxWeightKg)
-					  .Append(nbs)
-					  .Append("кг");
-				}
-				if(baggage.RestrictedWeight && baggage.RestrictedSize) sb.Append(",");
-				if(baggage.RestrictedSize) {
-					sb.Append(" до ") 
-					  .Append(baggage.maxDim.x)
-					  .Append('x')
-					  .Append(baggage.maxDim.y)
-					  .Append('x')
-					  .Append(baggage.maxDim.z)
-					  .Append(nbs)
-					  .Append("см");
-				}
-				if((baggage.RestrictedWeight || baggage.RestrictedSize) && baggage.count != 1) sb.Append(" за шт.");
+            if(freeBaggage.Count == 0) {
+                addListItem(baggageOptionsTable, Status.paid, baggagePaid);
+            }
 
-				addListItem(baggageOptionsTable, Status.free, sb.ToString());
-			}
-		}
+            foreach(var baggage in freeBaggage) {
+                sb.Clear().Append(label).Append(' ');
+                sb.Append(baggage.count);
+                if(baggage.count == 1) sb.Append(" сумка");
+                else sb.Append(" сумок");
+                if(baggage.RestrictedWeight) {
+                    sb.Append(" до ")
+                      .Append(baggage.maxWeightKg)
+                      .Append(nbs)
+                      .Append("кг");
+                }
+                if(baggage.RestrictedWeight && baggage.RestrictedSize) sb.Append(",");
+                if(baggage.RestrictedSize) {
+                    sb.Append(" до ")
+                      .Append(baggage.maxDim.x)
+                      .Append('x')
+                      .Append(baggage.maxDim.y)
+                      .Append('x')
+                      .Append(baggage.maxDim.z)
+                      .Append(nbs)
+                      .Append("см");
+                }
+                if((baggage.RestrictedWeight || baggage.RestrictedSize) && baggage.count != 1) sb.Append(" за шт.");
 
-		private void updateOptions() {
-			var flight = this.flight;
+                addListItem(baggageOptionsTable, Status.free, sb.ToString());
+            }
+        }
 
-			var selectedClassIndex = ((KeyValuePair<int, string>)classType.SelectedItem).Key;
-			var thisOptions = flight.optionsForClasses[selectedClassIndex];
+        private void updateOptions() {
+            var flight = this.flight;
 
-			var availableForCurrentClass = flight.availableSeatsForClasses[selectedClassIndex];
+            var selectedClassIndex = ((KeyValuePair<int, string>)classType.SelectedItem).Key;
+            var thisOptions = flight.optionsForClasses[selectedClassIndex];
 
-			availableSeatsCount.Text = "Свободных мест: " + availableForCurrentClass;
-			availableSeatsCount.Parent.PerformLayout();
-			
-			{ //baggage options
-				baggageOptionsTable.SuspendLayout();
+            var availableForCurrentClass = flight.availableSeatsForClasses[selectedClassIndex];
 
-				baggageOptionsTable.Controls.Clear();
-				baggageOptionsTable.RowStyles.Clear();
-				baggageOptionsTable.ColumnStyles.Clear();
+            availableSeatsCount.Text = "Свободных мест: " + availableForCurrentClass;
+            availableSeatsCount.Parent.PerformLayout();
 
-				baggageOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-				baggageOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            { //baggage options
+                baggageOptionsTable.SuspendLayout();
 
-				var bo = thisOptions.baggageOptions;
+                baggageOptionsTable.Controls.Clear();
+                baggageOptionsTable.RowStyles.Clear();
+                baggageOptionsTable.ColumnStyles.Clear();
 
-				baggageOptionsTable.ColumnCount = 2;
-				
+                baggageOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                baggageOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 
-				var sb = new StringBuilder();
+                var bo = thisOptions.baggageOptions;
 
-				addBaggageList("Багаж", "Багаж платный", bo.baggage);
-				addBaggageList("Ручная кладь", "Ручная кладь платная", bo.handLuggage);
+                baggageOptionsTable.ColumnCount = 2;
 
-				baggageOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
 
-				baggageOptionsTable.ResumeLayout();
-			}
+                var sb = new StringBuilder();
 
-			{ //terms options
-				termsOptionsTable.SuspendLayout();
+                addBaggageList("Багаж", "Багаж платный", bo.baggage);
+                addBaggageList("Ручная кладь", "Ручная кладь платная", bo.handLuggage);
 
-				termsOptionsTable.Controls.Clear();
-				termsOptionsTable.RowStyles.Clear();
-				termsOptionsTable.ColumnStyles.Clear();
+                baggageOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
 
-				termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-				termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-				termsOptionsTable.ColumnCount = 2;
+                baggageOptionsTable.ResumeLayout();
+            }
 
-				var options = thisOptions.termsOptions;
-				
-				if(options.CanChangeFlights) {
-					if(options.ChangeFlightCostRub == 0) addListItem(termsOptionsTable, Status.free, "Обмен без сборов");
-					else addListItem(termsOptionsTable, Status.paid, "Обмен со сбором " + options.ChangeFlightCostRub + nbs + rub);
-				}
-				else addListItem(termsOptionsTable, Status.unavailable, "Обмен недоступен");
+            { //terms options
+                termsOptionsTable.SuspendLayout();
 
-				if(options.Refundable) {
-					if(options.RefundCostRub == 0) addListItem(termsOptionsTable, Status.free, "Полный возврат");
-					else addListItem(termsOptionsTable, Status.paid, "Возврат со сбором " + options.RefundCostRub + nbs + rub);
-				}
-				else addListItem(termsOptionsTable, Status.unavailable, "Возврат недоступен");
+                termsOptionsTable.Controls.Clear();
+                termsOptionsTable.RowStyles.Clear();
+                termsOptionsTable.ColumnStyles.Clear();
 
-				termsOptionsTable.ResumeLayout();
-			}
+                termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                termsOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+                termsOptionsTable.ColumnCount = 2;
 
-			{ //services options
-				servicesOptionsTable.SuspendLayout();
+                var options = thisOptions.termsOptions;
 
-				servicesOptionsTable.Controls.Clear();
-				servicesOptionsTable.RowStyles.Clear();
-				servicesOptionsTable.ColumnStyles.Clear();
+                if(options.CanChangeFlights) {
+                    if(options.ChangeFlightCostRub == 0) addListItem(termsOptionsTable, Status.free, "Обмен без сборов");
+                    else addListItem(termsOptionsTable, Status.paid, "Обмен со сбором " + options.ChangeFlightCostRub + nbs + rub);
+                }
+                else addListItem(termsOptionsTable, Status.unavailable, "Обмен недоступен");
 
-				servicesOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-				servicesOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-				servicesOptionsTable.ColumnCount = 2;
+                if(options.Refundable) {
+                    if(options.RefundCostRub == 0) addListItem(termsOptionsTable, Status.free, "Полный возврат");
+                    else addListItem(termsOptionsTable, Status.paid, "Возврат со сбором " + options.RefundCostRub + nbs + rub);
+                }
+                else addListItem(termsOptionsTable, Status.unavailable, "Возврат недоступен");
 
-				var options = thisOptions.servicesOptions;
-				
-				addListItem(servicesOptionsTable, Status.paid, "Цена билета: " + options.basePriceRub + "руб.");
-				
-				if(options.seatChoiceCostRub == 0) {
-					addListItem(servicesOptionsTable, Status.free, "Выбор места при регистрации");
-				}
-				else {
-					addListItem(servicesOptionsTable, Status.paid, "Выбор места платный");
-				}
+                termsOptionsTable.ResumeLayout();
+            }
 
-				servicesOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
+            { //services options
+                servicesOptionsTable.SuspendLayout();
 
-				servicesOptionsTable.ResumeLayout();
-			}
-		}
+                servicesOptionsTable.Controls.Clear();
+                servicesOptionsTable.RowStyles.Clear();
+                servicesOptionsTable.ColumnStyles.Clear();
 
-		private void button1_Click(object sender, EventArgs e) {
-			this.OnClick(e);
-		}
-	}
+                servicesOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                servicesOptionsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+                servicesOptionsTable.ColumnCount = 2;
+
+                var options = thisOptions.servicesOptions;
+
+                addListItem(servicesOptionsTable, Status.paid, "Цена билета: " + options.basePriceRub + "руб.");
+
+                if(options.seatChoiceCostRub == 0) {
+                    addListItem(servicesOptionsTable, Status.free, "Выбор места при регистрации");
+                }
+                else {
+                    addListItem(servicesOptionsTable, Status.paid, "Выбор места платный");
+                }
+
+                servicesOptionsTable.Controls.Add(new Label{ Height = 0, Width = 0 });
+
+                servicesOptionsTable.ResumeLayout();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            this.OnClick(e);
+        }
+    }
 }

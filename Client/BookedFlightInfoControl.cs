@@ -4,109 +4,109 @@ using System;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class BookedFlightInfoControl : UserControl {
-		private ClientService service;
+    public partial class BookedFlightInfoControl : UserControl {
+        private ClientService service;
 
-		private int bookedFlightIndex;
-		private BookedFlight bookedFlight;
-		private CustomerContext customer;
-		private Context context;
+        private int bookedFlightIndex;
+        private BookedFlight bookedFlight;
+        private CustomerContext customer;
+        private Context context;
 
-		private SetStatus setStatus;
+        private SetStatus setStatus;
 
-		public event EventHandler OnDelete;
+        public event EventHandler OnDelete;
 
-		public BookedFlightInfoControl(
-			ClientService service, CustomerContext customer, 
-			Context context,
-			int bookedFlightIndex,
-			SetStatus setStatus
-		) {
-			this.service = service;
-			this.customer = customer;
-			this.context = context;
-			this.bookedFlightIndex = bookedFlightIndex;
-			this.setStatus = setStatus;
+        public BookedFlightInfoControl(
+            ClientService service, CustomerContext customer,
+            Context context,
+            int bookedFlightIndex,
+            SetStatus setStatus
+        ) {
+            this.service = service;
+            this.customer = customer;
+            this.context = context;
+            this.bookedFlightIndex = bookedFlightIndex;
+            this.setStatus = setStatus;
 
-			InitializeComponent();
+            InitializeComponent();
 
-			this.bookedFlight = customer.flightsBooked[bookedFlightIndex];
-			var af = bookedFlight.availableFlight;
+            this.bookedFlight = customer.flightsBooked[bookedFlightIndex];
+            var af = bookedFlight.availableFlight;
 
-			flightNameLabel.Text = af.flightName;
-			airplaneNameLabel.Text = af.airplaneName;
-			departureLocationLabel.Text = bookedFlight.availableFlight.fromCode;
-			departireDatetimeLabel.Text = af.departureTime.AddMinutes(context.Cities[bookedFlight.availableFlight.fromCode].timeOffsetMinutes)
-				.ToString("d MMMM, ddd, HH:mm");
-			arrivalLocationLabel.Text = bookedFlight.availableFlight.toCode;
-			arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsetMinutes)
-				.AddMinutes(context.Cities[bookedFlight.availableFlight.toCode].timeOffsetMinutes).ToString("d MMMM, ddd, HH:mm");
-			bookingFinishedTimeLabel.Text = "Дата бронирования (по локальному времени): " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
-			updateBookedSeatsCount();
-		}
+            flightNameLabel.Text = af.flightName;
+            airplaneNameLabel.Text = af.airplaneName;
+            departureLocationLabel.Text = bookedFlight.availableFlight.fromCode;
+            departireDatetimeLabel.Text = af.departureTime.AddMinutes(context.Cities[bookedFlight.availableFlight.fromCode].timeOffsetMinutes)
+                .ToString("d MMMM, ddd, HH:mm");
+            arrivalLocationLabel.Text = bookedFlight.availableFlight.toCode;
+            arrivalDatetimeLabel.Text = af.departureTime.AddMinutes(af.arrivalOffsetMinutes)
+                .AddMinutes(context.Cities[bookedFlight.availableFlight.toCode].timeOffsetMinutes).ToString("d MMMM, ddd, HH:mm");
+            bookingFinishedTimeLabel.Text = "Дата бронирования (по локальному времени): " + bookedFlight.bookingFinishedTime.ToString("d MMMM, ddd, HH:mm");
+            updateBookedSeatsCount();
+        }
 
-		private Form openedFlightDetails = null;
+        private Form openedFlightDetails = null;
 
-		private void proceedButton_Click(object sender, EventArgs e) {
-			if(openedFlightDetails != null) {
-				openedFlightDetails.BringToFront();
-				return;
-			}
+        private void proceedButton_Click(object sender, EventArgs e) {
+            if(openedFlightDetails != null) {
+                openedFlightDetails.BringToFront();
+                return;
+            }
 
-			try {
-				if(!customer.bookedFlightsDetails.ContainsKey(bookedFlightIndex)) {
-					if(bookedFlight.bookedFlightId == null) {
-						setStatus("Невозможно получить информацию о данном рейсе так как его идентификатор неизвестен", null);
-						return;
-					}
-					else if(customer.LoggedIn) {
-						var result = service.getBookedFlightDetails(customer.customer.Value, (int) bookedFlight.bookedFlightId);
+            try {
+                if(!customer.bookedFlightsDetails.ContainsKey(bookedFlightIndex)) {
+                    if(bookedFlight.bookedFlightId == null) {
+                        setStatus("Невозможно получить информацию о данном рейсе так как его идентификатор неизвестен", null);
+                        return;
+                    }
+                    else if(customer.LoggedIn) {
+                        var result = service.getBookedFlightDetails(customer.customer.Value, (int) bookedFlight.bookedFlightId);
 
-						if(result) customer.bookedFlightsDetails.Add(bookedFlightIndex, result.s);
-						else {
-							if(result.f.isLoginError) setStatus(result.f.LoginError.message, null);
-							else setStatus(result.f.InputError.message, null);
+                        if(result) customer.bookedFlightsDetails.Add(bookedFlightIndex, result.s);
+                        else {
+                            if(result.f.isLoginError) setStatus(result.f.LoginError.message, null);
+                            else setStatus(result.f.InputError.message, null);
 
-							return;
-						}
-					}
-					else {
-						setStatus("Невозможно получить информацию о данном рейсе для неавторизованного пользователя", null);
-						return;
-					}
-				}
+                            return;
+                        }
+                    }
+                    else {
+                        setStatus("Невозможно получить информацию о данном рейсе для неавторизованного пользователя", null);
+                        return;
+                    }
+                }
 
-				var status = new BookingStatus{ 
-					booked = true, 
-					bookedFlightIndex = bookedFlightIndex,
-				};
-				
-				var form = new FlightDetailsFill(
-					service, customer, context, 
-					status, null, null
-				);
+                var status = new BookingStatus{
+                    booked = true,
+                    bookedFlightIndex = bookedFlightIndex,
+                };
 
-				form.FormClosed += (a, b) => {
-					openedFlightDetails = null;
-				};
+                var form = new FlightDetailsFill(
+                    service, customer, context,
+                    status, null, null
+                );
 
-				form.OnBookedPassangersChanged += (a, b) => {
-					if(bookedFlight.bookedPassangerCount == 0) OnDelete?.Invoke(this, new EventArgs());
-					else updateBookedSeatsCount();
-				};
+                form.FormClosed += (a, b) => {
+                    openedFlightDetails = null;
+                };
 
-				openedFlightDetails = form;
-				form.Show();
-			}
-			catch(Exception ex) {
-				setStatus(null, ex);
-			}
-		}
+                form.OnBookedPassangersChanged += (a, b) => {
+                    if(bookedFlight.bookedPassangerCount == 0) OnDelete?.Invoke(this, new EventArgs());
+                    else updateBookedSeatsCount();
+                };
 
-		private void updateBookedSeatsCount() {
-			bookedSeatsCountLabel.Text = "Забронированно мест: " + bookedFlight.bookedPassangerCount;
-		}
-	}
+                openedFlightDetails = form;
+                form.Show();
+            }
+            catch(Exception ex) {
+                setStatus(null, ex);
+            }
+        }
 
-	public delegate void SetStatus(string msg, Exception details);
+        private void updateBookedSeatsCount() {
+            bookedSeatsCountLabel.Text = "Забронированно мест: " + bookedFlight.bookedPassangerCount;
+        }
+    }
+
+    public delegate void SetStatus(string msg, Exception details);
 }

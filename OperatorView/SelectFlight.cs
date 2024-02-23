@@ -11,173 +11,173 @@ using Communication;
 using OperatorCommunication;
 
 namespace Operator {
-	public partial class SelectFlight : Form {
-		Context context{ get; }
+    public partial class SelectFlight : Form {
+        Context context{ get; }
 
-		private OperatorService service{ get{ return context.service; } }
-		
-		public SelectFlight(Context context) {
-			this.context = context;
+        private OperatorService service{ get{ return context.service; } }
+
+        public SelectFlight(Context context) {
+            this.context = context;
 
             InitializeComponent();
 
-			Misc.unfocusOnEscape(this);
-			Misc.addBottomDivider(tableLayoutPanel1);
+            Misc.unfocusOnEscape(this);
+            Misc.addBottomDivider(tableLayoutPanel1);
 
-			pictureBox1.Image = TintImage.applyTint(pictureBox1.Image, Color.RoyalBlue);
+            pictureBox1.Image = TintImage.applyTint(pictureBox1.Image, Color.RoyalBlue);
 
-			reconnect();
-			setupAvailableOptions();
-		}
+            reconnect();
+            setupAvailableOptions();
+        }
 
-		void setupAvailableOptions() {
-			try {
-				context.update();
+        void setupAvailableOptions() {
+            try {
+                context.update();
 
-				updateErrorDisplay(false, null, null);
-			}
-			catch(Exception e) {
-				updateErrorDisplay(true, null, e);
-			}
-		}
+                updateErrorDisplay(false, null, null);
+            }
+            catch(Exception e) {
+                updateErrorDisplay(true, null, e);
+            }
+        }
 
-		void updateErrorDisplay(bool isError, string message, Exception e) {
-			if(isError) { 
-				statusLabel.Text = message ?? "Неизвестная ошибка";
-				this.elementHint.SetToolTip(this.statusLabel, e?.ToString() ?? message);
-			}
-			else {
-				statusLabel.Text = "";
-				this.elementHint.SetToolTip(this.statusLabel, null);
-			}
-		}
+        void updateErrorDisplay(bool isError, string message, Exception e) {
+            if(isError) {
+                statusLabel.Text = message ?? "Неизвестная ошибка";
+                this.elementHint.SetToolTip(this.statusLabel, e?.ToString() ?? message);
+            }
+            else {
+                statusLabel.Text = "";
+                this.elementHint.SetToolTip(this.statusLabel, null);
+            }
+        }
 
-		private void findFlightsButton_Click(object sender, EventArgs e) {
-			try {
-				var fromCode = (fromLoc.SelectedItem as City?)?.code;
-				var toCode = (toLoc.SelectedItem as City?)?.code;
-				
-				var response = service.findMatchingFlights(new MatchingFlightsParams{
-					fromCode = fromCode, toCode = toCode,
-					when = fromDepDate.Value
-				});
+        private void findFlightsButton_Click(object sender, EventArgs e) {
+            try {
+                var fromCode = (fromLoc.SelectedItem as City?)?.code;
+                var toCode = (toLoc.SelectedItem as City?)?.code;
 
-				if(response) {
-					var result = response.s;
+                var response = service.findMatchingFlights(new MatchingFlightsParams{
+                    fromCode = fromCode, toCode = toCode,
+                    when = fromDepDate.Value
+                });
 
-					flightsTable.SuspendLayout();
+                if(response) {
+                    var result = response.s;
 
-					flightsTable.Controls.Clear();
-					flightsTable.RowStyles.Clear();
+                    flightsTable.SuspendLayout();
 
-					if(result.Count == 0) {
-						var noResultsLabel = new Label();
-						noResultsLabel.Font = new Font(noResultsLabel.Font.FontFamily, 12);
-						noResultsLabel.Text = "Результаты не найдены";
-						noResultsLabel.TextAlign = ContentAlignment.TopCenter;
-						noResultsLabel.Dock = DockStyle.Top;
+                    flightsTable.Controls.Clear();
+                    flightsTable.RowStyles.Clear();
 
-						flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
-						flightsTable.RowCount++;
-						flightsTable.RowStyles.Add(new RowStyle());
-					}
-					else foreach(var flight in result) {
-						var flightDisplay = new FlightDisplay();
-						flightDisplay.Margin = new Padding(0, 0, 0, 10);
-						flightDisplay.updateFromFlight(context, flight);
-						flightDisplay.Dock = DockStyle.Top;
-						flightDisplay.Click += new EventHandler(openPassangersView);
+                    if(result.Count == 0) {
+                        var noResultsLabel = new Label();
+                        noResultsLabel.Font = new Font(noResultsLabel.Font.FontFamily, 12);
+                        noResultsLabel.Text = "Результаты не найдены";
+                        noResultsLabel.TextAlign = ContentAlignment.TopCenter;
+                        noResultsLabel.Dock = DockStyle.Top;
 
-						flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
-						flightsTable.RowCount++;
-						flightsTable.RowStyles.Add(new RowStyle());
-					}
+                        flightsTable.Controls.Add(noResultsLabel, flightsTable.RowCount, 0);
+                        flightsTable.RowCount++;
+                        flightsTable.RowStyles.Add(new RowStyle());
+                    }
+                    else foreach(var flight in result) {
+                        var flightDisplay = new FlightDisplay();
+                        flightDisplay.Margin = new Padding(0, 0, 0, 10);
+                        flightDisplay.updateFromFlight(context, flight);
+                        flightDisplay.Dock = DockStyle.Top;
+                        flightDisplay.Click += new EventHandler(openPassangersView);
 
-					flightsTable.ResumeLayout(false);
-					flightsTable.PerformLayout();
+                        flightsTable.Controls.Add(flightDisplay, flightsTable.RowCount, 0);
+                        flightsTable.RowCount++;
+                        flightsTable.RowStyles.Add(new RowStyle());
+                    }
 
-					updateErrorDisplay(false, null, null);
-				}
-				else {
-					updateErrorDisplay(true, response.f.message, null);
-				}
-			}
-			catch(FaultException<ExceptionDetail> ex) {
-				updateErrorDisplay(true, null, ex);
-			}
-		}
+                    flightsTable.ResumeLayout(false);
+                    flightsTable.PerformLayout();
 
-		
+                    updateErrorDisplay(false, null, null);
+                }
+                else {
+                    updateErrorDisplay(true, response.f.message, null);
+                }
+            }
+            catch(FaultException<ExceptionDetail> ex) {
+                updateErrorDisplay(true, null, ex);
+            }
+        }
 
-		private void pictureBox1_Click(object sender, EventArgs e) {
-			reconnect();
-		}
 
-		private Dictionary<int, PassangersView> openedViews = new Dictionary<int, PassangersView>();
 
-		private void openPassangersView(object sender, EventArgs e) {
-			var flightDisplay = (FlightDisplay) sender;
-			var flight = flightDisplay.CurrentFlight;
+        private void pictureBox1_Click(object sender, EventArgs e) {
+            reconnect();
+        }
 
-			var flightId = flight.id;
+        private Dictionary<int, PassangersView> openedViews = new Dictionary<int, PassangersView>();
 
-			PassangersView view;
-			if(openedViews.TryGetValue(flightId, out view)) {
-				view.Focus();
-			}
-			else {
-				try {
-					var result = service.getFlightDetails(flight.id);
+        private void openPassangersView(object sender, EventArgs e) {
+            var flightDisplay = (FlightDisplay) sender;
+            var flight = flightDisplay.CurrentFlight;
 
-					if(result) { 
-						view = new PassangersView(service, flight, result.s, context);
-						view.FormClosed += (obj, args) => { openedViews.Remove(flightId); };
+            var flightId = flight.id;
 
-						updateErrorDisplay(false, null, null);
-					
-						openedViews.Add(flight.id, view);
-						view.Show();
-					}
-					else {
-						updateErrorDisplay(true, result.f.message, null);
-					}
-				}
-				catch(Exception ex) {
-					updateErrorDisplay(true, null, ex);
-				}
-			}
-		}
+            PassangersView view;
+            if(openedViews.TryGetValue(flightId, out view)) {
+                view.Focus();
+            }
+            else {
+                try {
+                    var result = service.getFlightDetails(flight.id);
 
-		void reconnect() {
-			updateErrorDisplay(false, null, null);
-			
-			setupAvailableOptions();
+                    if(result) {
+                        view = new PassangersView(service, flight, result.s, context);
+                        view.FormClosed += (obj, args) => { openedViews.Remove(flightId); };
 
-			fromLoc.DisplayMember = "name";
-			toLoc.DisplayMember = "name";
+                        updateErrorDisplay(false, null, null);
 
-			fromLoc.DataSource = new BindingSource{ DataSource = context?.cities.Values };
-			toLoc.BindingContext = new BindingContext();
-			toLoc.DataSource = new BindingSource{ DataSource = context?.cities.Values };
+                        openedViews.Add(flight.id, view);
+                        view.Show();
+                    }
+                    else {
+                        updateErrorDisplay(true, result.f.message, null);
+                    }
+                }
+                catch(Exception ex) {
+                    updateErrorDisplay(true, null, ex);
+                }
+            }
+        }
 
-			fromLoc.SelectedIndex = -1;
-			toLoc.SelectedIndex = -1;
+        void reconnect() {
+            updateErrorDisplay(false, null, null);
 
-			flightsTable.Controls.Clear();
-		}
+            setupAvailableOptions();
 
-		//https://stackoverflow.com/a/3526775/18704284
-		private void SelectFlight_KeyDown(object sender, KeyEventArgs e) {
-			var form = (Form) sender;
-			if(e.KeyCode == Keys.Escape) {
-				form.ActiveControl = null;
-				e.Handled = true;
-			}
-			else e.Handled = false;
-		}
+            fromLoc.DisplayMember = "name";
+            toLoc.DisplayMember = "name";
 
-		private void flightsTable_Paint(object sender, PaintEventArgs e) {
-			ActiveControl = Misc.addDummyButton(this);
-		}
-	}
+            fromLoc.DataSource = new BindingSource{ DataSource = context?.cities.Values };
+            toLoc.BindingContext = new BindingContext();
+            toLoc.DataSource = new BindingSource{ DataSource = context?.cities.Values };
+
+            fromLoc.SelectedIndex = -1;
+            toLoc.SelectedIndex = -1;
+
+            flightsTable.Controls.Clear();
+        }
+
+        //https://stackoverflow.com/a/3526775/18704284
+        private void SelectFlight_KeyDown(object sender, KeyEventArgs e) {
+            var form = (Form) sender;
+            if(e.KeyCode == Keys.Escape) {
+                form.ActiveControl = null;
+                e.Handled = true;
+            }
+            else e.Handled = false;
+        }
+
+        private void flightsTable_Paint(object sender, PaintEventArgs e) {
+            ActiveControl = Misc.addDummyButton(this);
+        }
+    }
 }

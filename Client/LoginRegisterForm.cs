@@ -14,142 +14,142 @@ using Common;
 
 namespace Client {
 
-	public partial class LoginRegisterForm : Form {
-		CustomerContext customer;
-		ClientService service;
+    public partial class LoginRegisterForm : Form {
+        CustomerContext customer;
+        ClientService service;
 
-		public AbortAction beforeChangeAccount;
+        public AbortAction beforeChangeAccount;
 
-		public delegate bool AbortAction();
+        public delegate bool AbortAction();
 
-		public LoginRegisterForm(ClientService service, CustomerContext customer) {
-			this.service = service;
-			this.customer = customer;
+        public LoginRegisterForm(ClientService service, CustomerContext customer) {
+            this.service = service;
+            this.customer = customer;
 
-			InitializeComponent();
-			Misc.unfocusOnEscape(this);
-			
-			LoginText.Text = customer.customer?.login;
-			PasswordText.Text = customer.customer?.password;
-		}
+            InitializeComponent();
+            Misc.unfocusOnEscape(this);
 
-		public void setError(string message) {
-			statusLabel.ForeColor = Color.Firebrick;
-			statusLabel.Text = message;
-			statusTooltip.SetToolTip(statusLabel, message);
-		}
+            LoginText.Text = customer.customer?.login;
+            PasswordText.Text = customer.customer?.password;
+        }
 
-		public void setFine(string message) {
-			statusLabel.ForeColor = SystemColors.ControlText;
-			statusLabel.Text = message;
-			statusTooltip.SetToolTip(statusLabel, message);
-		}
+        public void setError(string message) {
+            statusLabel.ForeColor = Color.Firebrick;
+            statusLabel.Text = message;
+            statusTooltip.SetToolTip(statusLabel, message);
+        }
 
-		private void RegisterButton_Click(object sender, EventArgs e) {
-			var login = LoginText.Text;
-			var password = PasswordText.Text;
+        public void setFine(string message) {
+            statusLabel.ForeColor = SystemColors.ControlText;
+            statusLabel.Text = message;
+            statusTooltip.SetToolTip(statusLabel, message);
+        }
 
-			try {
-				var newCust = new Account(login, password);
-				var response = service.registerAccount(newCust);
-				if(response) {
-					customer.setFrom(newCust);
+        private void RegisterButton_Click(object sender, EventArgs e) {
+            var login = LoginText.Text;
+            var password = PasswordText.Text;
 
-					statusLabel.ForeColor = SystemColors.ControlText;
-					statusLabel.Text = "Аккаунт зарегистрирован";
-				}
-				else {
-					setError(response.f.message);
-				}
-			}
-			catch(FaultException<ExceptionDetail> ex) {
-				statusLabel.ForeColor = Color.Firebrick;
-				statusLabel.Text = "Неизвестная ошибка";
-				statusTooltip.SetToolTip(statusLabel, ex.ToString());
-			}
-		}
+            try {
+                var newCust = new Account(login, password);
+                var response = service.registerAccount(newCust);
+                if(response) {
+                    customer.setFrom(newCust);
 
-		private void LoginButton_Click(object sender, EventArgs e) {
-			var login = LoginText.Text;
-			var password = PasswordText.Text;
-			
-			try {
-				var abort = beforeChangeAccount?.Invoke();
-				if(abort == true) {
-					setFine("Вход отменён");
-					return;
-				}
+                    statusLabel.ForeColor = SystemColors.ControlText;
+                    statusLabel.Text = "Аккаунт зарегистрирован";
+                }
+                else {
+                    setError(response.f.message);
+                }
+            }
+            catch(FaultException<ExceptionDetail> ex) {
+                statusLabel.ForeColor = Color.Firebrick;
+                statusLabel.Text = "Неизвестная ошибка";
+                statusTooltip.SetToolTip(statusLabel, ex.ToString());
+            }
+        }
 
-				var newCust = new Account(login, password);
-				var response = service.logInAccount(newCust);
-				if(response) {
-					var response2 = service.getPassangers(newCust);
-					if(response2) {
+        private void LoginButton_Click(object sender, EventArgs e) {
+            var login = LoginText.Text;
+            var password = PasswordText.Text;
 
-						customer.unlogin();
+            try {
+                var abort = beforeChangeAccount?.Invoke();
+                if(abort == true) {
+                    setFine("Вход отменён");
+                    return;
+                }
 
-						customer.setFrom(newCust);
+                var newCust = new Account(login, password);
+                var response = service.logInAccount(newCust);
+                if(response) {
+                    var response2 = service.getPassangers(newCust);
+                    if(response2) {
 
-						foreach(var newPassanger in response2.s) {
-							var index = customer.newPassangerIndex++;
-							customer.passangers.Add(index, newPassanger.Value);
-							customer.passangerIds.Add(index, new PassangerIdData(newPassanger.Key));
-						}
+                        customer.unlogin();
 
-						setFine(null);
-						
-						DialogResult = DialogResult.OK;
-						Close();
-					}
-					else setError(response2.f.message);
-				}
-				else setError(response.f.message);
-			}
-			catch(FaultException<ExceptionDetail> ex) {
-				statusLabel.ForeColor = Color.Firebrick;
-				statusLabel.Text = "Неизвестная ошибка";
-				statusTooltip.SetToolTip(statusLabel, ex.ToString());
-			}
-		}
+                        customer.setFrom(newCust);
 
-		private void pictureBox1_MouseDown(object sender, MouseEventArgs e) {
-			PasswordText.UseSystemPasswordChar = false;
-		}
+                        foreach(var newPassanger in response2.s) {
+                            var index = customer.newPassangerIndex++;
+                            customer.passangers.Add(index, newPassanger.Value);
+                            customer.passangerIds.Add(index, new PassangerIdData(newPassanger.Key));
+                        }
 
-		private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
-			PasswordText.UseSystemPasswordChar = true;
-		}
+                        setFine(null);
 
-		private void showPassword_MouseLeave(object sender, EventArgs e) {
-			PasswordText.UseSystemPasswordChar = true;
-		}
+                        DialogResult = DialogResult.OK;
+                        Close();
+                    }
+                    else setError(response2.f.message);
+                }
+                else setError(response.f.message);
+            }
+            catch(FaultException<ExceptionDetail> ex) {
+                statusLabel.ForeColor = Color.Firebrick;
+                statusLabel.Text = "Неизвестная ошибка";
+                statusTooltip.SetToolTip(statusLabel, ex.ToString());
+            }
+        }
 
-		bool focused = false;
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e) {
+            PasswordText.UseSystemPasswordChar = false;
+        }
 
-		private void PasswordText_Enter(object sender, EventArgs e) {
-			focused = true;
-			tableLayoutPanel3.Refresh();
-		}
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
+            PasswordText.UseSystemPasswordChar = true;
+        }
 
-		private void PasswordText_Leave(object sender, EventArgs e) {
-			focused = false;
-			tableLayoutPanel3.Refresh();
-		}
+        private void showPassword_MouseLeave(object sender, EventArgs e) {
+            PasswordText.UseSystemPasswordChar = true;
+        }
 
-		private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
-			if(focused) {
-				var cr = tableLayoutPanel3.ClientRectangle;
-				using(var p = new Pen(Color.FromArgb(0,120,215))) {
-					e.Graphics.DrawRectangle(p, new Rectangle(cr.X, cr.Y, cr.Width-1, cr.Height-1));
-				}
-			}
-			else {
-				var cr = tableLayoutPanel3.ClientRectangle;
-				using(var p = new Pen(Color.FromArgb(122,122,122))) {
-					e.Graphics.DrawRectangle(p, new Rectangle(cr.X, cr.Y, cr.Width-1, cr.Height-1));
-				}
-			}
-			//ControlPaint.DrawBorder(e.Graphics, tableLayoutPanel3.ClientRectangle, Color.FromArgb(0,120,215), ButtonBorderStyle.Solid);
-		}
-	}
+        bool focused = false;
+
+        private void PasswordText_Enter(object sender, EventArgs e) {
+            focused = true;
+            tableLayoutPanel3.Refresh();
+        }
+
+        private void PasswordText_Leave(object sender, EventArgs e) {
+            focused = false;
+            tableLayoutPanel3.Refresh();
+        }
+
+        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
+            if(focused) {
+                var cr = tableLayoutPanel3.ClientRectangle;
+                using(var p = new Pen(Color.FromArgb(0,120,215))) {
+                    e.Graphics.DrawRectangle(p, new Rectangle(cr.X, cr.Y, cr.Width-1, cr.Height-1));
+                }
+            }
+            else {
+                var cr = tableLayoutPanel3.ClientRectangle;
+                using(var p = new Pen(Color.FromArgb(122,122,122))) {
+                    e.Graphics.DrawRectangle(p, new Rectangle(cr.X, cr.Y, cr.Width-1, cr.Height-1));
+                }
+            }
+            //ControlPaint.DrawBorder(e.Graphics, tableLayoutPanel3.ClientRectangle, Color.FromArgb(0,120,215), ButtonBorderStyle.Solid);
+        }
+    }
 }

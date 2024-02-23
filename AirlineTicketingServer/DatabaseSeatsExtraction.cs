@@ -6,128 +6,128 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 
 namespace Server {
-	public class DatabaseSeatsExtraction {
-		private List<RawSeat> rawSeatsOccupation;
-		private byte[] seatsSchemeBin;
+    public class DatabaseSeatsExtraction {
+        private List<RawSeat> rawSeatsOccupation;
+        private byte[] seatsSchemeBin;
 
-		private struct RawSeat {
-			public short index;
-			public byte classId;
-			public bool occupied;
-		};
+        private struct RawSeat {
+            public short index;
+            public byte classId;
+            public bool occupied;
+        };
 
-		public static readonly string commandText = @"
-			--get seats scheme
-			select top 1 [ap].[SeatsScheme]
-			from (
-				select top 1 [af].[FlightInfo]
-				from [Flights].[AvailableFlights] as [af]
-				where @AvailableFlight = [af].[Id]
-			) as [afFlightInfo]
-			
-			inner join [Flights].[FlightInfo] as [fi]
-			on [afFlightInfo].[FlightInfo] = [fi].[Id]
+        public static readonly string commandText = @"
+            --get seats scheme
+            select top 1 [ap].[SeatsScheme]
+            from (
+                select top 1 [af].[FlightInfo]
+                from [Flights].[AvailableFlights] as [af]
+                where @AvailableFlight = [af].[Id]
+            ) as [afFlightInfo]
 
-			inner join [Flights].[Airplanes] as [ap]
-			on [fi].[Airplane] = [ap].[Id];
+            inner join [Flights].[FlightInfo] as [fi]
+            on [afFlightInfo].[FlightInfo] = [fi].[Id]
 
-			--get current flight airplane
-			declare @FlightAirplane int;
+            inner join [Flights].[Airplanes] as [ap]
+            on [fi].[Airplane] = [ap].[Id];
 
-			select top 1 @FlightAirplane = [fi].[Airplane]
-			from (
-				select top 1 *
-				from [Flights].[AvailableFlights] as [af]
-				where [af].[Id] = @AvailableFlight
-			) as [af]
-			
-			inner join [Flights].[FlightInfo] as [fi]
-			on [af].[FlightInfo] = [fi].[Id];
+            --get current flight airplane
+            declare @FlightAirplane int;
+
+            select top 1 @FlightAirplane = [fi].[Airplane]
+            from (
+                select top 1 *
+                from [Flights].[AvailableFlights] as [af]
+                where [af].[Id] = @AvailableFlight
+            ) as [af]
+
+            inner join [Flights].[FlightInfo] as [fi]
+            on [af].[FlightInfo] = [fi].[Id];
 
 
-			--get seats occupation
-			select 
-				[aps].[SeatIndex],
-				[aps].[Class], 
-				cast(case when [afs].[Passanger] is not null then 1 else 0 end as bit) as [Occupied]
-			from (
-				select * 
-				from [Flights].[AirplanesSeats] as [aps]
-				where @FlightAirplane = [aps].[Airplane]
-			) as [aps]
-			
-			left join (
-				select *
-				from [Flights].[AvailableFlightsSeats] as [afs]
-				where @AvailableFlight = [afs].[AvailableFlight]
-					and [afs].[CanceledIndex] = 0
-			) as [afs]
-			on [aps].[SeatIndex] = [afs].[SeatIndex]
-			order by [aps].[SeatIndex] ASC;
-		";
+            --get seats occupation
+            select
+                [aps].[SeatIndex],
+                [aps].[Class],
+                cast(case when [afs].[Passanger] is not null then 1 else 0 end as bit) as [Occupied]
+            from (
+                select *
+                from [Flights].[AirplanesSeats] as [aps]
+                where @FlightAirplane = [aps].[Airplane]
+            ) as [aps]
 
-		public DatabaseSeatsExtraction() {				
-			rawSeatsOccupation = new List<RawSeat>();
-		}
+            left join (
+                select *
+                from [Flights].[AvailableFlightsSeats] as [afs]
+                where @AvailableFlight = [afs].[AvailableFlight]
+                    and [afs].[CanceledIndex] = 0
+            ) as [afs]
+            on [aps].[SeatIndex] = [afs].[SeatIndex]
+            order by [aps].[SeatIndex] ASC;
+        ";
 
-		public Either<Success, InputError> execute(SqlDataReader result) {
-			if(!result.Read()) return Either<Success, InputError>.Failure(new InputError(
-				"Данный рейс не существует"
-			));
-			this.seatsSchemeBin = (byte[]) result[0];
+        public DatabaseSeatsExtraction() {
+            rawSeatsOccupation = new List<RawSeat>();
+        }
 
-			Common.Debug2.AssertPersistent(result.NextResult());
+        public Either<Success, InputError> execute(SqlDataReader result) {
+            if(!result.Read()) return Either<Success, InputError>.Failure(new InputError(
+                "Данный рейс не существует"
+            ));
+            this.seatsSchemeBin = (byte[]) result[0];
 
-			while(result.Read()) this.rawSeatsOccupation.Add(new RawSeat{
-				index = (short) result[0],
-				classId = (byte) result[1],
-				occupied = (bool) result[2]
-			});
+            Common.Debug2.AssertPersistent(result.NextResult());
 
-			return Either<Success, InputError>.Success(new Success());
-		}
+            while(result.Read()) this.rawSeatsOccupation.Add(new RawSeat{
+                index = (short) result[0],
+                classId = (byte) result[1],
+                occupied = (bool) result[2]
+            });
 
-		public Seats calculate() {
-			var seatsScheme = DatabaseSeats.fromBytes(seatsSchemeBin);
+            return Either<Success, InputError>.Success(new Success());
+        }
 
-			Debug.Assert(seatsScheme.SeatsCount == rawSeatsOccupation.Count);
+        public Seats calculate() {
+            var seatsScheme = DatabaseSeats.fromBytes(seatsSchemeBin);
 
-			for(int i = 0; i < seatsScheme.SeatsCount; i++) {
-				Debug.Assert(rawSeatsOccupation[i].index == i);
-			}
+            Debug.Assert(seatsScheme.SeatsCount == rawSeatsOccupation.Count);
 
-			return new Seats(
-				seatsScheme,
-				new MappingEnumerator<RawSeat, byte>(rawSeatsOccupation, it => it.classId),
-				new MappingEnumerator<RawSeat, bool>(rawSeatsOccupation, it => it.occupied)
-			);
-		}
+            for(int i = 0; i < seatsScheme.SeatsCount; i++) {
+                Debug.Assert(rawSeatsOccupation[i].index == i);
+            }
 
-		private sealed class MappingEnumerator<T, T2> : IEnumerator<T2> {
-			private IEnumerator<T> inner;
-			private Map<T, T2> map;
+            return new Seats(
+                seatsScheme,
+                new MappingEnumerator<RawSeat, byte>(rawSeatsOccupation, it => it.classId),
+                new MappingEnumerator<RawSeat, bool>(rawSeatsOccupation, it => it.occupied)
+            );
+        }
 
-			public delegate T Map<F, T>(F f);
+        private sealed class MappingEnumerator<T, T2> : IEnumerator<T2> {
+            private IEnumerator<T> inner;
+            private Map<T, T2> map;
 
-			public MappingEnumerator(IEnumerable<T> it, Map<T, T2> map) {
-				this.inner = it.GetEnumerator();
-				this.map = map;
-			}
+            public delegate T Map<F, T>(F f);
 
-			public MappingEnumerator(IEnumerator<T> inner, Map<T, T2> map) {
-				this.inner = inner;
-				this.map = map;
-			}
+            public MappingEnumerator(IEnumerable<T> it, Map<T, T2> map) {
+                this.inner = it.GetEnumerator();
+                this.map = map;
+            }
 
-			public T2 Current => map(inner.Current);
+            public MappingEnumerator(IEnumerator<T> inner, Map<T, T2> map) {
+                this.inner = inner;
+                this.map = map;
+            }
 
-			object IEnumerator.Current => this.Current;
+            public T2 Current => map(inner.Current);
 
-			public void Dispose() { inner.Dispose(); }
+            object IEnumerator.Current => this.Current;
 
-			public bool MoveNext() { return inner.MoveNext(); }
+            public void Dispose() { inner.Dispose(); }
 
-			public void Reset() { inner.Reset(); }
-		}
-	}
+            public bool MoveNext() { return inner.MoveNext(); }
+
+            public void Reset() { inner.Reset(); }
+        }
+    }
 }

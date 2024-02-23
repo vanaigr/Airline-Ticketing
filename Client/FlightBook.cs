@@ -11,240 +11,240 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class FlightBook : Form {
-		private ClientService service;
-		private Dictionary<int, string> classesNames;
+    public partial class FlightBook : Form {
+        private ClientService service;
+        private Dictionary<int, string> classesNames;
 
-		private CustomerContext customer;
-		private List<BookingPassanger> bookingPassangers;
+        private CustomerContext customer;
+        private List<BookingPassanger> bookingPassangers;
 
-		private Dictionary<int, Passanger> localPassangers;
-		private SeatAndOptions[] seatsAndOptions;
-		private SelectedSeat[] selectedSeats;
+        private Dictionary<int, Passanger> localPassangers;
+        private SeatAndOptions[] seatsAndOptions;
+        private SelectedSeat[] selectedSeats;
 
-		private BookingPassangerSummaryControl[] controls;
+        private BookingPassangerSummaryControl[] controls;
 
-		private Flight flight;
-		private FlightsSeats.Seats seats;
+        private Flight flight;
+        private FlightsSeats.Seats seats;
 
-		private BookingStatus status;
-		
-		public FlightBook(
-			ClientService service,
-			CustomerContext customer, List<BookingPassanger> bookingPassangers,
-			Flight flight, FlightsSeats.Seats seats,
-			Dictionary<int, string> classesNames,
-			BookingStatus status
-		) {
-			this.service = service;
-			this.classesNames = classesNames;
+        private BookingStatus status;
 
-			this.customer = customer;
-			this.bookingPassangers = bookingPassangers;
+        public FlightBook(
+            ClientService service,
+            CustomerContext customer, List<BookingPassanger> bookingPassangers,
+            Flight flight, FlightsSeats.Seats seats,
+            Dictionary<int, string> classesNames,
+            BookingStatus status
+        ) {
+            this.service = service;
+            this.classesNames = classesNames;
 
-			this.flight = flight;
-			this.seats = seats;
+            this.customer = customer;
+            this.bookingPassangers = bookingPassangers;
 
-			this.status = status;
+            this.flight = flight;
+            this.seats = seats;
 
-			controls = new BookingPassangerSummaryControl[bookingPassangers.Count];
+            this.status = status;
 
-			InitializeComponent();
+            controls = new BookingPassangerSummaryControl[bookingPassangers.Count];
 
-			Misc.unfocusOnEscape(this);
+            InitializeComponent();
 
-			this.passangersSummaryPanel.SuspendLayout();
+            Misc.unfocusOnEscape(this);
 
-			if(status.booked) {
-				updateSum(null);
+            this.passangersSummaryPanel.SuspendLayout();
 
-				for(int i = 0; i < controls.Length; i++) {
-					var it = controls[i];
-					it.setPNR(status.BookedFlightDetails(customer).bookedSeats[i].pnr);
-				}
+            if(status.booked) {
+                updateSum(null);
 
-				statusOk("Бронирование было выполено успешно");
-				bookFlightButton.Enabled = false;
-			}
-			else {
-				seatsAndOptions = new SeatAndOptions[bookingPassangers.Count];
-				for(int i = 0; i < seatsAndOptions.Length; i++) {
-					var p = bookingPassangers[i];
-					var seatClassId = p.ClassId(seats);
+                for(int i = 0; i < controls.Length; i++) {
+                    var it = controls[i];
+                    it.setPNR(status.BookedFlightDetails(customer).bookedSeats[i].pnr);
+                }
 
-					seatsAndOptions[i] = new SeatAndOptions{
-						selectedSeatClass = seatClassId,
-						seatIndex = p.manualSeatSelected ? p.seatIndex : (int?) null,
-						selectedOptions = new FlightsOptions.SelectedOptions(
-							new FlightsOptions.SelectedBaggageOptions(
-								p.baggageOptionIndexForClass[seatClassId],
-								p.handLuggageOptionIndexForClass[seatClassId]
-							), 
-							new FlightsOptions.SelectedServicesOptions(
-								p.manualSeatSelected
-							)
-						)
-					};
-				}
+                statusOk("Бронирование было выполено успешно");
+                bookFlightButton.Enabled = false;
+            }
+            else {
+                seatsAndOptions = new SeatAndOptions[bookingPassangers.Count];
+                for(int i = 0; i < seatsAndOptions.Length; i++) {
+                    var p = bookingPassangers[i];
+                    var seatClassId = p.ClassId(seats);
 
-				localPassangers = new Dictionary<int, Passanger>();
-				selectedSeats = new SelectedSeat[seatsAndOptions.Length];
+                    seatsAndOptions[i] = new SeatAndOptions{
+                        selectedSeatClass = seatClassId,
+                        seatIndex = p.manualSeatSelected ? p.seatIndex : (int?) null,
+                        selectedOptions = new FlightsOptions.SelectedOptions(
+                            new FlightsOptions.SelectedBaggageOptions(
+                                p.baggageOptionIndexForClass[seatClassId],
+                                p.handLuggageOptionIndexForClass[seatClassId]
+                            ),
+                            new FlightsOptions.SelectedServicesOptions(
+                                p.manualSeatSelected
+                            )
+                        )
+                    };
+                }
 
-				for(int i = 0; i < bookingPassangers.Count; i++) {
-					var index = (int) bookingPassangers[i].passangerIndex;
-					var idInfo = customer.passangerIds[index];
+                localPassangers = new Dictionary<int, Passanger>();
+                selectedSeats = new SelectedSeat[seatsAndOptions.Length];
 
-					selectedSeats[i] = new SelectedSeat{
-						fromTempPassangers = idInfo.IsLocal,
-						passangerId = idInfo.IsLocal ? index : idInfo.DatabaseId,
-						seatAndOptions = seatsAndOptions[i]
-					};
+                for(int i = 0; i < bookingPassangers.Count; i++) {
+                    var index = (int) bookingPassangers[i].passangerIndex;
+                    var idInfo = customer.passangerIds[index];
 
-					if(idInfo.IsLocal) {
-						localPassangers[index] = customer.passangers[index];
-					}
-				}
-				
-				try {
-					SeatCost[] seatsCost;
+                    selectedSeats[i] = new SelectedSeat{
+                        fromTempPassangers = idInfo.IsLocal,
+                        passangerId = idInfo.IsLocal ? index : idInfo.DatabaseId,
+                        seatAndOptions = seatsAndOptions[i]
+                    };
 
-					if(!status.booked) {
-						var result = service.calculateSeatsCost(this.flight.id, seatsAndOptions);
+                    if(idInfo.IsLocal) {
+                        localPassangers[index] = customer.passangers[index];
+                    }
+                }
 
-						if(result) {
-							seatsCost = result.s;
-						}
-						else {
-							var e = result.f.message;
-							totalPriceLabel.Text = "";
-							statusError(e);
-							bookFlightButton.Enabled = false;
-							return;
-						}
-					}
-					else seatsCost = null;
-					
-					updateSum(seatsCost);
+                try {
+                    SeatCost[] seatsCost;
 
-					statusOk("");
-					bookFlightButton.Enabled = true;
-				}
-				catch(Exception e) {
-					totalPriceLabel.Text = "";
-					statusError("Неизвестная ошибка", e.ToString());
-					bookFlightButton.Enabled = false;
-				}
-			}
+                    if(!status.booked) {
+                        var result = service.calculateSeatsCost(this.flight.id, seatsAndOptions);
 
-			this.passangersSummaryPanel.ResumeLayout(false);
-			this.passangersSummaryPanel.PerformLayout();
-		}
+                        if(result) {
+                            seatsCost = result.s;
+                        }
+                        else {
+                            var e = result.f.message;
+                            totalPriceLabel.Text = "";
+                            statusError(e);
+                            bookFlightButton.Enabled = false;
+                            return;
+                        }
+                    }
+                    else seatsCost = null;
 
-		private void updateSum(SeatCost[] seatsCost) {
-			var totalSum = 0;
+                    updateSum(seatsCost);
 
-			var flightDetails = status.booked ? status.BookedFlightDetails(customer) : null;
+                    statusOk("");
+                    bookFlightButton.Enabled = true;
+                }
+                catch(Exception e) {
+                    totalPriceLabel.Text = "";
+                    statusError("Неизвестная ошибка", e.ToString());
+                    bookFlightButton.Enabled = false;
+                }
+            }
 
-			for(int i = 0; i < bookingPassangers.Count; i++) {
-				var passanger = bookingPassangers[i];
-				var it = new BookingPassangerSummaryControl();
+            this.passangersSummaryPanel.ResumeLayout(false);
+            this.passangersSummaryPanel.PerformLayout();
+        }
 
-				BookedSeatInfo? bookedSeatInfo;;
-				SeatCost seatCost;
+        private void updateSum(SeatCost[] seatsCost) {
+            var totalSum = 0;
 
-				if(status.booked) {
-					bookedSeatInfo = flightDetails.bookedSeats[i];
-					seatCost = bookedSeatInfo.Value.cost;
-				}
-				else {
-					bookedSeatInfo = null;
-					seatCost = seatsCost[i];
-				}
+            var flightDetails = status.booked ? status.BookedFlightDetails(customer) : null;
 
-				it.set(
-					customer, passanger,
-					seats, this.flight.optionsForClasses, 
-					bookedSeatInfo, seatCost, 
-					classesNames
-				);
+            for(int i = 0; i < bookingPassangers.Count; i++) {
+                var passanger = bookingPassangers[i];
+                var it = new BookingPassangerSummaryControl();
 
-				controls[i] = it;
-				passangersSummaryPanel.Controls.Add(it);
-				totalSum += seatCost.totalCost;
-			}
-			
-			totalPriceLabel.Text = "Итого: " + totalSum + " руб.";
-		}
+                BookedSeatInfo? bookedSeatInfo;;
+                SeatCost seatCost;
 
-		private void statusOk(string msg) {
-			statusLabel.ForeColor = SystemColors.ControlText;
-			statusLabel.Text = msg;
-			statusTooltip.SetToolTip(statusLabel, msg);
-		}
+                if(status.booked) {
+                    bookedSeatInfo = flightDetails.bookedSeats[i];
+                    seatCost = bookedSeatInfo.Value.cost;
+                }
+                else {
+                    bookedSeatInfo = null;
+                    seatCost = seatsCost[i];
+                }
 
-		private void statusError(string msg, string msg2 = null) {
-			statusLabel.ForeColor = Color.Firebrick;
-			statusLabel.Text = msg;
-			statusTooltip.SetToolTip(statusLabel, msg2 ?? msg);
-		}
+                it.set(
+                    customer, passanger,
+                    seats, this.flight.optionsForClasses,
+                    bookedSeatInfo, seatCost,
+                    classesNames
+                );
 
-		private void bookFlightButton_Click(object sender, EventArgs e) {
-			bookFlight();
-		}
+                controls[i] = it;
+                passangersSummaryPanel.Controls.Add(it);
+                totalSum += seatCost.totalCost;
+            }
 
-		private void bookFlight() {
-			if(status.booked) throw new InvalidOperationException();
+            totalPriceLabel.Text = "Итого: " + totalSum + " руб.";
+        }
 
-			var booked = false;
-			try {
-				var result = service.bookFlight(customer.customer, selectedSeats, localPassangers, flight.id);
+        private void statusOk(string msg) {
+            statusLabel.ForeColor = SystemColors.ControlText;
+            statusLabel.Text = msg;
+            statusTooltip.SetToolTip(statusLabel, msg);
+        }
 
-				if(result) {
-					booked = true;
-					var booking = result.s;
-					
-					for(int i = 0; i < bookingPassangers.Count; i++) {
-						var ss = booking.seatsInfo[i];
-						var bp = bookingPassangers[i];
+        private void statusError(string msg, string msg2 = null) {
+            statusLabel.ForeColor = Color.Firebrick;
+            statusLabel.Text = msg;
+            statusTooltip.SetToolTip(statusLabel, msg2 ?? msg);
+        }
 
-						customer.passangerIds[(int) bp.passangerIndex] = new PassangerIdData(ss.passangerId);
-						if(customer.LoggedIn) customer.passangers[(int) bp.passangerIndex].archived = true;
-					}
+        private void bookFlightButton_Click(object sender, EventArgs e) {
+            bookFlight();
+        }
 
-					var newIndex = customer.newBookedFlightIndex++;
+        private void bookFlight() {
+            if(status.booked) throw new InvalidOperationException();
 
-					customer.flightsBooked.Add(newIndex, new BookedFlight{
-						bookedFlightId = booking.customerBookedFlightId, bookingFinishedTime = booking.bookingFinishedTime,
-						availableFlight = flight, bookedPassangerCount = bookingPassangers.Count,
-					});
+            var booked = false;
+            try {
+                var result = service.bookFlight(customer.customer, selectedSeats, localPassangers, flight.id);
 
-					customer.bookedFlightsDetails.Add(newIndex, new BookedFlightDetails{
-						bookedSeats = booking.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
-					});
+                if(result) {
+                    booked = true;
+                    var booking = result.s;
 
-					for(int i = 0; i < controls.Length; i++) {
-						var it = controls[i];
-						it.setPNR(booking.seatsInfo[i].pnr);
-					}
+                    for(int i = 0; i < bookingPassangers.Count; i++) {
+                        var ss = booking.seatsInfo[i];
+                        var bp = bookingPassangers[i];
 
-					statusOk("Бронирование выполено успешно");
-					bookFlightButton.Enabled = false;
+                        customer.passangerIds[(int) bp.passangerIndex] = new PassangerIdData(ss.passangerId);
+                        if(customer.LoggedIn) customer.passangers[(int) bp.passangerIndex].archived = true;
+                    }
 
-					status.bookedFlightIndex = newIndex;
-					status.booked = true;
-				}
-				else {
-					string msg;
-					if(result.f.isInputError) msg = result.f.InputError.message;
-					else msg = result.f.LoginError.message;
+                    var newIndex = customer.newBookedFlightIndex++;
 
-					statusError(msg);
-				}
-			}
-			catch(Exception ex) {
-				if(booked) statusError("Неизвестная ошибка после окончания оформления полёта", ex.ToString());
-				else statusError("Неизвестная ошибка", ex.ToString());
-			}
-		}
-	}
+                    customer.flightsBooked.Add(newIndex, new BookedFlight{
+                        bookedFlightId = booking.customerBookedFlightId, bookingFinishedTime = booking.bookingFinishedTime,
+                        availableFlight = flight, bookedPassangerCount = bookingPassangers.Count,
+                    });
+
+                    customer.bookedFlightsDetails.Add(newIndex, new BookedFlightDetails{
+                        bookedSeats = booking.seatsInfo, seats = seats, seatsAndOptions = seatsAndOptions
+                    });
+
+                    for(int i = 0; i < controls.Length; i++) {
+                        var it = controls[i];
+                        it.setPNR(booking.seatsInfo[i].pnr);
+                    }
+
+                    statusOk("Бронирование выполено успешно");
+                    bookFlightButton.Enabled = false;
+
+                    status.bookedFlightIndex = newIndex;
+                    status.booked = true;
+                }
+                else {
+                    string msg;
+                    if(result.f.isInputError) msg = result.f.InputError.message;
+                    else msg = result.f.LoginError.message;
+
+                    statusError(msg);
+                }
+            }
+            catch(Exception ex) {
+                if(booked) statusError("Неизвестная ошибка после окончания оформления полёта", ex.ToString());
+                else statusError("Неизвестная ошибка", ex.ToString());
+            }
+        }
+    }
 }

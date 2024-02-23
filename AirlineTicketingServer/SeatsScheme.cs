@@ -7,291 +7,291 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace FlightsSeats {
-	[Serializable] public struct Point { public int x, z; public Point(int z, int x) { this.x = x; this.z = z; } }
+    [Serializable] public struct Point { public int x, z; public Point(int z, int x) { this.x = x; this.z = z; } }
 
-	[Serializable] public class SeatsScheme {
-		List<int> seatsBeforeZ;
-		List<int> sizeIndexForZ;
-		List<Point> sizes;
-		int totalLength;
-		int seatsCount;
+    [Serializable] public class SeatsScheme {
+        List<int> seatsBeforeZ;
+        List<int> sizeIndexForZ;
+        List<Point> sizes;
+        int totalLength;
+        int seatsCount;
 
-		public SeatsScheme(IEnumerator<Point> sizesE) { setFromIterators(sizesE); }
+        public SeatsScheme(IEnumerator<Point> sizesE) { setFromIterators(sizesE); }
 
-		public int WidthForRow(int z) { return sizes[sizeIndexForZ[z]].x; }
+        public int WidthForRow(int z) { return sizes[sizeIndexForZ[z]].x; }
 
-		public int SeatsBeforeZ(int z) { return seatsBeforeZ[z]; }
+        public int SeatsBeforeZ(int z) { return seatsBeforeZ[z]; }
 
-		public int TotalLength => totalLength;
-		public int SeatsCount => seatsCount;
-		public int SizesCount => sizes.Count;
-		
-		public int coordToIndex(int x, int z) {
-			Common.Debug2.AssertPersistent(x >= 0 && x < WidthForRow(z));
-			return SeatsBeforeZ(z) + x;
-		}
+        public int TotalLength => totalLength;
+        public int SeatsCount => seatsCount;
+        public int SizesCount => sizes.Count;
 
-		public int coordToIndex(Point coord) {
-			return coordToIndex(coord.x, coord.z);
-		}
+        public int coordToIndex(int x, int z) {
+            Common.Debug2.AssertPersistent(x >= 0 && x < WidthForRow(z));
+            return SeatsBeforeZ(z) + x;
+        }
 
-		public Point indexToCoord(int index) {
-			if(index < 0 || index >= seatsCount) {
-				throw new IndexOutOfRangeException();
-			}
-			var prevBefore = 0;
-			for(int z = 1; z < totalLength; z++) {
-				var beforeZ = seatsBeforeZ[z];
-				if(beforeZ > index) {
-					return new Point{ x = index - prevBefore, z = z-1 };
-				}
-				prevBefore = beforeZ;
-			}
-			if(SeatsCount > index) return new Point { x = index - prevBefore, z = totalLength - 1 };
-			throw new IndexOutOfRangeException();
-		}
+        public int coordToIndex(Point coord) {
+            return coordToIndex(coord.x, coord.z);
+        }
 
-		public Point sizeAtIndex(int i) { return sizes[i]; }
+        public Point indexToCoord(int index) {
+            if(index < 0 || index >= seatsCount) {
+                throw new IndexOutOfRangeException();
+            }
+            var prevBefore = 0;
+            for(int z = 1; z < totalLength; z++) {
+                var beforeZ = seatsBeforeZ[z];
+                if(beforeZ > index) {
+                    return new Point{ x = index - prevBefore, z = z-1 };
+                }
+                prevBefore = beforeZ;
+            }
+            if(SeatsCount > index) return new Point { x = index - prevBefore, z = totalLength - 1 };
+            throw new IndexOutOfRangeException();
+        }
 
-		public IEnumerator<Point> GetSizesEnumerator() {
-			return sizes.GetEnumerator();
-		}
-		
-		protected SeatsScheme(SerializationInfo info, StreamingContext context) {
-			Common.Debug2.AssertPersistent(info.GetInt32("version") == 1);
-			var sizes = (List<Point>) info.GetValue("sizes", typeof(List<Point>));
-			setFromIterators(sizes.GetEnumerator());
-		}
+        public Point sizeAtIndex(int i) { return sizes[i]; }
 
-		public virtual void GetObjectData(SerializationInfo info, StreamingContext context) {
-			info.AddValue("version", 1);
-			info.AddValue("sizes", sizes, typeof(List<Point>));
-		}
+        public IEnumerator<Point> GetSizesEnumerator() {
+            return sizes.GetEnumerator();
+        }
 
-		private void setFromIterators(
-			IEnumerator<Point> sizesE
-		) {
-			this.seatsBeforeZ = new List<int>();
-			this.sizeIndexForZ = new List<int>();
-			this.sizes = new List<Point>();
+        protected SeatsScheme(SerializationInfo info, StreamingContext context) {
+            Common.Debug2.AssertPersistent(info.GetInt32("version") == 1);
+            var sizes = (List<Point>) info.GetValue("sizes", typeof(List<Point>));
+            setFromIterators(sizes.GetEnumerator());
+        }
 
-			int seatsSum = 0;
-			for(int i = 0; sizesE.MoveNext(); i++) {
-				var size = sizesE.Current;
-				
-				for(int z = 0; z < size.z; z++) this.sizeIndexForZ.Add(i);
-				for(int z = 0; z < size.z; z++) {
-					this.seatsBeforeZ.Add(seatsSum);
-					seatsSum += size.x;
-				}
-				this.totalLength += size.z;
-				this.sizes.Add(size);
-			}
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context) {
+            info.AddValue("version", 1);
+            info.AddValue("sizes", sizes, typeof(List<Point>));
+        }
 
-			this.seatsCount = seatsSum;
-		}
+        private void setFromIterators(
+            IEnumerator<Point> sizesE
+        ) {
+            this.seatsBeforeZ = new List<int>();
+            this.sizeIndexForZ = new List<int>();
+            this.sizes = new List<Point>();
 
-		public string ToName(int index) {
-			var coord = indexToCoord(index);
-			var width = WidthForRow(coord.z);
-			return WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z + 1);
-		}
+            int seatsSum = 0;
+            for(int i = 0; sizesE.MoveNext(); i++) {
+                var size = sizesE.Current;
 
-		internal int? FromName(string t) {
-			try {
-				var z = int.Parse(t.Substring(1)) - 1;
-				var width = WidthForRow(z);
-				var naming = WidthsNaming.widthsNaming[width];
-				var x = 0;
-				for(; x < naming.Length; x++) if(char.ToLowerInvariant(naming[x]) == char.ToLowerInvariant(t[0])) break;
+                for(int z = 0; z < size.z; z++) this.sizeIndexForZ.Add(i);
+                for(int z = 0; z < size.z; z++) {
+                    this.seatsBeforeZ.Add(seatsSum);
+                    seatsSum += size.x;
+                }
+                this.totalLength += size.z;
+                this.sizes.Add(size);
+            }
 
-				return coordToIndex(x, z); 
-			}
-			catch(Exception ex) {
-				return null;
-			}
-		}
-	}
+            this.seatsCount = seatsSum;
+        }
 
-	public struct Seat {
-		public byte Class;
-		public bool Occupied;
-	}
+        public string ToName(int index) {
+            var coord = indexToCoord(index);
+            var width = WidthForRow(coord.z);
+            return WidthsNaming.widthsNaming[width][coord.x] + "" + (coord.z + 1);
+        }
 
-	public static class Occupation {
-		public static bool Occupied(byte[] occupation, int size, int i) {
-			if(i >= 0 && i < size) return ((occupation[i/8] >> (i%8)) & 1) != 0; 
-			else throw new IndexOutOfRangeException();
-		}
+        internal int? FromName(string t) {
+            try {
+                var z = int.Parse(t.Substring(1)) - 1;
+                var width = WidthForRow(z);
+                var naming = WidthsNaming.widthsNaming[width];
+                var x = 0;
+                for(; x < naming.Length; x++) if(char.ToLowerInvariant(naming[x]) == char.ToLowerInvariant(t[0])) break;
 
-		public static void Occupy(byte[] occupation, int size, int i) {
-			if(i >= 0 && i < size) occupation[i/8] |= (byte) (1u << (i%8)); 
-			else throw new IndexOutOfRangeException();
-		}
+                return coordToIndex(x, z);
+            }
+            catch(Exception ex) {
+                return null;
+            }
+        }
+    }
 
-		public static void Unoccupy(byte[] occupation, int size, int i) {
-			if(i >= 0 && i < size) occupation[i/8] &= (byte) ~(1u << (i%8)); 
-			else throw new IndexOutOfRangeException();
-		}
-	}
+    public struct Seat {
+        public byte Class;
+        public bool Occupied;
+    }
 
-	[Serializable] public class Seats {
-		public SeatsScheme Scheme{ get; private set; }
-		private byte[] seatsClasses;
-		private byte[] seatsOccupied; 
+    public static class Occupation {
+        public static bool Occupied(byte[] occupation, int size, int i) {
+            if(i >= 0 && i < size) return ((occupation[i/8] >> (i%8)) & 1) != 0;
+            else throw new IndexOutOfRangeException();
+        }
 
-		public Seats(SeatsScheme scheme, IEnumerator<byte> seatsClasses, IEnumerator<bool> seatsOccupied) {
-			this.Scheme = scheme;
-			this.seatsClasses = new byte[scheme.SeatsCount];
-			this.seatsOccupied = new byte[this.Scheme.SeatsCount / 8 + (this.Scheme.SeatsCount % 8 != 0 ? 1 : 0)];
+        public static void Occupy(byte[] occupation, int size, int i) {
+            if(i >= 0 && i < size) occupation[i/8] |= (byte) (1u << (i%8));
+            else throw new IndexOutOfRangeException();
+        }
 
-			var seatClassI = 0;
-			while(seatsClasses.MoveNext()) this.seatsClasses[seatClassI++] = seatsClasses.Current;
-			Common.Debug2.AssertPersistent(seatClassI == scheme.SeatsCount);
+        public static void Unoccupy(byte[] occupation, int size, int i) {
+            if(i >= 0 && i < size) occupation[i/8] &= (byte) ~(1u << (i%8));
+            else throw new IndexOutOfRangeException();
+        }
+    }
 
-			var seatOccupiedI = 0;
-			while(seatsOccupied.MoveNext()) {
-				this.seatsOccupied[seatOccupiedI >> 3] |= (byte) (seatsOccupied.Current ? 1 << (seatOccupiedI & 7) : 0);
-				seatOccupiedI++;
-			}
-			Common.Debug2.AssertPersistent(seatOccupiedI == scheme.SeatsCount);
-		}
+    [Serializable] public class Seats {
+        public SeatsScheme Scheme{ get; private set; }
+        private byte[] seatsClasses;
+        private byte[] seatsOccupied;
 
-		public int Size{ get{ return Scheme.SeatsCount; } }
+        public Seats(SeatsScheme scheme, IEnumerator<byte> seatsClasses, IEnumerator<bool> seatsOccupied) {
+            this.Scheme = scheme;
+            this.seatsClasses = new byte[scheme.SeatsCount];
+            this.seatsOccupied = new byte[this.Scheme.SeatsCount / 8 + (this.Scheme.SeatsCount % 8 != 0 ? 1 : 0)];
 
-		public bool Occupied(int i) {
-			return Occupation.Occupied(seatsOccupied, Scheme.SeatsCount, i);
-		}
+            var seatClassI = 0;
+            while(seatsClasses.MoveNext()) this.seatsClasses[seatClassI++] = seatsClasses.Current;
+            Common.Debug2.AssertPersistent(seatClassI == scheme.SeatsCount);
 
-		public bool Occupied(int x, int z) { 
-			return this.Occupied(Scheme.SeatsBeforeZ(z) + x);
-		}
+            var seatOccupiedI = 0;
+            while(seatsOccupied.MoveNext()) {
+                this.seatsOccupied[seatOccupiedI >> 3] |= (byte) (seatsOccupied.Current ? 1 << (seatOccupiedI & 7) : 0);
+                seatOccupiedI++;
+            }
+            Common.Debug2.AssertPersistent(seatOccupiedI == scheme.SeatsCount);
+        }
 
-		public void SetOccupied(int i, bool occupied) {
-			if(occupied) Occupation.Occupy(seatsOccupied, Scheme.SeatsCount, i);
-			else Occupation.Unoccupy(seatsOccupied, Scheme.SeatsCount, i);
-		}
+        public int Size{ get{ return Scheme.SeatsCount; } }
 
-		public void SetOccupied(int x, int z, bool occupied) { 
-			this.SetOccupied(Scheme.SeatsBeforeZ(z) + x, occupied);
-		}
+        public bool Occupied(int i) {
+            return Occupation.Occupied(seatsOccupied, Scheme.SeatsCount, i);
+        }
 
-		public byte Class(int i) {
-			if(i >= 0 && i < Scheme.SeatsCount) return seatsClasses[i];
-			else throw new IndexOutOfRangeException();
-		}
+        public bool Occupied(int x, int z) {
+            return this.Occupied(Scheme.SeatsBeforeZ(z) + x);
+        }
 
-		public byte Class(int x, int z) { 
-			return this.Class(Scheme.SeatsBeforeZ(z) + x);
-		}
+        public void SetOccupied(int i, bool occupied) {
+            if(occupied) Occupation.Occupy(seatsOccupied, Scheme.SeatsCount, i);
+            else Occupation.Unoccupy(seatsOccupied, Scheme.SeatsCount, i);
+        }
 
-		public Seat this[int i] { get{
-			return new Seat{ Class = Class(i), Occupied = Occupied(i) };
-		} }
+        public void SetOccupied(int x, int z, bool occupied) {
+            this.SetOccupied(Scheme.SeatsBeforeZ(z) + x, occupied);
+        }
 
-		public Seat this[int x, int z] { get{
-			return new Seat{ Class = Class(x, z), Occupied = Occupied(x, z) };
-		} }
+        public byte Class(int i) {
+            if(i >= 0 && i < Scheme.SeatsCount) return seatsClasses[i];
+            else throw new IndexOutOfRangeException();
+        }
 
-		public IEnumerator<bool> GetOccupationEnumerator() {
-			return new OccupiedEnumerator(seatsOccupied, Scheme.SeatsCount);
-		}
+        public byte Class(int x, int z) {
+            return this.Class(Scheme.SeatsBeforeZ(z) + x);
+        }
 
-		public IEnumerator<byte> GetClassEnumerator() {
-			return seatsClasses.Cast<byte>().GetEnumerator();
-		}
+        public Seat this[int i] { get{
+            return new Seat{ Class = Class(i), Occupied = Occupied(i) };
+        } }
 
-		public IEnumerator<Seat> GetEnumerator() { 
-			return new SeatEnumerator(GetClassEnumerator(), GetOccupationEnumerator()); 
-		}
+        public Seat this[int x, int z] { get{
+            return new Seat{ Class = Class(x, z), Occupied = Occupied(x, z) };
+        } }
 
-		class OccupiedEnumerator : IEnumerator<bool> {
-			private byte[] seatsOccupied;
-			private int count;
-			private int index;
+        public IEnumerator<bool> GetOccupationEnumerator() {
+            return new OccupiedEnumerator(seatsOccupied, Scheme.SeatsCount);
+        }
 
-			public OccupiedEnumerator(byte[] seatsOccupied, int count) {
-				this.seatsOccupied = seatsOccupied;
-				this.count = count;
-				this.index = -1;
-			}
+        public IEnumerator<byte> GetClassEnumerator() {
+            return seatsClasses.Cast<byte>().GetEnumerator();
+        }
 
-			public bool Current{
-				get{
-					if(index >= 0 && index >= count) throw new IndexOutOfRangeException();
-					else return ((seatsOccupied[index/8] >> (index%8)) & 1) != 0; 
-				}
-			}
+        public IEnumerator<Seat> GetEnumerator() {
+            return new SeatEnumerator(GetClassEnumerator(), GetOccupationEnumerator());
+        }
 
-			object IEnumerator.Current => Current;
+        class OccupiedEnumerator : IEnumerator<bool> {
+            private byte[] seatsOccupied;
+            private int count;
+            private int index;
 
-			public void Dispose() {}
+            public OccupiedEnumerator(byte[] seatsOccupied, int count) {
+                this.seatsOccupied = seatsOccupied;
+                this.count = count;
+                this.index = -1;
+            }
 
-			public bool MoveNext() {
-				if(index >= count) return false;
-				else {
-					index++;
-					return index < count;
-				}
-			}
+            public bool Current{
+                get{
+                    if(index >= 0 && index >= count) throw new IndexOutOfRangeException();
+                    else return ((seatsOccupied[index/8] >> (index%8)) & 1) != 0;
+                }
+            }
 
-			public void Reset() {
-				index = 0;
-			}
-		}
+            object IEnumerator.Current => Current;
 
-		class SeatEnumerator : IEnumerator<Seat> {
-			IEnumerator<byte> classes;
-			IEnumerator<bool> occupied;
+            public void Dispose() {}
 
-			public SeatEnumerator(IEnumerator<byte> classes, IEnumerator<bool> occupied) {
-				this.classes = classes;
-				this.occupied = occupied;
-			}
+            public bool MoveNext() {
+                if(index >= count) return false;
+                else {
+                    index++;
+                    return index < count;
+                }
+            }
 
-			public Seat Current{ get{ return new Seat{ Class = classes.Current, Occupied = occupied.Current }; } }
+            public void Reset() {
+                index = 0;
+            }
+        }
 
-			object IEnumerator.Current{ get{ return Current; } }
+        class SeatEnumerator : IEnumerator<Seat> {
+            IEnumerator<byte> classes;
+            IEnumerator<bool> occupied;
 
-			public void Dispose() {
-				classes.Dispose();
-				occupied.Dispose();
-			}
+            public SeatEnumerator(IEnumerator<byte> classes, IEnumerator<bool> occupied) {
+                this.classes = classes;
+                this.occupied = occupied;
+            }
 
-			public bool MoveNext() {
-				var f = classes.MoveNext();
-				var s = occupied.MoveNext();
-				Common.Debug2.AssertPersistent(f == s);
-				return f;
-			}
+            public Seat Current{ get{ return new Seat{ Class = classes.Current, Occupied = occupied.Current }; } }
 
-			public void Reset() {
-				classes.Reset();
-				occupied.Reset();
-			}
-		}
+            object IEnumerator.Current{ get{ return Current; } }
 
-		private Seats(SerializationInfo info, StreamingContext context) {
-			Common.Debug2.AssertPersistent(info.GetInt32("version") == 0);
-			this.Scheme = (SeatsScheme) info.GetValue("scheme", typeof(SeatsScheme));
-			this.seatsClasses = (byte[]) info.GetValue("seatsClasses", typeof(byte[]));
-			this.seatsOccupied = (byte[]) info.GetValue("seatsOccupied", typeof(byte[]));
-		}
+            public void Dispose() {
+                classes.Dispose();
+                occupied.Dispose();
+            }
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context) {
-			info.AddValue("version", 0);
-			info.AddValue("scheme", this.Scheme, typeof(SeatsScheme));
-			info.AddValue("seatsClasses", this.seatsClasses, typeof(byte[]));
-			info.AddValue("seatsOccupied", this.seatsOccupied, typeof(byte[]));
-		}
-	}
+            public bool MoveNext() {
+                var f = classes.MoveNext();
+                var s = occupied.MoveNext();
+                Common.Debug2.AssertPersistent(f == s);
+                return f;
+            }
 
-	public static class WidthsNaming {
-		public static Dictionary<int, char[]> widthsNaming = new Dictionary<int, char[]>();
+            public void Reset() {
+                classes.Reset();
+                occupied.Reset();
+            }
+        }
 
-		static WidthsNaming() {
-			widthsNaming.Add(4, new char[]{ 'A', 'C', 'D', 'F' });
-			widthsNaming.Add(6, new char[]{ 'A', 'B', 'C', 'D', 'E', 'F' });
-		}
-	}
+        private Seats(SerializationInfo info, StreamingContext context) {
+            Common.Debug2.AssertPersistent(info.GetInt32("version") == 0);
+            this.Scheme = (SeatsScheme) info.GetValue("scheme", typeof(SeatsScheme));
+            this.seatsClasses = (byte[]) info.GetValue("seatsClasses", typeof(byte[]));
+            this.seatsOccupied = (byte[]) info.GetValue("seatsOccupied", typeof(byte[]));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context) {
+            info.AddValue("version", 0);
+            info.AddValue("scheme", this.Scheme, typeof(SeatsScheme));
+            info.AddValue("seatsClasses", this.seatsClasses, typeof(byte[]));
+            info.AddValue("seatsOccupied", this.seatsOccupied, typeof(byte[]));
+        }
+    }
+
+    public static class WidthsNaming {
+        public static Dictionary<int, char[]> widthsNaming = new Dictionary<int, char[]>();
+
+        static WidthsNaming() {
+            widthsNaming.Add(4, new char[]{ 'A', 'C', 'D', 'F' });
+            widthsNaming.Add(6, new char[]{ 'A', 'B', 'C', 'D', 'E', 'F' });
+        }
+    }
 }

@@ -8,64 +8,64 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace Client {
-	public partial class BaggageOption : UserControl {
-		private FlightsOptions.Baggage baggage;
+    public partial class BaggageOption : UserControl {
+        private FlightsOptions.Baggage baggage;
 
-		public FlightsOptions.Baggage Baggage{
-			get {
-				return baggage;
-			}
-			set {
-				baggage = value;
-				updateDisplay();		
-			}
-		}
+        public FlightsOptions.Baggage Baggage{
+            get {
+                return baggage;
+            }
+            set {
+                baggage = value;
+                updateDisplay();
+            }
+        }
 
-		public int Index;
+        public int Index;
 
-		public BaggageOption() {
-			InitializeComponent();
+        public BaggageOption() {
+            InitializeComponent();
 
-			touchArea.Click += (a, b) => this.OnClick(b);
-			touchArea.BringToFront();
-		}
+            touchArea.Click += (a, b) => this.OnClick(b);
+            touchArea.BringToFront();
+        }
 
-		private void updateDisplay() {
-			mainTable.SuspendLayout();
+        private void updateDisplay() {
+            mainTable.SuspendLayout();
 
-			mainParamLabel.Text = "";
-			axilParamLabel.Text = "";
-			priceLabel.Text = "";
-			
+            mainParamLabel.Text = "";
+            axilParamLabel.Text = "";
+            priceLabel.Text = "";
 
-			if(baggage.count == 0) {
-				mainParamLabel.Text = "Без багажа";
-			}
-			else if(baggage.RestrictedWeight) {
-				mainParamLabel.Text = baggage.count + " x " + baggage.maxWeightKg + " кг" + (
-					baggage.RestrictedSize ? "*" : ""	
-				);
 
-				if(baggage.RestrictedSize) {
-					var md = baggage.maxDim;
-					axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
-				}
+            if(baggage.count == 0) {
+                mainParamLabel.Text = "Без багажа";
+            }
+            else if(baggage.RestrictedWeight) {
+                mainParamLabel.Text = baggage.count + " x " + baggage.maxWeightKg + " кг" + (
+                    baggage.RestrictedSize ? "*" : ""
+                );
 
-			}
-			else if(baggage.RestrictedSize) {
-				mainParamLabel.Text = baggage.count + " x сумка*";
+                if(baggage.RestrictedSize) {
+                    var md = baggage.maxDim;
+                    axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
+                }
 
-				var md = baggage.maxDim;
-				axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
-			}
-			else mainParamLabel.Text = baggage.count + " x сумка";
+            }
+            else if(baggage.RestrictedSize) {
+                mainParamLabel.Text = baggage.count + " x сумка*";
 
-			
-			if(baggage.IsFree) priceLabel.Text = "Бесплатно";
-			else priceLabel.Text = baggage.costRub + " руб.";
+                var md = baggage.maxDim;
+                axilParamLabel.Text = "*до " + md.x + "x" + md.y + "x" + md.z;
+            }
+            else mainParamLabel.Text = baggage.count + " x сумка";
 
-			mainTable.ResumeLayout(false);
-			mainTable.PerformLayout();
-		}
-	}
+
+            if(baggage.IsFree) priceLabel.Text = "Бесплатно";
+            else priceLabel.Text = baggage.costRub + " руб.";
+
+            mainTable.ResumeLayout(false);
+            mainTable.PerformLayout();
+        }
+    }
 }
